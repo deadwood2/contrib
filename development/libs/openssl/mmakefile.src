@@ -55,7 +55,7 @@ $(OPENSSL_BUILD_DIR)/.build-configured : $(OPENSSL_BUILD_DIR)/.links-created
 	@$(RM) $@
 	@$(ECHO) "Configuring build in         $(subst $(TOP)/,,$(OPENSSL_BUILD_DIR))"
 	@cd $(OPENSSL_BUILD_DIR); \
-	env -i PATH="$(PATH)" AROS_CC="$(strip $(CC) $(TARGET_SYSROOT))" AROS_CFLAGS="$(CFLAGS)" AROS_RANLIB="$(RANLIB)" AR="$(AR_PLAIN)" ./Configure "$(OPENSSL_TARGET)" $(OPENSSL_OPTIONS) --prefix=/$(AROS_DIR_DEVELOPER) --openssldir=/$(AROS_DIR_DEVELOPER)/etc/ssl
+	env -i PATH="$(PATH)" AROS_CC="$(strip $(CC) $(TARGET_SYSROOT))" AROS_CFLAGS="$(CFLAGS) -newclib" AROS_RANLIB="$(RANLIB)" AR="$(AR_PLAIN)" ./Configure "$(OPENSSL_TARGET)" $(OPENSSL_OPTIONS) --prefix=/$(AROS_DIR_DEVELOPER) --openssldir=/$(AROS_DIR_DEVELOPER)/etc/ssl
 	@$(TOUCH) $@;
 
 #MM
