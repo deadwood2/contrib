@@ -38,6 +38,7 @@ $(GENDIR)/$(CURDIR)/.includes-generated : $(GENMODULE) | $(GENINCDIRS)
 #MM- fryingpan-framework-genericlib-gen : fryingpan-framework-genericlib-gen-includes fryingpan-framework-genericlib-gen-stubs
 #MM contrib-fryingpan-framework-genericlib : fryingpan-framework-genericlib-gen
 
+USER_CPPFLAGS := -D__POSIXC_RELLIBBASE__ -D__STDC_RELLIBBASE__
 GENFILES := \
             $(wildcard $(GENDIR)/$(CURDIR)/*_start.c) \
             $(wildcard $(GENDIR)/$(CURDIR)/*_end.c)

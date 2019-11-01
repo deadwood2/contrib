@@ -27,7 +27,8 @@ USER_INCLUDES := \
 
 NOWARN_FLAGS := $(NOWARN_ARRAY_BOUNDS) $(NOWARN_VOLATILE_REGISTER_VAR)
 USER_CFLAGS := -std=gnu99 $(CFLAGS_FAST_MATH) -Wall $(NOWARN_FLAGS) -DAL_ALEXT_PROTOTYPES 
-#OPTIMIZATION_CFLAGS += -O3
+# This is needed for inline functions (ReadRef & Co.) to be actually compiled in --enable-debug builds
+OPTIMIZATION_CFLAGS += -O2
 
 OPENAL32_FILES = \
         alAuxEffectSlot \
