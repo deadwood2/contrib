@@ -62,4 +62,4 @@ development-curl-fixconfig :
 	do \
 	$(SED) -i -e 's@-lssl -lssl -lcrypto -lz@-lssl -lcrypto -lz@' $$file; \
 	done; \
-	$(ECHO) "SYS:Developer" > $(AROS_ENVARC)/SYS/Packages/Curl
+	$(ECHO) "SYS:Development" > $(AROS_ENVARC)/SYS/Packages/Curl
