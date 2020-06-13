@@ -4,7 +4,7 @@
 
 include $(SRCDIR)/config/aros-contrib.cfg
 
-#MM- contrib-multimedia : contrib-multimedia-playcdda
+##MM- contrib-multimedia : contrib-multimedia-playcdda
 #MM  contrib-multimedia-playcdda : \
 #MM    includes linklibs \
 #MM    contrib-multimedia-playcdda-files

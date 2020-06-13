@@ -1,6 +1,6 @@
 # $Id$
 
-#MM- contrib : contrib-wazp3d
+##MM- contrib : contrib-wazp3d
 
 #MM- contrib-wazp3d : contrib-wazp3d-prefs contrib-wazp3d-cow3d \
 #MM  contrib-wazp3d-test contrib-wazp3d-lib

@@ -13,8 +13,8 @@ USER_INCLUDES := -I$(AROS_INCLUDES)/lua
 %build_linklib mmake=contrib-development-build-tolua-lib \
   libname=$(LIBNAME) files=$(FILES)
 
-#MM
-includes-copy :
-%copy_includes includes=../../include/tolua++.h path=lua dir=../../include
+##MM
+#includes-copy :
+#%copy_includes includes=../../include/tolua++.h path=lua dir=../../include
 
 %common

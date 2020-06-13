@@ -4,7 +4,7 @@
 
 include $(SRCDIR)/config/aros-contrib.cfg
 
-#MM- contrib-multimedia : contrib-multimedia-cdxlplay
+##MM- contrib-multimedia : contrib-multimedia-cdxlplay
 #MM  contrib-multimedia-cdxlplay : includes linklibs development-sdl
 
 EXEDIR := $(AROS_CONTRIB)/MultiMedia/Video/CDXLPlay

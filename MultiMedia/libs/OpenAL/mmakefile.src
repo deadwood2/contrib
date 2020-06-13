@@ -5,7 +5,7 @@
 
 include $(SRCDIR)/config/aros-contrib.cfg
 
-#MM- contrib-multimedia : contrib-openal
+##MM- contrib-multimedia : contrib-openal
 
 #MM- contrib-openal : contrib-openal-linklib contrib-openal-library
 #MM- contrib-openal-common : includes contrib-openal-includes workbench-devs-AHI

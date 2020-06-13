@@ -2,7 +2,7 @@
 
 include $(SRCDIR)/config/aros-contrib.cfg
 
-#MM- contrib : contrib-arospdf
+##MM- contrib : contrib-arospdf
 
 #MM- contrib-arospdf : \
 #MM     contrib-arospdf-xpdf \

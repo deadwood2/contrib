@@ -6,7 +6,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 
 include $(SRCDIR)/$(CURDIR)/regina.ver
 
-#MM- contrib-complete : contrib-regina
+##MM- contrib-complete : contrib-regina
 
 #MM- contrib-regina : contrib-regina-exes contrib-regina-module \
 #MM      contrib-regina-test
@@ -73,7 +73,7 @@ FILES := $(OFILES) \
     files=$(FILES) uselibs="crtmod" \
     objdir=$(GENDIR)/$(CURDIR)/shared linklibname=regina_shared
 
-%copy_includes includes=rexxsaa.h
+#%copy_includes includes=rexxsaa.h
 
 TEST_FILES := addsupport typepkt forbid1 forbid2 ptrarith ados
 TESTS := $(addsuffix .rexx,$(TEST_FILES))

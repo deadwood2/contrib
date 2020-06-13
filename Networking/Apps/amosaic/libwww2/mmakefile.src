@@ -5,7 +5,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 
 ##MM- linklibs : linklibs-www2
 #MM linklibs-www2 : includes
-#MM- includes-copy : libwww2-inc-directories
+##MM- includes-copy : libwww2-inc-directories
 
 FILES := \
 	aros_tcphack \
@@ -54,10 +54,10 @@ USER_CFLAGS += $(NOWARN_FLAGS) -DUSE_DIRENT -D__BSD_VISIBLE=1
 
 %build_linklib mmake=linklibs-www2 libname=www2 files=$(FILES)
 
-#MM
-includes-copy :
-	@$(CP) $(SRCDIR)/$(CURDIR)/*.h $(GENINCDIR)/libwww2
-	@$(CP) $(SRCDIR)/$(CURDIR)/*.h $(AROS_INCLUDES)/libwww2
+##MM
+#includes-copy :
+#	@$(CP) $(SRCDIR)/$(CURDIR)/*.h $(GENINCDIR)/libwww2
+#	@$(CP) $(SRCDIR)/$(CURDIR)/*.h $(AROS_INCLUDES)/libwww2
 
 #MM
 libwww2-inc-directories ::

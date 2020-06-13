@@ -4,8 +4,8 @@ include $(SRCDIR)/config/aros-contrib.cfg
 
 INCLUDE_FILES := libintl.h
 
-#MM- contrib-development-libs-libintl-includes :
-%copy_includes includes=$(INCLUDE_FILES)
+##MM- contrib-development-libs-libintl-includes :
+#%copy_includes includes=$(INCLUDE_FILES)
 
 %common
 

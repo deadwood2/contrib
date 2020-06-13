@@ -25,6 +25,6 @@ USER_CFLAGS := $(NOWARN_FLAGS)
 
 HEADERS:=SDL_ttf.h
 
-%copy_includes mmake=includes-copy includes=$(HEADERS) path=SDL
+#%copy_includes mmake=includes-copy includes=$(HEADERS) path=SDL
 
 %common

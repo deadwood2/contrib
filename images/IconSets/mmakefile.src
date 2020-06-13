@@ -3,4 +3,4 @@
 
 include $(SRCDIR)/config/aros-contrib.cfg
 
-#MM- contrib-complete : iconset-$(AROS_TARGET_ICONSET)-contrib-icons
+##MM- contrib-complete : iconset-$(AROS_TARGET_ICONSET)-contrib-icons

@@ -2,7 +2,7 @@
 
 include $(SRCDIR)/config/aros-contrib.cfg
 
-#MM- contrib-multimedia : contrib-multimedia-shellplayer
+##MM- contrib-multimedia : contrib-multimedia-shellplayer
 #MM contrib-multimedia-shellplayer : includes linklibs contrib-ptplay-lib contrib-multimedia-shellplayer-cpy
 
 EXE    := ShellPlayer

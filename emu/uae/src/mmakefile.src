@@ -81,7 +81,7 @@ USER_CPPFLAGS := -DGCCCONSTFUNC='__attribute__((const))'\
 USER_INCLUDES := -I$(UAESRCDIR) -I$(UAESRCDIR)/include \
 	       -I$(TOP)/$(CURDIR) -I$(TOP)/$(CURDIR)/include \
 
-#MM- contrib-complete: uae
+##MM- contrib-complete: uae
 #MM- uae : uae-$(AROS_TARGET_CPU)
 #MM uae-i386 : setup includes uae-setup uae-od-aros uae-docs-copy
 #MM- uae-quick : uae-setup uae-od-aros-quick uae-docs-copy

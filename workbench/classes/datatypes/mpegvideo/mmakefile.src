@@ -16,6 +16,6 @@ USER_LDFLAGS :=
 
 %build_module mmake=contrib-datatype-mpegvideo \
     modname=mpegvideo modtype=datatype \
-    files=$(FILES) uselibs="romhack" usesdks="private"
+    files=$(FILES) usesdks="private"
 
 %common

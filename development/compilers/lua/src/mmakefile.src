@@ -65,8 +65,8 @@ USER_CFLAGS	:= $(NOWARN_FLAGS) -DLUA_COMPAT_ALL
 
 
 
-#MM
-includes-copy :
-%copy_includes includes=$(HEADERS) path=lua
+##MM
+#includes-copy :
+#%copy_includes includes=$(HEADERS) path=lua
 
 %common

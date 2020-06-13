@@ -44,7 +44,7 @@ FUNCS := \
     iniToUpper \
     iniValue
 
-#MM- workbench-libs-libini-includes : includes-copy
+##MM- workbench-libs-libini-includes : includes-copy
 #MM- workbench-libs-libini : linklibs
 
 USER_CFLAGS := -I$(SRCDIR)/$(CURDIR) -I$(SRCDIR)/$(CURDIR)/include
@@ -52,5 +52,5 @@ USER_CFLAGS := -I$(SRCDIR)/$(CURDIR) -I$(SRCDIR)/$(CURDIR)/include
 %build_module mmake=workbench-libs-libini modname=inifile \
     modtype=library files="$(INILBFILES) $(FUNCS)"
 
-%copy_includes includes=include/ini.h path=inifile dir=include
+#%copy_includes includes=include/ini.h path=inifile dir=include
 %common

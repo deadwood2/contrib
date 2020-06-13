@@ -6,14 +6,14 @@ FILES := classbase methods dispatch prefs misc encoder
 #FILES stackswap 
 TESTSDIR := $(AROS_TESTS)/datatypes
 
-#MM- contrib-datatypes-complete : contrib-datatype-gifanim datatype-descriptor-gifanim
-#MM contrib-datatype-gifanim : includes linklibs
+##MM- contrib-datatypes-complete : contrib-datatype-gifanim datatype-descriptor-gifanim
+##MM contrib-datatype-gifanim : includes linklibs
 
 USER_CPPFLAGS   := -DDEBUG=0
 USER_LDFLAGS :=
 
-%build_module mmake=contrib-datatype-gifanim \
-    modname=gifanim modtype=datatype \
-    files=$(FILES)
+#%build_module mmake=contrib-datatype-gifanim \
+#    modname=gifanim modtype=datatype \
+#    files=$(FILES)
 
 %common

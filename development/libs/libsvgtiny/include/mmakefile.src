@@ -8,6 +8,6 @@
 
 include $(SRCDIR)/config/aros-contrib.cfg
 
-%copy_includes includes=svgtiny.h
+#%copy_includes includes=svgtiny.h
 
 %common

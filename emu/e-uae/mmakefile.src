@@ -3,7 +3,7 @@
 
 include $(SRCDIR)/config/aros-contrib.cfg
 
-##MM- contrib-complete : contrib-euae
+###MM- contrib-complete : contrib-euae
 
 PROGDIR := $(AROS_CONTRIB)/Emu/E-UAE
 PACKAGE := e-uae

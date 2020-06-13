@@ -15,9 +15,9 @@ $(DOPUSDIR)/S/% : S/%
 	@$(MKDIR) $(dir $@)
 	@$(CP) $< $@
 
-#MM
-contrib-dopus :
-	$(ECHO) "Extras:DOpus" >$(AROS_PACKAGES)/DOpus
+##MM
+#contrib-dopus :
+#	$(ECHO) "Extras:DOpus" >$(AROS_PACKAGES)/DOpus
 
 %copy_dir_recursive mmake=dopus-includes src=include \
     dst=$(DOPUSDIR)/Development/include

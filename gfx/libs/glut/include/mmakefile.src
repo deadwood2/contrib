@@ -4,8 +4,8 @@ include $(SRCDIR)/config/aros-contrib.cfg
 
 INCLUDE_FILES := glut.h
 
-#MM- contrib-gfx-libs-glut-includes :
-%copy_includes path=GL includes=$(INCLUDE_FILES)
+##MM- contrib-gfx-libs-glut-includes :
+#%copy_includes path=GL includes=$(INCLUDE_FILES)
 
 %common
 

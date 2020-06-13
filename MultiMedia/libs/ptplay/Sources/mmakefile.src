@@ -1,7 +1,7 @@
 
 include $(SRCDIR)/config/aros-contrib.cfg
 
-#MM- contrib : contrib-ptplay-lib
+##MM- contrib : contrib-ptplay-lib
 
 #MM contrib-ptplay-lib : includes linklibs
 
@@ -13,7 +13,7 @@ USER_CFLAGS := $(NOWARN_FLAGS) -DAMIGA
 %build_module mmake=contrib-ptplay-lib modname=ptplay modtype=library \
   files=$(FILES)
 
-%copy_includes mmake=includes-copy includes=ptplay.h path=libraries
+#%copy_includes mmake=includes-copy includes=ptplay.h path=libraries
 
 #MM contrib-ptplay-clean : contrib-ptplay-lib-clean
 
