@@ -60,6 +60,8 @@ GIT_PATCHIGNORE := autom4te.cache configure GIT-VERSION-FILE
 NOWARN_FLAGS := $(NOWARN_IMPLICIT_FUNCTION_DECLARATION)
 USER_CFLAGS := $(NOWARN_FLAGS)
 
+contrib-development-git-touchfileflag := $(GENDIR)/$(CURDIR)/.files-touched
+
 %build_with_configure mmake=contrib-development-git compiler=target \
     srcdir=$(GIT_PORTDIR)/$(GIT_ARCHDIR) prefix="$(GIT_NATIVEDIR)" gnuflags=no nix=yes \
     config_env_extra="$(GIT_CONFIG_ENV)" install_env="$(GIT_INSTALL_ENV)" extraoptions="$(GIT_OPTIONS)"

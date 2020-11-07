@@ -6,4 +6,6 @@ include $(SRCDIR)/config/aros-contrib.cfg
 #MM- contrib-gnu : contrib-gnu-autoconf
 #MM- contrib-gnu-autoconf : development-autoconf
 
+development-autoconf--touchfileflag := $(GENDIR)/$(CURDIR)/.files-touched
+
 %fetch_and_build_gnu_development package=autoconf version=2.62 patch=yes

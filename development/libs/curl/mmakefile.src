@@ -18,6 +18,8 @@ USER_CPPFLAGS= \
         -D__BSD_VISIBLE=1
 CURL_OPTIONS=--disable-shared --without-random --disable-threaded-resolver --disable-ntlm-wb --with-ssl=$(AROS_DEVELOPER) --libdir=$(AROS_LIB)
 
+development-curl--touchfileflag := $(GENDIR)/$(CURDIR)/.files-touched
+
 %fetch_and_build_gnu_development package=curl version=$(CURL_VERSION) \
     patch=yes package_repo="$(REPOSITORIES)" \
     extraoptions="$(CURL_OPTIONS)" \
