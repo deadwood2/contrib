@@ -1,6 +1,6 @@
-diff -urN grep-2.5.1/config.sub grep-2.5.1-aros/config.sub
---- grep-2.5.1/config.sub	2002-02-28 10:12:58.000000000 +0100
-+++ grep-2.5.1-aros/config.sub	2011-07-10 23:41:03.000000000 +0200
+diff -ruN grep-2.5.1/config.sub grep-2.5.1.aros/config.sub
+--- grep-2.5.1/config.sub	2002-02-28 09:12:58.000000000 +0000
++++ grep-2.5.1.aros/config.sub	2011-07-10 21:41:03.000000000 +0000
 @@ -1168,6 +1168,9 @@
          -*mint | -mint[0-9]* | -*MiNT | -MiNT[0-9]*)
  	        os=-mint
@@ -11,9 +11,9 @@ diff -urN grep-2.5.1/config.sub grep-2.5.1-aros/config.sub
  	-none)
  		;;
  	*)
-diff -urN grep-2.5.1/configure grep-2.5.1-aros/configure
---- grep-2.5.1/configure	2002-03-26 17:09:38.000000000 +0100
-+++ grep-2.5.1-aros/configure	2011-07-10 23:41:03.000000000 +0200
+diff -ruN grep-2.5.1/configure grep-2.5.1.aros/configure
+--- grep-2.5.1/configure	2002-03-26 16:09:38.000000000 +0000
++++ grep-2.5.1.aros/configure	2011-07-10 21:41:03.000000000 +0000
 @@ -4229,7 +4229,7 @@
  
  
@@ -24,8 +24,8 @@ diff -urN grep-2.5.1/configure grep-2.5.1-aros/configure
  as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
  if eval "test \"\${$as_ac_Header+set}\" = set"; then
 diff -ruN grep-2.5.1/doc/grep.texi grep-2.5.1.aros/doc/grep.texi
---- grep-2.5.1/doc/grep.texi    2002-01-22 14:20:04.000000000 +0100
-+++ grep-2.5.1.aros/doc/grep.texi       2015-01-19 22:17:07.768232354 +0100
+--- grep-2.5.1/doc/grep.texi	2002-01-22 13:20:04.000000000 +0000
++++ grep-2.5.1.aros/doc/grep.texi	2015-01-19 21:17:07.768232354 +0000
 @@ -288,7 +288,7 @@
  Print a usage message briefly summarizing these command-line options
  and the bug-reporting address, then exit.
@@ -35,9 +35,25 @@ diff -ruN grep-2.5.1/doc/grep.texi grep-2.5.1.aros/doc/grep.texi
  @opindex --binary-files
  @cindex binary files
  If the first few bytes of a file indicate that the file contains binary
-diff -urN grep-2.5.1/src/dfa.c grep-2.5.1-aros/src/dfa.c
---- grep-2.5.1/src/dfa.c	2001-09-26 18:57:55.000000000 +0200
-+++ grep-2.5.1-aros/src/dfa.c	2011-07-10 23:41:03.000000000 +0200
+diff -ruN grep-2.5.1/doc/stamp-vti grep-2.5.1.aros/doc/stamp-vti
+--- grep-2.5.1/doc/stamp-vti	1970-01-01 00:00:00.000000000 +0000
++++ grep-2.5.1.aros/doc/stamp-vti	2020-11-07 18:20:14.480511383 +0000
+@@ -0,0 +1,4 @@
++@set UPDATED 19 January 2015
++@set UPDATED-MONTH January 2015
++@set EDITION 2.5.1
++@set VERSION 2.5.1
+diff -ruN grep-2.5.1/doc/version.texi grep-2.5.1.aros/doc/version.texi
+--- grep-2.5.1/doc/version.texi	1970-01-01 00:00:00.000000000 +0000
++++ grep-2.5.1.aros/doc/version.texi	2020-11-07 18:20:14.476511302 +0000
+@@ -0,0 +1,4 @@
++@set UPDATED 19 January 2015
++@set UPDATED-MONTH January 2015
++@set EDITION 2.5.1
++@set VERSION 2.5.1
+diff -ruN grep-2.5.1/src/dfa.c grep-2.5.1.aros/src/dfa.c
+--- grep-2.5.1/src/dfa.c	2001-09-26 16:57:55.000000000 +0000
++++ grep-2.5.1.aros/src/dfa.c	2011-07-10 21:41:03.000000000 +0000
 @@ -44,11 +44,6 @@
  # include <locale.h>
  #endif
@@ -50,9 +66,9 @@ diff -urN grep-2.5.1/src/dfa.c grep-2.5.1-aros/src/dfa.c
  #ifdef MBS_SUPPORT
  # include <wchar.h>
  # include <wctype.h>
-diff -urN grep-2.5.1/src/getpagesize.h grep-2.5.1-aros/src/getpagesize.h
---- grep-2.5.1/src/getpagesize.h	2001-02-08 16:56:55.000000000 +0100
-+++ grep-2.5.1-aros/src/getpagesize.h	2011-07-10 23:41:03.000000000 +0200
+diff -ruN grep-2.5.1/src/getpagesize.h grep-2.5.1.aros/src/getpagesize.h
+--- grep-2.5.1/src/getpagesize.h	2001-02-08 15:56:55.000000000 +0000
++++ grep-2.5.1.aros/src/getpagesize.h	2011-07-10 21:41:03.000000000 +0000
 @@ -25,6 +25,10 @@
  # endif
  #endif
