@@ -24,7 +24,7 @@ FILES	:= \
 
 #MM- dopus-library : setup includes linklibs dopus-includes
 
-USER_INCLUDES := -I$(DOPUSDIR)/$(AROS_DIR_DEVELOPER)/include
+USER_INCLUDES := -I$(DOPUSDIR)/Development/include
 USER_CPPFLAGS := -D__DOPUS_NOLIBBASE__ 
 
 # TODO: Remove and clean the compiler warnings!

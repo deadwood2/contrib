@@ -30,7 +30,7 @@ NOWARN_FLAGS := \
 
 USER_CFLAGS := $(NOWARN_FLAGS)
 USER_INCLUDES := \
-    -I$(TARGETDIR)/$(AROS_DIR_DEVELOPER)/include \
+    -I$(TARGETDIR)/Development/include \
     -I$(SRCDIR)/$(CURDIR)/../../../common/Plugin \
     -I$(SRCDIR)/$(CURDIR)/../../../common/DataTypesMCC \
     -I$(SRCDIR)/$(CURDIR)/../../../common/FontSampleMCC \

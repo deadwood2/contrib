@@ -8,7 +8,7 @@ include $(SRCDIR)/config/aros.cfg
 #MM contrib-development-git-setup : contrib-development-git-fetch contrib-development-git-gendirs
 
 GIT_DESTDIR     :=	$(AROS_DEVELOPER)
-GIT_NATIVEDIR  :=	/$(AROS_DIR_DEVELOPER)
+GIT_NATIVEDIR  :=	/$(AROS_DIR_DEVELOPMENT)
 
 GIT_ENV := \
            UNAME="$(CROSSTOOLSDIR)/$(AROS_TARGET_CPU)-aros-uname"

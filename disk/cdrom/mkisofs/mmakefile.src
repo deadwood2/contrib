@@ -11,5 +11,5 @@ REPOSITORIES := ftp://ftp.gwdg.de/pub/misc/cdrecord/mkisofs/old \
  https://ftp.icm.edu.pl/packages/cdrtools/mkisofs/old
 
 %fetch_and_build_gnu mmake=disk-cdrom-mkisofs package=mkisofs version=1.11.3 \
-	patch=yes prefix=$(AROS_DEVELOPER) aros_prefix=/$(AROS_DIR_DEVELOPER) \
+	patch=yes prefix=$(AROS_DEVELOPER) aros_prefix=/$(AROS_DIR_DEVELOPMENT) \
 	package_repo="$(REPOSITORIES)"

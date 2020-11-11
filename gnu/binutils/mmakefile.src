@@ -9,7 +9,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 
 BINUTILS_VERSION     = $(TARGET_BINUTILS_VER)
 
-BINUTILS_EXTRAOPTS := --with-sysroot=/$(AROS_DIR_DEVELOPER)
+BINUTILS_EXTRAOPTS := --with-sysroot=/$(AROS_DIR_DEVELOPMENT)
 BINUTILS_EXTRAOPTS += --with-build-sysroot=$(AROS_DEVELOPER)
 BINUTILS_EXTRAOPTS += --libdir=$(AROS_LIB)
 

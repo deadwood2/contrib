@@ -20,7 +20,7 @@ contrib-dopus :
 	$(ECHO) "Extras:DOpus" >$(AROS_PACKAGES)/DOpus
 
 %copy_dir_recursive mmake=dopus-includes src=include \
-    dst=$(DOPUSDIR)/$(AROS_DIR_DEVELOPER)/include
+    dst=$(DOPUSDIR)/Development/include
 
 
 #MM- contrib-dopus-clean : \

@@ -40,7 +40,7 @@ NOWARN_FLAGS := \
 
 USER_CFLAGS := $(NOWARN_FLAGS)
 USER_INCLUDES := \
-    -I$(AROS_CONTRIB)/Scalos/$(AROS_DIR_DEVELOPER)/include \
+    -I$(AROS_CONTRIB)/Scalos/Development/include \
     -I$(SRCDIR)/$(CURDIR)/../../common/FontSampleMCC \
     -I$(SRCDIR)/$(CURDIR)/../../common/McpGfx \
     -I$(SRCDIR)/$(CURDIR)/../../common/DataTypesMCC \

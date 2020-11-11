@@ -8,4 +8,4 @@ include $(SRCDIR)/config/aros-contrib.cfg
 ICONS := Build False Lua nasm MUIBuilder ChocolateCastle MinAD
 
 #MM- iconset-Gorilla-contrib-icons-extras-clean : iconset-Gorilla-contrib-icons-extras-development-clean
-%build_icons mmake=iconset-Gorilla-contrib-icons-extras-development icons=$(ICONS) dir=$(AROS_CONTRIB)/$(AROS_DIR_DEVELOPER)
+%build_icons mmake=iconset-Gorilla-contrib-icons-extras-development icons=$(ICONS) dir=$(AROS_CONTRIB_DEVELOPER)

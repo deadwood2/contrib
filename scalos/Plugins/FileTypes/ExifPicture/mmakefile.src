@@ -20,7 +20,7 @@ NOWARN_FLAGS := \
 
 USER_CFLAGS := $(NOWARN_FLAGS)
 USER_INCLUDES := \
-    -I$(TARGETDIR)/$(AROS_DIR_DEVELOPER)/include \
+    -I$(TARGETDIR)/Development/include \
     -I$(SRCDIR)/$(CURDIR)/../../../common/Plugin \
     -idirafter $(SRCDIR)/$(CURDIR)/../../../include
 USER_CPPFLAGS := -DSCALOSLOCALE=$(SCALOS_LOCALE) \

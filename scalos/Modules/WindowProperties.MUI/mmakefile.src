@@ -26,7 +26,7 @@ NOWARN_FLAGS := \
     $(NOWARN_PARENTHESES) \
     $(NOWARN_FORMAT_TRUNCATION)
 
-USER_INCLUDES := -I$(AROS_CONTRIB)/Scalos/$(AROS_DIR_DEVELOPER)/include \
+USER_INCLUDES := -I$(AROS_CONTRIB)/Scalos/Development/include \
     -I $(SRCDIR)/$(CURDIR)/../IconProperties.MUI \
     -I $(SRCDIR)/$(CURDIR)/../../common/BackfillMCC \
     -I $(SRCDIR)/$(CURDIR)/../../common/BitMapMCC \

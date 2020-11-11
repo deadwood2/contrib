@@ -8,4 +8,4 @@ include $(SRCDIR)/config/aros-contrib.cfg
 ICONS := AmiLua
 
 #MM- iconset-Gorilla-contrib-icons-extras-development-clean : iconset-Gorilla-contrib-icons-extras-development-lua-clean
-%build_icons mmake=iconset-Gorilla-contrib-icons-extras-development-lua icons=$(ICONS) dir=$(AROS_CONTRIB)/$(AROS_DIR_DEVELOPER)/Lua
+%build_icons mmake=iconset-Gorilla-contrib-icons-extras-development-lua icons=$(ICONS) dir=$(AROS_CONTRIB_DEVELOPER)/Lua
