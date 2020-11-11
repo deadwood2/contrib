@@ -415,7 +415,7 @@ diff -ruN SDL-1.2.15/aros/sdl-config SDL-1.2.15.aros/aros/sdl-config
 @@ -0,0 +1,58 @@
 +#!/bin/sh
 +
-+prefix=/Developer
++prefix=/Development
 +exec_prefix=${prefix}
 +exec_prefix_set=no
 +libdir=${exec_prefix}/lib
