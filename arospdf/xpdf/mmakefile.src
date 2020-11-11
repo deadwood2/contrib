@@ -23,7 +23,7 @@ NOWARN_FLAGS := \
 USER_INCLUDES := -I$(SRCDIR)/$(CURDIR)/.. -I$(SRCDIR)/$(CURDIR)/../goo -I$(SRCDIR)/$(CURDIR)/../splash -I$(SRCDIR)/$(CURDIR)/../fofi
 USER_CXXFLAGS := $(CFLAGS_PERMISSIVE) $(NOWARN_FLAGS)
 USER_CPPFLAGS := -DHAVE_CONFIG_H
-USER_LDFLAGS := -static-libstdc++ -L$(TARGETDIR)/libs
+USER_LDFLAGS := -L$(TARGETDIR)/libs
 
 ################################################################################
 

@@ -46,7 +46,7 @@ USER_CFLAGS := $(NOWARN_FLAGS)
 OPTIMIZATION_CFLAGS := -O0
 USER_CPPFLAGS := -D__LOCALE_STDLIBBASE__ -D__TIMER_STDLIBBASE__ -DMUI_OBSOLETE
 USER_CXXFLAGS := $(NOWARN_FLAGS) -frtti $(CFLAGS_PERMISSIVE) $(CFLAGS_EXCEPTIONS) -fcheck-new
-USER_LDFLAGS := -L$(TARGETDIR)/libs -L$(AROS_CONTRIB_LIB) -static-libstdc++
+USER_LDFLAGS := -L$(TARGETDIR)/libs -L$(AROS_CONTRIB_LIB)
 
 %build_prog mmake=contrib-vpdf progname=VPDF files=$(CFILES) cxxfiles=$(CPPFILES) \
     targetdir=$(TARGETDIR) uselibs="rexxsyslib muiclasses poppler fofi goo poppler-splash cairo pixman fontconfig freetype2 iconv xml2 jpeg z pthread"

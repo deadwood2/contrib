@@ -60,7 +60,7 @@ demos-gl-glexcess-cpp : demos-gl-glexcess-cpp-directories-setup $(GLEXCESS_SOURC
 demos-gl-glexcess-cpp-directories-setup :
 %mkdirs_q dirs="$(GENDIR)/$(CURDIR) $(AROS_CONTRIB)/Demos/GL/GLExcess"
 
-USER_LDFLAGS := -L$(AROS_LIB) -static-libstdc++
+USER_LDFLAGS := -L$(AROS_LIB)
 
 #MM
 demos-gl-glexcess :

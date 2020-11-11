@@ -6,7 +6,6 @@ FILES := LibWrapper_aros Library
 
 USER_INCLUDES := $(CFLAGS_ISYSTEM) $(SRCDIR)/$(CURDIR)/.. $(CFLAGS_ISYSTEM_END) -I$(GENDIR)/$(CURDIR)/../include
 USER_CXXFLAGS := $(CFLAGS_NO_RTTI) $(CFLAGS_NO_EXCEPTIONS) 
-USER_LDFLAGS := -static-libstdc++
 
 GENINCDIRS := $(GENDIR)/$(CURDIR)/../include $(GENDIR)/$(CURDIR)/../include/proto $(GENDIR)/$(CURDIR)/../include/clib $(GENDIR)/$(CURDIR)/../include/defines $(GENDIR)/$(CURDIR)/../include/inline
 

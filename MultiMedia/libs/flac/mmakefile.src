@@ -7,8 +7,6 @@ include $(SRCDIR)/config/aros-contrib.cfg
 
 EXTRAOPTS := --disable-doxygen-docs --disable-xmms-plugin --disable-valgrind-testing --disable-exhaustive-tests --disable-thorough-tests 
 
-USER_LDFLAGS := -static-libstdc++
-
 REPOSITORIES := http://downloads.xiph.org/releases/flac \
  https://ftp.osuosl.org/pub/xiph/releases/flac \
  http://mirror.sobukus.de/files/grimoire/audio-libs \
