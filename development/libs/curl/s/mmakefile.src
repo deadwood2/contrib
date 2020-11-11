@@ -3,7 +3,7 @@
 include $(SRCDIR)/config/aros.cfg
 
 FILES := Curl-Startup
-PACKAGEDIR := $(AROS_DEVELOPER)/S
+PACKAGEDIR := $(AROS_DEVELOPMENT)/S
 #MM development-curl-pakagefiles : development-curl-pakagedir
 
 %copy_files_q mmake=development-curl-pakagefiles dst=$(PACKAGEDIR)

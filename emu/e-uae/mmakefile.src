@@ -18,7 +18,7 @@ REPOSITORIES := http://www.rcdrummond.net/uae/$(PKG_VER) \
 	prefix=$(PROGDIR) \
 	package=$(PACKAGE) version=$(VERSION) patch=yes \
 	package_repo="$(REPOSITORIES)" \
-	extraoptions="--includedir=$(AROS_INCLUDES) --with-zlib=$(AROS_DEVELOPER)" \
+	extraoptions="--includedir=$(AROS_INCLUDES) --with-zlib=$(AROS_DEVELOPMENT)" \
 	postinstall=euae-copy-files
 
 CP_SRC := $(PORTSDIR)/$(PACKAGE)/$(PKG_VER)

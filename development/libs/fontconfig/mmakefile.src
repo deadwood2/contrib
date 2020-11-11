@@ -22,7 +22,7 @@ FONTCONFIG_OPTIONS = \
     FREETYPE_LIBS='-L$(AROS_LIB) -lfreetype2' \
     LIBXML2_CFLAGS='-I$(AROS_INCLUDES)/libxml2' \
     LIBXML2_LIBS='-L$(AROS_LIB) -lxml2 -lz' \
-    lt_sys_lib_search_path_spec='$(AROS_DEVELOPER)/lib/'
+    lt_sys_lib_search_path_spec='$(AROS_DEVELOPMENT)/lib/'
 
 REPOSITORIES := https://www.freedesktop.org/software/fontconfig/release \
  http://distfiles.macports.org/fontconfig \

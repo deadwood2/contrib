@@ -11,7 +11,7 @@ USER_INCLUDES := -I$(AROS_CONTRIB_INCLUDES)
 USER_LDFLAGS := -L$(AROS_CONTRIB_LIB)
 
 SDL_MIXER_EXTRA_OPTS := \
-        LIBMIKMOD_CONFIG='$(AROS_DEVELOPER)/bin/libmikmod-config' \
+        LIBMIKMOD_CONFIG='$(AROS_DEVELOPMENT)/bin/libmikmod-config' \
         --disable-music-mp3 \
         --disable-music-mod-shared \
         --disable-music-ogg-shared \

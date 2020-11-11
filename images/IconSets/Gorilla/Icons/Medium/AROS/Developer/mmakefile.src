@@ -8,4 +8,4 @@ include $(SRCDIR)/config/aros-contrib.cfg
 
 DEVENVICONS := DevEnv
 
-%build_icons mmake=iconset-Gorilla-contrib-icons-developer icons=$(DEVENVICONS) dir=$(AROS_DEVELOPER)
+%build_icons mmake=iconset-Gorilla-contrib-icons-developer icons=$(DEVENVICONS) dir=$(AROS_DEVELOPMENT)

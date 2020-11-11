@@ -37,7 +37,7 @@ endif
 libxml2-post:
 	$(Q)$(IF) ! $(TEST) -f $(CROSSTOOLSDIR)/$(CPU)-aros-xml2-config; then \
 		$(CP) $(AROS_DEV_BINS)/xml2-config $(CROSSTOOLSDIR)/$(CPU)-aros-xml2-config \
-        && $(SED) -i -e "s|$(AROS_DEVELOPER)|\$${prefix}|g" $(AROS_DEV_BINS)/xml2-config ; \
+        && $(SED) -i -e "s|$(AROS_DEVELOPMENT)|\$${prefix}|g" $(AROS_DEV_BINS)/xml2-config ; \
 	fi
 
 %fetch_and_build_gnu_development package=libxml2 version=$(XML2_VERS) patch=yes \

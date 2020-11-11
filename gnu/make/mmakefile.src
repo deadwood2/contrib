@@ -25,7 +25,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 #MM- contrib-gnu : contrib-gnu-make
 #MM contrib-gnu-make : includes linklibs kernel-aros-linklib
 
-TARGETDIR := $(AROS_DEVELOPER)/bin
+TARGETDIR := $(AROS_DEVELOPMENT)/bin
 
 NOWARN_FLAGS := $(NOWARN_UNUSED_FUNCTION) $(NOWARN_UNUSED_LABEL) \
     $(NOWARN_UNUSED_VARIABLE) $(NOWARN_UNUSED_BUT_SET_VARIABLE)

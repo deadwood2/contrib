@@ -56,7 +56,7 @@ FFMPEG_OPTIONS += \
         --disable-decoder=hevc
 endif
 
-%fetch_and_build mmake=contrib-ffmpeg prefix=$(AROS_DEVELOPER) \
+%fetch_and_build mmake=contrib-ffmpeg prefix=$(AROS_DEVELOPMENT) \
 	package=ffmpeg version=$(VERSION) suffixes="tar.bz2" \
 	patch=yes nix=no package_repo=$(REPOSITORIES) \
 	extraoptions="$(FFMPEG_OPTIONS)" buildflags=no gnuflags=no

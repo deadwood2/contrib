@@ -228,15 +228,15 @@ SDL_main-aros-includes : setup-gendir $(STAMPFILE)
 #MM
 SDL-aros-config : \
     $(TOOLDIR)/$(AROS_TARGET_CPU)-$(AROS_TARGET_ARCH)$(AROS_TARGET_SUFFIX)-aros-sdl-config \
-    $(AROS_DEVELOPER)/bin/sdl-config
+    $(AROS_DEVELOPMENT)/bin/sdl-config
 
 $(TOOLDIR)/$(AROS_TARGET_CPU)-$(AROS_TARGET_ARCH)$(AROS_TARGET_SUFFIX)-aros-sdl-config: $(ARCHSRCDIR)/aros/sdl-config
-	@$(SED) 's,prefix=/$(AROS_DIR_DEVELOPMENT),prefix=$(AROS_DEVELOPER),g' $< > $@
+	@$(SED) 's,prefix=/$(AROS_DIR_DEVELOPMENT),prefix=$(AROS_DEVELOPMENT),g' $< > $@
 	@$(CHMOD) a+x $@
 	ln -sf $@ $(TOOLDIR)/$(AROS_TARGET_CPU)-$(AROS_TARGET_ARCH)$(AROS_TARGET_SUFFIX)/sdl-config
 
-$(AROS_DEVELOPER)/bin/sdl-config: $(ARCHSRCDIR)/aros/sdl-config
-	%mkdir_q dir=$(AROS_DEVELOPER)/bin
+$(AROS_DEVELOPMENT)/bin/sdl-config: $(ARCHSRCDIR)/aros/sdl-config
+	%mkdir_q dir=$(AROS_DEVELOPMENT)/bin
 	@$(CP) $< $@
 	@$(CHMOD) a+x $@
 

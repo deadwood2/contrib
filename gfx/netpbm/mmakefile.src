@@ -11,7 +11,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 REPOSITORIES = sf://netpbm http://mirror.sobukus.de/files/src/netpbm
 
 ARCHBASE := netpbm-10.26.53
-TARGETDIR := $(AROS_DEVELOPER)/bin
+TARGETDIR := $(AROS_DEVELOPMENT)/bin
 USER_INCLUDES := -I$(PORTSDIR)/netpbm/$(ARCHBASE) \
                  -I$(PORTSDIR)/netpbm/$(ARCHBASE)/lib \
                  -I$(PORTSDIR)/netpbm/$(ARCHBASE)/lib/util \

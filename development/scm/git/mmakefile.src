@@ -7,7 +7,7 @@ include $(SRCDIR)/config/aros.cfg
 #MM contrib-development-git : contrib-development-git-setup contrib-libiconv contrib-curl
 #MM contrib-development-git-setup : contrib-development-git-fetch contrib-development-git-gendirs
 
-GIT_DESTDIR     :=	$(AROS_DEVELOPER)
+GIT_DESTDIR     :=	$(AROS_DEVELOPMENT)
 GIT_NATIVEDIR  :=	/$(AROS_DIR_DEVELOPMENT)
 
 GIT_ENV := \
@@ -15,7 +15,7 @@ GIT_ENV := \
 GIT_CONFIG_ENV := \
             ac_cv_fread_reads_directories="no" \
             ac_cv_snprintf_returns_bogus="no" \
-            CURL_CONFIG="$(AROS_DEVELOPER)/bin/curl-config" \
+            CURL_CONFIG="$(AROS_DEVELOPMENT)/bin/curl-config" \
             $(GIT_ENV)
 GIT_INSTALL_ENV := \
             DESTDIR_SQ="$(AROSDIR)" \
