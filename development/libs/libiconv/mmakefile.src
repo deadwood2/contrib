@@ -24,4 +24,4 @@ ICONV_OPTS := \
     --datadir=$(AROS_CONTRIB_DEVELOPMENT)/iconv
 
 %fetch_and_build_gnu_development package=libiconv version=$(ICONV_VERS) patch=no \
-    prefix=$(AROS_CONTRIB_SDK) suffixes="tar.gz" extraoptions="$(ICONV_OPTS)"
+    prefix=$(AROS_CONTRIB_DEVELOPMENT) suffixes="tar.gz" extraoptions="$(ICONV_OPTS)"
