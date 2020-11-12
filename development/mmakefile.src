@@ -10,6 +10,6 @@ contrib-development : setup
 
 #MM
 contrib-development-setup ::
-	%mkdirs_q $(AROS_CONTRIB_DEVELOPER)
+	%mkdirs_q $(AROS_CONTRIB_DEVELOPMENT)
 	
 %common

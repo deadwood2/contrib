@@ -14,7 +14,7 @@ ChocolateCastleEN.guide.info ChocolateCastle.info LEGAL
 #MM    contrib-development-gui-chocolatecastle-cpy \
 #MM    contrib-development-gui-chocolatecastle-example
 
-EXEDIR := $(AROS_CONTRIB_DEVELOPER)/ChocolateCastle
+EXEDIR := $(AROS_CONTRIB_DEVELOPMENT)/ChocolateCastle
 
 %copy_files_q mmake=contrib-development-gui-chocolatecastle-cpy files=$(FILES) dst=$(EXEDIR)
 

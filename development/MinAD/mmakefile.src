@@ -3,7 +3,7 @@
 
 include $(SRCDIR)/config/aros-contrib.cfg
 
-EXEDIR := $(AROS_CONTRIB_DEVELOPER)/MinAD
+EXEDIR := $(AROS_CONTRIB_DEVELOPMENT)/MinAD
 
 #MM- contrib-development-minad : \
 #MM    contrib-development-minad-files \

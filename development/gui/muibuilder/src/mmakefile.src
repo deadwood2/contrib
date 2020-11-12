@@ -54,7 +54,7 @@ LOCGENFILES := $(GENDIR)/$(CURDIR)/MUIBuilder_cat
 
 #MM contrib-development-gui-muibuilder-src : includes linklib contrib-development-gui-muibuilder-locale
 
-EXEDIR := $(AROS_CONTRIB_DEVELOPER)/MUIBuilder
+EXEDIR := $(AROS_CONTRIB_DEVELOPMENT)/MUIBuilder
 
 NOWARN_FLAGS := \
     $(NOWARN_FORMAT_SECURITY) \

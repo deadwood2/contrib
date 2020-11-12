@@ -11,4 +11,4 @@ FILES := Package-Startup Package-Shutdown
 contrib-development-lua-envpackage :
 	$(ECHO) "Extras:$(AROS_DIR_DEVELOPMENT)/Lua" >$(AROS_PACKAGES)/Lua
 
-%copy_files_q mmake=contrib-development-lua-startupfiles dst=$(AROS_CONTRIB_DEVELOPER)/Lua/S
+%copy_files_q mmake=contrib-development-lua-startupfiles dst=$(AROS_CONTRIB_DEVELOPMENT)/Lua/S
