@@ -53,4 +53,4 @@ USER_LDFLAGS := $(TARGET_CXX_LDFLAGS) -Wl,--start-group -L$(GENDIR)/$(CURDIR)/..
 
 %build_prog mmake=contrib-fryingpan-fp-guimui \
  progname="mui.interface" targetdir=$(DESTDIR) files= cxxfiles="$(CXXFILES)" \
- uselibs="" usestartup=no lto=no
+ uselibs="" usestartup=no lto=no usesdks="rel"

@@ -24,4 +24,4 @@ USER_LDFLAGS := $(TARGET_CXX_LDFLAGS) -Wl,--start-group -L$(GENDIR)/$(CURDIR)/..
 
 %build_prog mmake=contrib-fryingpan-expat \
  progname="expat2.library" targetdir=$(DESTDIR) files="$(FILES)" \
- cxxfiles="$(CXXFILES)" uselibs="" usestartup=no
+ cxxfiles="$(CXXFILES)" uselibs="" usestartup=no usesdks="rel"

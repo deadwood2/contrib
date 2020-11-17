@@ -36,4 +36,4 @@ USER_CXXFLAGS := $(CFLAGS_NO_RTTI) $(CFLAGS_NO_EXCEPTIONS)
 USER_LDFLAGS := $(TARGET_CXX_LDFLAGS) -Wl,--start-group -L$(GENDIR)/$(CURDIR)/../framework -lGeneric -lLibrary -lC -lposixc_rel -lstdc_rel -lautoinit
 
 %build_prog mmake=contrib-fryingpan-dtlib progname="dtlibio.module" \
- targetdir=$(DESTDIR) files= cxxfiles="$(CXXFILES)" uselibs="" usestartup=no
+ targetdir=$(DESTDIR) files= cxxfiles="$(CXXFILES)" uselibs="" usestartup=no usesdks="rel"

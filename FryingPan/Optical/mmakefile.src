@@ -52,4 +52,4 @@ USER_LDFLAGS := $(TARGET_CXX_LDFLAGS) -Wl,--start-group -L$(GENDIR)/$(CURDIR)/..
 
 %build_prog mmake=contrib-fryingpan-optical progname="Optical" \
  targetdir=$(DESTDIR) files= cxxfiles="$(CXXFILES)" \
- uselibs="" usestartup=no
+ uselibs="" usestartup=no usesdks="rel"
