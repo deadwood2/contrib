@@ -29,7 +29,6 @@ INCLUDE_FILES = \
 	$(INCLUDES_DIR)/bgui/bgui_macros.h \
 	$(INCLUDES_DIR)/bgui/bgui_proto.h \
 	$(INCLUDES_DIR)/bgui/bgui_pragmas.h \
-	$(INCLUDES_DIR)/pragma/bgui_lib.h \
 	$(INCLUDES_DIR)/bgui/bgui_lib.fd \
 	$(INCLUDES_DIR)/clib/bgui_protos.h \
 	$(INCLUDES_DIR)/defines/bgui.h \
@@ -124,9 +123,6 @@ $(INCLUDES_DIR)/bgui/bgui_proto.h : include/bgui_proto.h
 	@$(CP) $< $@
 
 $(INCLUDES_DIR)/bgui/bgui_pragmas.h : include/bgui_pragmas.h
-	@$(CP) $< $@
-
-$(INCLUDES_DIR)/pragma/bgui_lib.h : include/pragma/bgui_lib.h
 	@$(CP) $< $@
 
 $(INCLUDES_DIR)/bgui/bgui_lib.fd : include/bgui_lib.fd
