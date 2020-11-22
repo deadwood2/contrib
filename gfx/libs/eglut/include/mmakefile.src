@@ -4,8 +4,8 @@ include $(SRCDIR)/config/aros-contrib.cfg
 
 INCLUDE_FILES := eglut.h
 
-#MM- contrib-gfx-libs-eglut-includes :
-%copy_includes path=EGL includes=$(INCLUDE_FILES)
+##MM- contrib-gfx-libs-eglut-includes :
+#%copy_includes path=EGL includes=$(INCLUDE_FILES)
 
 %common
 
