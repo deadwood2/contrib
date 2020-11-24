@@ -3,7 +3,7 @@
 
 include $(SRCDIR)/config/aros.cfg
 
-#MM- contrib-development : contrib-development-git
+##MM- contrib-development : contrib-development-git
 #MM contrib-development-git : contrib-development-git-setup contrib-libiconv contrib-curl
 #MM contrib-development-git-setup : contrib-development-git-fetch contrib-development-git-gendirs
 
