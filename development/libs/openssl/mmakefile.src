@@ -23,7 +23,7 @@ endif
 
 OPENSSL_OPTIONS=no-threads no-sse2 no-ssl3
 
-#MM- contrib-openssl : contrib-openssl-install contrib-openssl-installtests
+#MM- contrib-openssl : contrib-openssl-install
 #MM contrib-openssl-setup : contrib-openssl-fetch 
 #MM contrib-openssl-configure : contrib-openssl-setup 
 #MM contrib-openssl-build : contrib-openssl-configure 
@@ -89,21 +89,21 @@ $(OPENSSL_BUILD_DIR)/.install-flag : $(OPENSSL_BUILD_DIR)/.build-flag
 #MM
 contrib-openssl-install : $(OPENSSL_BUILD_DIR)/.install-flag
 
-$(OPENSSL_BUILD_DIR)/.installtest-flag : $(OPENSSL_BUILD_DIR)/.build-flag $(AROS_TESTS)/openssl
-	@$(RM) $@
-	@$(ECHO) "Installing    OpenSSL Tests..."
-	@$(CP) -R $(OPENSSL_BUILD_DIR)/test/* $(AROS_TESTS)/openssl/
-	@$(RM) $(AROS_TESTS)/openssl/*.c
-	@$(RM) $(AROS_TESTS)/openssl/*.h
-	@$(RM) $(AROS_TESTS)/openssl/*.d
-	@$(RM) $(AROS_TESTS)/openssl/*.o
-	@$(RM) $(AROS_TESTS)/openssl/generate_buildtest.pl
-	@$(RM) $(AROS_TESTS)/openssl/generate_ssl_test.pl
-	@$(RM) $(AROS_TESTS)/openssl/*.info
-	@$(TOUCH) $@
+#$(OPENSSL_BUILD_DIR)/.installtest-flag : $(OPENSSL_BUILD_DIR)/.build-flag $(AROS_TESTS)/openssl
+#	@$(RM) $@
+#	@$(ECHO) "Installing    OpenSSL Tests..."
+#	@$(CP) -R $(OPENSSL_BUILD_DIR)/test/* $(AROS_TESTS)/openssl/
+#	@$(RM) $(AROS_TESTS)/openssl/*.c
+#	@$(RM) $(AROS_TESTS)/openssl/*.h
+#	@$(RM) $(AROS_TESTS)/openssl/*.d
+#	@$(RM) $(AROS_TESTS)/openssl/*.o
+#	@$(RM) $(AROS_TESTS)/openssl/generate_buildtest.pl
+#	@$(RM) $(AROS_TESTS)/openssl/generate_ssl_test.pl
+#	@$(RM) $(AROS_TESTS)/openssl/*.info
+#	@$(TOUCH) $@
 
-$(AROS_TESTS)/openssl:
-	%mkdir_q dir="$@"
+#$(AROS_TESTS)/openssl:
+#	%mkdir_q dir="$@"
 
-#MM
-contrib-openssl-installtests : $(OPENSSL_BUILD_DIR)/.installtest-flag
+##MM
+#contrib-openssl-installtests : $(OPENSSL_BUILD_DIR)/.installtest-flag
