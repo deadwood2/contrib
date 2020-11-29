@@ -4337,7 +4337,11 @@ diff -ruN OWB-r1097/BAL/Timer/WebCore/AROS/BCSharedTimerAROS.cpp OWB-r1097.aros/
 +
 +static struct MsgPort *mp = NULL;
 +static struct timerequest *timereq = NULL;
-+static struct Interrupt timerint = { { NULL, NULL, 0, NT_UNKNOWN, "OWB shared timer int" }, NULL, (void (*)(void)) timerint_func };
++#if defined(__i386__)
++static struct Interrupt timerint = { { NULL, NULL, "OWB shared timer int", NT_UNKNOWN, 0 }, NULL, (void (*)(void)) timerint_func };
++#else
++static struct Interrupt timerint = { { NULL, NULL, NT_UNKNOWN, 0, "OWB shared timer int" }, NULL, (void (*)(void)) timerint_func };
++#endif
 +
 +static void cleanup(void)
 +{
