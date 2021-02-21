@@ -41,6 +41,6 @@ USER_CFLAGS := $(NOWARN_FLAGS) -noposixc
 USER_INCLUDES := -I$(SRCDIR)/$(CURDIR)/../include
 
 %build_module mmake=contrib-libs-lcms2 \
-  modname=lcms2 modtype=library files="$(FILES)" usesdks="rel"
+  modname=lcms2 modtype=library files="$(FILES) stdcio_startup" usesdks="rel"
 
 %common
