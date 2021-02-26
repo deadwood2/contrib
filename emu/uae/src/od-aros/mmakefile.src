@@ -23,7 +23,7 @@ USER_CFLAGS := -O2 -fno-exceptions -fno-strength-reduce \
                -I$(TOP)/$(CURDIR)/.. -I$(TOP)/$(CURDIR)/../include
 
 # Hack: do not strip object
-STRIP := $(NOP)
+TARGET_STRIP := $(NOP)
 
 %build_prog mmake=uae-od-aros \
     progname=od-aros.o targetdir=$(EXEDIR) files=$(FILES) \
