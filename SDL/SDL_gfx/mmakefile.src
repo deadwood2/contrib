@@ -17,9 +17,6 @@ else
 DISABLE_MMX :=
 endif
 
-USER_INCLUDES := -I$(AROS_CONTRIB_INCLUDES)
-USER_LDFLAGS := -L$(AROS_CONTRIB_LIB)
-
 REPOSITORIES := http://www.ferzkopp.net/Software/SDL_gfx-2.0 \
  http://ftp.sleepgate.ru/pub/pub/FreeBSD/ports/distfiles \
  https://mirror.sobukus.de/files/grimoire/libs \

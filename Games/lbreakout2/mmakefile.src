@@ -15,9 +15,7 @@ LB2REPO := http://prdownloads.sourceforge.net/lgames
 LB2ARCH := $(LB2NAME)-$(LB2VERS)
 LB2PS     := $(LB2ARCH)-aros.diff:$(LB2ARCH):-p1
 
-USER_INCLUDES := -I$(AROS_CONTRIB_INCLUDES)
 USER_CPPFLAGS := -DSDL_NET_ENABLED -DPOSIXC_NO_VAARGS
-USER_LDFLAGS := -L$(AROS_CONTRIB_LIB)
 
 LB2OPTS := \
     --bindir='$$(PROGDIR)' \

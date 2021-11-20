@@ -7,9 +7,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 
 #MM- development-SDL_net : SDL-aros-lib
 
-USER_INCLUDES := -I$(AROS_CONTRIB_INCLUDES)
 USER_CFLAGS := -D__BSD_VISIBLE=1
-USER_LDFLAGS := -L$(AROS_CONTRIB_LIB)
 
 REPOSITORIES := https://www.libsdl.org/projects/SDL_net/release \
  http://kobyla.info/distfiles \

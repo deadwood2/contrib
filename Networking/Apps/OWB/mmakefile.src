@@ -6,8 +6,6 @@ include $(SRCDIR)/config/aros-contrib.cfg
 EXEDIR := $(AROS_CONTRIB)/Networking/Apps/OWB
     
 USER_CFLAGS := -DZUNE_BUILTIN_SCROLLGROUP=0 -DWTF_PLATFORM_AROS=1
-USER_INCLUDES := -I$(AROS_CONTRIB_INCLUDES)
-USER_LDFLAGS := -L$(AROS_CONTRIB_LIB)
 
 # The webkit code can only be compiled if flex <2.5 is used
 # otherwise it malforms tokenize.cpp. older compilers will silently
@@ -76,7 +74,7 @@ I18N_LIBS=
 USER_CFLAGS := -DZUNE_BUILTIN_SCROLLGROUP=0 -DMUIMASTER_YES_INLINE_STDARG \
     -DWTF_PLATFORM_AROS=1
 USER_INCLUDES := -I$(SRCDIR)/$(CURDIR)/tabs -I$(AROS_INCLUDES)/SDL \
-    -I$(AROS_INCLUDES)/webkit-owb -I$(AROS_CONTRIB_INCLUDES)
+    -I$(AROS_INCLUDES)/webkit-owb
 
 %build_prog mmake=aros-tcpip-apps-owb progname=owb targetdir=$(EXEDIR) \
             files="$(FILES)" uselibs="webkit-owb webcore wtf jsc webkit-owb $(I18N_LIBS) codesets thread xml2 fontconfig freetype2.static SDL SDL_gfx GL png jpeg curl iconv z mui ssl crypto sqlite3 xslt thread stdc++ pthread"

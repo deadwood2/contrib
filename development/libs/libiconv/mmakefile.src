@@ -3,14 +3,6 @@
 
 include $(SRCDIR)/config/aros-contrib.cfg
 
-#
-# N.B -:
-# iconv is not placed directly in AROS_INCLUDE/LIB
-# its presence there can cause some components to fail to compile,
-# such as the native gnu toolchain.
-# code using it should explicitly include AROS_CONTRIB_INCLUDE/LIB
-#
-
 #MM- contrib-development : contrib-libiconv
 #MM- contrib-libiconv : development-libiconv
 
@@ -19,9 +11,8 @@ include $(SRCDIR)/config/aros-contrib.cfg
 
 ICONV_VERS := 1.14
 ICONV_OPTS := \
-    --bindir=$(AROS_CONTRIB_DEVELOPMENT)/$(AROS_DIR_BIN) \
-    --libdir=$(AROS_CONTRIB_LIB) \
-    --datadir=$(AROS_CONTRIB_DEVELOPMENT)/iconv
+    --bindir=$(AROS_DEVELOPMENT)/$(AROS_DIR_BIN) \
+    --libdir=$(AROS_LIB)
 
 %fetch_and_build_gnu_development package=libiconv version=$(ICONV_VERS) patch=no \
-    prefix=$(AROS_CONTRIB_DEVELOPMENT) suffixes="tar.gz" extraoptions="$(ICONV_OPTS)"
+    suffixes="tar.gz" extraoptions="$(ICONV_OPTS)"
