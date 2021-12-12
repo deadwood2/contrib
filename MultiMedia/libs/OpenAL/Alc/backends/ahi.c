@@ -341,8 +341,3 @@ ALCbackend* ALCahiBackendFactory_createBackend(ALCahiBackendFactory* UNUSED(self
     return NULL;
 }
 
-void abort(void)
-{
-    int a = 0 / 0;
-}
-

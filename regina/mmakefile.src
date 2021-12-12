@@ -70,8 +70,8 @@ FILES := $(OFILES) \
 
 %build_module mmake=contrib-regina-module \
     modname=regina modtype=library \
-    files=$(FILES) \
-    objdir=$(GENDIR)/$(CURDIR)/shared linklibname=regina_shared usesdks="rel"
+    files=$(FILES) uselibs="crtmod" \
+    objdir=$(GENDIR)/$(CURDIR)/shared linklibname=regina_shared
 
 %copy_includes includes=rexxsaa.h
 

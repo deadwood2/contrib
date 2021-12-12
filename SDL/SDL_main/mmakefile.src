@@ -116,7 +116,7 @@ USER_CPPFLAGS := -DSDL_AROS_SHARED
 %build_module mmake=SDL-aros-sharedlib \
     modname=SDL modtype=library \
     files="$(ARCHSRCDIR)/aros_init $(FILES)" conffile=$(ARCHSRCDIR)/SDL.conf \
-    uselibs="GL iconv"
+    uselibs="GL iconv crtmod"
 
 #MM SDL-aros-staticlib : SDL-aros-includes
 

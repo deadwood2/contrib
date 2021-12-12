@@ -105,6 +105,6 @@ OPENAL_FILES = \
     files="$(OPENAL_FILES)" objdir=$(OBJDIR)/static
 
 %build_module mmake=contrib-openal-library modname=openal \
-    modtype=library files="$(OPENAL_FILES)" uselibs="pthread"
+    modtype=library files="$(OPENAL_FILES)" uselibs="pthread crtmod"
 
 %common
