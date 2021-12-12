@@ -9,7 +9,7 @@ FILES = Send Receive Utils xprgetsystime xprtimeout xprzmodem_locale Zm xprsprin
 
 %build_module mmake=linklibs-aminet-comm-term-xprz \
     modname=xprzmodem modtype=library \
-    conffile=lib.conf files=$(FILES) uselibs=stdc
+    conffile=lib.conf files=$(FILES)
 
 #MM linklibs-aminet-comm-term-xprz-includes: xprz-includes-copy
 

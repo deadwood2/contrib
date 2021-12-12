@@ -15,7 +15,7 @@ NOWARN_FLAGS := \
 
 USER_CFLAGS := $(NOWARN_FLAGS)
 USER_INCLUDES := -I$(SRCDIR)/$(CURDIR) -idirafter$(SRCDIR)/$(CURDIR)/include -I$(SRCDIR)/$(CURDIR)/classes -I$(SRCDIR)/$(CURDIR)/tbLib
-USER_LDFLAGS  := -L$(EXEDIR)/libs -static
+USER_LDFLAGS  := -L$(EXEDIR)/libs -nolibc
 USER_CPPFLAGS   := -D__BSD_VISIBLE=1 -D_UTMP_H_
 
 FILES := \
@@ -103,7 +103,7 @@ FILES := \
 
 %build_prog mmake=contrib-scout-bin \
 	progname=$(EXE) targetdir=$(EXEDIR) \
-	files=$(FILES) uselibs="tblib" usestartup=no usesdks="private"
+	files=$(FILES) uselibs="tblib stdc.static" usestartup=no usesdks="private"
 
 #MM
 contrib-scout-icon : $(EXEDIR)/Scout.info

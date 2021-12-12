@@ -11,7 +11,7 @@ NOWARN_FLAGS := $(NOWARN_PARENTHESES) $(NOWARN_MISSING_BRACES)
 USER_CFLAGS := $(NOWARN_FLAGS) -DAMIGA
 
 %build_module mmake=contrib-ptplay-lib modname=ptplay modtype=library \
-  files=$(FILES) uselibs="stdc"
+  files=$(FILES)
 
 %copy_includes mmake=includes-copy includes=ptplay.h path=libraries
 

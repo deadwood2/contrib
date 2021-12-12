@@ -27,7 +27,7 @@ USER_CFLAGS := -D__UTILITY_STDLIBBASE__ -D__LOCALE_STDLIBBASE__ -D__REXXSYSLIB_S
 
 %build_module mmake=contrib-scalos-plugins-oop-wbrexx \
     modname=wbrexx modtype=library modsuffix=plugin conffile=wbrexx-aros.conf \
-    files="$(FILES)" moduledir=Plugins/OOP prefix=$(TARGETDIR) uselibs=stdc
+    files="$(FILES)" moduledir=Plugins/OOP prefix=$(TARGETDIR)
 
 
 %common

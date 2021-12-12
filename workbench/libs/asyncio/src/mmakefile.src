@@ -27,7 +27,7 @@ FUNCS := \
 
 %build_module mmake=contrib-libs-asyncio \
     modname=asyncio modtype=library \
-    files="$(FUNCS)" uselibs=stdc
+    files="$(FUNCS)"
 
 #MM includes-copy
 INCLUDE_FILES := $(call WILDCARD, ../include/libraries/*.h)

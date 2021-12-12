@@ -53,7 +53,7 @@ USER_LDFLAGS := -static
 
 %build_module mmake=contrib-zune-classes-mailtext-mcc \
   modname=Mailtext modtype=mcc conffile=$(SRCDIR)/$(CURDIR)/Mailtext_mcc.conf \
-  files="$(MCCFILES)" objdir=$(OBJDIR)/mcc moduledir=Extras/Zune/MCC_Mailtext/Classes/Zune uselibs=stdc
+  files="$(MCCFILES)" objdir=$(OBJDIR)/mcc moduledir=Extras/Zune/MCC_Mailtext/Classes/Zune
 
 %build_module mmake=contrib-zune-classes-mailtext-mcp \
   modname=Mailtext modtype=mcp conffile=$(SRCDIR)/$(CURDIR)/Mailtext_mcp.conf \

@@ -102,7 +102,7 @@ USER_CFLAGS := $(NOWARN_FLAGS) -D__UTILITY_STDLIBBASE__ \
 
 %build_module mmake=contrib-scalos-libraries-sqlite3 \
     modname=sqlite3 modtype=library conffile="sqlite3-aros.conf" \
-    files="$(FILES)" moduledir=Libs prefix=$(TARGETDIR) uselibs=stdc
+    files="$(FILES)" moduledir=Libs prefix=$(TARGETDIR)
 
 
 %common

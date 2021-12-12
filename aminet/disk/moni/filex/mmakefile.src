@@ -37,7 +37,7 @@ USER_CFLAGS := -DUSE_PROTO_INCLUDES \
 	       -D__chip="" \
 	       -D__stdargs="" \
 	       -D__asm=""
-USER_LDFLAGS := -static
+USER_LDFLAGS := -nolibc -lstdc.static
 
 EXEDIR := $(AROS_CONTRIB)/Misc/aminet/FileX
 

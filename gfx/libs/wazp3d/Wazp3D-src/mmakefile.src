@@ -14,7 +14,7 @@ USER_CFLAGS := $(NOWARN_IMPLICIT_FUNCTION_DECL) \
 FILES := Wazp3D soft3d_opengl WazpSupport
 
 %build_module mmake=contrib-wazp3d-lib modname=Warp3D modtype=library \
-  files=$(FILES) uselibs="GL stdc"
+  files=$(FILES) uselibs="GL"
 
 
 FILES := Wazp3D-Prefs

@@ -21,7 +21,7 @@ USER_CFLAGS := $(NOWARN_FLAGS) -D__UTILITY_STDLIBBASE__
 
 %build_module mmake=contrib-scalos-datatypes-pngiconobject \
     modname=pngiconobject modtype=library modsuffix=datatype conffile="pngiconobject-aros.conf" \
-    files="$(FILES)" moduledir=datatypes prefix=$(TARGETDIR) usesdks="rel"
+    files="$(FILES)" moduledir=datatypes prefix=$(TARGETDIR) uselibs="png"
 
 
 %common

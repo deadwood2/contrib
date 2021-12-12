@@ -28,6 +28,6 @@ FUNCS := \
 
 %build_module mmake=workbench-libs-thread \
     modname=thread modtype=library \
-    files="$(FILES) $(FUNCS)" uselibs=stdc
+    files="$(FILES) $(FUNCS)"
 
 %common

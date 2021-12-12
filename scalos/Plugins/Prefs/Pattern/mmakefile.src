@@ -32,7 +32,7 @@ USER_CFLAGS := -DMUI_OBSOLETE -DSCALOSLOCALE=$(SCALOS_LOCALE) \
 
 %build_module mmake=contrib-scalos-plugins-prefs-pattern \
     modname=Pattern modtype=library modsuffix=prefsplugin conffile=patternprefs-aros.conf \
-    files="$(FILES)" moduledir=Prefs prefix=$(TARGETDIR) uselibs=stdc
+    files="$(FILES)" moduledir=Prefs prefix=$(TARGETDIR)
 
 
 #MM

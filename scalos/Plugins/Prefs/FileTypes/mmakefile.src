@@ -41,7 +41,7 @@ USER_CPPFLAGS := -DMUI_OBSOLETE -DSCALOSLOCALE=$(SCALOS_LOCALE) \
 
 %build_module mmake=contrib-scalos-plugins-prefs-filetypes \
     modname=FileTypes modtype=library modsuffix=prefsplugin conffile=filetypesprefs-aros.conf \
-    files="$(FILES)" moduledir=Prefs prefix=$(TARGETDIR) uselibs=stdc
+    files="$(FILES)" moduledir=Prefs prefix=$(TARGETDIR)
 
 
 #MM

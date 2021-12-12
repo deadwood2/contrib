@@ -21,7 +21,6 @@ USER_CFLAGS     := -I$(AROS_INCLUDES)/SDI -I$(SRCDIR)/$(CURDIR)/../../../portabl
 #MM  test-xad : includes linklibs xadmaster-includes
 
 %build_progs mmake=test-xad \
-    files=$(TESTFILES) targetdir=$(EXEDIR) \
-    uselibs="stdc"
+    files=$(TESTFILES) targetdir=$(EXEDIR)
 
 %common

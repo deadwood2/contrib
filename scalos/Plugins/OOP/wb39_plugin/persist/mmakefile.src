@@ -20,7 +20,7 @@ USER_CFLAGS := -D__UTILITY_STDLIBBASE__ -D__LOCALE_STDLIBBASE__ -D__TIMER_STDLIB
 
 %build_module mmake=contrib-scalos-plugins-oop-persist \
     modname=persist modtype=library modsuffix=plugin conffile=persist-aros.conf \
-    files="$(FILES)" moduledir=Plugins/OOP prefix=$(TARGETDIR) uselibs=stdc
+    files="$(FILES)" moduledir=Plugins/OOP prefix=$(TARGETDIR)
 
 
 %common

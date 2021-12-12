@@ -48,8 +48,8 @@ NOWARN_FLAGS := \
 
 USER_INCLUDES := $(CFLAGS_ISYSTEM) $(SRCDIR)/$(CURDIR)/../framework $(CFLAGS_ISYSTEM_END) -I $(GENDIR)/$(CURDIR)/../framework/include
 USER_CXXFLAGS := $(CFLAGS_NO_RTTI) $(CFLAGS_NO_EXCEPTIONS) $(NOWARN_FLAGS)
-USER_LDFLAGS := $(TARGET_CXX_LDFLAGS) -Wl,--start-group -L$(GENDIR)/$(CURDIR)/../framework -lGeneric -lLibrary -lC -lposixc_rel -lstdc_rel -lautoinit
+USER_LDFLAGS := $(TARGET_CXX_LDFLAGS) -Wl,--start-group -L$(GENDIR)/$(CURDIR)/../framework -lGeneric -lLibrary -lC -lautoinit
 
 %build_prog mmake=contrib-fryingpan-optical progname="Optical" \
  targetdir=$(DESTDIR) files= cxxfiles="$(CXXFILES)" \
- uselibs="" usestartup=no usesdks="rel"
+ uselibs="" usestartup=no

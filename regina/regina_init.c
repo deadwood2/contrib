@@ -43,5 +43,17 @@ static int ExpungeLib(LIBBASETYPEPTR LIBBASE)
    return TRUE;
 }
 
+void exit(int code)
+{
+    (void)code;
+    int a = 0 / 0;
+}
+
+int atexit(void (*func)(void))
+{
+    int a = 0 / 0;
+    return 0;
+}
+
 ADD2INITLIB(InitLib, 0);
 ADD2EXPUNGELIB(ExpungeLib, 0);
