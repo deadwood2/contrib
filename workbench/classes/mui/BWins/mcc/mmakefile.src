@@ -16,7 +16,7 @@ FILES := libinit_aros \
 USER_INCLUDES := -I$(SRCDIR)/$(CURDIR)/../include
 USER_CPPFLAGS := -DNO_INLINE_STDARG -DAROS_ABI_V1
 USER_CFLAGS := $(PARANOIA_CFLAGS)
-USER_LDFLAGS := -static
+USER_LDFLAGS :=
 
 %build_module mmake=contrib-zune-classes-bwin-mcc \
   modname=BWin modtype=mcc moduledir=Extras/Zune/MCC_BWin/Classes/Zune \

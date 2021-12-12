@@ -18,7 +18,7 @@ TARGETDIR     := $(AROS_CONTRIB)/Zune/MCC_Popph
 %build_prog mmake=contrib-zune-classes-popph-demo progname=Popph-Demo \
     files="popph_demo" targetdir=$(TARGETDIR)/Demos
 
-USER_LDFLAGS := -static
+USER_LDFLAGS :=
 
 %build_module \
     mmake=contrib-zune-classes-popph-class \

@@ -20,7 +20,7 @@ USER_INCLUDES := -I$(AROS_CONTRIB)/Scalos/Development/include \
 
 NOWARN_FLAGS := $(NOWARN_IMPLICIT_FUNCTION_DECL)
 USER_CFLAGS := $(NOWARN_FLAGS) -D__UTILITY_STDLIBBASE__
-USER_LDFLAGS := -static
+USER_LDFLAGS :=
 
 %build_module mmake=contrib-scalos-datatypes-iconobject \
     modname=iconobject modtype=library modsuffix=datatype conffile="iconobject-aros.conf" \

@@ -10,7 +10,7 @@ TESTSDIR := $(AROS_TESTS)/datatypes
 #MM contrib-datatype-gifanim : includes linklibs
 
 USER_CPPFLAGS   := -DDEBUG=0
-USER_LDFLAGS := -static
+USER_LDFLAGS :=
 
 %build_module mmake=contrib-datatype-gifanim \
     modname=gifanim modtype=datatype \

@@ -16,7 +16,7 @@ USER_INCLUDES := -I$(AROS_CONTRIB)/Scalos/Development/include \
 
 NOWARN_FLAGS := $(NOWARN_IMPLICIT_FUNCTION_DECL)
 USER_CFLAGS := $(NOWARN_FLAGS) -D__UTILITY_STDLIBBASE__
-USER_LDFLAGS := -static
+USER_LDFLAGS :=
 
 %build_module mmake=contrib-scalos-datatypes-amigaiconobj35 \
     modname=amigaiconobj35 modtype=library modsuffix=datatype conffile="amigaiconobj35-aros.conf" \

@@ -110,7 +110,7 @@ LINKLIB_FILES = \
 	varargfuncs
 
 USER_CFLAGS := $(NOWARN_PARENTHESES) $(NOWARN_FRAME_ADDRESS)
-USER_LDFLAGS := -static
+USER_LDFLAGS :=
 
 #MM- aminet-dev-gui-gtlayout : aminet-dev-gui-gtlayout-test
 #MM aminet-dev-gui-gtlayout-test : linklibs-aminet-dev-gui-gtlayout

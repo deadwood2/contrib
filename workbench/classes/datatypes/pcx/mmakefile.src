@@ -10,7 +10,7 @@ FILES := pcx_class
 NOWARN_FLAGS  :=
 USER_CFLAGS   := $(NOWARN_FLAGS)
 USER_INCLUDES := -I$(SRCDIR)/$(CURDIR)
-USER_LDFLAGS  := -static
+USER_LDFLAGS  :=
 
 %build_module mmake=contrib-datatype-pcx \
     modname=pcx modtype=datatype \
