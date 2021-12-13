@@ -11,7 +11,7 @@ COMMONINCLUDES := -I$(SRCDIR)/$(CURDIR)/include -I$(SRCDIR)/$(CURDIR)/../
 LAYOUTGROUPINCLUDES := $(COMMONINCLUDES) -I$(SRCDIR)/$(CURDIR)/include -I$(SRCDIR)/$(CURDIR)/LayoutGroup
 TREEVIEWINCLUDES := $(COMMONINCLUDES) -I$(SRCDIR)/$(CURDIR)/TreeView/include
 
-EXELIBS = -L$(AROS_LIB) -lamiga -larossupport -lbgui -lautoinit
+EXELIBS = -L$(AROS_LIB) -lamiga -larossupport -lbgui -lautoinit -lstdc.static
 GADGETLIBS = -lbgui -lamiga -lstdc.static
 LDFLAGS += -nolibc
 

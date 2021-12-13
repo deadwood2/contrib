@@ -14,6 +14,7 @@ CAIRO_OPTIONS= \
     --disable-lto \
     --disable-shared \
     --disable-xlib \
+    --disable-gobject \
     --disable-xcb png_CFLAGS=' ' \
     --libdir=$(AROS_LIB) \
     png_LIBS='-lpng' \
