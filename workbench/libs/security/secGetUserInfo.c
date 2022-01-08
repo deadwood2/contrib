@@ -1,27 +1,27 @@
 /*
-    Copyright © 2002-2007, The AROS Development Team. All rights reserved.
-    $Id$
+    Copyright (C) 2002-2019, The AROS Development Team. All rights reserved.
 */
+
+#include <aros/debug.h>
 
 #include <stdio.h>
 
 #include "security_intern.h"
-
-#define DEBUG 1
-#include <aros/debug.h>
+#include "security_userinfo.h"
+#include "security_server.h"
 
 /*****************************************************************************
 
     NAME */
-	AROS_LH2(struct muUserInfo *, secGetUserInfo,
+        AROS_LH2(struct secUserInfo *, secGetUserInfo,
 
 /*  SYNOPSIS */
-	/* void */
-	AROS_LHA(struct muUserInfo *, info, A0),
-	AROS_LHA(ULONG, keytype, D0),
+        /* void */
+        AROS_LHA(struct secUserInfo *, info, A0),
+        AROS_LHA(ULONG, keytype, D0),
 
 /*  LOCATION */
-	struct Library *, SecurityBase, 11, Security)
+        struct SecurityBase *, secBase, 11, Security)
 
 /*  FUNCTION
 
@@ -49,9 +49,15 @@
 {
     AROS_LIBFUNC_INIT
 
-    D(bug( DEBUG_NAME_STR "secGetUserInfo()\n") );;
+    struct secUserInfo *userInfo;
 
-    return NULL;
+    D(bug( DEBUG_NAME_STR " %s()\n", __func__);)
+
+    userInfo = ((struct secUserInfo *)SendServerPacket(
+            secBase, secSAction_GetUserInfo,
+            (SIPTR)info, keytype, (SIPTR)NULL, (SIPTR)NULL));
+
+    return userInfo;
 
     AROS_LIBFUNC_EXIT
 

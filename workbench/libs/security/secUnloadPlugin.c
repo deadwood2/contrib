@@ -1,26 +1,23 @@
 /*
-    Copyright © 2002-2007, The AROS Development Team. All rights reserved.
-    $Id$
+    Copyright (C) 2002-2019, The AROS Development Team. All rights reserved.
 */
 
+#include <aros/debug.h>
 #include <stdio.h>
 
 #include "security_intern.h"
 
-#define DEBUG 1
-#include <aros/debug.h>
-
 /*****************************************************************************
 
     NAME */
-	AROS_LH1(BOOL, secUnloadPlugin,
+        AROS_LH1(BOOL, secUnloadPlugin,
 
 /*  SYNOPSIS */
-	/* void */
-	AROS_LHA(STRPTR, name, A0),
+        /* void */
+        AROS_LHA(STRPTR, name, A0),
 
 /*  LOCATION */
-	struct Library *, SecurityBase, 51, Security)
+        struct SecurityBase *, secBase, 51, Security)
 
 /*  FUNCTION
 
@@ -48,9 +45,9 @@
 {
     AROS_LIBFUNC_INIT
 
-    D(bug( DEBUG_NAME_STR "secUnloadPlugin()\n") );;
+    D(bug( DEBUG_NAME_STR " %s()\n", __func__);)
 
-    return NULL;
+    return 0;
 
     AROS_LIBFUNC_EXIT
 

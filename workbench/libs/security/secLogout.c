@@ -1,25 +1,22 @@
 /*
-    Copyright © 2002-2007, The AROS Development Team. All rights reserved.
-    $Id$
+    Copyright (C) 2002-2019, The AROS Development Team. All rights reserved.
 */
 
+#include <aros/debug.h>
 #include <stdio.h>
 
 #include "security_intern.h"
 
-#define DEBUG 1
-#include <aros/debug.h>
-
 /*****************************************************************************
 
     NAME */
-	AROS_LH0(ULONG, secLogout,
+        AROS_LH0(ULONG, secLogout,
 
 /*  SYNOPSIS */
-	/* void */
+        /* void */
 
 /*  LOCATION */
-	struct Library *, SecurityBase, 5, Security)
+        struct SecurityBase *, secBase, 5, Security)
 
 /*  FUNCTION
 
@@ -47,9 +44,9 @@
 {
     AROS_LIBFUNC_INIT
 
-    D(bug( DEBUG_NAME_STR "secLogout()\n") );;
+    D(bug( DEBUG_NAME_STR " %s()\n", __func__);)
 
-    return NULL;
+    return 0;
 
     AROS_LIBFUNC_EXIT
 

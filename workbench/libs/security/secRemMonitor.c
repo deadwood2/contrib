@@ -1,26 +1,25 @@
 /*
-    Copyright © 2002-2007, The AROS Development Team. All rights reserved.
-    $Id$
+    Copyright (C) 2002-2019, The AROS Development Team. All rights reserved.
 */
 
+#include <aros/debug.h>
 #include <stdio.h>
 
 #include "security_intern.h"
 
-#define DEBUG 1
-#include <aros/debug.h>
+#include <libraries/mufs.h>
 
 /*****************************************************************************
 
     NAME */
-	AROS_LH1(void, secRemMonitor,
+        AROS_LH1(void, secRemMonitor,
 
 /*  SYNOPSIS */
-	/* (monitor) */
-	AROS_LHA(struct secMonitor *, monitor, A0),
+        /* (monitor) */
+        AROS_LHA(struct secMonitor *, monitor, A0),
 
 /*  LOCATION */
-	struct Library *, SecurityBase, 29, Security)
+        struct SecurityBase *, secBase, 29, Security)
 
 /*  FUNCTION
 
@@ -48,9 +47,9 @@
 {
     AROS_LIBFUNC_INIT
 
-    D(bug( DEBUG_NAME_STR "secRemMonitor()\n") );;
+    D(bug( DEBUG_NAME_STR " %s()\n", __func__);)
 
-    return NULL;
+    return;
 
     AROS_LIBFUNC_EXIT
 

@@ -1,27 +1,24 @@
 /*
-    Copyright © 2002-2007, The AROS Development Team. All rights reserved.
-    $Id$
+    Copyright (C) 2002-2019, The AROS Development Team. All rights reserved.
 */
 
+#include <aros/debug.h>
 #include <stdio.h>
 
 #include "security_intern.h"
 
-#define DEBUG 1
-#include <aros/debug.h>
-
 /*****************************************************************************
 
     NAME */
-	AROS_LH2(BOOL, secSetProtection,
+        AROS_LH2(BOOL, secSetProtection,
 
 /*  SYNOPSIS */
-	/* (name, mask) */
-	AROS_LHA(STRPTR, name, D1),
-	AROS_LHA(LONG, mask, D2),
+        /* (name, mask) */
+        AROS_LHA(STRPTR, name, D1),
+        AROS_LHA(LONG, mask, D2),
 
 /*  LOCATION */
-	struct Library *, SecurityBase, 15, Security)
+        struct SecurityBase *, secBase, 15, Security)
 
 /*  FUNCTION
 
@@ -49,9 +46,9 @@
 {
     AROS_LIBFUNC_INIT
 
-    D(bug( DEBUG_NAME_STR "secSetProtection()\n") );;
+    D(bug( DEBUG_NAME_STR " %s()\n", __func__);)
 
-    return NULL;
+    return 0;
 
     AROS_LIBFUNC_EXIT
 

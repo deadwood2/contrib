@@ -1,26 +1,26 @@
 /*
-    Copyright © 2002-2007, The AROS Development Team. All rights reserved.
-    $Id$
+    Copyright (C) 2002-2019, The AROS Development Team. All rights reserved.
 */
 
+#include <aros/debug.h>
 #include <stdio.h>
 
 #include "security_intern.h"
+#include "security_userinfo.h"
+#include "security_memory.h"
 
-#define DEBUG 1
-#include <aros/debug.h>
 
 /*****************************************************************************
 
     NAME */
-	AROS_LH1(void, secFreeUserInfo,
+        AROS_LH1(void, secFreeUserInfo,
 
 /*  SYNOPSIS */
-	/* void */
-	AROS_LHA(struct secUserInfo *, info, A0),
+        /* void */
+        AROS_LHA(struct secUserInfo *, info, A0),
 
 /*  LOCATION */
-	struct Library *, SecurityBase, 10, Security)
+        struct SecurityBase *, secBase, 10, Security)
 
 /*  FUNCTION
 
@@ -48,9 +48,17 @@
 {
     AROS_LIBFUNC_INIT
 
-    D(bug( DEBUG_NAME_STR "secFreeUserInfo()\n") );;
+    struct secPrivUserInfo *_pinfo = (struct secPrivUserInfo *)info;
 
-    return NULL;
+    D(bug( DEBUG_NAME_STR " %s()\n", __func__);)
+
+    if (_pinfo) {
+        if (_pinfo->Pub.NumSecGroups)
+            Free(_pinfo->Pub.SecGroups, _pinfo->Pub.NumSecGroups*sizeof(UWORD));
+        if (_pinfo->Pattern)
+            FreeV(_pinfo->Pattern);
+        Free(_pinfo, sizeof(struct secPrivUserInfo));
+    }
 
     AROS_LIBFUNC_EXIT
 

@@ -1,26 +1,23 @@
 /*
-    Copyright © 2002-2007, The AROS Development Team. All rights reserved.
-    $Id$
+    Copyright (C) 2002-2019, The AROS Development Team. All rights reserved.
 */
 
+#include <aros/debug.h>
 #include <stdio.h>
 
 #include "security_intern.h"
 
-#define DEBUG 1
-#include <aros/debug.h>
-
 /*****************************************************************************
 
     NAME */
-	AROS_LH1(void, secUnRegisterHandler,
+        AROS_LH1(void, secUnRegisterHandler,
 
 /*  SYNOPSIS */
-	/* (ops) */
-	AROS_LHA(struct plugin_ops *, ops, A0),
+        /* (ops) */
+        AROS_LHA(struct plugin_ops *, ops, A0),
 
 /*  LOCATION */
-	struct Library *, SecurityBase, 48, Security)
+        struct SecurityBase *, secBase, 48, Security)
 
 /*  FUNCTION
 
@@ -48,9 +45,9 @@
 {
     AROS_LIBFUNC_INIT
 
-    D(bug( DEBUG_NAME_STR "secUnRegisterHandler()\n") );;
+    D(bug( DEBUG_NAME_STR " %s()\n", __func__);)
 
-    return NULL;
+    return;
 
     AROS_LIBFUNC_EXIT
 

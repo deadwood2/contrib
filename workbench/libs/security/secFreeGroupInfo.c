@@ -1,26 +1,25 @@
 /*
-    Copyright © 2002-2007, The AROS Development Team. All rights reserved.
-    $Id$
+    Copyright (C) 2002-2019, The AROS Development Team. All rights reserved.
 */
 
+#include <aros/debug.h>
 #include <stdio.h>
 
 #include "security_intern.h"
-
-#define DEBUG 1
-#include <aros/debug.h>
+#include "security_groupinfo.h"
+#include "security_memory.h"
 
 /*****************************************************************************
 
     NAME */
-	AROS_LH1(void, secFreeGroupInfo,
+        AROS_LH1(void, secFreeGroupInfo,
 
 /*  SYNOPSIS */
-	/* (info) */
-	AROS_LHA(struct secGroupInfo *, info, A0),
+        /* (info) */
+        AROS_LHA(struct secGroupInfo *, info, A0),
 
 /*  LOCATION */
-	struct Library *, SecurityBase, 26, Security)
+        struct SecurityBase *, secBase, 26, Security)
 
 /*  FUNCTION
 
@@ -48,9 +47,15 @@
 {
     AROS_LIBFUNC_INIT
 
-    D(bug( DEBUG_NAME_STR "secFreeGroupInfo()\n") );;
+    struct secPrivGroupInfo *_pinfo = (struct secPrivGroupInfo *)info;
 
-    return NULL;
+    D(bug( DEBUG_NAME_STR " %s(0x%p)\n", __func__, info);)
+
+    if (_pinfo) {
+        if (_pinfo->Pattern)
+              FreeV(_pinfo->Pattern);
+                Free(_pinfo, sizeof(struct secPrivGroupInfo));
+        }
 
     AROS_LIBFUNC_EXIT
 

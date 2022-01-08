@@ -1,26 +1,24 @@
 /*
-    Copyright © 2002-2007, The AROS Development Team. All rights reserved.
-    $Id$
+    Copyright (C) 2002-2019, The AROS Development Team. All rights reserved.
 */
 
+#include <aros/debug.h>
 #include <stdio.h>
 
 #include "security_intern.h"
-
-#define DEBUG 1
-#include <aros/debug.h>
+#include "security_task.h"
 
 /*****************************************************************************
 
     NAME */
-	AROS_LH1(ULONG, secGetTaskOwner,
+        AROS_LH1(ULONG, secGetTaskOwner,
 
 /*  SYNOPSIS */
-	/* (task) */
-	AROS_LHA(struct Task *, task, D0),
+        /* (task) */
+        AROS_LHA(struct Task *, task, D0),
 
 /*  LOCATION */
-	struct Library *, SecurityBase, 7, Security)
+        struct SecurityBase *, secBase, 7, Security)
 
 /*  FUNCTION
 
@@ -48,9 +46,12 @@
 {
     AROS_LIBFUNC_INIT
 
-    D(bug( DEBUG_NAME_STR "secGetTaskOwner()\n") );;
+    D(bug( DEBUG_NAME_STR " %s()\n", __func__);)
 
-    return NULL;
+    if (!task)
+        task = FindTask(NULL);
+
+    return(GetTaskOwner(secBase, task));
 
     AROS_LIBFUNC_EXIT
 

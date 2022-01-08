@@ -1,25 +1,25 @@
 /*
-    Copyright © 2002-2007, The AROS Development Team. All rights reserved.
-    $Id$
+    Copyright (C) 2002-2019, The AROS Development Team. All rights reserved.
 */
 
+#include <aros/debug.h>
 #include <stdio.h>
 
 #include "security_intern.h"
+#include "security_task.h"
 
-#define DEBUG 1
-#include <aros/debug.h>
+#include <libraries/mufs.h>
 
 /*****************************************************************************
 
     NAME */
-	AROS_LH0(UWORD, secgetuid,
+        AROS_LH0(UWORD, secgetuid,
 
 /*  SYNOPSIS */
-	/* void */
+        /* void */
 
 /*  LOCATION */
-	struct Library *, SecurityBase, 39, Security)
+        struct SecurityBase *, secBase, 39, Security)
 
 /*  FUNCTION
 
@@ -47,9 +47,16 @@
 {
     AROS_LIBFUNC_INIT
 
-    D(bug( DEBUG_NAME_STR "secgetuid()\n") );;
+    D(bug( DEBUG_NAME_STR " %s()\n", __func__);)
 
-    return NULL;
+    struct secTaskNode *tasknode;
+    UWORD rc = secNOBODY_UID;
+
+    ObtainSemaphore(&secBase->TaskOwnerSem);
+    if ((tasknode = FindTaskNode(secBase, FindTask(NULL))) || (tasknode = CreateOrphanTask(secBase, FindTask(NULL), DEFPROTECTION)))
+            rc = tasknode->RealUID;
+    ReleaseSemaphore(&secBase->TaskOwnerSem);
+    return rc;
 
     AROS_LIBFUNC_EXIT
 

@@ -1,18 +1,16 @@
-#   $Id$
 #
-#   Makefile to make MultiUserFS security library.
+#   Makefile to make MultiUserFS compatible security.library.
 
 include $(SRCDIR)/config/aros-contrib.cfg
 
-TOPLEVEL=$(shell pwd)
+#MM- contrib-workbench : contrib-libs-security
 
-FUNCS= 	\
+PUBLICFUNCS := \
 	secAccess_Control \
 	secAddMonitor \
 	secAllocGroupInfo \
 	secAllocUserInfo \
 	secCheckPasswd \
-	secCheckPasswdTags \
 	secContextLocate \
 	secEnumChildren \
 	secFreeExtOwner \
@@ -26,29 +24,23 @@ FUNCS= 	\
 	secGetPktDefProtection \
 	secGetPktOwner \
 	secGetRelationshipA \
-	secGetRelationship \
 	secGetTaskExtOwner \
 	secGetTaskOwner \
 	secGetUserInfo \
 	secKill \
 	secLimitDOSSetProtection \
-	secLoadPlugin \
 	secLocksecBase \
 	secLoginA \
-	secLogin \
 	secLogout \
 	secPasswd \
-	secPluginOperationComplete \
-	secRegisterHandler \
 	secRemMonitor \
 	secSetDefProtectionA \
-	secSetDefProtection \
 	secSetProtection \
-	secUnRegisterHandler \
 	secUnfreeze \
-	secUnloadPlugin \
 	secUnlocksecBase \
-	secUserInfo2ExtOwner \
+	secUserInfo2ExtOwner
+
+CRTPUBLICFUNCS := \
 	secgetgid \
 	secgetpgid \
 	secgetuid \
@@ -58,13 +50,45 @@ FUNCS= 	\
 	secsetreuid \
 	secsetuid
 
+PRIVATEFUNCS := \
+	secFSRendezVous \
+	secLoadPlugin \
+	secUnloadPlugin \
+	secRegisterHandler \
+	secUnRegisterHandler \
+	secPluginOperationComplete
+
+SECURITYFILES := \
+	security_config \
+	security_execfuncs \
+	security_dosfuncs \
+	security_locale \
+	security_volumes \
+	security_memory \
+	security_plugins \
+	security_crypto \
+	security_monitor \
+	security_packetio \
+	security_enforce \
+	security_task \
+	security_server \
+	security_segment \
+	security_support
+
 EXEDIR := $(AROSDIR)/MuFS
 
-USER_INCLUDES := -I$(SRCDIR)/$(CURDIR)/../Include
+#USER_INCLUDES := -I$(SRCDIR)/$(CURDIR)/../Include
+USER_CPPFLAGS := -DDEBUG
+USER_LDFLAGS :=
 
-##MM workbench-libs-security : includes linklibs
+#MM contrib-libs-security : includes linklibs contrib-libs-security-catalogs
 
-#%build_module mmake=workbench-libs-security modname=security \
-  modtype=library files=$(FUNCS)
+%build_module mmake=contrib-libs-security modname=security \
+  modtype=library files="security_init $(PUBLICFUNCS) $(CRTPUBLICFUNCS) $(PRIVATEFUNCS) $(SECURITYFILES)" \
+  uselibs="" usesdks="private config"
+
+#MM includes-copy
+INCLUDE_FILES := $(call WILDCARD, include/libraries/*.h)
+%copy_includes path=libraries dir=include/libraries
 
 %common

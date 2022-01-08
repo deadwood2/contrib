@@ -1,26 +1,26 @@
 /*
-    Copyright © 2002-2007, The AROS Development Team. All rights reserved.
-    $Id$
+    Copyright (C) 2002-2019, The AROS Development Team. All rights reserved.
 */
 
+#include <aros/debug.h>
 #include <stdio.h>
 
 #include "security_intern.h"
+#include "security_task.h"
 
-#define DEBUG 1
-#include <aros/debug.h>
+#include <libraries/mufs.h>
 
 /*****************************************************************************
 
     NAME */
-	AROS_LH1(int, secsetuid,
+        AROS_LH1(int, secsetuid,
 
 /*  SYNOPSIS */
-	/* (uid) */
-	AROS_LHA(UWORD, uid, D0),
+        /* (uid) */
+        AROS_LHA(UWORD, uid, D0),
 
 /*  LOCATION */
-	struct Library *, SecurityBase, 41, Security)
+        struct SecurityBase *, secBase, 41, Security)
 
 /*  FUNCTION
 
@@ -48,9 +48,32 @@
 {
     AROS_LIBFUNC_INIT
 
-    D(bug( DEBUG_NAME_STR "secsetuid()\n") );;
+    D(bug( DEBUG_NAME_STR " %s()\n", __func__);)
 
-    return NULL;
+    struct secTaskNode *tasknode;
+    int rc = -1;
+
+    ObtainSemaphore(&secBase->TaskOwnerSem);
+    if ((tasknode = FindTaskNode(secBase, FindTask(NULL))) || (tasknode = CreateOrphanTask(secBase, FindTask(NULL), DEFPROTECTION)))
+    {
+            if (tasknode->Owner != NULL)
+            {
+                    if (tasknode->Owner->uid == secROOT_UID)
+                    {
+                            tasknode->RealUID = uid;
+                            tasknode->SavedUID = uid;
+                            tasknode->Owner->uid = uid;
+                            rc = 0;
+                    }
+                    else if (tasknode->RealUID == uid || tasknode->SavedUID == uid)
+                    {
+                            tasknode->Owner->uid = uid;
+                            rc = 0;
+                    }
+            }
+    }
+    ReleaseSemaphore(&secBase->TaskOwnerSem);
+    return rc;
 
     AROS_LIBFUNC_EXIT
 
