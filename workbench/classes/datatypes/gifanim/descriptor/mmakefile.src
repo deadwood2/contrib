@@ -23,7 +23,7 @@ datatype-descriptor-gifanim-quick : datatype-descriptor-gifanim
 %rule_makedirs dirs="$(DESCRDIR) $(GENDIR)/$(CURDIR)/dtcd" setuptarget=datatype-descriptor-gifanim-setup
 
 USER_INCLUDES := -I$(SRCDIR)/$(CURDIR)/..
-USER_LDFLAGS := -nolibc -nostartfiles -lstdc.static
+USER_LDFLAGS := -noclibs -nostartfiles -lstdc.static
 
 ifeq ($(AROS_TARGET_CPU),m68k)
 CREATEDTDESCARGS := -m $(DESCRDTCD)

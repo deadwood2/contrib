@@ -13,7 +13,7 @@ TREEVIEWINCLUDES := $(COMMONINCLUDES) -I$(SRCDIR)/$(CURDIR)/TreeView/include
 
 EXELIBS = -L$(AROS_LIB) -lamiga -larossupport -lbgui -lautoinit -lstdc.static
 GADGETLIBS = -lbgui -lamiga -lstdc.static
-LDFLAGS += -nolibc
+LDFLAGS += -noclibs
 
 BARGADGET = bgui_bar.gadget
 BARDEMO = BarDemo

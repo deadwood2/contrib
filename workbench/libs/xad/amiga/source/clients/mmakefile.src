@@ -4,7 +4,7 @@
 include $(SRCDIR)/config/aros-contrib.cfg
 
 USER_INCLUDES     := -I$(AROS_INCLUDES)/SDI -I$(SRCDIR)/$(CURDIR)/../../../portable/include
-USER_LDFLAGS += -nostartfiles -nolibc -lstdc.static
+USER_LDFLAGS += -nostartfiles -noclibs -lstdc.static
 
 #MM- contrib-pack-xadmaster : xadmaster-clients
 

@@ -15,7 +15,7 @@ NOWARN_FLAGS := \
 
 USER_CFLAGS := $(NOWARN_FLAGS)
 USER_INCLUDES := -I$(SRCDIR)/$(CURDIR) -idirafter$(SRCDIR)/$(CURDIR)/include -I$(SRCDIR)/$(CURDIR)/classes -I$(SRCDIR)/$(CURDIR)/tbLib
-USER_LDFLAGS  := -L$(EXEDIR)/libs -nolibc
+USER_LDFLAGS  := -L$(EXEDIR)/libs -noclibs
 USER_CPPFLAGS   := -D__BSD_VISIBLE=1 -D_UTMP_H_
 
 FILES := \

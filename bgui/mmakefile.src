@@ -3,7 +3,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 include $(SRCDIR)/$(CURDIR)/make.cfg
 
 USER_CFLAGS := -DENHANCED $(PARANOIA_CFLAGS)
-USER_LDFLAGS := -nolibc -lstdc.static
+USER_LDFLAGS := -noclibs -lstdc.static
 
 OS_INCLUDES_DIR := $(AROS_INCLUDES)
 INCLUDES_DIR    := $(AROS_INCLUDES)
