@@ -12,7 +12,9 @@ BINUTILS_VERSION     = $(TARGET_BINUTILS_VER)
 BINUTILS_EXTRAOPTS := --with-sysroot=/$(AROS_DIR_DEVELOPER)
 BINUTILS_EXTRAOPTS += --with-build-sysroot=$(AROS_DEVELOPER)
 BINUTILS_EXTRAOPTS += --libdir=$(AROS_LIB)
+BINUTILS_EXTRAOPTS += --disable-werror
+BINUTILS_EXTRAOPTS += --disable-nls
 
-%fetch_and_build_gnu_development package=binutils version=2.21.1 patch=yes \
+%fetch_and_build_gnu_development package=binutils version=$(BINUTILS_VERSION) patch=yes \
     extraoptions=$(BINUTILS_EXTRAOPTS)
 
