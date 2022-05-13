@@ -960,6 +960,26 @@ diff -ruN gcc-6.3.0/gcc/configure gcc-6.3.0.aros/gcc/configure
  	${realsrcdir}/configure \
  		--enable-languages=${enable_languages-all} \
  		--target=$target_alias --host=$build_alias --build=$build_alias
+diff -ruN gcc-6.3.0/gcc/cp/g++spec.c gcc-6.3.0.aros/gcc/cp/g++spec.c
+--- gcc-6.3.0/gcc/cp/g++spec.c	2016-01-04 15:30:50.000000000 +0100
++++ gcc-6.3.0.aros/gcc/cp/g++spec.c	2022-05-11 20:04:35.091837992 +0200
+@@ -347,14 +347,12 @@
+ 		       CL_DRIVER, &new_decoded_options[j]);
+       added_libraries++;
+       j++;
+-      /* Add target-dependent static library, if necessary.  */
+-      if ((static_link || library > 1) && LIBSTDCXX_STATIC != NULL)
+-	{
++
+ 	  generate_option (OPT_l, LIBSTDCXX_STATIC, 1,
+ 			   CL_DRIVER, &new_decoded_options[j]);
+ 	  added_libraries++;
+ 	  j++;
+-	}
++
+ #ifdef HAVE_LD_STATIC_DYNAMIC
+       if (library > 1 && !static_link)
+ 	{
 diff -ruN gcc-6.3.0/gcc/ginclude/aros/types/null.h gcc-6.3.0.aros/gcc/ginclude/aros/types/null.h
 --- gcc-6.3.0/gcc/ginclude/aros/types/null.h	1970-01-01 01:00:00.000000000 +0100
 +++ gcc-6.3.0.aros/gcc/ginclude/aros/types/null.h	2018-04-23 15:24:25.358883950 +0100
