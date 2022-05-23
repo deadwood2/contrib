@@ -80,37 +80,51 @@ enum TriState
    stTrue      = 1      /**< Yes = True    */
 };
 
-//! Use this macro instead of varargs. Maintains compatibility across platforms.
-#define ARRAY(arg...) \
-   ((IPTR) \
-      ({ \
-         IPTR __parm[] = {arg}; \
-         &__parm; \
-      }))
+#ifdef __cplusplus
 
-/** 
- * \brief Use this macro whenever you need to pass varargs along with the array size.\n
- * \b Size is always stored in \b param[-1].
- */
-#define SIZEARRAY(arg...) \
-   ((IPTR) \
-      ({ \
-         IPTR __parm[] = {0, arg}; \
-         __parm[0] = sizeof(__parm) / sizeof(__parm[0]) - 1; \
-         &__parm[1]; \
-      }))
+#include <cstdint>
+#include <array>
 
-/**
- * \def TAGARRAY(arg...)
- * \brief Use this macro to pass the tagitem structure to any function.\n
- * Tags defined with \a arg are automatically TAG_DONE terminated.
- */
-#define TAGARRAY(arg...) \
-   ((struct TagItem*) \
-      ({ \
-         IPTR __parm[] = {arg, TAG_DONE, TAG_DONE}; \
-         &__parm; \
-       }))
+template <std::size_t N>
+struct IPTRArray
+{
+    template <typename... Ts>
+    constexpr IPTRArray(Ts &&... vs)
+        : array_(iptrarray(std::forward<Ts>(vs)...))
+    {}
+
+    operator IPTR ()
+    {
+        return (IPTR)array_.data();
+    }
+
+    operator TagItem* ()
+    {
+        return (TagItem *)(char*)array_.data();
+    }
+
+    operator APTR ()
+    {
+        return (APTR)(char*)array_.data();
+    }
+
+private:
+    std::array<IPTR, N> array_;
+
+    template <typename... Ts>
+    static auto iptrarray(Ts &&... vs)
+    {
+        return std::array<IPTR, N> { (IPTR)std::forward<Ts>(vs)... };
+    }
+};
+
+//! Use this template instead of varargs. Maintains compatibility across platforms.
+template <typename... Ts>
+IPTRArray<sizeof...(Ts)> ARRAY(Ts &&... vs) {
+    return { std::forward<Ts>(vs)... };
+}
+
+#endif
 
 /**
  * \def OFFSET(type, field)
