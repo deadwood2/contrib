@@ -285,6 +285,18 @@ diff -ruN -X ./exclude.patterns openssl-1.1.0h/Configurations/50-aros.conf opens
 +        inherit_from     => [ "aros-x86_64",  "aros-buildsys" ],
 +    },
 +);
+diff -ruN -X ./exclude.patterns openssl-1.1.0h/Configurations/unix-Makefile.tmpl openssl-1.1.0h.aros/Configurations/unix-Makefile.tmpl
+--- openssl-1.1.0h/Configurations/unix-Makefile.tmpl	2018-03-27 15:50:37.000000000 +0200
++++ openssl-1.1.0h.aros/Configurations/unix-Makefile.tmpl	2022-05-24 15:52:40.351675992 +0200
+@@ -268,7 +268,7 @@
+ 	@echo "Tests are not supported with your chosen Configure options"
+ 	@ : {- output_on() if !$disabled{tests}; "" -}
+ 
+-install: install_sw install_ssldirs install_docs
++install: install_sw install_ssldirs
+ 
+ uninstall: uninstall_docs uninstall_sw
+ 
 diff -ruN -X ./exclude.patterns openssl-1.1.0h/crypto/bio/b_addr.c openssl-1.1.0h.aros/crypto/bio/b_addr.c
 --- openssl-1.1.0h/crypto/bio/b_addr.c	2018-03-27 14:50:37.000000000 +0100
 +++ openssl-1.1.0h.aros/crypto/bio/b_addr.c	2018-06-10 17:06:48.527664570 +0100
