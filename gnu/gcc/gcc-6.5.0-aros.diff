@@ -463,7 +463,7 @@ diff -ruN gcc-6.5.0/gcc/config/aros.h gcc-6.5.0.aros/gcc/config/aros.h
 +
 +#undef	LIB_SPEC
 +#define LIB_SPEC \
-+  "--start-group -lmui -larossupport -lamiga %{!nostartfiles:%{!static:%{!nostdc:%{!noposixc:-lposixc} -lstdcio -lstdc}}%{static:%{!nostdc:-lstdc.static}}} -lcodesets -lkeymap -lexpansion -lcommodities -ldiskfont -lasl -lmuimaster -ldatatypes -lcybergraphics -lworkbench -licon -lintuition -lgadtools -llayers -laros -lpartition -liffparse -lgraphics -llocale -ldos -lutility -loop %{!nosysbase:-lexec} -lautoinit -llibinit %{nostartfiles:%{static:-lstdc.static}} --end-group"
++  "--start-group -lmui -larossupport -lamiga %{!nostartfiles:%{!static:%{newclib:%{!nostdc:%{!noposixc:-lposixc} -lstdcio -lstdc}} %{!newclib:%{!nostdc:-larosc}}} %{static:%{!nostdc:-lstdc.static}}} -lcodesets -lkeymap -lexpansion -lcommodities -ldiskfont -lasl -lmuimaster -ldatatypes -lcybergraphics -lworkbench -licon -lintuition -lgadtools -llayers -laros -lpartition -liffparse -lgraphics -llocale -ldos -lutility -loop %{!nosysbase:-lexec} -lautoinit -llibinit %{nostartfiles:%{static:-lstdc.static}} --end-group"
 +
 +#undef	LIBSTDCXX_STATIC
 +#define LIBSTDCXX_STATIC "pthread"
@@ -482,7 +482,7 @@ diff -ruN gcc-6.5.0/gcc/config/aros.h gcc-6.5.0.aros/gcc/config/aros.h
 diff -ruN gcc-6.5.0/gcc/config/aros.opt gcc-6.5.0.aros/gcc/config/aros.opt
 --- gcc-6.5.0/gcc/config/aros.opt	1970-01-01 00:00:00.000000000 +0000
 +++ gcc-6.5.0.aros/gcc/config/aros.opt	2019-03-01 02:31:13.371291400 +0000
-@@ -0,0 +1,35 @@
+@@ -0,0 +1,38 @@
 +; Processor-independent options for AROS.
 +
 +; Copyright (C) 2015 Free Software Foundation, Inc.
@@ -516,6 +516,9 @@ diff -ruN gcc-6.5.0/gcc/config/aros.opt gcc-6.5.0.aros/gcc/config/aros.opt
 +Driver
 +
 +nix
++Driver
++
++newclib
 +Driver
 +
 diff -ruN gcc-6.5.0/gcc/config/i386/aros.h gcc-6.5.0.aros/gcc/config/i386/aros.h
@@ -1023,6 +1026,26 @@ diff -ruN gcc-6.5.0/gcc/config.host gcc-6.5.0.aros/gcc/config.host
    *-*-*vms*)
      host_xm_file="vms/xm-vms.h"
      host_xmake_file=vms/x-vms
+diff -ruN gcc-6.5.0/gcc/cp/g++spec.c gcc-6.5.0.aros/gcc/cp/g++spec.c
+--- gcc-6.5.0/gcc/cp/g++spec.c	2016-01-04 15:30:50.000000000 +0100
++++ gcc-6.5.0.aros/gcc/cp/g++spec.c	2022-06-06 20:26:22.166853410 +0200
+@@ -347,14 +347,12 @@
+ 		       CL_DRIVER, &new_decoded_options[j]);
+       added_libraries++;
+       j++;
+-      /* Add target-dependent static library, if necessary.  */
+-      if ((static_link || library > 1) && LIBSTDCXX_STATIC != NULL)
+-	{
++
+ 	  generate_option (OPT_l, LIBSTDCXX_STATIC, 1,
+ 			   CL_DRIVER, &new_decoded_options[j]);
+ 	  added_libraries++;
+ 	  j++;
+-	}
++
+ #ifdef HAVE_LD_STATIC_DYNAMIC
+       if (library > 1 && !static_link)
+ 	{
 diff -ruN gcc-6.5.0/gcc/ginclude/aros/types/null.h gcc-6.5.0.aros/gcc/ginclude/aros/types/null.h
 --- gcc-6.5.0/gcc/ginclude/aros/types/null.h	1970-01-01 00:00:00.000000000 +0000
 +++ gcc-6.5.0.aros/gcc/ginclude/aros/types/null.h	2019-03-01 02:31:13.371291400 +0000
