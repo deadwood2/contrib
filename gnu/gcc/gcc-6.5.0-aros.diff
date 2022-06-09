@@ -1024,6 +1024,18 @@ diff -ruN gcc-6.5.0/gcc/config.host gcc-6.5.0.aros/gcc/config.host
    *-*-*vms*)
      host_xm_file="vms/xm-vms.h"
      host_xmake_file=vms/x-vms
+diff -ruN gcc-6.5.0/gcc/configure gcc-6.5.0.aros/gcc/configure
+--- gcc-6.5.0/gcc/configure	2018-03-08 09:55:59.000000000 +0100
++++ gcc-6.5.0.aros/gcc/configure	2022-06-09 16:33:49.726661073 +0200
+@@ -11803,7 +11803,7 @@
+ 	CC="${CC_FOR_BUILD}" CFLAGS="${CFLAGS_FOR_BUILD}" \
+ 	CXX="${CXX_FOR_BUILD}" CXXFLAGS="${CXXFLAGS_FOR_BUILD}" \
+ 	LD="${LD_FOR_BUILD}" LDFLAGS="${LDFLAGS_FOR_BUILD}" \
+-	GMPINC="" CPPFLAGS="${CPPFLAGS} -DGENERATOR_FILE" \
++	GMPINC="" CPPFLAGS="-DGENERATOR_FILE" \
+ 	${realsrcdir}/configure \
+ 		--enable-languages=${enable_languages-all} \
+ 		--target=$target_alias --host=$build_alias --build=$build_alias
 diff -ruN gcc-6.5.0/gcc/cp/g++spec.c gcc-6.5.0.aros/gcc/cp/g++spec.c
 --- gcc-6.5.0/gcc/cp/g++spec.c	2016-01-04 14:30:50.000000000 +0000
 +++ gcc-6.5.0.aros/gcc/cp/g++spec.c	2020-11-11 12:14:13.790835542 +0000
