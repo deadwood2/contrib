@@ -4,7 +4,7 @@
 include $(SRCDIR)/config/aros-contrib.cfg
 
 #MM- contrib-openal : contrib-openal-utils
-#MM- contrib-openal-utils : contrib-openal-library
+#MM- contrib-openal-utils : contrib-openal-linklib
 
 FILES   :=  openal-info
 EXEDIR  := $(AROS_TESTS)/OpenAL
