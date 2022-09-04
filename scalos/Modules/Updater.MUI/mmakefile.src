@@ -2,15 +2,14 @@
 
 include $(SRCDIR)/config/aros-contrib.cfg
 
-#MM- contrib-scalos : contrib-scalos-modules-updater
+##MM- contrib-scalos : contrib-scalos-modules-updater
 
 #MM contrib-scalos-modules-updater : \
 #MM     includes \
 #MM     linklibs \
 #MM     contrib-scalos-modules-updater-locale \
 #MM     iconset-Gorilla-contrib-icons-extras-scalos-modules \
-#MM     contrib-scalos-library-includes \
-#MM     contrib-curl
+#MM     contrib-scalos-library-includes
 
 FILES := Updater
 SCALOS_LOCALE := Updater_Locale.h
