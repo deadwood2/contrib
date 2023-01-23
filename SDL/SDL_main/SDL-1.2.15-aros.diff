@@ -16293,7 +16293,7 @@ diff -ruN SDL-1.2.15/src/video/cgx/SDL_cgxgl_LoadLibrary.c SDL-1.2.15.aros/src/v
 +
 +#if SDL_VIDEO_OPENGL
 +#if !defined(PROTO_SDL_H)
-+struct Library *GLBase;
++struct Library *GLBase __attribute__ ((weak));
 +#else
 +#define GLBase SDLBase->GLBase
 +#endif
@@ -16306,7 +16306,7 @@ diff -ruN SDL-1.2.15/src/video/cgx/SDL_cgxgl_LoadLibrary.c SDL-1.2.15.aros/src/v
 +{
 +    D(bug("CGX_GL_LoadLibrary('%s')\n", path));
 +
-+    if (GLBase == NULL)
++//    if (GLBase == NULL)
 +    {
 +        if ((GLBase = OpenLibrary("gl.library", 20)) != NULL)
 +        {
