@@ -5,8 +5,8 @@ include $(SRCDIR)/config/aros-contrib.cfg
 
 EXEDIR      := $(AROS_CONTRIB)/Demos/EGL
 
-##MM- contrib-demo : demo-mesa-egl
-##MM- contrib-demo-quick : demo-mesa-egl-quick
+#MM- contrib-demo : demo-mesa-egl
+#MM- contrib-demo-quick : demo-mesa-egl-quick
 
 #MM- demo-mesa-egl-prerequisites : \
 #MM     demo-mesa-prerequisites \
