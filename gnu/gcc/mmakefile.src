@@ -58,22 +58,6 @@ GCC_HOST_VARS += \
 	ac_cv_header_iconv_h=no \
 
 #
-# GCC will fail to build if iconv is found, so check and generate an error if it
-# is present.
-#
-INVALID_ICONV=false
-# Check if iconv is incorrectly installed in the Dev env..
-ifneq ($(wildcard $(AROS_INCLUDE)/iconv.h),)
-    INVALID_ICONV=true
-endif
-ifneq ($(wildcard $(AROS_LIB)/libiconv.a),)
-    INVALID_ICONV=true
-endif
-ifneq (false,$(INVALID_ICONV))
-$(error iconv incorrect installed - please remove it from the developer environement)
-endif
-
-#
 # Rules to build the native GCC compiler.
 #
 %fetch_and_build_gnu_development package=gcc version=$(GCC_VERSION)  crossbuild=yes patch=yes \
