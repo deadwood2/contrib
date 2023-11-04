@@ -32,7 +32,7 @@ EGLDEMOFILES 	    := \
 
 %build_progs mmake=demo-mesa-egl-common \
     targetdir=$(EXEDIR) \
-    files="$(EGLDEMOFILES)" uselibs="glut eglut GL GLU EGL"
+    files="$(EGLDEMOFILES)" uselibs="eglut GL GLU EGL"
 
 %build_prog mmake=demo-mesa-lion \
     targetdir=$(EXEDIR) progname="lion" \
