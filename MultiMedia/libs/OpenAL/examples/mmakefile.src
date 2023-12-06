@@ -4,7 +4,7 @@
 include $(SRCDIR)/config/aros-contrib.cfg
 
 ##MM- contrib-openal : contrib-openal-examples
-#MM- openal-example-deps : contrib-openal-library contrib-sdl-sdl-sound contrib-ffmpeg
+#MM- openal-example-deps : contrib-openal-linklib contrib-sdl-sdl-sound contrib-ffmpeg
 
 #MM openal-examples-alffplay : openal-example-deps
 #MM openal-examples-allatency : openal-example-deps
