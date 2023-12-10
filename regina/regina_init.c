@@ -46,6 +46,42 @@ static int ExpungeLib(LIBBASETYPEPTR LIBBASE)
 ADD2INITLIB(InitLib, 0);
 ADD2EXPUNGELIB(ExpungeLib, 0);
 
+const ULONG __aros_rellib_base_CrtBase = 0;
+SETRELLIBOFFSET(CrtBase, LIBBASETYPE, crtBase);
+
+struct Library * __modonly_mayget_shareable(struct Library *base);
+
+int _OpenLib(LIBBASETYPEPTR ReginaBase)
+{
+    struct Library *tmp = NULL;
+
+    ReginaBase->crtBase = OpenLibrary("crt.library", 3L);
+    if (ReginaBase->crtBase == NULL) return 0;
+    ReginaBase->crtBaseClose = TRUE;
+
+    tmp = __modonly_mayget_shareable(ReginaBase->crtBase);
+    if (tmp != ReginaBase->crtBase) /* ReginaBase->crtBase must not be used and... */
+    {
+        CloseLibrary(ReginaBase->crtBase);
+        ReginaBase->crtBaseClose = FALSE;
+        if (tmp == NULL) /* ...there is no sharable base available or...*/
+            return 0;
+
+        ReginaBase->crtBase = tmp; /* ...there is a sharable base that should be used. */
+    }
+
+    return 1;
+}
+
+void _CloseLib(LIBBASETYPEPTR ReginaBase)
+{
+    if (ReginaBase->crtBaseClose)
+        CloseLibrary(ReginaBase->crtBase);
+}
+
+ADD2OPENLIB(_OpenLib, 0);
+ADD2CLOSELIB(_CloseLib, 0);
+
 /*
     This implementation of atexit is different than the definition of atexit
     function due to how libraries work in AROS.
