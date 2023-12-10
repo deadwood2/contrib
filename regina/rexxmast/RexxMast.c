@@ -30,6 +30,11 @@ static void RemLib(struct RexxMsg *);
 static void AddCon(struct RexxMsg *);
 static void RemCon(struct RexxMsg *);
 
+struct Library *CrtBase = NULL;
+struct Library *ReginaBase = NULL;
+static void OpenLibs();
+static void CloseLibs();
+
 static UBYTE progdir[256];
 
 int main(int argc, char **argv)
@@ -48,6 +53,8 @@ int main(int argc, char **argv)
       "OK"
    };
 
+   OpenLibs();
+
    if (argc==3 && strcmp("SUBTASK", argv[1])==0)
    {
       struct RexxMsg *msg;
@@ -55,7 +62,7 @@ int main(int argc, char **argv)
       sscanf(argv[2], "%p", &msg);
       StartFileSlave(msg);
       ReplyMsg((struct Message *)msg);
-
+      CloseLibs();
       return 0;
    }
 
@@ -173,6 +180,7 @@ int main(int argc, char **argv)
    } while(!done);
    
    DeletePort(port);
+   CloseLibs();
    
    return 0;
 }
@@ -527,4 +535,26 @@ static void RemCon(struct RexxMsg *msg)
    
    msg->rm_Result2 = 0;
    return;
+}
+
+void __progonly_allow_shareable(struct Library *base);
+void __progonly_disallow_shareable(struct Library *base);
+
+static void OpenLibs()
+{
+   CrtBase = OpenLibrary("crt.library", 3L);
+
+   __progonly_allow_shareable(CrtBase);
+
+   ReginaBase = OpenLibrary("regina.library", 4L);
+
+   __progonly_disallow_shareable(CrtBase);
+}
+
+static void CloseLibs()
+{
+   CloseLibrary(ReginaBase);
+   ReginaBase = NULL;
+   CloseLibrary(CrtBase);
+   CrtBase = NULL;
 }
