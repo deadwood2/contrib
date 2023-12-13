@@ -215,4 +215,4 @@ void CloseLib(APTR base)
         cleanup(0, node);
 }
 
-ADD2CLOSELIB(CloseLib, 0);
+ADD2CLOSELIB(CloseLib, 2);

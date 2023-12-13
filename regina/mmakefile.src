@@ -58,7 +58,8 @@ USER_CPPFLAGS   := -DRXLIB -DINCL_REXXSAA -DAPIENTRY= \
     -DREGINA_VERSION_MAJOR=\"$(VER_MAJOR)\" \
     -DREGINA_VERSION_MINOR=\"$(VER_MINOR)\" \
     -DREGINA_VERSION_SUPP=\"$(VER_SUPP)\" \
-    -Dlint
+    -Dlint \
+    -D__CRT_RELLIBBASE__
 
 FILES := $(OFILES) \
          rexxsaa \
@@ -70,7 +71,7 @@ FILES := $(OFILES) \
 
 %build_module mmake=contrib-regina-module \
     modname=regina modtype=library \
-    files=$(FILES) uselibs="crtmod" \
+    files=$(FILES) uselibs="crt_rel crtmod" usesdks="rel" \
     objdir=$(GENDIR)/$(CURDIR)/shared linklibname=regina_shared
 
 %copy_includes includes=rexxsaa.h
