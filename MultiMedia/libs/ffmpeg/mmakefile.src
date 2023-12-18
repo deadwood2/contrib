@@ -3,6 +3,8 @@
 
 include $(SRCDIR)/config/aros-contrib.cfg
 
+#MM- contrib-multimedia : contrib-ffmpeg
+
 #MM- contrib-ffmpeg : linklibs-startup linklibs-amiga linklibs-arossupport linklibs-clib
 
 NOWARN_FLAGS := $(NOWARN_ATTRIBUTES) $(NOWARN_DEPRECATED_DECLARATIONS) $(NOWARN_MISLEADING_INDENTATION) \
@@ -39,7 +41,7 @@ FFMPEG_OPTIONS := \
         --enable-cross-compile \
         --arch=$(FFMPEG_ARCH) \
         --target-os=aros \
-        --cc="$(CC)" \
+        --cc="$(CC) $(TARGET_SYSROOT)" \
         --extra-libs="$(FFMPEG_LIBS)" \
         --enable-static \
         --disable-pic \
@@ -55,6 +57,8 @@ FFMPEG_OPTIONS += \
         --disable-network \
         --disable-decoder=hevc
 endif
+
+contrib-ffmpeg--touchfileflag := $(GENDIR)/$(CURDIR)/.files-touched
 
 %fetch_and_build mmake=contrib-ffmpeg prefix=$(AROS_DEVELOPMENT) \
 	package=ffmpeg version=$(VERSION) suffixes="tar.bz2" \
