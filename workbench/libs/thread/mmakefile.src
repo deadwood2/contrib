@@ -1,6 +1,8 @@
 
 include $(SRCDIR)/config/aros-contrib.cfg
 
+#MM- contrib-workbench : contrib-libs-thread
+
 FILES := thread_init
 
 FUNCS := \
@@ -21,12 +23,12 @@ FUNCS := \
         broadcastcondition \
 	exitthread
 
-#MM workbench-libs-thread-includes : \
+#MM contrib-libs-thread-includes : \
 #MM    kernel-exec-includes \
 #MM    includes-copy
-#MM- workbench-libs-thread : linklibs
+#MM- contrib-libs-thread : linklibs
 
-%build_module mmake=workbench-libs-thread \
+%build_module mmake=contrib-libs-thread \
     modname=thread modtype=library \
     files="$(FILES) $(FUNCS)"
 
