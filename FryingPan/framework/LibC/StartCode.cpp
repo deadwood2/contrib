@@ -42,9 +42,8 @@
    struct Library         *__InternalDOSBase;
    struct Library         *__InternalIntuitionBase;
    struct Library         *__InternalUtilityBase;
-#if !defined(__AROS__)
    struct Library         *SysBase;
-#endif
+
 
 #ifdef __AMIGAOS4__
    struct DOSIFace        *__InternalDOSIFace;
