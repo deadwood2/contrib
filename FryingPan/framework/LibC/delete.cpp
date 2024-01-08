@@ -30,3 +30,8 @@ void operator delete[](void* mem)
 {
    operator delete(mem);
 }
+
+void operator delete(void* mem, std::size_t sz)
+{
+   operator delete(mem);
+}
