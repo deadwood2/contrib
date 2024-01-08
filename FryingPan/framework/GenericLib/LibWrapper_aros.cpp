@@ -27,6 +27,14 @@ extern "C" {
 
 #include "LibWrapper_aros.h"
 
+const struct LibInitStruct GM_UNIQUENAME(InitTable) =
+{
+   (unsigned long)   sizeof(struct Library),
+   (void*)           &GM_UNIQUENAME(FuncTable)[0],
+   (void*)           NULL,
+   (void (*)(void))  &GM_UNIQUENAME(InitLib)
+};
+
 static int LibLibrary_Init(struct Library *pOurBase)
 {
     if (true == Lib_SetUp())
@@ -53,6 +61,13 @@ static int LibLibrary_Close(struct Library *pOurBase)
     return TRUE;
 }
 
+static int LibLibrary_InitSysBase(struct Library *sysBase)
+{
+    SysBase = sysBase;
+    return TRUE;
+}
+
+ADD2INIT(LibLibrary_InitSysBase, 0);
 ADD2INITLIB(LibLibrary_Init, 0);
 ADD2OPENLIB(LibLibrary_Open, 0);
 ADD2CLOSELIB(LibLibrary_Close, 0);

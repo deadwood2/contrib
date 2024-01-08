@@ -44,6 +44,8 @@ extern "C"
     extern void AROS_SLIB_ENTRY(GM_UNIQUENAME(ExpungeLib),LibWrapper,3)(void);
     extern void AROS_SLIB_ENTRY(GM_UNIQUENAME(ExtFuncLib),LibWrapper,4)(void);
     extern const struct LibInitStruct GM_UNIQUENAME(InitTable);
+    extern APTR GM_UNIQUENAME(InitLib);
+    extern APTR GM_UNIQUENAME(FuncTable)[];
 #ifdef __cplusplus
 };
 #endif
@@ -72,7 +74,7 @@ static int GM_UNIQUENAME(Version) __attribute__((used)) = (version);        \
 static int GM_UNIQUENAME(Revision) __attribute__((used)) = (0);
 
 #define LIB_FT_Begin                                                            \
-static APTR GM_UNIQUENAME(FuncTable)[] __attribute__((used)) =                                      \
+APTR GM_UNIQUENAME(FuncTable)[] __attribute__((used)) =                     \
 {                                                                            \
   (APTR)(IPTR)&AROS_SLIB_ENTRY(GM_UNIQUENAME(OpenLib),LibWrapper,1),        \
   (APTR)(IPTR)&AROS_SLIB_ENTRY(GM_UNIQUENAME(CloseLib),LibWrapper,2),       \
