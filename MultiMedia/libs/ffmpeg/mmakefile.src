@@ -47,7 +47,6 @@ FFMPEG_OPTIONS := \
         --disable-pic \
         --disable-shared \
         --disable-rpath \
-        --disable-yasm \
         --disable-doc \
         --disable-debug \
         $(FFMPEG_PROGS)
