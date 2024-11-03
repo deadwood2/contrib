@@ -7,9 +7,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 
 GMP_EXTRAOPTS := --libdir=$(AROS_LIB)
 
-GMP_CFLAGS := -DPOSIXC_NO_VAARGS
-
-%fetch_and_build_gnu_development package=gmp version=5.1.2 patch=yes \
-    extraoptions="$(GMP_EXTRAOPTS)" extracflags="$(GMP_CFLAGS)" nlsflag=no xflag=no
+%fetch_and_build_gnu_development package=gmp version=6.1.2 patch=yes \
+    extraoptions="$(GMP_EXTRAOPTS)" nlsflag=no xflag=no
 
 %common
