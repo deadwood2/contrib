@@ -1,0 +1,11 @@
+diff -Naru gmp-6.1.2/gmp-h.in gmp-6.1.2.aros/gmp-h.in
+--- gmp-6.1.2/gmp-h.in	2016-12-16 16:45:27.000000000 +0100
++++ gmp-6.1.2.aros/gmp-h.in	2024-11-03 12:29:56.633280244 +0100
+@@ -264,6 +264,7 @@
+   || defined (_STDIO_H_INCLUDED)      /* QNX4 */		\
+   || defined (_ISO_STDIO_ISO_H)       /* Sun C++ */		\
+   || defined (__STDIO_LOADED)         /* VMS */			\
++  || defined (_STDC_STDIO_H_)         /* AROS */                \
+   || defined (__DEFINED_FILE)         /* musl */
+ #define _GMP_H_HAVE_FILE 1
+ #endif
