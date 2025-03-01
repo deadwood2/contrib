@@ -572,10 +572,10 @@ diff -Naur gcc-10.5.0/gcc/config/aros.h gcc-10.5.0.aros/gcc/config/aros.h
 +#define SIZE_TYPE "long unsigned int"
 +
 +#undef WCHAR_TYPE
-+#define WCHAR_TYPE "char"
++#define WCHAR_TYPE "int"
 +
 +#undef WCHAR_TYPE_SIZE
-+#define WCHAR_TYPE_SIZE 8
++#define WCHAR_TYPE_SIZE 32
 +
 +#undef PTRDIFF_TYPE
 +#define PTRDIFF_TYPE "long int"
@@ -732,8 +732,8 @@ diff -Naur gcc-10.5.0/gcc/config/i386/aros.h gcc-10.5.0.aros/gcc/config/i386/aro
 +	(MASK_80387 | MASK_IEEE_FP | MASK_FLOAT_RETURNS | MASK_NO_RED_ZONE)
 diff -Naur gcc-10.5.0/gcc/config/i386/aros64.h gcc-10.5.0.aros/gcc/config/i386/aros64.h
 --- gcc-10.5.0/gcc/config/i386/aros64.h	1970-01-01 01:00:00.000000000 +0100
-+++ gcc-10.5.0.aros/gcc/config/i386/aros64.h	2024-10-31 00:38:00.862273860 +0100
-@@ -0,0 +1,41 @@
++++ gcc-10.5.0.aros/gcc/config/i386/aros64.h	2024-12-09 20:38:01.645254877 +0100
+@@ -0,0 +1,65 @@
 +/* Definitions for AMD x86_64 running AROS systems with ELF64 format.
 +   Copyright (C) 1994, 1995, 1996, 1997, 1998, 1999, 2001, 2002
 +   Free Software Foundation, Inc.
@@ -773,6 +773,30 @@ diff -Naur gcc-10.5.0/gcc/config/i386/aros64.h gcc-10.5.0.aros/gcc/config/i386/a
 +#undef TARGET_SUBTARGET_DEFAULT
 +#define TARGET_SUBTARGET_DEFAULT \
 +	(MASK_80387 | MASK_IEEE_FP | MASK_FLOAT_RETURNS | MASK_NO_RED_ZONE)
++
++
++/* r12 is reserved for library base pointer */
++
++#undef FIXED_REGISTERS
++#define FIXED_REGISTERS						\
++/*ax,dx,cx,bx,si,di,bp,sp,st,st1,st2,st3,st4,st5,st6,st7*/	\
++{  0, 0, 0, 0, 0, 0, 0, 1, 0,  0,  0,  0,  0,  0,  0,  0,	\
++/*arg,flags,fpsr,frame*/					\
++    1,    1,   1,    1,						\
++/*xmm0,xmm1,xmm2,xmm3,xmm4,xmm5,xmm6,xmm7*/			\
++     0,   0,   0,   0,   0,   0,   0,   0,			\
++/* mm0, mm1, mm2, mm3, mm4, mm5, mm6, mm7*/			\
++     0,   0,   0,   0,   0,   0,   0,   0,			\
++/*  r8,  r9, r10, r11, r12, r13, r14, r15*/			\
++     0,   0,   0,   0,   1,   0,   0,   0,			\
++/*xmm8,xmm9,xmm10,xmm11,xmm12,xmm13,xmm14,xmm15*/		\
++     0,   0,    0,    0,    0,    0,    0,    0,		\
++/*xmm16,xmm17,xmm18,xmm19,xmm20,xmm21,xmm22,xmm23*/		\
++     0,   0,    0,    0,    0,    0,    0,    0,		\
++/*xmm24,xmm25,xmm26,xmm27,xmm28,xmm29,xmm30,xmm31*/		\
++     0,   0,    0,    0,    0,    0,    0,    0,		\
++/*  k0,  k1, k2, k3, k4, k5, k6, k7*/				\
++     0,  0,   0,  0,  0,  0,  0,  0 }
 +
 +/* FIXME: AROS doesn't support dw2 unwinding yet.  */
 diff -Naur gcc-10.5.0/gcc/config/m68k/m68k.c gcc-10.5.0.aros/gcc/config/m68k/m68k.c
@@ -1216,6 +1240,17 @@ diff -Naur gcc-10.5.0/gcc/config.gcc gcc-10.5.0.aros/gcc/config.gcc
 diff -Naur gcc-10.5.0/gcc/config.host gcc-10.5.0.aros/gcc/config.host
 --- gcc-10.5.0/gcc/config.host	2023-07-07 09:08:19.219161767 +0200
 +++ gcc-10.5.0.aros/gcc/config.host	2024-09-08 23:51:11.987198313 +0200
+@@ -93,8 +93,8 @@
+ case ${host} in
+   *-darwin*)
+     # Generic darwin host support.
+-    out_host_hook_obj=host-darwin.o
+-    host_xmake_file="${host_xmake_file} x-darwin"
++    # out_host_hook_obj=host-darwin.o
++    # host_xmake_file="${host_xmake_file} x-darwin"
+     ;;
+ esac
+ 
 @@ -107,7 +107,7 @@
  	;;
      esac
