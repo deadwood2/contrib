@@ -24,8 +24,7 @@ ICONS := BlackHole \
          Voxel \
          startsomedemos \
          startsomedemos2 \
-         StartGLDemos \
-         StartEGLDemos
+         StartGLDemos
 
 #MM- iconset-Gorilla-contrib-icons-extras-clean : iconset-Gorilla-contrib-icons-extras-demos-clean
 %build_icons mmake=iconset-Gorilla-contrib-icons-extras-demos icons=$(ICONS) dir=$(AROS_CONTRIB)/Demos
