@@ -12,8 +12,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 SCRIPTFILES = \
         StartSomeDemos \
         StartSomeDemos2 \
-        StartGLDemos \
-        StartEGLDemos
+        StartGLDemos
 
 DSTDIR := $(AROS_CONTRIB)/Demos
 
