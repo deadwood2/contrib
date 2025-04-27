@@ -125,7 +125,7 @@ save_tooltypes (void)
       if (NULL != (disk_obj = GetDiskObject (prg_name)))
       {
          old_toolarray = (APTR)disk_obj->do_ToolTypes;
-         while (old_toolarray[n] != NULL)
+         while (old_toolarray && old_toolarray[n] != NULL)
             ++n;
          
          old_toolval[0] = FindToolType ((APTR)old_toolarray, "PUBSCREEN");
@@ -196,7 +196,7 @@ save_tooltypes (void)
                strncpy (tooltypes[10], "NOCOLORS", 128);
             
             i = 0;
-            while (old_toolarray[i] != NULL)
+            while (old_toolarray && old_toolarray[i] != NULL)
             {
                if (strstr (old_toolarray[i], "PUBSCREEN=") ==
                    old_toolarray[i] ||
