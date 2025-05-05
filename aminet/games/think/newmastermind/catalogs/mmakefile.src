@@ -3,7 +3,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 
 DESTDIR := $(AROS_CONTRIB)/Games/Board/NewMasterMind/Catalogs
 
-CATALOGS := dansk svenska
+CATALOGS := dansk polish svenska
 CATDESC := newmastermind
 CATNAME := NewMasterMind
 CATSUBDIR :=

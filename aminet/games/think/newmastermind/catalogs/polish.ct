@@ -1,0 +1,67 @@
+## version $VER: newmastermind.catalog 1.0 (05.05.2025)
+## codeset 5
+## language polski
+;
+MSG_GAME_MENU
+ \0Gra
+;
+MSG_GAME_NEW
+N\0Nowa
+;
+MSG_GAME_ABOUT
+?\0O programie...
+;
+MSG_GAME_QUIT
+Q\0Skoñcz NewMasterMind
+;
+MSG_SETTINGS_MENU
+ \0Ustawienia
+;
+MSG_SETTINGS_OPPONENT
+ \0Przeciwnik
+;
+MSG_SETTINGS_HUMAN
+ \0Cz³owiek
+;
+MSG_SETTINGS_COMPUTER
+ \0Komputer
+;
+MSG_SETTINGS_CORRECTION
+ \0Metoda korekty
+;
+MSG_SETTINGS_CHILDREN
+ \0dla dzieci
+;
+MSG_SETTINGS_ADULTS
+ \0dla doros³ych
+;
+MSG_SETTINGS_NUMCOLORS
+ \0Liczba kolorów
+;
+MSG_SETTINGS_NUMCOLORS_4
+ \0004 kolory
+;
+MSG_SETTINGS_NUMCOLORS_6
+ \0006 kolorów
+;
+MSG_SETTINGS_NUMCOLORS_8
+ \0008 kolorów
+;
+MSG_SETTINGS_COLORDISPLAY
+ \0Brak kolorów
+;
+MSG_SETTINGS_SAVE
+ \0Zapisz ustawienia
+;
+MSG_ABOUT_REQTITLE
+O programie %s
+;
+MSG_ABOUT_REQMSG
+%s v%s\nBy %s %s\nCopyright (c) %s %s
+;
+MSG_CONTINUE_GAD
+Kontynuuj
+;
+MSG_OK_GAD
+OK
+;
