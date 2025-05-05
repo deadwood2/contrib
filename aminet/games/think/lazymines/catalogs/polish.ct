@@ -27,7 +27,7 @@ MSG_GAME_ABOUT
 ?\0O programie...
 ;
 MSG_GAME_QUIT
-Q\0SkoÄcz
+Q\0Skoñcz
 ;
 MSG_SETTINGS_MENU
  \0Ustawienia
@@ -36,19 +36,19 @@ MSG_SETTINGS_TASK
  \0Rodzaj zadania:
 ;
 MSG_SETTINGS_TASK_ALL
- \0oznacz caÃ®e pole.
+ \0oznacz ca³e pole.
 ;
 MSG_SETTINGS_TASK_PATH
- \0wyznacz Ã´cieÅ±kÃ«.
+ \0wyznacz ¶cie¿kê.
 ;
 MSG_SETTINGS_AUTOOPEN
  \0Automatyczne otwarcia...
 ;
 MSG_SETTINGS_WARNINGS
- \0OstrzeÅ±enia
+ \0Ostrze¿enia
 ;
 MSG_SETTINGS_NOCOLORS
- \0Bez kolorÃ³w
+ \0Bez kolorów
 ;
 MSG_SETTINGS_SAVE
  \0Zapisz ustawienia
@@ -60,13 +60,13 @@ MSG_OK_GAD
 OK
 ;
 MSG_NUMROWS_GAD
-IloÃ´Ä™ szeregÃ³w
+Ilo¶æ wierszy
 ;
 MSG_NUMCOLS_GAD
-IloÃ´Ä™ kolumn
+Ilo¶æ kolumn
 ;
 MSG_NUMMINES_GAD
-IloÃ´Ä™ min
+Ilo¶æ min
 ;
 MSG_NAME_GAD
 Gracz:
@@ -76,7 +76,7 @@ O programie
 ;
 MSG_ABOUT_REQMSG
 %s (%s)\n\
-Copyright Å  %s %s
+Copyright (c) %s %s
 ;
 MSG_OPTIONAL_REQTITLE
 Opcje gracza
@@ -85,40 +85,40 @@ MSG_AUTOOPEN_REQTITLE
 Automatyczne otwarcia
 ;
 MSG_NAME_REQTITLE
-To naprawdÃ« szybka akcja!!!
+To naprawdê szybka akcja!!!
 ;
 MSG_HIGHSCORES_REQTITLE
 Najszybsi minerzy
 ;
 MSG_ERROR_REQTITLE
-Komunikat o bÃ®Ã«dzie
+Komunikat o b³êdzie
 ;
 MSG_INITIALIZE_FIELD
-TworzÃ« pole minowe...
+Tworzê pole minowe...
 ;
 MSG_GENERATE_PATH
-GenerujÃ« Ã´cieÅ±kÃ« (%3d)...
+Generujê ¶cie¿kê (%3d)...
 ;
 MSG_OPEN_ERROR
-Nie mogÃ« otworzyÄ™ %s!
+Nie mogê otworzyæ %s!
 ;
 MSG_CREATE_ERROR
-Nie mogÃ« stworzyÄ™ %s!
+Nie mogê stworzyæ %s!
 ;
 MSG_GET_ERROR
-Nie mogÃ« wziÃ¢Ä™ %s!
+Nie mogê wzi±æ %s!
 ;
 MSG_SMALLSCREEN_ERROR
-Ekran jest zbyt maÃ®y!!!
+Ekran jest zbyt ma³y!!!
 ;
 MSG_LOCKSCREEN_ERROR
-Nie mogÃ« znalÃºÄ™ ekranu publicznego!!!
+Nie mogê znale¼æ ekranu publicznego!!!
 ;
 MSG_SETMENU_ERROR
-Nie mogÃ« ustawiÄ™ menustrip!
+Nie mogê ustawiæ menustrip!
 ;
 MSG_LAYOUTMENU_ERROR
-Nie mogÃ« uÃ®oÅ±yÄ™ menu!
+Nie mogê u³o¿yæ menu!
 ;
 MSG_MINEFIELD
 pole minowe
