@@ -1,0 +1,165 @@
+## version $VER: yahzee.catalog 1.0 (05.05.2025)
+## codeset 5
+## language polski
+;
+MSG_GAME_MENU
+ \0Gra
+;
+MSG_GAME_NEW
+N\0Nowa
+;
+MSG_GAME_UNDO
+Z\0Cofnij
+;
+MSG_GAME_HIGHSCORE
+ \0Tabela wyników...
+;
+MSG_GAME_ABOUT
+?\0O programie...
+;
+MSG_GAME_QUIT
+Q\0Skoñcz Yahzee
+;
+MSG_SETTINGS_MENU
+ \0Ustawienia
+;
+MSG_SETTINGS_NUMPLAYERS
+ \0Liczba graczy
+;
+MSG_SETTINGS_NUMPLAYERS_1
+1\0001 gracz
+;
+MSG_SETTINGS_NUMPLAYERS_2
+2\0002 graczy
+;
+MSG_SETTINGS_NUMPLAYERS_3
+3\0003 graczy
+;
+MSG_SETTINGS_NUMPLAYERS_4
+4\0004 graczy
+;
+MSG_SETTINGS_NUMPLAYERS_5
+5\0005 graczy
+;
+MSG_SETTINGS_NUMPLAYERS_6
+6\0006 graczy
+;
+MSG_SETTINGS_SCORING
+ \0Metoda punktacji
+;
+MSG_SETTINGS_SCORING_DEFAULT
+ \0Tradycyjna
+;
+MSG_SETTINGS_SCORING_AMERICAN
+ \0Amerykañska
+;
+MSG_SETTINGS_SAVE
+ \0Zapisz ustawienia
+;
+MSG_HIGHSCORE_REQTITLE
+Najlepsze wyniki
+;
+MSG_ABOUT_REQTITLE
+O programie... %s
+;
+MSG_ABOUT_REQMSG
+%s v%s\nBy %s %s\nCopyright (c) %s %s
+;
+MSG_NAME_REQTITLE
+Wspania³y wynik graczu %d!!!
+;
+MSG_CONTINUE_GAD
+Kontynuuj
+;
+MSG_NAME_GAD
+Imiê:
+;
+MSG_ROLL_GAD
+Rzut
+;
+MSG_ACES_LABEL
+Asy
+;
+MSG_TWOS_LABEL
+Dwójki
+;
+MSG_THREES_LABEL
+Trójki
+;
+MSG_FOURS_LABEL
+Czwórki
+;
+MSG_FIVES_LABEL
+Pi±tki
+;
+MSG_SIXES_LABEL
+Szóstki
+;
+MSG_UPPERTOTAL_LABEL
+Suma górna
+;
+MSG_BONUS_LABEL
+Premia
+;
+MSG_ONEPAIR_LABEL
+Jedna para
+;
+MSG_TWOPAIRS_LABEL
+Dwie pary
+;
+MSG_THREEKIND_LABEL
+Trójka
+;
+MSG_FOURKIND_LABEL
+Czwórka
+;
+MSG_SMSTRAIGHT_LABEL
+Ma³y strit
+;
+MSG_LGSTRAIGHT_LABEL
+Du¿y strit
+;
+MSG_FULLHOUSE_LABEL
+Full
+;
+MSG_CHANCE_LABEL
+Szansa
+;
+MSG_YAHZEE_LABEL
+YAHZEE
+;
+MSG_TOTAL_LABEL
+Suma koñcowa
+;
+;
+;
+MSG_SETTINGS_GAMETYPE
+ \0Typ gry
+;
+MSG_SETTINGS_GAMETYPE_ORIGINAL
+ \0Oryginalna
+;
+MSG_SETTINGS_GAMETYPE_MAXI
+ \0Maxi
+;
+MSG_THREEPAIRS_LABEL
+Trzy pary
+;
+MSG_FIVEKIND_LABEL
+Pi±tka
+;
+MSG_FULLSTRAIGHT_LABEL
+Pe³ny strit
+;
+MSG_HOUSE_LABEL
+Dom
+;
+MSG_TOWER_LABEL
+Wie¿a
+;
+MSG_MAXIYAHZEE_LABEL
+MAXI-YAHZEE
+;
+MSG_SAVEDROLLS_LABEL
+Zachowane rzuty
+;
