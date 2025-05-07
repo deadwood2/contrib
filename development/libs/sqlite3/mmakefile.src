@@ -1,17 +1,16 @@
-# Copyright © 1995-2019, The AROS Development Team. All rights reserved.
+# Copyright © 1995-2025, The AROS Development Team. All rights reserved.
 # $Id$
 
 include $(SRCDIR)/config/aros-contrib.cfg
 
-#MM- contrib-sqlite : development-sqlite-amalgamation
+#MM- contrib-sqlite : development-sqlite-autoconf
 
-REPOSITORIES := https://www.sqlite.org https://www2.sqlite.org \
- http://repository.timesys.com/buildsources/s/sqlite3/sqlite3-3.7.3 \
+REPOSITORIES := https://www.sqlite.org/2025 https://www2.sqlite.org/2025 \
  https://ftp.osuosl.org/pub/blfs/conglomeration/sqlite
 
-%fetch_and_build_gnu_development package=sqlite-amalgamation version=3.7.3 \
+%fetch_and_build_gnu_development package=sqlite-autoconf version=3480000 \
     suffixes="tar.gz" \
     package_repo="$(REPOSITORIES)" \
-    srcdir=sqlite-3.7.3 patch="yes" \
+    patch="yes" \
     extraoptions="--disable-threadsafe --disable-dynamic-extensions --libdir=$(AROS_LIB)" nlsflag=no xflag=no
 
