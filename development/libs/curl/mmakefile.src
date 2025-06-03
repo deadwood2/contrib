@@ -12,11 +12,11 @@ REPOSITORIES := https://curl.haxx.se/download \
  https://ftp.icm.edu.pl/packages/curl \
  https://mirror.sobukus.de/files/src/curl
 
-CURL_VERSION=7.60.0
+CURL_VERSION=7.76.0
 USER_CPPFLAGS= \
         -D_XOPEN_SOURCE=500 \
         -D__BSD_VISIBLE=1
-CURL_OPTIONS=--disable-shared --without-random --without-libpsl --disable-threaded-resolver --disable-ntlm-wb --with-ssl=$(AROS_DEVELOPMENT) --libdir=$(AROS_LIB)
+CURL_OPTIONS=--disable-shared --without-random --without-libpsl --disable-threaded-resolver --disable-ipv6 --disable-ntlm-wb --with-ssl=$(AROS_DEVELOPMENT) --libdir=$(AROS_LIB)
 
 development-curl--touchfileflag := $(GENDIR)/$(CURDIR)/.files-touched
 
