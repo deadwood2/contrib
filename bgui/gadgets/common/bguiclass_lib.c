@@ -49,7 +49,11 @@ extern UWORD _LibRevision;     /* Revision of library    */
 
 #ifdef __AROS__
 
-struct Library * LibInit();
+AROS_UFP3(struct Library *, LibInit,
+		    AROS_UFHA(struct Library *, lib, D0),
+		    AROS_UFHA(BPTR, segment, A0),
+		    AROS_UFHA(struct ExecBase *,syslib, A6));
+
 AROS_LD1(struct Library *, LibOpen,
     AROS_LHA(ULONG, version, D0),
     struct Library *, lib, 1, BGUIGadget);
