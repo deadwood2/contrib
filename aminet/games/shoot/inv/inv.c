@@ -918,8 +918,8 @@ else
 		if(loop >= MAXBOBS)
 			{
 			bobDrawGlist(win);
-			SetCollision(2,gotit,win->RPort->GelsInfo);
-			SetCollision(3,gotit,win->RPort->GelsInfo);
+			SetCollision(2,(VOID_FUNC)gotit,win->RPort->GelsInfo);
+			SetCollision(3,(VOID_FUNC)gotit,win->RPort->GelsInfo);
 			process_window(win,ship_bob,enemy_bobs);
 			}		
 		for(i = 0; i <loop;i++)
