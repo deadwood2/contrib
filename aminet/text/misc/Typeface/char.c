@@ -692,7 +692,7 @@ ULONG i,j;
   }
 }
 
-void MoveAll(void (*MoveFunction)())
+void MoveAll(MoveFunction_t MoveFunction)
 {
 struct Character *chr;
 ULONG i;
