@@ -712,7 +712,7 @@ void close_outfile(__G)
 #ifdef USE_EF_UT_TIME
     iztimes z_utime;
 #endif
-    LONG FileDate();
+    LONG FileDate(char *filename, time_t u[]);
 
     if (uO.cflag)               /* can't set time or filenote on stdout */
         return;
@@ -780,7 +780,7 @@ int stamp_file(fname, modtime)
     time_t modtime;
 {
     time_t m_time;
-    LONG FileDate();
+    LONG FileDate(char *filename, time_t u[]);
 
     m_time = modtime;
     return (FileDate((char *)fname, &m_time));
