@@ -581,7 +581,7 @@ chunkyi_dispatcher (
    Msg      msg)
 {
    IPTR   retval = 0;
-   
+
    switch (msg->MethodID)
    {
    case OM_NEW:
@@ -615,7 +615,7 @@ chunkyi_dispatcher (
       retval = DoSuperMethodA (cl, obj, msg);
       break;
    }
-      
+
    return retval;
 }
 
@@ -625,15 +625,22 @@ Class *
 init_chunkyiclass (void)
 {
    Class         *cl;
+#if !defined(__AROS__)
    extern IPTR   HookEntry();
-   
+#else
+   extern AROS_UFP3(IPTR, HookEntry,
+       AROS_UFPA(struct Hook *, hook,  A0),
+       AROS_UFPA(APTR,          obj,   A2),
+       AROS_UFPA(APTR,          param, A1));
+#endif
+
    if ((cl = MakeClass (NULL, "imageclass", NULL,
                        sizeof (struct chunkyidata), 0)))
    {
       cl->cl_Dispatcher.h_Entry = HookEntry;
       cl->cl_Dispatcher.h_SubEntry = chunkyi_dispatcher;
    }
-   
+
    return cl;
 }
 
