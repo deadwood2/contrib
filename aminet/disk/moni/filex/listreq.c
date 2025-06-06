@@ -24,7 +24,8 @@ static struct Gadget *LRGadgets[4];
 static long LRLeft = -1, LRTop = -1, LRWidth = -1, LRHeight = -1;
 static struct List *LRList;
 static int LRCurrent, LREntries;
-static void ( * LRFunc )( struct List *, struct Node * );
+typedef void ( * LRFunc_t )( struct List *, struct Node * );
+static LRFunc_t LRFunc;
 
 static long MakeLRGadgets( UWORD Breite, UWORD Height )
 {
@@ -264,7 +265,7 @@ BOOL OpenListReq( struct List *List, CONST_STRPTR Title, void ( * Func )())
 
 	LRCurrent = 0;
 
-	LRFunc = Func;
+	LRFunc = (LRFunc_t)Func;
 
 	{
 		struct Node *n;

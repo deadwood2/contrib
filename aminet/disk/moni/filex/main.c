@@ -414,7 +414,7 @@ static BOOL DoMenu( struct IntuiMessage *Msg )
 							if( !IsListEmpty( &OldFileList ))
 							{
 								if( QuitView( 5, AktuDD ))
-									OpenListReq( &OldFileList, GetStr( MSG_WINDOWTITLE_PREVIOUSFILES ), &OldFileListCallBack );
+									OpenListReq( &OldFileList, GetStr( MSG_WINDOWTITLE_PREVIOUSFILES ), (VOID_FUNC)&OldFileListCallBack );
 							}
 							else
 								MyBeep();

@@ -966,7 +966,7 @@ BOOL OpenPubScreenListReq( void )
 		return( FALSE );
 	}
 	else
-		return( OpenListReq( ScrList, GetStr(MSG_WINDOWTITLE_PUBLICSCREENLIST), &PubScreenListCallBack ));
+		return( OpenListReq( ScrList, GetStr(MSG_WINDOWTITLE_PUBLICSCREENLIST), (VOID_FUNC)&PubScreenListCallBack ));
 }
 
 /*******************************************************************/
