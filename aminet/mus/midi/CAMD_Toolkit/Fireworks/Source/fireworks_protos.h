@@ -17,7 +17,8 @@ LONG HowOldIsTimestamp(ULONG timestamp);
 
                                /* async.c */
 
-BOOL StartAsyncTask(struct Globals *glob, struct Prefs *pref, UBYTE *TaskName, TaskFlag flg, APTR AsyncFunction, APTR UserData, ULONG UDLength);
+typedef void (*AsyncFunction_t)(struct Globals *, struct Prefs *, void *);
+BOOL StartAsyncTask(struct Globals *glob, struct Prefs *pref, UBYTE *TaskName, TaskFlag flg, AsyncFunction_t AsyncFunction, APTR UserData, ULONG UDLength);
 void AsyncMessageFunction(struct Globals *glob, struct Prefs *pref, APTR UserData);
 
 BOOL AllocAsync(struct Globals *glob, TaskFlag flg);

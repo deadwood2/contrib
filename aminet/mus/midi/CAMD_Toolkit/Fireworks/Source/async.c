@@ -6,14 +6,13 @@
 #include "fireworks.h"
 #include "fireworks_protos.h"
 
-
 struct AsyncData
 {
 	struct Message Message;
 	struct Globals *glob;
 	struct Prefs *pref;
 	TaskFlag flg;
-	void (*AsyncFunction)(struct Globals *glob, struct Prefs *pref, APTR UserData);
+	AsyncFunction_t AsyncFunction;
 };
 
 SAVEDS void AsyncTask(void)
@@ -41,7 +40,7 @@ SAVEDS void AsyncTask(void)
 	}
 }
 
-BOOL StartAsyncTask(struct Globals *glob, struct Prefs *pref, UBYTE *TaskName, TaskFlag flg, APTR AsyncFunction, APTR UserData, ULONG UDLength)
+BOOL StartAsyncTask(struct Globals *glob, struct Prefs *pref, UBYTE *TaskName, TaskFlag flg, AsyncFunction_t AsyncFunction, APTR UserData, ULONG UDLength)
 {
 	BOOL Success = FALSE;
 	struct Process *proc;
@@ -76,7 +75,7 @@ BOOL StartAsyncTask(struct Globals *glob, struct Prefs *pref, UBYTE *TaskName, T
 				ad->glob = glob;
 				ad->pref = pref;
 				ad->flg = flg;
-				ad->AsyncFunction = ( void (*)() )AsyncFunction;
+				ad->AsyncFunction = AsyncFunction;
 				
 				if (UserData && UDLength)
 				{
