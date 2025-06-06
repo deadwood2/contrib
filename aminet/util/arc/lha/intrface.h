@@ -24,17 +24,24 @@ extern void fileerror(); */
 /* from slide.c */ 
 extern node *next;
 
-extern int encode_alloc();
-extern void encode();
-extern void decode();
+extern int encode_alloc(int method);
+extern void encode(struct interfacing *interface);
+extern void decode(struct interfacing *interface);
 
 /* from crcio.c */
 extern unsigned short crc;
 
-extern void make_crctable();
-extern unsigned short calccrc();
+extern void make_crctable(void);
+extern unsigned short calccrc(unsigned char *p,
+                       unsigned int n);
 
 /* from append.c */
-extern void start_indicator();
-extern void finish_indicator();
-extern void finish_indicator2();
+extern void start_indicator(char *name,
+                     long size,
+                     char *msg,
+                     long def_indicator_threshold);
+extern void finish_indicator2(char *name,
+                       char *msg,
+                       int pcnt);
+extern void finish_indicator(char *name,
+                      char *msg);

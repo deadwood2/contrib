@@ -73,7 +73,8 @@ extern unsigned short	c_freq[], c_table[], c_code[],
 			p_freq[], pt_table[], pt_code[],
 			t_freq[];
 
-extern void output_st1();
+extern void output_st1(int c,
+                int p);
 extern unsigned char *alloc_buf(void);
 extern void encode_start_st1(void);
 extern void encode_end_st1(void);
@@ -110,16 +111,22 @@ extern void decode_start_lz5(void);
 /* from maketbl.c */
 /* void make_table(short nchar, uchar bitlen[],
 		   short tablebits, ushort table[]); */
-extern void make_table(/*int nchar, uchar bitlen[],
-			 int tablebits, ushort table[]*/);
+extern void make_table(int nchar,
+                unsigned char *bitlen,
+                int tablebits,
+                unsigned short *table);
 
 /* from maketree.c */
 /* void make_code(short n, uchar len[], ushort code[]);
 short make_tree(short nparm, ushort freqparm[], 
                 uchar lenparm[], ushort codeparam[]); */
-extern void make_code(/*int n, uchar len[], ushort code[]*/);
-extern short make_tree(/*int nparm, ushort freqparm[], 
-			 uchar lenparm[], ushort codeparam[]*/);
+extern void make_code(int n,
+               unsigned char *len,
+               unsigned short *code);
+extern short make_tree(int nparm,
+                unsigned short *freqparm,
+                unsigned char *lenparm,
+                unsigned short *codeparm);
 
 /* from crcio.c */
 extern FILE *infile, *outfile;
@@ -127,12 +134,17 @@ extern unsigned short crc, bitbuf;
 extern int dispflg;
 
 extern void make_crctable(void);
-extern unsigned short calccrc(/*uchar *p, uint n*/);
+extern unsigned short calccrc(unsigned char *p,
+                       unsigned int n);
 //extern void fillbuf(/*uchar n*/);
 //extern unsigned short getbits(/*uchar n*/);
 //extern void putcode(/*uchar n, ushort x*/);
 //extern void putbits(/*uchar n, ushort x*/);
-extern int fread_crc(/*uchar *p, int n, FILE *f*/);
-extern void fwrite_crc(/*uchar *p, int n, FILE *f*/);
+extern int fread_crc(unsigned char *p,
+              int n,
+              FILE *fp);
+extern void fwrite_crc(unsigned char *p,
+                int n,
+                FILE *fp);
 extern void init_getbits(void);
 extern void init_putbits(void);

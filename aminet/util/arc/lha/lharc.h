@@ -123,8 +123,8 @@ extern struct interfacing interface;
 
 
 /* non-integral functions */
-extern struct tm *localtime ();
-extern char *getenv ();
+extern struct tm *localtime (const time_t *);
+extern char *getenv (const char *name);
 
 #ifndef FALSE
 #define	FALSE	0

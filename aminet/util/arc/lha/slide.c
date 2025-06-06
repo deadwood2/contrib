@@ -22,22 +22,22 @@ static unsigned long encoded_origsize;
 static struct encode_option encode_define[2] = {
 #if defined(__STDC__) || defined(AIX)
 /* lh1 */
-	{(void(*)())output_dyn,
-	 (void(*)())encode_start_fix,
-	 (void(*)())encode_end_dyn},
+	{(void(*)(int, int))output_dyn,
+	 (void(*)(void))encode_start_fix,
+	 (void(*)(void))encode_end_dyn},
 /* lh4, 5 */
-	{(void(*)())output_st1,
-	(void(*)())encode_start_st1,
-	(void(*)())encode_end_st1}
+	{(void(*)(int, int))output_st1,
+	(void(*)(void))encode_start_st1,
+	(void(*)(void))encode_end_st1}
 #else
 /* lh1 */
-	{(int(*)())output_dyn,
-	 (int(*)())encode_start_fix,
-	 (int(*)())encode_end_dyn},
+	{(int(*)(int, int))output_dyn,
+	 (int(*)(void))encode_start_fix,
+	 (int(*)(void))encode_end_dyn},
 /* lh4, 5 */
-	{(int(*)())output_st1,
-	(int(*)())encode_start_st1,
-	(int(*)())encode_end_st1}
+	{(int(*)(int, int))output_st1,
+	(int(*)(void))encode_start_st1,
+	(int(*)(void))encode_end_st1}
 #endif
 };
 

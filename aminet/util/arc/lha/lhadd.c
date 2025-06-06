@@ -12,8 +12,14 @@
 #include <aros/debug.h>
 #include "lharc.h"
 
-extern int encode_lzhuf ();
-extern int encode_stored_crc ();
+extern int encode_lzhuf(FILE *infp,
+                 FILE *outfp,
+                 long size,
+                 long *original_size_var,
+                 long *packed_size_var,
+                 char *name,
+                 char *hdr_method);
+extern int encode_stored_crc(FILE *, FILE *, long, long *, long *);
 
 static char new_archive_name_buffer [ FILENAME_LENGTH ];
 static char *new_archive_name;

@@ -13,7 +13,12 @@
 #include <dos/dos.h>
 #include <proto/dos.h>
 
-extern int decode_lzhuf ();
+extern int decode_lzhuf(FILE *infp,
+                 FILE *outfp,
+                 long original_size,
+                 long packed_size,
+                 char *name,
+                 int method);
 
 static boolean inquire_extract(char *name)
 {
