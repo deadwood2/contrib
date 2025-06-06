@@ -217,15 +217,15 @@ static ulong DoAssignIteration(farlong *arraybase,
 		ulong numarrays);
 static void LoadAssignArrayWithRand(farlong *arraybase,
 		ulong numarrays);
-static void LoadAssign(farlong arraybase[][ASSIGNCOLS]);
-static void CopyToAssign(farlong arrayfrom[][ASSIGNCOLS],
-		long arrayto[][ASSIGNCOLS]);
-static void Assignment(farlong arraybase[][ASSIGNCOLS]);
-static void calc_minimum_costs(long tableau[][ASSIGNCOLS]);
-static int first_assignments(long tableau[][ASSIGNCOLS],
-		short assignedtableau[][ASSIGNCOLS]);
-static void second_assignments(long tableau[][ASSIGNCOLS],
-		short assignedtableau[][ASSIGNCOLS]);
+static void LoadAssign(farlong arraybase[ASSIGNROWS][ASSIGNCOLS]);
+static void CopyToAssign(farlong arrayfrom[ASSIGNROWS][ASSIGNCOLS],
+		long arrayto[ASSIGNROWS][ASSIGNCOLS]);
+static void Assignment(farlong arraybase[ASSIGNROWS][ASSIGNCOLS]);
+static void calc_minimum_costs(long tableau[ASSIGNROWS][ASSIGNCOLS]);
+static int first_assignments(long tableau[ASSIGNROWS][ASSIGNCOLS],
+		short assignedtableau[ASSIGNROWS][ASSIGNCOLS]);
+static void second_assignments(long tableau[ASSIGNROWS][ASSIGNCOLS],
+		short assignedtableau[ASSIGNROWS][ASSIGNCOLS]);
 
 /********************
 ** IDEA ENCRYPTION **
@@ -367,7 +367,7 @@ static void do_out_error(int patt);
 static void worst_pass_error();
 static void do_mid_error();
 static void adjust_out_wts();
-static void adjust_mid_wts();
+static void adjust_mid_wts(int patt);
 static void do_back_pass(int patt);
 static void move_wt_changes();
 static int check_out_error();
