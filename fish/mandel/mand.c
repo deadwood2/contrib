@@ -127,8 +127,10 @@ int cur_resource = 0;
 
 int main()
 {
+#if !defined(__AROS__)
    FILE *fopen();
    char *fgets(),*stpblk();
+#endif
 #if USE_MATHFFP
    float cnvf();
 #else

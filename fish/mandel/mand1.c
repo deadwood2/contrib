@@ -122,7 +122,7 @@ void init_c7rot()
 
 int gen_mand()
 {
-   void write_out();
+   void write_out(int,int,int);
 
    int x_coord,y_coord,count;
    union kludge x_gap,y_gap,z_r,z_i,u_r,u_i,temp,temp2,temp3,const0;
@@ -250,7 +250,7 @@ u_i.f = -2.0  + (((float)y_coord) * 4.0 / 200.0);
  
 int disp_mand()
 {
-   void write_out();
+   void write_out(int,int,int);
 
    int x_coord,y_coord,count;
 
@@ -274,7 +274,7 @@ int disp_mand()
 void write_out(count,x,y)
 int count,x,y;
 {
-   void ham_write();
+   void ham_write(int,int,int);
    SHORT modulus;
    int color;
 
