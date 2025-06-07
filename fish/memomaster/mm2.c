@@ -27,9 +27,9 @@ struct Remember *RK;
 
 void Action(),MemoBrs(),Display_Heads();
 void Colours(char c0, char c1, char c2, char c3);
-void Display_One(),Display_Blank(),Display_Block(),Mode_Help();
-void Toggle(),DisplayT(),Today();
-int Shrink(),SaveData(),date2days(),Month2Num(),CleanUp(),SetColours();
+void Display_One(int, struct MI_Mem *),Display_Blank(int),Display_Block(struct MinNode *),Mode_Help();
+void Toggle(int),DisplayT(char **),Today(char *Today_buf);
+int Shrink(),SaveData(),date2days(int,int,int),Month2Num(char *),CleanUp(),SetColours();
 BOOL MemoChk(BOOL loud);
 struct Window *MainWindow();
 extern struct MinNode *MoveBackOne(struct MinNode *);

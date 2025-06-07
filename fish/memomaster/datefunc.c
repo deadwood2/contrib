@@ -14,7 +14,7 @@ BOOL Month2Txt(int MonthNum, char *MonthTxt);
 BOOL CheckMemoDate(char *dbuf);
 BOOL CheckDate(int dd, int mm, int yy);
 void Today(char *Today_buf);
-char *ctime();
+char *ctime(const time_t * tt);
 
 /*-----------------------------------------------------------------------
  * Convert month as MMM (eg JUL) to month number (eg 2 for FEB).

@@ -49,13 +49,13 @@
 #define rename Rename
 #endif
 
-extern void Display_One(), Display_Blank();
+extern void Display_One(int, struct MI_Mem *), Display_Blank(int);
 
 extern struct MinNode *DisplayFirst;
 extern struct Remember *RK;
 extern struct MinList *MemListPtr;
 
-void Toggle();
+void Toggle(int);
 
 /* ==========================================================================
  * LoadData() - version using exec list handling
@@ -222,7 +222,7 @@ void Display_Block(struct MinNode *m)
 /*    while ( (p<MEMOS_IN_BLOCK) && ( m != NULL ) ) */
     while ( (p<MEMOS_IN_BLOCK) && ( m->mln_Succ ) )
 	{
-	Display_One( p, (struct MI_mem *)m );
+	Display_One( p, (struct MI_Mem *)m );
 	p++;
 	m=m->mln_Succ;
 	}
