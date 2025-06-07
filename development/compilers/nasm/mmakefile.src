@@ -135,11 +135,12 @@ $(EXEDIR)/test/arostest.README : test/arostest.README | $(EXEDIR)
 
 #MM
 contrib-development-nasm-asm-includes: | $(EXEDIR)/include
-	$(foreach f, \
+	@$(ECHO) "Generating Nasm asm headers ..."
+	@$(foreach f, \
 		$(wildcard $(AROS_INCLUDES)/defines/*.h), \
 		$(AWK) -f $(SRCDIR)/$(CURDIR)/genasminc.awk $(f) \
 			>$(EXEDIR)/include/$(notdir $(f:%.h=%.i)) ; )
-	$(foreach f, \
+	@$(foreach f, \
 		$(wildcard $(EXEDIR)/include/*.i), \
 		sort -n -k 4 $(f) >$(f:%.i=%.inc) ; )
 
