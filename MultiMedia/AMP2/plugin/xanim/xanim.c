@@ -19,20 +19,6 @@ static unsigned char *chunky = NULL; /* VIDEO */
 
 typedef void XA_ANIM_HDR;
 
-typedef struct
-{
-  XA_ANIM_HDR *anim_hdr; /* used to add stuff to Free Chain */
-  u32 compression;       /* input/output compression */
-  u32 x,y;               /* input/output x,y */
-  u32 depth;             /* input depth  and cfunc */
-  void *extra;           /* extra for delta */
-  u32 xapi_rev;          /* XAnim API rev */
-  u32 (*decoder)();      /* decoder routine */
-  u8 *description;       /* text string */
-  u32 avi_ctab_flag;     /* AVI ctable to be read */
-  u32 (*avi_read_ext)(); /* routine to read extended data */
-} XA_CODEC_HDR;
-
 #define CODEC_SUPPORTED    1
 #define CODEC_UNKNOWN      0
 #define CODEC_UNSUPPORTED -1
@@ -43,24 +29,6 @@ typedef struct
 #define XAVID_DEC_FUNC     0x0100
 
 #define XAVID_API_REV      0x0003
-
-typedef struct {
-  u32 what;
-  u32 id;
-  s32 (*iq_func)();  /* init/query function */
-  u32 (*dec_func)(); /* opt decode function */
-} XAVID_FUNC_HDR;
-
-typedef struct {
-  u32 api_rev;
-  u8 *desc;
-  u8 *rev;
-  u8 *copyright;
-  u8 *mod_author;
-  u8 *authors;
-  u32 num_funcs;
-  XAVID_FUNC_HDR    *funcs;
-} XAVID_MOD_HDR;
 
 typedef struct
 {
@@ -147,6 +115,38 @@ typedef struct
   s32 *YUV_UG_tab;
   s32 *YUV_VG_tab;
 } YUVTabs;
+
+typedef struct
+{
+  XA_ANIM_HDR *anim_hdr; /* used to add stuff to Free Chain */
+  u32 compression;       /* input/output compression */
+  u32 x,y;               /* input/output x,y */
+  u32 depth;             /* input depth  and cfunc */
+  void *extra;           /* extra for delta */
+  u32 xapi_rev;          /* XAnim API rev */
+  u32 (*decoder)(unsigned char *,void *, int, XA_DEC2_INFO *);      /* decoder routine */
+  u8 *description;       /* text string */
+  u32 avi_ctab_flag;     /* AVI ctable to be read */
+  u32 (*avi_read_ext)(); /* routine to read extended data */
+} XA_CODEC_HDR;
+
+typedef struct {
+  u32 what;
+  u32 id;
+  s32 (*iq_func)(XA_CODEC_HDR *);  /* init/query function */
+  u32 (*dec_func)(); /* opt decode function */
+} XAVID_FUNC_HDR;
+
+typedef struct {
+  u32 api_rev;
+  u8 *desc;
+  u8 *rev;
+  u8 *copyright;
+  u8 *mod_author;
+  u8 *authors;
+  u32 num_funcs;
+  XAVID_FUNC_HDR    *funcs;
+} XAVID_MOD_HDR;
 
 static YUVBufs jpg_YUVBufs;
 static YUVTabs def_yuv_tabs;
