@@ -131,19 +131,19 @@ int       attenuating;   /* attenuation factor for each hit  */
                break;
 
           case TRIANGLE :
-               hit = hittriangle(np,eye,d,p,&t);
+               hit = hittriangle((triangle *)np,eye,d,p,&t);
                break;
 
           case QUAD :
-               hit = hitquad(np,eye,d,p,&t);
+               hit = hitquad((quad *)np,eye,d,p,&t);
                break;
 
           case RING :
-               hit = hitring(np,eye,d,p,&t);
+               hit = hitring((ring *)np,eye,d,p,&t);
                break;
 
           case CYLINDER :
-               hit = hitcylinder(np,eye,d,p,&t);
+               hit = hitcylinder((cylinder *)np,eye,d,p,&t);
                break;
 
           default :

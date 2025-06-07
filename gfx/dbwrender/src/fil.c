@@ -454,7 +454,10 @@ int     argc;
 char    **argv;
 {
      int       i;
-     char      *s, *strchr();
+     char      *s;
+#if !defined(__AROS__)
+     char      *strchr();
+#endif
      rextent   re;
 
      if (argc == 1) 

@@ -48,11 +48,11 @@ int  nppsp = 0;
 #define   pushnpp(npp)   (nppstack[++nppsp] = npp)
 #define   popnpp         (nppstack[nppsp--])
 
-void sphere_rextent();
-void triangle_rextent();
-void quad_rextent();
-void ring_rextent();
-void cyl_rextent();
+void sphere_rextent(sphere *, rextent *);
+void triangle_rextent(triangle *, rextent *);
+void quad_rextent(quad *, rextent *);
+void ring_rextent(ring *, rextent *);
+void cyl_rextent(cylinder *, rextent *);
 void cone_rextent();
 
 
@@ -100,25 +100,25 @@ rextent *re;
                /* planar objects */
           case TRIANGLE:
 
-               triangle_rextent(np,&newre); 
+               triangle_rextent((triangle *)np,&newre); 
                break;
           case QUAD:
 
-               quad_rextent(np,&newre); 
+               quad_rextent((quad *)np,&newre); 
                break;
           case RING:
 
-               ring_rextent(np,&newre); 
+               ring_rextent((ring *)np,&newre); 
                break;
 
                /* volume objects */
           case SPHERE:
 
-               sphere_rextent(np,&newre); 
+               sphere_rextent((sphere *)np,&newre); 
                break;
           case CYLINDER:
                /* in work */
-               cyl_rextent(np,&newre);
+               cyl_rextent((cylinder *)np,&newre);
                break;
 
           }

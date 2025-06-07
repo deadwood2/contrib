@@ -160,11 +160,10 @@ fracvert;
 
 #define ERROR( str ) { fprintf( stderr, "%s\n", str ); exit(0); }
 
-#ifndef IBM_PC
+#if !defined(IBM_PC) && !defined(__AROS__)
 extern void *malloc();
-#endif
-
 extern long time();
+#endif
 
 #define CHECK_ALLOC( ptr, typ ) {\
     if (!(ptr = (typ *) malloc( sizeof( typ )))) {\
@@ -583,27 +582,27 @@ extern int          MAXCOL;
 #ifndef MODULE_CALC
 extern void         spherenormal();     /* center to dir                */
 extern void         planenormal();      /* ve vp n                      */
-extern void         calcripple();       /* point w ripple               */
-extern void         noise3();           /* point total                  */
-extern float        noise();            /* point                        */
-extern float        turbulence();       /* point                        */
-extern void         dodirection();      /* val eye2 d2 atten amblits    */
+extern void         calcripple(vector, int, vector);       /* point w ripple               */
+extern void         noise3(vector,vector);           /* point total                  */
+extern float        noise(vector);            /* point                        */
+extern float        turbulence(vector);       /* point                        */
+extern void         dodirection(vector, vector, vector, float, int);      /* val eye2 d2 atten amblits    */
 #endif
 
 #ifndef MODULE_EXTENT
 extern void         setextent();        /* ep re                        */
-extern void         getextent();        /* np re                        */
+extern void         getextent(node *, rextent *);        /* np re                        */
 #endif
 
 #ifndef MODULE_HIT
-extern void         findnormal();       /* np p n                       */
-extern int          hitcylinder();      /* top bottom a b c eye d p t   */
-extern int          hitsphere();        /* center radius eye d p t      */
-extern int          hitplane();         /* p ve vp eye d sfs inter      */
-extern int          hittriangle();      /* tp eye d p t                 */
-extern int          hitquad();          /* qp eye d p t                 */
-extern int          hitring();          /* rp eye d p t                 */
-extern void         shell();            /* v v1 v2 n                    */
+extern void         findnormal(node *, vector, vector);       /* np p n                       */
+extern int          hitcylinder(cylinder *, vector, vector, vector, float *);      /* top bottom a b c eye d p t   */
+extern int          hitsphere(vector, float, vector, vector, vector, float   *);        /* center radius eye d p t      */
+extern int          hitplane(vector,vector,vector,vector,vector,vector,vector);         /* p ve vp eye d sfs inter      */
+extern int          hittriangle(triangle *, vector, vector, vector, float *);      /* tp eye d p t                 */
+extern int          hitquad(quad *, vector, vector, vector, float *);          /* qp eye d p t                 */
+extern int          hitring(ring *, vector, vector, vector, float *);          /* rp eye d p t                 */
+extern void         shell(float[], vector[], node *[], int);            /* v v1 v2 n                    */
 #endif
 
 #ifndef MODULE_FILEIO
@@ -613,38 +612,38 @@ extern void         read_vec();         /* v                            */
 extern void         read_attr();        /* attr                         */
 extern void         dofractal();        /* level a b c attr             */
 extern void         readimagefile();    /* opp                          */
-extern void         getinput();         /* argc argv                    */
+extern void         getinput(int, char *);         /* argc argv                    */
 extern void         write_scanline();   /*                              */
-extern void         getoutput();        /* argc argv                    */
+extern void         getoutput(int, char *);        /* argc argv                    */
 #endif
 
 #ifndef MODULE_INTER
-extern node *get_next_intersection();   /* which best_p best_t          */
+extern node *get_next_intersection(int, vector, float *);   /* which best_p best_t          */
 extern void         add_intersection(); /* np p t attenuating           */
 extern void       calc_intersections(); /* np eye d attenuating         */
-extern void         all_intersects();   /* eye d attenuating            */
+extern void         all_intersects(vector, vector, int);   /* eye d attenuating            */
 extern int          bounce_lighting();  /* pintens plitdir bouncep lit  */
-extern void         blendcolor();       /* orig target scale result     */
-extern void         getatten();         /* atten p d lit pointdist      */
+extern void         blendcolor(vector,vector,float,vector);       /* orig target scale result     */
+extern void         getatten(vector,vector,vector,int,float);         /* atten p d lit pointdist      */
 #endif
 
 #ifndef MODULE_MATH
-extern void         veczero();          /* v                            */
-extern void         veccopy();          /* from to                      */
-extern void         vecdump();          /* v str                        */
+extern void         veczero(vector);          /* v                            */
+extern void         veccopy(vector,vector);          /* from to                      */
+extern void         vecdump(vector,char *);          /* v str                        */
 extern float        hlsvalue();         /* n1 n2 hue                    */
-extern void         cv();               /* x y z v                      */
-extern void         hls();              /* h l s v                      */
-extern void         vecsub();           /* v1 v2 r                      */
-extern void         vecsum();           /* v1 v2 r                      */
-extern void         vecmul();           /* v1 v2 r                      */
-extern void         vecdiv();           /* v1 v2 r                      */
-extern void         vecscale();         /* s v r                        */
-extern float        norm();             /* v                            */
-extern void         normalize();        /* v                            */
-extern float        dot();              /* v1 v2                        */
-extern void         cross();            /* v1 v2 r                      */
-extern void         direction();        /* f t d                        */
+extern void         cv(float, float, float, vector);               /* x y z v                      */
+extern void         hls(float, float, float, vector);              /* h l s v                      */
+extern void         vecsub(vector,vector,vector);           /* v1 v2 r                      */
+extern void         vecsum(vector,vector,vector);           /* v1 v2 r                      */
+extern void         vecmul(vector,vector,vector);           /* v1 v2 r                      */
+extern void         vecdiv(vector,vector,vector);           /* v1 v2 r                      */
+extern void         vecscale(float,vector,vector);         /* s v r                        */
+extern float        norm(vector);             /* v                            */
+extern void         normalize(vector);        /* v                            */
+extern float        dot(vector,vector);              /* v1 v2                        */
+extern void         cross(vector,vector,vector);            /* v1 v2 r                      */
+extern void         direction(vector,vector,vector);        /* f t d                        */
 extern long         curstack();         /*                              */
 #endif
 
@@ -653,10 +652,10 @@ extern float    rnd();
 #endif
 
 #ifndef MODULE_TEXTURE
-extern void         gettex();           /* diffuse np p n               */
+extern void         gettex(vector,node *,vector,vector);           /* diffuse np p n               */
 #endif
 
 #ifndef MODULE_VAL
-extern void         getval();           /* val np p d atten ambientlit  */
+extern void         getval(vector, node *, vector, vector, float, int);           /* val np p d atten ambientlit  */
 #endif
 
