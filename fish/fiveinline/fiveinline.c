@@ -38,7 +38,7 @@ static  SHORT Weight[]={0,0,4,20,100,500,0};
 WORD wintop = 11;
 
     void OpenALL(),Human(),AddUp(),UpdateValue(),MakeMove(),FindMove();
-    void CreateMes(),DrawFrame(),make_window(),init_newgame();
+    void CreateMes(struct IntuiText *, SHORT, SHORT, UBYTE *),DrawFrame(),make_window(),init_newgame();
     void setup_menu(),show_About();
 
 struct TextAttr topaz8 =
