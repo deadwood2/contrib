@@ -119,12 +119,12 @@ $(GENDIR)/$(CURDIR)/gitsha1.c: $(SRCDIR)/$(CURDIR)/src/utils/gitsha1.c.in | $(GE
 #MM
 contrib-gfx-c-ray-generated : $(GENDIR)/$(CURDIR)/gitsha1.c
 
-NOWARN_FLAGS  :=
-USER_CFLAGS   := $(NOWARN_FLAGS) -Wno-missing-field-initializers -std=c99 -O2 -ftree-vectorize
+OPTIMIZATION_CFLAGS := -O2 -ftree-vectorize
+NOWARN_FLAGS  := $(NOWARN_MISSING_FIELD_INITIALIZERS)
+USER_CFLAGS   := $(CFLAGS_C99) $(NOWARN_FLAGS)
 USER_INCLUDES := -I$(SRCDIR)/$(CURDIR)/src
 USER_LDFLAGS  :=
 USER_CPPFLAGS := -DCRAY_TESTING -D_GNU_SOURCE
-
 
 %build_prog mmake=contrib-gfx-c-ray-bin \
     progname=$(EXE) targetdir=$(EXEDIR) \
