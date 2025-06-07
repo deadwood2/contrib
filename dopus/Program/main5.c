@@ -467,8 +467,8 @@ char *fil;
     }
 }
 
-void update_buffer_stamp(win,true)
-int win,true;
+void update_buffer_stamp(win,stamp)
+int win,stamp;
 {
     struct FileInfoBlock __aligned fib;
     char dirbuf[256];
@@ -479,7 +479,7 @@ int win,true;
     dirwin=dopus_curwin[win];
     strcpy(dirbuf,str_pathbuffer[win]);
     FOREVER {
-        if (true) {
+        if (stamp) {
             if (lockandexamine(dirbuf,&fib))
                 copy_datestamp(&fib.fib_Date,&dirwin->dirstamp);
             if (!(doparent(dirbuf)) ||
