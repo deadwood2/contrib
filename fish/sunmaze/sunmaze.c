@@ -116,8 +116,8 @@ struct RastPort *rp;
 
 ULONG  class,code;
 BOOL   WorkBench=FALSE,demomode=FALSE,forward();
-void   right(),left(),demo(),newmaze(),leave(),show3d(),showmaze();
-void   statusline();
+void   right(),left(),demo(),newmaze(),leave(char *),show3d(),showmaze();
+void   statusline(short, char *);
 short  i,j,xsize,ysize,mazesize=2,x,y,wayout,moves;
 char   *mymaze=NULL,areapts[7*5],*raster=NULL,buffer[20];
 short  dirincs[4][2]={{0,-1},{1,0},{0,1},{-1,0}};
