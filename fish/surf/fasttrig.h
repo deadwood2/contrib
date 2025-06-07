@@ -15,6 +15,10 @@ extern float *costab;
 #define fsin(sdeg) sintab[sdeg]
 #define fcos(sdeg) costab[sdeg]
 
+#if !defined(__AROS__)
 bool InitFastTrig(/* float, int */);
+#else
+bool InitFastTrig(int,int,int);
+#endif
 
 #endif /* !FASTTRIG_H_FILE */

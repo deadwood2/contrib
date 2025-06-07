@@ -53,16 +53,16 @@ static short     numcolors;
 static
 FILE            *fin;                   /* input file           */
 
-static void FRead();
-static void ReadBMHD();
+static void FRead(APTR, int);
+static void ReadBMHD(struct BMHD *);
 static void ReadChunk();
-static void RastOut();
-static void HamOut();
-static char GetIlbmVal();
+static void RastOut(char **, int, int, int);
+static void HamOut(char **, int, int);
+static char GetIlbmVal(char **, int, int);
 static void InitColorMappings();
-static short Convert();
-static void ReadDecomLine();
-static void ProcessRows();
+static short Convert(unsigned char,unsigned char,unsigned char);
+static void ReadDecomLine(int, char *);
+static void ProcessRows(struct BMHD *);
 
 #define ABORT(str) { OutErr(str); goto ErrorExit; }
 
@@ -384,7 +384,7 @@ struct BMHD *bmhd;
   */
 
 static void FRead(pointer,len)
-char    *pointer;
+APTR pointer;
 int     len;
 {
     if (fread (pointer, len, 1, fin) == 0)  {

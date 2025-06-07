@@ -169,14 +169,11 @@ float xpos, ypos;
 
 
 
-
-
-
 /*
  * return true on failure
  */
 bool Revolve(acceptfunc)
-    void (*acceptfunc)();
+    acceptfunc_t acceptfunc;
 {
     float tparm, deltat;
     int subseg;

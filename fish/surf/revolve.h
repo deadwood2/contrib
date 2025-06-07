@@ -34,6 +34,8 @@ extern short RevMesh;
 extern short RevImageR,
              RevImageB;
 
+typedef void (*acceptfunc_t)(PtGen *,PtGen *,PtGen *,PtGen *);
+#if !defined(__AROS__)
 extern void SetRotStart();
 extern void SetRotRange(/* Panel_item, int, struct input_event */);
 extern void SetSecAng(/* Panel_item, int, struct input_event */);
@@ -45,4 +47,17 @@ extern void SetRevMesh( /* Panel_item, int, struct input_event */);
 extern void SetSurfDist(/* Panel_item, int, struct input_event */);
 extern void SetViewDist();
 extern void SetPerspective();
+#else
+extern void SetRotStart(int);
+extern void SetRotRange(int);
+extern void SetSecAng(int);
+extern void SetPolyMode(int);
+extern void SetFitBez();
+extern bool Revolve(acceptfunc_t);
+extern void SetRevAxis(int);
+extern void SetRevMesh(int);
+extern void SetSurfDist(int);
+extern void SetViewDist(int);
+extern void SetPerspective(int);
+#endif
 #endif /* !REVOLVE_H_FILE */

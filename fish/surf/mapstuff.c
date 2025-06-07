@@ -130,7 +130,7 @@ static void AdjMapXY( inx, iny, outpair)
     ScrnPair *outpair;
 {
     float outx, outy;
-    MapXYRatio( inx, iny, &outx, &outy);
+    MapXYRatio( inx, iny, &outx, &outy, 0);
 
     outpair->y = MapImageH * (bezmin + bezdiff * outy);
     outpair->x = MapImageV * (revmin + revdiff * outx);

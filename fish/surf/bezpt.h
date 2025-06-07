@@ -19,17 +19,27 @@ typedef struct {
 #define DefBezMeshVal 10
 
 extern BezCoord Bezpt[MaxSegs+1];
+#if !defined(__AROS__)
 extern void SetBezMesh( /* Panel_item, int, struct input_event */);
+#else
+extern void SetBezMesh(int);
+#endif
 extern int BezMesh;
 extern float BezStepSize;
 
 extern void InitCalcBez( /* void */ );
-extern void CalcBezPt(/* float, float *, float * */);
 extern void XdrawAllBezSegs(/* void */);
 extern void XdrawBezSeg(/* void */);
+extern void ResetCurve( /* void */ );
+#if !defined(__AROS__)
+extern void CalcBezPt(/* float, float *, float * */);
 extern void InitBezPt( /* int, int */);
 extern void EditBezPt( /* int, int */);
-extern void ResetCurve( /* void */ );
+#else
+extern void CalcBezPt(float, float *, float *);
+extern void InitBezPt(int, int);
+extern void EditBezPt(int, int);
+#endif
 
 extern int NumBezPts;
 extern int ActSeg;

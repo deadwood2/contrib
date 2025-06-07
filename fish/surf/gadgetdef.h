@@ -12,7 +12,7 @@ extern UWORD *HourGlass;
 
 extern void InitGadgets();
 extern void EndGadgets();
-extern void GadgetHandler();
+extern void GadgetHandler(struct Gadget *);
 
 enum GadgetName { N_DefLines, N_EditLines, N_EditBez, N_Map, N_Wire,
                   N_Shaded, N_TiltAng, N_PtIntens, N_BkIntens, N_SurfDist,

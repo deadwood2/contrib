@@ -6,7 +6,7 @@
 #endif
 extern void InitWindow();
 extern void CloseDisplay();
-extern void SetMono();
+extern void SetMono(short,short,short);
 extern void ClearWindow();
 extern void DrawPoly();
 

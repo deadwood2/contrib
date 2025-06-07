@@ -1,12 +1,16 @@
 #ifndef MYTYPES_H_FILE
 #define MYTYPES_H_FILE
-#define true 1
-#define false 0
-
-typedef char bool;
 
 #include <stdlib.h>
 //extern char *calloc(), *malloc();
+
+#if !defined(__AROS__)
+#define true 1
+#define false 0
+typedef char bool;
+#else
+#include <stdbool.h>
+#endif
 
 #define null 0L
 

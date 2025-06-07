@@ -8,7 +8,7 @@
 #endif
 #include "mytypes.h"
 
-extern int PackRow();
+extern int PackRow(BYTE *,BYTE *,int);
 extern struct GfxBase * GfxBase;
 
 /*

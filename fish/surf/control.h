@@ -4,5 +4,5 @@ void SetFitBez();
 void SetPolyDraw();
 
 extern CURMODE CurMode;
-extern void EditControl0();
-extern void EditControl1();
+extern void EditControl0(int,int);
+extern void EditControl1(int,int);

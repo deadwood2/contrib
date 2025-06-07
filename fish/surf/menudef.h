@@ -1,3 +1,3 @@
 extern struct Menu menu[];
-extern void MenuHandler(/* USHORT */);
+extern void MenuHandler(USHORT);
 
