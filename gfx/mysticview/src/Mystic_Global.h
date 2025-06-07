@@ -186,9 +186,9 @@ enum MENUITEMS
 #define SETMENUITEM(menu, a) ToggleMenuFlags(menu,a,CHECKED+CHECKIT,0);
 
 
-extern void ToggleMenuFlags(struct Menu *menu, ULONG id, UWORD set, UWORD clear);
-extern struct MenuItem *FindMenuItem(struct Menu *menu, ULONG id);
-extern ULONG GetMenuFlag(struct Menu *menu, ULONG id, int true, int false);
+extern void ToggleMenuFlags(struct Menu *, ULONG, UWORD, UWORD);
+extern struct MenuItem *FindMenuItem(struct Menu *, ULONG);
+extern ULONG GetMenuFlag(struct Menu *, ULONG, int, int);
 #define GetItemFlag(mi, t, f) (((mi)->Flags & CHECKED) ? t : f)
 
 

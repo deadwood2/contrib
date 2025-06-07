@@ -409,7 +409,7 @@ void ToggleMenuFlags(struct Menu *menu, ULONG id, UWORD set, UWORD clear)
 
 --------------------------------------------------------------------*/
 
-ULONG GetMenuFlag(struct Menu *menu, ULONG id, int true, int false)
+ULONG GetMenuFlag(struct Menu *menu, ULONG id, int valtrue, int valfalse)
 {
 	do
 	{
@@ -423,14 +423,14 @@ ULONG GetMenuFlag(struct Menu *menu, ULONG id, int true, int false)
 				{
 					if (GTMENUITEM_USERDATA(si) == (APTR)(IPTR)id)
 					{
-						return (ULONG)((si->Flags & CHECKED) ? true : false);
+						return (ULONG)((si->Flags & CHECKED) ? valtrue : valfalse);
 					}
 				} while ((si = si->NextItem));
 			}
 
 			if (GTMENUITEM_USERDATA(mi) == (APTR)(IPTR)id)
 			{
-				return (ULONG)((mi->Flags & CHECKED) ? true : false);
+				return (ULONG)((mi->Flags & CHECKED) ? valtrue : valfalse);
 			}
 
 		} while ((mi = mi->NextItem));
