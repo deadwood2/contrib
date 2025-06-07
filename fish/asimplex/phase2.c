@@ -28,15 +28,20 @@
 #include "simplex.h"
 
 
-IMPORT VOID   Mult();
-IMPORT USHORT Invers();
-IMPORT DOUBLE M();
-IMPORT VOID   SetM();
+IMPORT VOID   Mult(DOUBLE *, DOUBLE *, DOUBLE *, SHORT, SHORT, SHORT);
+IMPORT USHORT Invers(DOUBLE *, SHORT, SHORT *);
+IMPORT DOUBLE M(DOUBLE *, SHORT, SHORT, SHORT, USHORT);
+IMPORT VOID   SetM(DOUBLE *, SHORT, SHORT, SHORT, DOUBLE);
 
 GLOBAL DOUBLE INFINITE;
 GLOBAL BOOL   minimize;
 GLOBAL FILE   *file[2];
 
+VOID    BTRAN(SHORT, DOUBLE *, SHORT *, DOUBLE *, DOUBLE *, DOUBLE *);
+VOID    FTRAN(SHORT, SHORT, DOUBLE *, DOUBLE *, SHORT, DOUBLE *, USHORT);
+USHORT  PRICE(SHORT, SHORT, DOUBLE *, SHORT *, DOUBLE *, DOUBLE *, DOUBLE *, SHORT *, USHORT, SHORT *);
+USHORT  CHUZR(SHORT, DOUBLE *, DOUBLE *, DOUBLE *, SHORT *, SHORT, SHORT, SHORT *, USHORT *);
+USHORT  WRETA(SHORT, SHORT, SHORT *B, SHORT *, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE, DOUBLE *, DOUBLE *, SHORT, SHORT, DOUBLE *, DOUBLE *, SHORT *, USHORT, ULONG);
 
 /*****************************************************************************
  * USHORT PhaseII()                                                          *
@@ -82,8 +87,6 @@ ULONG   *iter;        /* Zeiger auf "Anzahl Iterationen"                     */
   USHORT  phase = flags & (PHASE_I | PHASE_II), verbose = flags & VERBOSE;
   SHORT   r ,s ,nm = n-m, i, qs = 0, lastpos = nm-1; /* lastpos: 0,...,(n-m)-1 */
   DOUBLE  c0_old;
-  VOID    BTRAN(), FTRAN();
-  USHORT  PRICE(), CHUZR(), WRETA();
   ULONG   count = 1L;
 
 

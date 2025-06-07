@@ -39,10 +39,12 @@
 
 
 //IMPORT STRPTR ctime();
-IMPORT VOID   SetM();
+IMPORT VOID   SetM(DOUBLE *, SHORT, SHORT, SHORT, DOUBLE);
+#if !defined(__AROS__)
 IMPORT FILE   *fopen();
 IMPORT INT    fseek();
 IMPORT long int ftell()/*, time()*/;
+#endif
 
 GLOBAL DOUBLE  INFINITE;
 GLOBAL BOOL    minimize;
@@ -102,7 +104,7 @@ STRPTR  args;
 
 {
   SHORT i;
-  BOOL  GetArgs(), Pass1(), Pass2(), ChooseSymbols(), CorrectBounds();
+  BOOL  GetArgs(STRPTR), Pass1(), Pass2(), ChooseSymbols(), CorrectBounds();
   VOID  GetRidOfLists(), GiveMemBack();
 
   num_var = num_goals = num_rhs = num_ranges = num_bounds = 0;
@@ -140,7 +142,7 @@ STRPTR  str;
 {
   SHORT   start, stop, length;
   LONG    t;
-  VOID    PrintError();
+  VOID    PrintError(INT, STRPTR);
   /* SHORT   GetExpr(); */
   STRPTR  ptr;
 
@@ -261,6 +263,7 @@ invalid: /* Sprungmarke (na ja) für "invalid arguments" */
 }
 
 
+BOOL    ParseLine(SHORT, STRPTR, SHORT);
 
 /*****************************************************************************
  * BOOL Pass1() -> _TRUE/_FALSE                                              *
@@ -280,11 +283,10 @@ BOOL Pass1()
   TEXT    ch;
   STRPTR  ptr[5];
   ITEMPTR iptr;
-  BOOL    ParseLine();
-  VOID    PrintError(), UpdateLine();
+  VOID    PrintError(INT, STRPTR), UpdateLine(LONG *);
   /* SHORT   GetExpr(); */
   /* ITEMPTR NewListEl(), SearchEl(); */
-  ITEMPTR NewListEl();
+  ITEMPTR NewListEl(ITEMPTR, STRPTR);
 
   printf("P1 0");
   sprintf(line_nr,"%ld",(long)count);
@@ -643,7 +645,7 @@ SHORT   end0;
   TEXT    ch;
   STRPTR  ptr[5];
   ITEMPTR iptr, dptr;
-  ITEMPTR NewListEl();
+  ITEMPTR NewListEl(ITEMPTR, STRPTR);
 
 
   ptr[0] = line; /* wie auch in Pass1() */
@@ -742,8 +744,8 @@ BOOL ChooseSymbols()
 {
   ITEMPTR dptr;
   /* ITEMPTR Select(), SearchEl(); */
-  ITEMPTR Select();
-  VOID    DeleteList();
+  ITEMPTR Select(ITEMPTR, STRPTR);
+  VOID    DeleteList(ITEMPTR *);
 
 
   if(!(symbflag & BIT_GOAL)) {
@@ -852,7 +854,7 @@ STRPTR  str;
 {
   ITEMPTR ptr = lptr;
   SHORT   count = 0, /*atoi(),*/ choice, i;
-  INT     GetInput(), error;
+  INT     GetInput(STRPTR), error;
 
   printf("?? %s:\n",str);
 
@@ -893,12 +895,14 @@ BOOL Pass2()
   STRPTR  ptr[5];
   ITEMPTR iptr;
   DOUBLE  *ptr1, *ptr2;
+#if !defined(__AROS__)
   /* ITEMPTR SearchEl(); */
   /* SHORT   GetExpr(); */
-  BOOL    TakeMem(), SearchExpr();
+  BOOL    SearchExpr();
   /* VOID    Cap(); */
   DOUBLE  atof();
-
+#endif
+  BOOL    TakeMem();
 
   ptr[0] = line;
 
@@ -1180,7 +1184,7 @@ BOOL CorrectBounds()
   REGISTER DOUBLE *ptr1, dummy;
   REGISTER SHORT  j, i;
   BOOL            found = _FALSE;
-  VOID            PrintError();
+  VOID            PrintError(INT, STRPTR);
 
   for(i=0; i<num_var; ++i) {
     if(upper[i] != INFINITE && lower[i] > upper[i]) {
@@ -1306,7 +1310,7 @@ ITEMPTR list;
 STRPTR  str;
 
 {
-  VOID    PrintError();
+  VOID    PrintError(INT, STRPTR);
   ITEMPTR ptr;
 
   if((ptr = AllocMem(SIZE_ITEM,MEMF_CLEAR))) {
@@ -1383,7 +1387,7 @@ VOID GetRidOfLists()
 
 {
   SHORT i;
-  VOID  DeleteList();
+  VOID  DeleteList(ITEMPTR *);
 
   for(i=0; i<NUM_LISTS; ++i) DeleteList(&list[i]);
 }
@@ -1447,11 +1451,11 @@ STRPTR  str;
  * _FALSE : ERR_MEM                                                          *
  *****************************************************************************/
 
-BOOL TakeMem()
+BOOL TakeMem(void)
 
 {
   LONG  mem_needed, mem_avail, i;
-  VOID  GiveMemBack(), PrintError();
+  VOID  GiveMemBack(), PrintError(INT, STRPTR);
 
   mem_needed = S_SHORT*(mm+2L*nn)+S_DOUBLE*(mm*(mm+nn+8L)+6L*nn);
 

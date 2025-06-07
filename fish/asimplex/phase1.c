@@ -23,14 +23,19 @@
 #define PIVOT     (USHORT)1
 #define NO_PIVOT  (USHORT)0
 
-IMPORT VOID   Mult();
-IMPORT USHORT Invers();
-IMPORT DOUBLE M();
-IMPORT VOID   SetM();
-IMPORT USHORT PhaseII();
+IMPORT VOID   Mult(DOUBLE *, DOUBLE *, DOUBLE *, SHORT, SHORT, SHORT);
+IMPORT USHORT Invers(DOUBLE *, SHORT, SHORT *);
+IMPORT DOUBLE M(DOUBLE *, SHORT, SHORT, SHORT, USHORT);
+IMPORT VOID   SetM(DOUBLE *, SHORT, SHORT, SHORT, DOUBLE);
+IMPORT USHORT PhaseII(SHORT, SHORT, SHORT *, SHORT *, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE, USHORT, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE *, SHORT *, DOUBLE *, ULONG *);
 
 GLOBAL DOUBLE INFINITE;
 GLOBAL BOOL   minimize;
+
+VOID    PrepareData(SHORT, SHORT, SHORT *, SHORT *, DOUBLE  *, DOUBLE  *, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE *);
+VOID    Calc1(SHORT, SHORT, SHORT *, SHORT *, DOUBLE  *, DOUBLE *, DOUBLE *, DOUBLE, DOUBLE *, SHORT *);
+USHORT  TryPivot(SHORT, SHORT, SHORT, SHORT *, SHORT *, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE *);
+USHORT  Calc2(SHORT *, SHORT, SHORT *, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE *);
 
 
 /*****************************************************************************
@@ -82,8 +87,6 @@ ULONG   *iter;      /* Anzahl Iterationen     */
   DOUBLE  sum, *ptr1;
   SHORT   mm = *m, nn = *n, i, j, pivots, no_of_bad;
   USHORT  result;
-  VOID    PrepareData(), Calc1();
-  USHORT  TryPivot(), Calc2();
 
 
   PrepareData(mm,nn,B,Nq,A,AB1,b,b2q,&bsum,c2,c0,upper);

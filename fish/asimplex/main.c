@@ -15,11 +15,12 @@
 #include <aros/oldprograms.h>
 #include "simplex.h"
 
-IMPORT USHORT       PhaseI(), PhaseII();
-IMPORT BOOL         MPSX(), SearchExpr();
-IMPORT INT          GetInput();
-IMPORT SHORT        GetExpr();
-IMPORT VOID         GiveMemBack(), GetRidOfLists(), PrintError(), Cap();
+IMPORT USHORT       PhaseI(SHORT *, SHORT *, SHORT *, SHORT *, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE, USHORT, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE *, SHORT *, DOUBLE *, ULONG *);
+IMPORT USHORT       PhaseII(SHORT, SHORT, SHORT *, SHORT *, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE, USHORT, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE *, DOUBLE *, SHORT *, DOUBLE *, ULONG *);
+IMPORT BOOL         MPSX(STRPTR), SearchExpr(STRPTR, SHORT *, SHORT *);
+IMPORT INT          GetInput(STRPTR);
+IMPORT SHORT        GetExpr(STRPTR, STRPTR, SHORT, SHORT);
+IMPORT VOID         GiveMemBack(), GetRidOfLists(), PrintError(INT, STRPTR), Cap(STRPTR, SHORT, SHORT);
 
 
 struct IntuitionBase *IntuitionBase = NULL;
@@ -83,7 +84,7 @@ int main(int argc, char **argv)
   ULONG   iter1, iter2, sec1, sec2, micro1, micro2;
   LONG    h, min, sec, sec100, pri = 0L;
   /*SHORT   atoi();*/
-  VOID    PrintSolution(), Leave();
+  VOID    PrintSolution(), Leave(STRPTR);
 
   /* Zuerst Intuition-Bibliothek öffnen */
 
@@ -231,31 +232,6 @@ int main(int argc, char **argv)
 
 
 /*****************************************************************************
- * VOID PrintSolution()                                                      *
- * Ausgabe der Lösung                                                        *
- *****************************************************************************/
-
-VOID    PrintSolution()
-
-{
-  VOID PrintX();
-
-  puts("@@ Solution:\n");
-  printf("   %-9s = %14.10lg\n",symbols[GOAL],minimize ? -c0 : c0);
-  PrintX(list[VAR_LIST],stdout);
-  puts("");
-
-  if(file[1]) {
-    fputs("@@ Solution:\n\n",file[1]);
-    fprintf(file[1],"   %-9s = %14.10lg\n",symbols[GOAL],minimize ? -c0 : c0);
-    PrintX(list[VAR_LIST],file[1]);
-    fputs("\n",file[1]);
-  }
-}
-
-
-
-/*****************************************************************************
  * VOID PrintX()                                                             *
  * Gibt das Ergebnis der Berechnungen aus.                                   *
  *****************************************************************************/
@@ -269,6 +245,29 @@ FILE    *fptr;
   if(ptr) {
     PrintX(ptr->next,fptr);
     fprintf(fptr,"   %-9s = %14.10lg\n",ptr->string,x[ptr->nr-1]);
+  }
+}
+
+
+
+/*****************************************************************************
+ * VOID PrintSolution()                                                      *
+ * Ausgabe der Lösung                                                        *
+ *****************************************************************************/
+
+VOID    PrintSolution()
+
+{
+  puts("@@ Solution:\n");
+  printf("   %-9s = %14.10lg\n",symbols[GOAL],minimize ? -c0 : c0);
+  PrintX(list[VAR_LIST],stdout);
+  puts("");
+
+  if(file[1]) {
+    fputs("@@ Solution:\n\n",file[1]);
+    fprintf(file[1],"   %-9s = %14.10lg\n",symbols[GOAL],minimize ? -c0 : c0);
+    PrintX(list[VAR_LIST],file[1]);
+    fputs("\n",file[1]);
   }
 }
 
