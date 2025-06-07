@@ -111,6 +111,8 @@ extern int errno;
 # if !defined HAVE_GETCWD
 char *getwd ();
 #  define getcwd(buf, max) getwd (buf)
+# elif defined(__AROS__)
+// use the stdc provided definitions
 # else
 char *getcwd ();
 # endif
