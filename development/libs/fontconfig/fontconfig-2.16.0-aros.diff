@@ -1,0 +1,225 @@
+diff -ruN fontconfig-2.16.0/fc-cache/Makefile.am fontconfig-2.16.0.aros/fc-cache/Makefile.am
+--- fontconfig-2.16.0/fc-cache/Makefile.am	2025-01-17 15:15:05.000000000 +0000
++++ fontconfig-2.16.0.aros/fc-cache/Makefile.am	2025-01-17 15:18:06.205389000 +0000
+@@ -30,10 +30,10 @@
+ if OS_WIN32
+ else
+ install-data-local:
+-	-$(mkinstalldirs) "$(DESTDIR)$(fc_cachedir)"
++	-$(mkinstalldirs) "$(DESTDIR)$(prefix)$(fc_cachedir)"
+ 
+ uninstall-local:
+-	-$(RM) -rf "$(DESTDIR)$(fc_cachedir)"
++	-$(RM) -rf "$(DESTDIR)$(prefix)$(fc_cachedir)"
+ endif
+ 
+ AM_CPPFLAGS=-I${top_srcdir} -I${top_srcdir}/src $(WARN_CFLAGS)
+diff -ruN fontconfig-2.16.0/fc-cache/Makefile.in fontconfig-2.16.0.aros/fc-cache/Makefile.in
+--- fontconfig-2.16.0/fc-cache/Makefile.in	2025-01-17 15:18:06.711398100 +0000
++++ fontconfig-2.16.0.aros/fc-cache/Makefile.in	2025-01-17 15:18:06.205389000 +0000
+@@ -826,10 +826,10 @@
+ 
+ 
+ @OS_WIN32_FALSE@install-data-local:
+-@OS_WIN32_FALSE@	-$(mkinstalldirs) "$(DESTDIR)$(fc_cachedir)"
++@OS_WIN32_FALSE@	-$(mkinstalldirs) "$(DESTDIR)$(prefix)$(fc_cachedir)"
+ 
+ @OS_WIN32_FALSE@uninstall-local:
+-@OS_WIN32_FALSE@	-$(RM) -rf "$(DESTDIR)$(fc_cachedir)"
++@OS_WIN32_FALSE@	-$(RM) -rf "$(DESTDIR)$(prefix)$(fc_cachedir)"
+ 
+ @USEDOCBOOK_TRUE@${man_MANS}: ${SGML}	
+ @USEDOCBOOK_TRUE@	$(AM_V_GEN) $(RM) $@; \
+diff -ruN fontconfig-2.16.0/Makefile.am fontconfig-2.16.0.aros/Makefile.am
+--- fontconfig-2.16.0/Makefile.am	2025-01-17 15:15:05.000000000 +0000
++++ fontconfig-2.16.0.aros/Makefile.am	2025-01-17 15:18:06.205389000 +0000
+@@ -123,7 +123,7 @@
+ 	mv $@.tmp $@
+ 
+ install-data-local: fonts.conf
+-	$(mkinstalldirs) $(DESTDIR)$(baseconfigdir) $(DESTDIR)$(fc_cachedir)
++	$(mkinstalldirs) $(DESTDIR)$(baseconfigdir) $(DESTDIR)$(prefix)$(fc_cachedir)
+ 	if [ -f $(DESTDIR)$(baseconfigdir)/fonts.conf ]; then \
+ 	  echo "backing up existing $(DESTDIR)$(baseconfigdir)/fonts.conf"; \
+ 	  mv $(DESTDIR)$(baseconfigdir)/fonts.conf $(DESTDIR)$(baseconfigdir)/fonts.conf.bak; \
+diff -ruN fontconfig-2.16.0/Makefile.in fontconfig-2.16.0.aros/Makefile.in
+--- fontconfig-2.16.0/Makefile.in	2025-01-17 15:18:06.655397200 +0000
++++ fontconfig-2.16.0.aros/Makefile.in	2025-01-17 15:18:06.205389000 +0000
+@@ -1089,7 +1089,7 @@
+ 	mv $@.tmp $@
+ 
+ install-data-local: fonts.conf
+-	$(mkinstalldirs) $(DESTDIR)$(baseconfigdir) $(DESTDIR)$(fc_cachedir)
++	$(mkinstalldirs) $(DESTDIR)$(baseconfigdir) $(DESTDIR)$(prefix)$(fc_cachedir)
+ 	if [ -f $(DESTDIR)$(baseconfigdir)/fonts.conf ]; then \
+ 	  echo "backing up existing $(DESTDIR)$(baseconfigdir)/fonts.conf"; \
+ 	  mv $(DESTDIR)$(baseconfigdir)/fonts.conf $(DESTDIR)$(baseconfigdir)/fonts.conf.bak; \
+diff -ruN fontconfig-2.16.0/src/fcatomic.c fontconfig-2.16.0.aros/src/fcatomic.c
+--- fontconfig-2.16.0/src/fcatomic.c	2025-01-17 15:15:05.000000000 +0000
++++ fontconfig-2.16.0.aros/src/fcatomic.c	2025-01-17 15:18:06.205389000 +0000
+@@ -108,7 +108,7 @@
+     int		ret;
+     struct stat	lck_stat;
+ 
+-#ifdef HAVE_LINK
++#if defined(HAVE_LINK) && !defined(__AROS__)
+     int		fd = -1;
+     FILE	*f = 0;
+     FcBool	no_link = FcFalse;
+@@ -163,7 +163,7 @@
+ 	    time_t  now = time (0);
+ 	    if ((long int) (now - lck_stat.st_mtime) > 10 * 60)
+ 	    {
+-#ifdef HAVE_LINK
++#if defined(HAVE_LINK) && !defined(__AROS__)
+ 		if (no_link)
+ 		{
+ 		    if (rmdir ((char *) atomic->lck) == 0)
+@@ -218,7 +218,7 @@
+ void
+ FcAtomicUnlock (FcAtomic *atomic)
+ {
+-#ifdef HAVE_LINK
++#if defined(HAVE_LINK) && !defined(__AROS__)
+     if (unlink ((char *) atomic->lck) == -1)
+ 	rmdir ((char *) atomic->lck);
+ #else
+diff -ruN fontconfig-2.16.0/src/fcint.h fontconfig-2.16.0.aros/src/fcint.h
+--- fontconfig-2.16.0/src/fcint.h	2025-01-17 15:15:05.000000000 +0000
++++ fontconfig-2.16.0.aros/src/fcint.h	2025-06-07 17:02:51.750347391 +0000
+@@ -65,6 +65,10 @@
+ #define FC_UNLIKELY(expr) (__builtin_expect (((expr) ? 1 : 0), 0))
+ #endif
+ 
++#ifdef __AROS__
++#include <proto/dos.h>
++#endif
++
+ #ifdef _WIN32
+ #  include "fcwindows.h"
+ typedef UINT (WINAPI *pfnGetSystemWindowsDirectory)(LPSTR, UINT);
+@@ -74,6 +78,10 @@
+ #  define FC_SEARCH_PATH_SEPARATOR ';'
+ #  define FC_DIR_SEPARATOR         '\\'
+ #  define FC_DIR_SEPARATOR_S       "\\"
++#elif defined __AROS__
++#  define FC_SEARCH_PATH_SEPARATOR ';'
++#  define FC_DIR_SEPARATOR         '/'
++#  define FC_DIR_SEPARATOR_S       "/"
+ #else
+ #  define FC_SEARCH_PATH_SEPARATOR ':'
+ #  define FC_DIR_SEPARATOR         '/'
+diff -ruN fontconfig-2.16.0/src/fcstat.c fontconfig-2.16.0.aros/src/fcstat.c
+--- fontconfig-2.16.0/src/fcstat.c	2025-01-17 15:15:05.000000000 +0000
++++ fontconfig-2.16.0.aros/src/fcstat.c	2025-01-17 15:18:06.205389000 +0000
+@@ -167,6 +167,7 @@
+ }
+ #endif
+ 
++#ifndef __AROS__
+ static int
+ FcDirChecksumScandirSorter(const struct dirent **lhs, const struct dirent **rhs)
+ {
+@@ -331,6 +332,7 @@
+ 
+     return 0;
+ }
++#endif /* __AROS__ */
+ #endif /* _WIN32 */
+ 
+ int
+@@ -339,7 +341,7 @@
+     if (FcStat (file, statb) == -1)
+         return -1;
+ 
+-#ifndef _WIN32
++#if !defined(_WIN32) && !defined(__AROS__)
+     /* We have a workaround of the broken stat() in FcStat() for Win32.
+      * No need to do something further more.
+      */
+diff -ruN fontconfig-2.16.0/src/fcstr.c fontconfig-2.16.0.aros/src/fcstr.c
+--- fontconfig-2.16.0/src/fcstr.c	2025-01-17 15:15:05.000000000 +0000
++++ fontconfig-2.16.0.aros/src/fcstr.c	2025-06-07 16:59:47.962348608 +0000
+@@ -952,6 +952,10 @@
+ 	(isalpha (*s) && s[1] == ':' && (s[2] == '/' || s[2] == '\\')))
+ 	return FcTrue;
+ #endif
++#ifdef __AROS__
++	if (strchr((const char *) s, ':'))
++	return FcTrue;
++#endif
+     return *s == '/';
+ }
+ 
+@@ -1050,6 +1054,10 @@
+     FcChar8	    *slash;
+ 
+     slash = (FcChar8 *) strrchr ((const char *) path, '/');
++#ifdef __AROS__
++    if (!slash)
++        slash = (FcChar8 *) strrchr ((const char *) path, ':');
++#endif
+ #ifdef _WIN32
+     {
+         FcChar8     *backslash;
+@@ -1070,6 +1078,10 @@
+     FcChar8 *dir;
+ 
+     slash = FcStrLastSlash (file);
++#ifdef __AROS__
++    if (*slash == ':')
++        slash++;
++#endif
+     if (!slash)
+ 	return FcStrCopy ((FcChar8 *) ".");
+     dir = malloc ((slash - file) + 1);
+@@ -1100,7 +1112,16 @@
+     if (!path)
+ 	return NULL;
+ 
+-#ifndef _WIN32
++#if defined(__AROS__)
++	BPTR rpLock = Lock(path, SHARED_LOCK);
++	resolved_ret = NULL;
++	if (rpLock)
++	{
++		if (NameFromLock(rpLock, resolved_name, FC_PATH_MAX))
++			resolved_ret = resolved_name;
++		UnLock(rpLock);
++	}
++#elif !defined(_WIN32)
+     resolved_ret = realpath((const char *) path, resolved_name);
+ #else
+     if (GetFullPathNameA ((LPCSTR) path, FC_PATH_MAX, resolved_name, NULL) == 0)
+@@ -1220,7 +1241,7 @@
+     FcConvertDosPath ((char *) full);
+     return FcStrCanonAbsoluteFilename (full);
+ #else
+-    if (s[0] == '/')
++    if (s[0] == '/' || strchr((const char *) s, ':'))
+ 	return FcStrCanonAbsoluteFilename (s);
+     else
+     {
+diff -ruN fontconfig-2.16.0/src/Makefile.in fontconfig-2.16.0.aros/src/Makefile.in
+--- fontconfig-2.16.0/src/Makefile.in	2025-01-17 15:18:06.890401400 +0000
++++ fontconfig-2.16.0.aros/src/Makefile.in	2025-01-17 15:18:06.205389000 +0000
+@@ -279,7 +279,7 @@
+ CCDEPMODE = @CCDEPMODE@
+ CC_FOR_BUILD = @CC_FOR_BUILD@
+ CFLAGS = @CFLAGS@
+-CONFIGDIR = @CONFIGDIR@
++CONFIGDIR = $(shell echo @CONFIGDIR@|sed 's%/%%; s%/%:%')
+ CPP = @CPP@
+ CPPFLAGS = @CPPFLAGS@
+ CSCOPE = @CSCOPE@
+@@ -301,8 +301,8 @@
+ EXPAT_CFLAGS = @EXPAT_CFLAGS@
+ EXPAT_LIBS = @EXPAT_LIBS@
+ FC_ADD_FONTS = @FC_ADD_FONTS@
+-FC_CACHEDIR = @FC_CACHEDIR@
+-FC_DEFAULT_FONTS = @FC_DEFAULT_FONTS@
++FC_CACHEDIR = $(shell echo @FC_CACHEDIR@|sed 's%/%%; s%/%:%')
++FC_DEFAULT_FONTS = $(shell echo @FC_DEFAULT_FONTS@|sed 's%/%%; s%/%:%')
+ FC_FONTDATE = @FC_FONTDATE@
+ FC_FONTPATH = @FC_FONTPATH@
+ FGREP = @FGREP@

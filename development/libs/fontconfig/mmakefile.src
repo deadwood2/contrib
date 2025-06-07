@@ -1,4 +1,4 @@
-# Copyright © 2009-2019, The AROS Development Team. All rights reserved.
+# Copyright © 2009-2025, The AROS Development Team. All rights reserved.
 # $Id$
 
 include $(SRCDIR)/config/aros-contrib.cfg
@@ -6,7 +6,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 #MM- contrib-fontconfig : development-fontconfig
 #MM development-fontconfig : linklibs workbench-libs-freetype-complete development-libxml2
 
-FONTCONFIG_VERS = 2.11.1
+FONTCONFIG_VERS = 2.16.0
 
 FONTCONFIG_OPTIONS = \
     --without-expat \
@@ -31,6 +31,6 @@ REPOSITORIES := https://www.freedesktop.org/software/fontconfig/release \
  http://sources.openelec.tv/mirror/fontconfig
 
 %fetch_and_build_gnu_development package=fontconfig version=$(FONTCONFIG_VERS) \
-    srcdir=fontconfig-$(FONTCONFIG_VERS) patch=yes suffixes="tar.gz tar.bz2" \
+    srcdir=fontconfig-$(FONTCONFIG_VERS) patch=yes suffixes="tar.xz tar.bz2 tar.gz" \
     package_repo="$(REPOSITORIES)" \
     extraoptions="$(FONTCONFIG_OPTIONS)" nlsflag=no xflag=no
