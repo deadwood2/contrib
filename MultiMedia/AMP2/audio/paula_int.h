@@ -44,6 +44,6 @@ typedef struct audio_68k_s {
   u32 play;
 } audio_68k_t;
 
-extern void paula_interrupt();
+extern void paula_interrupt(struct Custom *custom, audio_68k_t *audio, void *SysBase);
 
 #endif
