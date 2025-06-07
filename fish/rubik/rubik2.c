@@ -31,7 +31,7 @@ int dorot; {
 	if (newcube) {
 		/* First update the display matrix for this slice */
 		if (dorot) {	/* Call the object's procedure */
-				void (*function)();
+				procedurefunc_t function;
 
 				function = objectinfo->procedure;
 				(*function)(objectinfo->matrix, SINA, COSA);

@@ -28,6 +28,8 @@ struct Tile {
 	WORD color;
 };
 
+typedef void (*procedurefunc_t)(struct Matrix *, WORD, WORD);
+
 struct Objectinfo {
 	struct Matrix *matrix;
 	struct Vector *position;
@@ -35,7 +37,7 @@ struct Objectinfo {
 	struct Vector **points;
 	WORD numtiles;
 	struct Tile **tiles;
-	void (*procedure)();
+	procedurefunc_t procedure;
 
 	WORD bufpointsize;
 	struct Vector *bufpoints;
