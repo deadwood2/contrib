@@ -30,7 +30,9 @@ int screenheight, screenwidth;
 int erasecolor, curcolor ;
 struct Screen *scr;
 struct Window	*Wind = NULL;
+#if !defined(__AROS__)
 struct MsgPort	*CreatePort() ;
+#endif
 struct IntuitionBase	*IntuitionBase ;
 struct IntuiMessage	*msg;
 struct Window *wH = NULL;        /* help window */
