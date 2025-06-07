@@ -1,4 +1,4 @@
-# Copyright © 2015-2019, The AROS Development Team. All rights reserved.
+# Copyright © 2015-2025, The AROS Development Team. All rights reserved.
 # $Id$
 
 include $(SRCDIR)/config/aros-contrib.cfg
@@ -13,6 +13,8 @@ REPOSITORIES := http://www.ibiblio.org/pub/Linux/libs/graphics \
  http://www.mazze-online.de/aros/ports-src/
 
 T1_ENVFLAGS := T1_AA_TYPE16="-DT1_AA_TYPE16=short" T1_AA_TYPE32="-DT1_AA_TYPE32=int" T1_AA_TYPE64="-DT1_AA_TYPE64=\"long long\""
+NOWARN_FLAGS := $(NOWARN_IMPLICIT_INT)
+USER_CFLAGS := $(CFLAGS_GNU99) $(NOWARN_FLAGS)
 
 %fetch_and_build_gnu_development package=t1lib version=5.1.2 \
     patch=yes package_repo="$(REPOSITORIES)" \
