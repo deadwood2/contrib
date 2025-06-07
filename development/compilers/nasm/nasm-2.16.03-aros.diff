@@ -1,0 +1,47 @@
+diff -ruN nasm-2.16.03/asm/nasm.c nasm-2.16.03.aros/asm/nasm.c
+--- nasm-2.16.03/asm/nasm.c	2024-04-17 17:04:08.000000000 +0000
++++ nasm-2.16.03.aros/asm/nasm.c	2025-06-07 15:03:59.094349848 +0000
+@@ -124,7 +124,11 @@
+ const struct ofmt_alias *ofmt_alias = NULL;
+ const struct dfmt *dfmt;
+ 
++#if !defined(__AROS__)
+ FILE *error_file;               /* Where to write error messages */
++#else
++extern FILE *error_file;
++#endif
+ 
+ FILE *ofile = NULL;
+ struct optimization optimizing =
+diff -ruN nasm-2.16.03/include/compiler.h nasm-2.16.03.aros/include/compiler.h
+--- nasm-2.16.03/include/compiler.h	2024-04-17 17:04:08.000000000 +0000
++++ nasm-2.16.03.aros/include/compiler.h	2025-06-07 14:59:23.482349177 +0000
+@@ -92,6 +92,10 @@
+ #include <limits.h>
+ #include <errno.h>
+ 
++#if defined(__AROS__)
++#include <time.h>
++#endif
++
+ #ifdef HAVE_STRINGS_H
+ # include <strings.h>
+ #endif
+@@ -264,6 +268,7 @@
+ /*
+  * Hack to support external-linkage inline functions
+  */
++#if !defined(__AROS__)
+ #ifndef HAVE_STDC_INLINE
+ # ifdef __GNUC__
+ #  ifdef __GNUC_STDC_INLINE__
+@@ -289,6 +294,9 @@
+ #else
+ # define inline_prototypes
+ #endif
++#else
++# define extern_inline static inline
++#endif
+ 
+ /*
+  * Hints to the compiler that a particular branch of code is more or

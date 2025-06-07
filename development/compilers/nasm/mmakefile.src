@@ -4,24 +4,126 @@
 
 include $(SRCDIR)/config/aros-contrib.cfg
 
-FILES  := nasm nasmlib float insnsa assemble labels \
-       parser outform outbin outaout outcoff outelf \
-       outobj outas86 outrdf outrdf2 outdbg zoutieee \
-       preproc listing eval
+STDLIBFILES := \
+        stdlib/snprintf \
+        stdlib/vsnprintf \
+        stdlib/strlcpy \
+        stdlib/strnlen \
+        stdlib/strrchrnul
 
-EXEDIR := $(AROS_CONTRIB_DEVELOPMENT)/nasm
+NASMLIBFILES  := \
+        nasmlib/ver \
+        nasmlib/alloc \
+        nasmlib/asprintf \
+        nasmlib/errfile \
+        nasmlib/crc32 \
+        nasmlib/crc64 \
+        nasmlib/md5c \
+        nasmlib/string \
+        nasmlib/nctype \
+        nasmlib/file \
+        nasmlib/mmap \
+        nasmlib/ilog2 \
+        nasmlib/realpath \
+        nasmlib/path \
+        nasmlib/filename \
+        nasmlib/rlimit \
+        nasmlib/readnum \
+        nasmlib/numstr \
+        nasmlib/zerobuf \
+        nasmlib/bsi \
+        nasmlib/rbtree \
+        nasmlib/hashtbl \
+        nasmlib/raa \
+        nasmlib/saa \
+        nasmlib/strlist \
+        nasmlib/perfhash \
+        nasmlib/badenum
+
+FILES  := \
+        $(STDLIBFILES) \
+        $(NASMLIBFILES) \
+        common/common \
+        x86/insnsa \
+        x86/insnsb \
+        x86/insnsd \
+        x86/insnsn \
+        x86/regs \
+        x86/regvals \
+        x86/regflags \
+        x86/regdis \
+        x86/disp8 \
+        x86/iflag \
+        asm/error \
+        asm/floats \
+        asm/directiv \
+        asm/directbl \
+        asm/pragma \
+        asm/assemble \
+        asm/labels \
+        asm/parser \
+        asm/preproc \
+        asm/quote \
+        asm/pptok \
+        asm/listing \
+        asm/eval \
+        asm/exprlib \
+        asm/exprdump \
+        asm/stdscan \
+        asm/strfunc \
+        asm/tokhash \
+        asm/segalloc \
+        asm/rdstrnum \
+        asm/srcfile \
+        macros/macros \
+        output/outform \
+        output/outlib \
+        output/legacy \
+        output/nulldbg \
+        output/nullout \
+        output/outbin \
+        output/outaout \
+        output/outcoff \
+        output/outelf \
+        output/outobj \
+        output/outas86 \
+        output/outdbg \
+        output/outieee \
+        output/outmacho \
+        output/codeview \
+        disasm/disasm \
+        disasm/sync
+
+EXEDIR := $(AROS_CONTRIB)/$(AROS_DIR_DEVELOPER)/nasm
 
 #MM- contrib-development : contrib-development-nasm
-#MM contrib-development-nasm : contrib-development-nasm-setup \
+#MM contrib-development-nasm : \
+#MM     contrib-development-nasm-fetch \
+#MM     contrib-development-nasm-setup \
 #MM     contrib-development-nasm-asm-includes
 
-NOWARN_FLAGS := $(NOWARN_STRINGOP_TRUNCATION)
+NASMVERS := 2.16.03
+ARCHBASE := nasm-$(NASMVERS)
+REPOSITORIES = https://www.nasm.us/pub/nasm/releasebuilds/$(NASMVERS)
+PATCHSPECS :=$(ARCHBASE)-aros.diff:$(ARCHBASE):-p1
+ARCHSRCDIR := $(PORTSDIR)/nasm/$(ARCHBASE)
 
+%fetch mmake=contrib-development-nasm-fetch archive=$(ARCHBASE) destination=$(PORTSDIR)/nasm \
+    location=$(PORTSSOURCEDIR) archive_origins=$(REPOSITORIES) suffixes="tar.gz" \
+    patches_specs=$(PATCHSPECS)
+
+%create_patch mmake=contrib-development-nasm-create-patch \
+    archive=$(ARCHBASE) suffixes="tar.gz" \
+    destination=$(PORTSDIR)/nasm
+
+NOWARN_FLAGS := $(NOWARN_STRINGOP_TRUNCATION)
+USER_INCLUDES := -I$(ARCHSRCDIR)/include -I$(ARCHSRCDIR) -I$(ARCHSRCDIR)/asm -I$(ARCHSRCDIR)/x86 -I$(ARCHSRCDIR)/output
 USER_CFLAGS := $(NOWARN_FLAGS)
+USER_CPPFLAGS := -DHAVE_STDBOOL_H -DHAVE_INTTYPES_H -DHAVE_STDC_INLINE -DHAVE_GNU_INLINE
 
 %build_prog mmake=contrib-development-nasm \
     progname=Nasm targetdir=$(EXEDIR) \
-    files=$(FILES) uselibs="z"
+    files="$(addprefix $(ARCHSRCDIR)/,asm/nasm asm/warnings $(FILES))" uselibs="z"
 
 %rule_makedirs dirs="$(EXEDIR) $(EXEDIR)/include $(EXEDIR)/test"
 
