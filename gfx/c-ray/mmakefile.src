@@ -1,4 +1,4 @@
-# Copyright © 2023 The AROS Development Team. All rights reserved.
+# Copyright © 2023-2025 The AROS Development Team. All rights reserved.
 # Makefile to make c-ray.
 
 include $(SRCDIR)/config/aros.cfg
