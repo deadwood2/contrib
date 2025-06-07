@@ -11,7 +11,7 @@ extern struct GfxBase *GfxBase;
 
 static BPTR _W_fh;
 static long flag;
-static void cWrite();
+static void cWrite(char *, long);
 
 /* FIXME: This will only work on screens with BMF_STANDARD bitmaps! */
 long WriteILBMFile(filename,scr)

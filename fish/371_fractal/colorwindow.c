@@ -22,9 +22,9 @@ typedef enum { NOTHING,EXIT,REDUP,GREENUP,BLUEUP,REDDOWN,GREENDOWN,BLUEDOWN
 extern struct IntuitionBase *IntuitionBase;
 extern struct GfxBase *GfxBase;
 
-void _CWDrawWindow(),_CWSetColMap(),_CWRight(),_CWLeft();
-void _CWDRGB(),_CWBox(),_CWWave(),_CWDown(),_CWUp();
-long _CWGetChoice();
+void _CWDrawWindow(),_CWSetColMap(),_CWRight(long),_CWLeft(long);
+void _CWDRGB(),_CWBox(long,long,long,long),_CWWave(long),_CWDown(long),_CWUp(long);
+long _CWGetChoice(long,long);
 
 static struct Window *CW_cwdw;
 static struct ViewPort *CW_WVP;

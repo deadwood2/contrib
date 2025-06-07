@@ -44,18 +44,18 @@ static short  fracmenu=0;
 
 struct IntuitionBase *IntuitionBase;
 struct GfxBase *GfxBase;
-struct Screen *scr,*openscreen();
-struct Window *gwdw,*wdw,*openwindow();
+struct Screen *scr,*openscreen(short, short, short, unsigned short);
+struct Window *gwdw,*wdw,*openwindow(struct Screen *, SHORT, SHORT, SHORT, SHORT, ULONG, USHORT,void *);
 extern struct IntuiMessage *imsg;
 extern struct ViewPort *WVP;
 
-void ColorWindow(),scanmenu(),newscreen();
-void ShutDown(),SavePic(),PutBoolGadget(),PutGadget();
+void ColorWindow(struct Screen *),scanmenu(),newscreen();
+void ShutDown(),SavePic(),PutBoolGadget(short, short, struct Gadget *),PutGadget(UBYTE *, short, short, short, struct Gadget *);
 void newmenu();
 ULONG class;
 USHORT code;
 short tmpcol,mennum,itmnum,subnum;
-long WriteILBMFile();
+long WriteILBMFile(char[], struct Screen *);
 void about();
 void runfractal(),run1fractal();
 void getfractal(),get1fractal();
@@ -65,7 +65,7 @@ void switchrun(),switchfrac();
 void stratt();
 
 void toggletitle();
-double sqrt(),atan(),log(),atof(),exp(),sin(),cos(),fabs();
+double sqrt(double),atan(double),log(double),atof(const char *),exp(double),sin(double),cos(double),fabs(double);
 
 struct RastPort *rport;
 
@@ -84,7 +84,7 @@ if(scr==NULL){printf("Error opening screen!\n");ShutDown();};
 
 wdw=openwindow(scr,0,0,scr->Width,scr->Height,
        (ULONG)(ACTIVATE|SMART_REFRESH|NOCAREREFRESH|BACKDROP|BORDERLESS),
-       (USHORT)MENUPICK);
+       (USHORT)MENUPICK, NULL);
 if(wdw==NULL){printf("Error opening window!\n");ShutDown();};
 
 WVP=(struct ViewPort *)ViewPortAddress(wdw);
@@ -151,7 +151,7 @@ if(scr!=NULL)
   {
    wdw=openwindow(scr,0,0,scr->Width,scr->Height,
        (ULONG)(ACTIVATE|SMART_REFRESH|NOCAREREFRESH|BACKDROP|BORDERLESS),
-       (USHORT)MENUPICK);
+       (USHORT)MENUPICK, NULL);
   };
 if((scr==NULL)||(wdw==NULL))
   {
@@ -168,7 +168,7 @@ if((scr==NULL)||(wdw==NULL))
 
    wdw=openwindow(scr,0,0,scr->Width,scr->Height,
        (ULONG)(ACTIVATE|SMART_REFRESH|NOCAREREFRESH|BACKDROP|BORDERLESS),
-       (USHORT)MENUPICK);
+       (USHORT)MENUPICK, NULL);
    if(wdw==NULL){printf("Error opening window!\n");ShutDown();};
 
   };
@@ -177,11 +177,12 @@ SetRGB4(WVP,0L,0L,0L,0L);
 SetRGB4(WVP,1L,15L,15L,15L);
 }
 
-struct Window *openwindow(scr,left,top,width,height,flags,idcmp)
+struct Window *openwindow(scr,left,top,width,height,flags,idcmp,_unused)
 struct Screen *scr;
 SHORT left,top,width,height;
 ULONG flags;
 USHORT idcmp;
+void *_unused;
 {
 struct NewWindow nwdw;
 nwdw.LeftEdge=left;

@@ -101,7 +101,7 @@ extern char rulebuf[];
 extern struct Gadget gad[];
 extern struct Gadget gadb[];
 extern struct Screen *scr,*openscreen();
-extern struct Window *gwdw,*wdw,*openwindow();
+extern struct Window *gwdw,*wdw,*openwindow(struct Screen *, SHORT, SHORT, SHORT, SHORT, ULONG, USHORT,void *);
 extern struct Menu men[];
 extern long titelflag;
 
@@ -116,7 +116,7 @@ extern short depth;
 struct IntuiMessage *imsg;
 struct ViewPort *WVP;
 void ColorWindow(),scanmenu();
-void PutBoolGadget(),PutGadget();
+void PutBoolGadget(short, short, struct Gadget *),PutGadget(UBYTE *, short, short, short, struct Gadget *);
 void prepult(),runfractal();
 void toggletitle();
 
@@ -130,14 +130,14 @@ static float resave,imsave,restep,imstep;
 static float re2,im2,lambdahalva;
 
 
-double sqrt(),atan(),log(),atof(),exp(),sin(),cos(),fabs();
+double sqrt(double),atan(double),log(double),atof(const char *),exp(double),sin(double),cos(double),fabs(double);
 
 void getfractal(),getvalues();
 void magnet0(),magnet1(),magnet2(),magnet3();
 void mandelbrot(),julia(),ultimate(),lcosz(),esinz(),lexpz();
 void bio0(),bio1(),bio2(),bio3(),bio4(),bio5();
 void nr0(),nr1(),nr2(),nr3(),nr4(),nr5();
-void runfractal(),frac1(),frac2(),frac3();
+void runfractal(),frac1(void (*)()),frac2(void (*)()),frac3(void (*)());
 void (*fracalg)()=lcosz;
 
 

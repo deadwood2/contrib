@@ -37,7 +37,7 @@ extern char c_iterbuf[];
 extern struct Gadget gad1[];
 extern struct Gadget gadb[];
 extern struct Screen *scr,*openscreen();
-extern struct Window *gwdw,*wdw,*openwindow();
+extern struct Window *gwdw,*wdw,*openwindow(struct Screen *, SHORT, SHORT, SHORT, SHORT, ULONG, USHORT,void *);
 extern struct Menu men[];
 
 extern struct IntuitionBase *IntuitionBase;
@@ -51,7 +51,7 @@ extern short depth;
 extern struct IntuiMessage *imsg;
 extern struct ViewPort *WVP;
 void ColorWindow(),scanmenu();
-void PutBoolGadget(),PutGadget();
+void PutBoolGadget(short, short, struct Gadget *),PutGadget(UBYTE *, short, short, short, struct Gadget *);
 void runfractal();
 void toggletitle();
 
@@ -61,7 +61,7 @@ static short maxcol,counter;
 extern short xc,yc,xoffset,yoffset;
 
 
-double pow(),sqrt(),atan(),log(),atof(),exp(),sin(),cos(),fabs(),tan();
+double pow(double,double),sqrt(double),atan(double),log(double),atof(char *),exp(double),sin(double),cos(double),fabs(double),tan(double);
 
 void get1fractal(),get1values();
 void stratt();
