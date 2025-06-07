@@ -1458,7 +1458,7 @@ void execerror(s, t)
 	longjmp(begin, 0);
 }
 
-void fpecatch()
+void fpecatch(int _unused)
 {
 	execerror("floating point exception", NULL);
 }

@@ -52,7 +52,7 @@ static struct {		/* constants */
 
 static struct {		/* complex-valued functions */
 	char	*name;
-	Complex	(*func)();
+	Complex	(*func)(Complex);
 } c_builtins[] = {
 	{ "sin",	csin, },
 	{ "cos",	ccos, },
@@ -73,7 +73,7 @@ static struct {		/* complex-valued functions */
 
 static struct {		/* real-valued functions */
 	char	*name;
-	double	(*func)();
+	double	(*func)(Complex);
 } r_builtins[] = {
 	{ "abs",	_cabs, },
 	{ "norm",	norm, },

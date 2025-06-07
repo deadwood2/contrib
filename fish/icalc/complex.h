@@ -28,8 +28,8 @@ typedef struct symbol {		/* general symbol - numerous types */
 	short	type;		/* VAR, CONST, BLTIN */
 	union {
 		Complex	val;		/* if VAR or CONST */
-		Complex	(*cptr)();	/* C_BLTIN (function) */
-		double	(*rptr)();	/* R_BLTIN (function) */
+		Complex	(*cptr)(Complex);	/* C_BLTIN (function) */
+		double	(*rptr)(Complex);	/* R_BLTIN (function) */
 		void	(*vptr)();	/* COMMAND */
 		UserFunc ufunc;		/* USER FUNCTION */
 	} u;
