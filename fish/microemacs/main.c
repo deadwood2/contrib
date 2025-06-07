@@ -48,25 +48,25 @@ typedef struct  {
         int     (*k_fp)();              /* Routine to handle it         */
 }       KEYTAB;
 
-extern  int     ctrlg();                /* Abort out of things          */
-extern  int     quit();                 /* Quit                         */
-extern  int     ctlxlp();               /* Begin macro                  */
-extern  int     ctlxrp();               /* End macro                    */
-extern  int     ctlxe();                /* Execute macro                */
+extern  int     ctrlg(int, int);        /* Abort out of things          */
+extern  int     quit(int, int);         /* Quit                         */
+extern  int     ctlxlp(int, int);       /* Begin macro                  */
+extern  int     ctlxrp(int, int);       /* End macro                    */
+extern  int     ctlxe(int, int);        /* Execute macro                */
 extern  int     fileread();             /* Get a file, read only        */
 extern  int     filevisit();            /* Get a file, read write       */
 extern  int     filewrite();            /* Write a file                 */
-extern  int     filesave();             /* Save current file            */
+extern  int     filesave(int, int);     /* Save current file            */
 extern  int     filename();             /* Adjust file name             */
-extern  int     getccol();              /* Get current column           */
+extern  int     getccol(int);           /* Get current column           */
 extern  int     gotobol();              /* Move to start of line        */
-extern  int     forwchar();             /* Move forward by characters   */
+extern  int     forwchar(int, int);     /* Move forward by characters   */
 extern  int     gotoeol();              /* Move to end of line          */
-extern  int     backchar();             /* Move backward by characters  */
+extern  int     backchar(int, int);     /* Move backward by characters  */
 extern  int     forwline();             /* Move forward by lines        */
-extern  int     backline();             /* Move backward by lines       */
+extern  int     backline(int, int);     /* Move backward by lines       */
 extern  int     forwpage();             /* Move forward by pages        */
-extern  int     backpage();             /* Move backward by pages       */
+extern  int     backpage(int, int);     /* Move backward by pages       */
 extern  int     gotobob();              /* Move to start of buffer      */
 extern  int     gotoeob();              /* Move to end of buffer        */
 extern  int     setfillcol();           /* Set fill column.             */
@@ -80,9 +80,9 @@ extern  int     prevwind();             /* Move to the previous window  */
 extern  int     onlywind();             /* Make current window only one */
 extern  int     splitwind();            /* Split current window         */
 extern  int     mvdnwind();             /* Move window down             */
-extern  int     mvupwind();             /* Move window up               */
+extern  int     mvupwind(int, int);     /* Move window up               */
 extern  int     enlargewind();          /* Enlarge display window.      */
-extern  int     shrinkwind();           /* Shrink window.               */
+extern  int     shrinkwind(int, int);   /* Shrink window.               */
 extern  int     listbuffers();          /* Display list of buffers      */
 extern  int     usebuffer();            /* Switch a window to a buffer  */
 extern  int     killbuffer();           /* Make a buffer go away.       */
@@ -90,15 +90,15 @@ extern  int     reposition();           /* Reposition window            */
 extern  int     refresh();              /* Refresh the screen           */
 extern  int     twiddle();              /* Twiddle characters           */
 extern  int     tab();                  /* Insert tab                   */
-extern  int     newline();              /* Insert CR-LF                 */
+extern  int     newline(int, int);      /* Insert CR-LF                 */
 extern  int     indent();               /* Insert CR-LF, then indent    */
 extern  int     openline();             /* Open up a blank line         */
 extern  int     deblank();              /* Delete blank lines           */
 extern  int     quote();                /* Insert literal               */
-extern  int     backword();             /* Backup by words              */
-extern  int     forwword();             /* Advance by words             */
+extern  int     backword(int, int);     /* Backup by words              */
+extern  int     forwword(int, int);     /* Advance by words             */
 extern  int     forwdel();              /* Forward delete               */
-extern  int     backdel();              /* Backward delete              */
+extern  int     backdel(int, int);      /* Backward delete              */
 extern  int     kill();                 /* Kill forward                 */
 extern  int     yank();                 /* Yank back from killbuffer.   */
 extern  int     upperword();            /* Upper case word.             */
@@ -118,55 +118,55 @@ extern  int     spawn();                /* Run a command in a subjob.   */
  * This table  is *roughly* in ASCII order, left to right across the
  * characters of the command. This expains the funny location of the
  * control-X commands.
- */
+ */typedef int (*keytabfunc_t)(void);
 KEYTAB  keytab[] = {
         { CTRL|'@',               &setmark, },
         { CTRL|'A',               &gotobol, },
-        { CTRL|'B',               &backchar, },
-        { CTRL|'C',               &spawncli,      /* Run CLI in subjob.   */ },
+        { CTRL|'B',               (keytabfunc_t)&backchar, },
+        { CTRL|'C',               &spawncli,                /* Run CLI in subjob.   */ },
         { CTRL|'D',               &forwdel, },
         { CTRL|'E',               &gotoeol, },
-        { CTRL|'F',               &forwchar, },
-        { CTRL|'G',               &ctrlg, },
-        { CTRL|'H',               &backdel, },
+        { CTRL|'F',               (keytabfunc_t)&forwchar, },
+        { CTRL|'G',               (keytabfunc_t)&ctrlg, },
+        { CTRL|'H',               (keytabfunc_t)&backdel, },
         { CTRL|'I',               &tab, },
         { CTRL|'J',               &indent, },
         { CTRL|'K',               &kill, },
         { CTRL|'L',               &refresh, },
-        { CTRL|'M',               &newline, },
+        { CTRL|'M',               (keytabfunc_t)&newline, },
         { CTRL|'N',               &forwline, },
         { CTRL|'O',               &openline, },
-        { CTRL|'P',               &backline, },
-        { CTRL|'Q',               &quote,         /* Often unreachable    */ },
+        { CTRL|'P',               (keytabfunc_t)&backline, },
+        { CTRL|'Q',               &quote,                   /* Often unreachable    */ },
         { CTRL|'R',               &backsearch, },
-        { CTRL|'S',               &forwsearch,    /* Often unreachable    */ },
+        { CTRL|'S',               &forwsearch,              /* Often unreachable    */ },
         { CTRL|'T',               &twiddle, },
         { CTRL|'V',               &forwpage, },
         { CTRL|'W',               &killregion, },
         { CTRL|'Y',               &yank, },
-        { CTRL|'Z',               &quickexit,     /* quick save and exit  */ },
+        { CTRL|'Z',               (keytabfunc_t)&quickexit, /* quick save and exit  */ },
         { CTLX|CTRL|'B',          &listbuffers, },
-        { CTLX|CTRL|'C',          &quit,          /* Hard quit.           */ },
+        { CTLX|CTRL|'C',          (keytabfunc_t)&quit,      /* Hard quit.           */ },
         { CTLX|CTRL|'F',          &filename, },
         { CTLX|CTRL|'L',          &lowerregion, },
         { CTLX|CTRL|'O',          &deblank, },
         { CTLX|CTRL|'N',          &mvdnwind, },
-        { CTLX|CTRL|'P',          &mvupwind, },
+        { CTLX|CTRL|'P',          (keytabfunc_t)&mvupwind, },
         { CTLX|CTRL|'R',          &fileread, },
-        { CTLX|CTRL|'S',          &filesave,      /* Often unreachable    */ },
+        { CTLX|CTRL|'S',          (keytabfunc_t)&filesave,  /* Often unreachable    */ },
         { CTLX|CTRL|'U',          &upperregion, },
         { CTLX|CTRL|'V',          &filevisit, },
         { CTLX|CTRL|'W',          &filewrite, },
         { CTLX|CTRL|'X',          &swapmark, },
-        { CTLX|CTRL|'Z',          &shrinkwind, },
-        { CTLX|'!',               &spawn,         /* Run 1 command.       */ },
+        { CTLX|CTRL|'Z',          (keytabfunc_t)&shrinkwind, },
+        { CTLX|'!',               &spawn,                   /* Run 1 command.       */ },
         { CTLX|'=',               &showcpos, },
-        { CTLX|'(',               &ctlxlp, },
-        { CTLX|')',               &ctlxrp, },
+        { CTLX|'(',               (keytabfunc_t)&ctlxlp, },
+        { CTLX|')',               (keytabfunc_t)&ctlxrp, },
         { CTLX|'1',               &onlywind, },
         { CTLX|'2',               &splitwind, },
         { CTLX|'B',               &usebuffer, },
-        { CTLX|'E',               &ctlxe, },
+        { CTLX|'E',               (keytabfunc_t)&ctlxe, },
         { CTLX|'F',               &setfillcol, },
         { CTLX|'K',               &killbuffer, },
         { CTLX|'N',               &nextwind, },
@@ -177,16 +177,16 @@ KEYTAB  keytab[] = {
         { META|'.',               &setmark, },
         { META|'>',               &gotoeob, },
         { META|'<',               &gotobob, },
-        { META|'B',               &backword, },
+        { META|'B',               (keytabfunc_t)&backword, },
         { META|'C',               &capword, },
         { META|'D',               &delfword, },
-        { META|'F',               &forwword, },
+        { META|'F',               (keytabfunc_t)&forwword, },
         { META|'L',               &lowerword, },
         { META|'U',               &upperword, },
-        { META|'V',               &backpage, },
+        { META|'V',               (keytabfunc_t)&backpage, },
         { META|'W',               &copyregion, },
         { META|0x7F,              &delbword, },
-        { 0x7F,                   &backdel },
+        { 0x7F,                   (keytabfunc_t)&backdel },
 };
 
 #define NKEYTAB (sizeof(keytab)/sizeof(keytab[0]))
@@ -396,6 +396,7 @@ char    bname[];
  * and arranges to move it to the "lastflag", so that the next command can
  * look at it. Return the status of command.
  */
+typedef int (*keytabfunc2_t)(int,int);
 int execute(c, f, n)
 	int c;
 	int f;
@@ -407,8 +408,9 @@ int execute(c, f, n)
         ktp = &keytab[0];                       /* Look in key table.   */
         while (ktp < &keytab[NKEYTAB]) {
                 if (ktp->k_code == c) {
+                        keytabfunc2_t kfp = (keytabfunc2_t)ktp->k_fp;
                         thisflag = 0;
-                        status   = (*ktp->k_fp)(f, n);
+                        status   = kfp(f, n);
                         lastflag = thisflag;
                         return (status);
                 }

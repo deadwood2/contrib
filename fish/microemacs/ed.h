@@ -163,9 +163,9 @@ typedef struct  {
         int     (*t_open)();            /* Open terminal at the start.  */
         int     (*t_close)();           /* Close terminal at end.       */
         int     (*t_getchar)();         /* Get character from keyboard. */
-        int     (*t_putchar)();         /* Put character to display.    */
+        int     (*t_putchar)(char);     /* Put character to display.    */
         int     (*t_flush)();           /* Flush output buffers.        */
-        int     (*t_move)();            /* Move the cursor, origin 0.   */
+        int     (*t_move)(int,int);     /* Move the cursor, origin 0.   */
         int     (*t_eeol)();            /* Erase to end of line.        */
         int     (*t_eeop)();            /* Erase to end of page.        */
         int     (*t_beep)();            /* Beep.                        */
@@ -190,9 +190,9 @@ extern  short   *kbdmop;                /* Output pointer for above     */
 extern  char    pat[];                  /* Search pattern               */
 extern  TERM    term;                   /*(Terminal information.        */
 
-extern  BUFFER  *bfind();               /* Lookup a buffer by name      */
+extern  BUFFER  *bfind(register char *, int, int); /* Lookup a buffer by name      */
 extern  WINDOW  *wpopup();              /* Pop up window creation       */
-extern  LINE    *lalloc();              /* Allocate a line              */
+extern  LINE    *lalloc(register int);  /* Allocate a line              */
 
 
 

@@ -16,21 +16,21 @@
 
 extern  int     ttopen();               /* Forward references.          */
 extern  int     ttgetc();
-extern  int     ttputc();
+extern  int     ttputc(char);
 extern  int     ttflush();
 extern  int     ttclose();
-extern  int     ansimove();
+extern  int     ansimove(int,int);
 extern  int     ansieeol();
 extern  int     ansieeop();
 extern  int     ansibeep();
 extern  int     ansiopen();
-extern  int     ansiparm();
+extern  int     ansiparm(register int);
 
 /*
  * Standard terminal interface dispatch table. Most of the fields point into
  * "termio" code.
  */
-TERM    term    = {
+ TERM    term    = {
         NROW-1,
         NCOL,
         &ansiopen,
