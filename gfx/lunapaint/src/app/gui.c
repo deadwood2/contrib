@@ -208,7 +208,7 @@ void Init_Application ( )
 void Exit_Application ( )
 {
     // Delete canvases (free allocated memory)
-    deleteCanvaswindows ( canvases );
+    deleteCanvaswindows ( );
 
     if ( canvases != NULL )
         FreeVec ( canvases );
