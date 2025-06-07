@@ -585,9 +585,9 @@ struct ConfigUndo {
     char menutit[5][16];
 };
 
-extern struct ConfigUndo *makeundo();
-extern char *getcopy(),*compilefunclist(),**makefiletypelist(),**makeclasslist();
-extern struct dopusgadgetbanks *lastbank();
+extern struct ConfigUndo *makeundo(int);
+extern char *getcopy(char *,int,struct DOpusRemember **),*compilefunclist(char **,char *,struct DOpusRemember **),**makefiletypelist(struct DOpusRemember **),**makeclasslist(struct DOpusRemember **);
+extern struct dopusgadgetbanks *lastbank(struct dopusgadgetbanks *);
 
 extern int fontplaceflags[],fontplacevals[];
 extern struct RMBGadget nextbankrmb,insertbankrmb,formatclearrmb,sampleclearrmb;
@@ -652,7 +652,7 @@ struct ScreenMode {
 
 extern char **screenmodelist;
 extern struct ScreenMode *firstmode,*screenmode;
-extern struct ScreenMode *showdisplaydesc(),*getscreenmode();
+extern struct ScreenMode *showdisplaydesc(),*getscreenmode(int);
 
 #define SCRFLAGS_DEFWIDTH   1
 #define SCRFLAGS_DEFHEIGHT  2
