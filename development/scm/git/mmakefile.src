@@ -47,18 +47,20 @@ contrib-development-git-setup :
 	       cd $(GIT_PORTDIR)/$(GIT_ARCHDIR) && $(MAKE) configure; \
 	fi
 
-%fetch mmake=contrib-development-git-fetch archive=$(GIT_ARCHBASE) suffixes="tar.gz" \
+%fetch mmake=contrib-development-git-fetch archive=$(GIT_ARCHBASE) \
     location=$(PORTSSOURCEDIR)/git destination=$(GIT_PORTDIR) \
-    archive_origins=". https://github.com/git/git/archive" \
-    patches_specs="$(GIT_ARCHBASE)-aros.diff:$(GIT_ARCHDIR):-f,-p1" patches_origins="$(SRCDIR)/$(CURDIR)"
+    archive_origins="https://github.com/git/git/archive" suffixes="tar.gz" \
+    patches_specs="$(GIT_ARCHBASE)-aros.diff:$(GIT_ARCHDIR):-f,-p1"
 
 GIT_PATCHIGNORE := autom4te.cache configure GIT-VERSION-FILE
 
-%create_patch mmake=contrib-development-git-create-patch archive=$(GIT_ARCHBASE) \
-    srcdir=$(GIT_ARCHDIR) suffixes="tar.gz" destination=$(GIT_PORTDIR) excludes="$(GIT_PATCHIGNORE)"
+%create_patch mmake=contrib-development-git-create-patch \
+    location=$(PORTSSOURCEDIR)/git destination=$(GIT_PORTDIR) \
+    archive=$(GIT_ARCHBASE) suffixes="tar.gz" \
+    srcdir="$(GIT_ARCHDIR)" excludes="$(GIT_PATCHIGNORE)"
 
 NOWARN_FLAGS := $(NOWARN_IMPLICIT_FUNCTION_DECLARATION)
-USER_CFLAGS := $(NOWARN_FLAGS)
+USER_CFLAGS := $(CFLAGS_GNU99) $(NOWARN_FLAGS)
 
 contrib-development-git-touchfileflag := $(GENDIR)/$(CURDIR)/.files-touched
 

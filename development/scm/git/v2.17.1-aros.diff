@@ -1,6 +1,6 @@
 diff -ruN -X ./exclude.patterns git-2.17.1/abspath.c git-2.17.1.aros/abspath.c
---- git-2.17.1/abspath.c	2018-05-22 06:28:26.000000000 +0100
-+++ git-2.17.1.aros/abspath.c	2018-06-09 16:31:06.737118519 +0100
+--- git-2.17.1/abspath.c	2018-05-22 05:28:26.000000000 +0000
++++ git-2.17.1.aros/abspath.c	2025-06-07 17:53:34.254350098 +0000
 @@ -8,6 +8,15 @@
  int is_directory(const char *path)
  {
@@ -18,8 +18,8 @@ diff -ruN -X ./exclude.patterns git-2.17.1/abspath.c git-2.17.1.aros/abspath.c
  }
  
 diff -ruN -X ./exclude.patterns git-2.17.1/common-main.c git-2.17.1.aros/common-main.c
---- git-2.17.1/common-main.c	2018-05-22 06:28:26.000000000 +0100
-+++ git-2.17.1.aros/common-main.c	2018-06-09 16:31:06.737118519 +0100
+--- git-2.17.1/common-main.c	2018-05-22 05:28:26.000000000 +0000
++++ git-2.17.1.aros/common-main.c	2025-06-07 17:53:34.254350098 +0000
 @@ -13,6 +13,12 @@
   * Restore the way SIGPIPE is handled to default, which is what we
   * expect.
@@ -59,21 +59,22 @@ diff -ruN -X ./exclude.patterns git-2.17.1/common-main.c git-2.17.1.aros/common-
  }
 +
 diff -ruN -X ./exclude.patterns git-2.17.1/compat/poll/poll.c git-2.17.1.aros/compat/poll/poll.c
---- git-2.17.1/compat/poll/poll.c	2018-05-22 06:28:26.000000000 +0100
-+++ git-2.17.1.aros/compat/poll/poll.c	2018-06-09 16:31:06.737118519 +0100
-@@ -47,6 +47,9 @@
+--- git-2.17.1/compat/poll/poll.c	2018-05-22 05:28:26.000000000 +0000
++++ git-2.17.1.aros/compat/poll/poll.c	2025-06-07 17:59:15.686349237 +0000
+@@ -47,6 +47,10 @@
  # include <stdio.h>
  # include <conio.h>
  #else
 +# if defined(__AROS__)
 +#  include <proto/socket.h>
++#  include <string.h>
 +# endif
  # include <sys/time.h>
  # include <sys/socket.h>
  # ifndef NO_SYS_SELECT_H
 diff -ruN -X ./exclude.patterns git-2.17.1/config.mak.uname git-2.17.1.aros/config.mak.uname
---- git-2.17.1/config.mak.uname	2018-05-22 06:28:26.000000000 +0100
-+++ git-2.17.1.aros/config.mak.uname	2018-06-09 16:31:06.737118519 +0100
+--- git-2.17.1/config.mak.uname	2018-05-22 05:28:26.000000000 +0000
++++ git-2.17.1.aros/config.mak.uname	2025-06-07 17:53:34.254350098 +0000
 @@ -1,11 +1,13 @@
  # Platform specific Makefile tweaks based on uname detection
  
@@ -120,8 +121,8 @@ diff -ruN -X ./exclude.patterns git-2.17.1/config.mak.uname git-2.17.1.aros/conf
  	# Need this for u_short definitions et al
  	BASIC_CFLAGS += -D_OSF_SOURCE
 diff -ruN -X ./exclude.patterns git-2.17.1/configure.ac git-2.17.1.aros/configure.ac
---- git-2.17.1/configure.ac	2018-05-22 06:28:26.000000000 +0100
-+++ git-2.17.1.aros/configure.ac	2018-06-09 16:31:06.737118519 +0100
+--- git-2.17.1/configure.ac	2018-05-22 05:28:26.000000000 +0000
++++ git-2.17.1.aros/configure.ac	2025-06-07 17:53:34.254350098 +0000
 @@ -580,7 +580,7 @@
  
  GIT_STASH_FLAGS($CURLDIR)
@@ -207,8 +208,8 @@ diff -ruN -X ./exclude.patterns git-2.17.1/configure.ac git-2.17.1.aros/configur
  if test -z "$NO_GETTEXT"; then
      test -n "$LIBC_CONTAINS_LIBINTL" || LIBS="$LIBS -lintl"
 diff -ruN -X ./exclude.patterns git-2.17.1/git-compat-util.h git-2.17.1.aros/git-compat-util.h
---- git-2.17.1/git-compat-util.h	2018-05-22 06:28:26.000000000 +0100
-+++ git-2.17.1.aros/git-compat-util.h	2018-06-09 16:31:06.737118519 +0100
+--- git-2.17.1/git-compat-util.h	2018-05-22 05:28:26.000000000 +0000
++++ git-2.17.1.aros/git-compat-util.h	2025-06-07 17:53:34.254350098 +0000
 @@ -179,12 +179,19 @@
  #include <assert.h>
  #include <regex.h>
@@ -284,8 +285,8 @@ diff -ruN -X ./exclude.patterns git-2.17.1/git-compat-util.h git-2.17.1.aros/git
  #ifdef PRECOMPOSE_UNICODE
  #include "compat/precompose_utf8.h"
 diff -ruN -X ./exclude.patterns git-2.17.1/Makefile git-2.17.1.aros/Makefile
---- git-2.17.1/Makefile	2018-05-22 06:28:26.000000000 +0100
-+++ git-2.17.1.aros/Makefile	2018-06-09 16:31:06.737118519 +0100
+--- git-2.17.1/Makefile	2018-05-22 05:28:26.000000000 +0000
++++ git-2.17.1.aros/Makefile	2025-06-07 17:53:34.254350098 +0000
 @@ -1220,6 +1220,9 @@
  		ifdef NEEDS_CRYPTO_WITH_SSL
  			CURL_LIBCURL += -lcrypto
@@ -339,8 +340,8 @@ diff -ruN -X ./exclude.patterns git-2.17.1/Makefile git-2.17.1.aros/Makefile
  	fi
  
 diff -ruN -X ./exclude.patterns git-2.17.1/refs/iterator.c git-2.17.1.aros/refs/iterator.c
---- git-2.17.1/refs/iterator.c	2018-05-22 06:28:26.000000000 +0100
-+++ git-2.17.1.aros/refs/iterator.c	2018-06-09 16:31:06.737118519 +0100
+--- git-2.17.1/refs/iterator.c	2018-05-22 05:28:26.000000000 +0000
++++ git-2.17.1.aros/refs/iterator.c	2025-06-07 17:53:34.254350098 +0000
 @@ -8,6 +8,12 @@
  #include "refs/refs-internal.h"
  #include "iterator.h"
@@ -355,8 +356,8 @@ diff -ruN -X ./exclude.patterns git-2.17.1/refs/iterator.c git-2.17.1.aros/refs/
  {
  	return ref_iterator->vtable->advance(ref_iterator);
 diff -ruN -X ./exclude.patterns git-2.17.1/transport.c git-2.17.1.aros/transport.c
---- git-2.17.1/transport.c	2018-05-22 06:28:26.000000000 +0100
-+++ git-2.17.1.aros/transport.c	2018-06-09 16:31:06.737118519 +0100
+--- git-2.17.1/transport.c	2018-05-22 05:28:26.000000000 +0000
++++ git-2.17.1.aros/transport.c	2025-06-07 17:53:34.254350098 +0000
 @@ -19,6 +19,12 @@
  #include "sigchain.h"
  #include "transport-internal.h"
