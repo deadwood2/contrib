@@ -36,7 +36,9 @@ struct RastPort *rastport ;
 int screenheight, screenwidth ;
 struct Screen *scr;
 struct Window	*Wind = NULL;
+#if !defined(__AROS__)
 struct MsgPort	*CreatePort() ;
+#endif
 struct IntuitionBase	*IntuitionBase ;
 struct IntuiMessage	*msg;
 
@@ -93,7 +95,7 @@ char *HelpText[40] = {
 "    Return to continue",
 NULL };
 
-void done();
+void done(int);
 void clr_grf();
 void startlines();
 void advancelines();
