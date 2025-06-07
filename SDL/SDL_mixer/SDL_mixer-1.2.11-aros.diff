@@ -1,6 +1,6 @@
-diff -Naur SDL_mixer-1.2.11-orig/configure SDL_mixer-1.2.11/configure
---- SDL_mixer-1.2.11-orig/configure	2009-11-12 07:44:13.000000000 +0100
-+++ SDL_mixer-1.2.11/configure	2017-01-04 21:34:37.423517751 +0100
+diff -ruN SDL_mixer-1.2.11/configure SDL_mixer-1.2.11.aros/configure
+--- SDL_mixer-1.2.11/configure	2009-11-12 06:44:13.000000000 +0000
++++ SDL_mixer-1.2.11.aros/configure	2017-01-04 20:34:37.423517751 +0000
 @@ -12053,7 +12053,7 @@
  
    if test "x$sdl_prefix$sdl_exec_prefix" = x ; then
@@ -29,9 +29,26 @@ diff -Naur SDL_mixer-1.2.11-orig/configure SDL_mixer-1.2.11/configure
  ac_cs_awk_cr=`$AWK 'BEGIN { print "a\rb" }' </dev/null 2>/dev/null`
  if test "$ac_cs_awk_cr" = "a${ac_cr}b"; then
    ac_cs_awk_cr='\\r'
-diff -Naur SDL_mixer-1.2.11-orig/Makefile.in SDL_mixer-1.2.11/Makefile.in
---- SDL_mixer-1.2.11-orig/Makefile.in	2009-10-13 01:06:53.000000000 +0200
-+++ SDL_mixer-1.2.11/Makefile.in	2017-01-04 21:34:37.423517751 +0100
+diff -ruN SDL_mixer-1.2.11/dynamic_mod.h SDL_mixer-1.2.11.aros/dynamic_mod.h
+--- SDL_mixer-1.2.11/dynamic_mod.h	2009-11-07 05:00:12.000000000 +0000
++++ SDL_mixer-1.2.11.aros/dynamic_mod.h	2025-06-07 10:57:18.046349248 +0000
+@@ -31,11 +31,11 @@
+ 	void (*MikMod_Exit)(void);
+ 	CHAR* (*MikMod_InfoDriver)(void);
+ 	CHAR* (*MikMod_InfoLoader)(void);
+-	BOOL (*MikMod_Init)(CHAR*);
++	int (*MikMod_Init)(const char*);
+ 	void (*MikMod_RegisterAllLoaders)(void);
+ 	void (*MikMod_RegisterDriver)(struct MDRIVER*);
+ 	int* MikMod_errno;
+-	char* (*MikMod_strerror)(int);
++	const char* (*MikMod_strerror)(int);
+ 	BOOL (*Player_Active)(void);
+ 	void (*Player_Free)(MODULE*);
+ 	MODULE* (*Player_LoadGeneric)(MREADER*,int,BOOL);
+diff -ruN SDL_mixer-1.2.11/Makefile.in SDL_mixer-1.2.11.aros/Makefile.in
+--- SDL_mixer-1.2.11/Makefile.in	2009-10-12 23:06:53.000000000 +0000
++++ SDL_mixer-1.2.11.aros/Makefile.in	2017-01-04 20:34:37.423517751 +0000
 @@ -32,7 +32,7 @@
  SDL_CFLAGS = @SDL_CFLAGS@
  SDL_LIBS = @SDL_LIBS@
@@ -91,9 +108,9 @@ diff -Naur SDL_mixer-1.2.11-orig/Makefile.in SDL_mixer-1.2.11/Makefile.in
  uninstall-bin:
  	rm -f $(bindir)/playwave$(EXE)
  	rm -f $(bindir)/playmus$(EXE)
-diff -Naur SDL_mixer-1.2.11-orig/mixer.c SDL_mixer-1.2.11/mixer.c
---- SDL_mixer-1.2.11-orig/mixer.c	2009-11-12 07:41:28.000000000 +0100
-+++ SDL_mixer-1.2.11/mixer.c	2017-01-04 21:34:37.423517751 +0100
+diff -ruN SDL_mixer-1.2.11/mixer.c SDL_mixer-1.2.11.aros/mixer.c
+--- SDL_mixer-1.2.11/mixer.c	2009-11-12 06:41:28.000000000 +0000
++++ SDL_mixer-1.2.11.aros/mixer.c	2017-01-04 20:34:37.423517751 +0000
 @@ -513,6 +513,14 @@
  }
  
@@ -133,9 +150,21 @@ diff -Naur SDL_mixer-1.2.11-orig/mixer.c SDL_mixer-1.2.11/mixer.c
  
  	/* Run the audio converter */
  	if ( SDL_ConvertAudio(&wavecvt) < 0 ) {
-diff -Naur SDL_mixer-1.2.11-orig/timidity/config.h SDL_mixer-1.2.11/timidity/config.h
---- SDL_mixer-1.2.11-orig/timidity/config.h	2009-10-13 01:06:52.000000000 +0200
-+++ SDL_mixer-1.2.11/timidity/config.h	2017-01-04 21:34:37.423517751 +0100
+diff -ruN SDL_mixer-1.2.11/music_mod.c SDL_mixer-1.2.11.aros/music_mod.c
+--- SDL_mixer-1.2.11/music_mod.c	2009-11-12 07:48:25.000000000 +0000
++++ SDL_mixer-1.2.11.aros/music_mod.c	2025-06-07 10:54:05.758349113 +0000
+@@ -165,7 +165,7 @@
+ 	SDL_RWops *rw;
+ } LMM_MREADER;
+ 
+-BOOL LMM_Seek(struct MREADER *mr,long to,int dir)
++int LMM_Seek(struct MREADER *mr,long to,int dir)
+ {
+ 	LMM_MREADER* lmmmr = (LMM_MREADER*)mr;
+ 	if ( dir == SEEK_SET ) {
+diff -ruN SDL_mixer-1.2.11/timidity/config.h SDL_mixer-1.2.11.aros/timidity/config.h
+--- SDL_mixer-1.2.11/timidity/config.h	2009-10-12 23:06:52.000000000 +0000
++++ SDL_mixer-1.2.11.aros/timidity/config.h	2017-01-04 20:34:37.423517751 +0000
 @@ -176,6 +176,8 @@
  
  #if defined(__WIN32__) || defined(__OS2__)
