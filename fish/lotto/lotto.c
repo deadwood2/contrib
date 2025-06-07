@@ -38,6 +38,10 @@
 #include <libraries/dos.h>
 //#include <functions.h>          /* Manx C */
 
+#if defined(__AROS__)
+#include <stdlib.h>
+#endif
+
 /********************
 *  AMIGA STRUCTURES
 *********************/
@@ -175,16 +179,21 @@ long random_variable;
 *  FUNCTIONS
 **************/
 
-void display_numbers();  /* displays the lotto numbers in the box */
-void end_program();      /* closes the window, screen, and libraries */
-void get_inputs();       /* receives and processes user input */
-void get_numbers();      /* gets the lotto numbers */
-void initialize();       /* draws the lotto box and renders the gadgets */
-void open_all();         /* opens the libraries, screen, and window */
-long random();           /* random number function */
-long random_mult();      /* calculation used by random() function */
-void randomize();        /* plants pseudo-random variable seed using clock */
+void display_numbers();         /* displays the lotto numbers in the box */
+void end_program(int);          /* closes the window, screen, and libraries */
+void get_inputs();              /* receives and processes user input */
+void get_numbers();             /* gets the lotto numbers */
+void initialize();              /* draws the lotto box and renders the gadgets */
+void open_all();                /* opens the libraries, screen, and window */
+long random_mult(long,long);    /* calculation used by random() function */
+void randomize();               /* plants pseudo-random variable seed using clock */
+#if !defined(_STDC_STDLIB_H_)
+long random();                  /* random number function */
+#define lotto_rand(x) random(x)
 void exit();
+#else
+#define lotto_rand(x) (random() % x)
+#endif
 
 /**************************
 *  M A I N  P R O G R A M
@@ -216,7 +225,7 @@ void display_numbers()
     left = 92 + i * 24;
     SetAPen( window->RPort, BLACK );
     for (j = 0; j < 150; j++) {
-      r = random( UPPER ) + 1;
+      r = lotto_rand( UPPER ) + 1;
       digits[0] = r / 10 + '0';
       digits[1] = r % 10 + '0';
       Move( window->RPort, left, 88L );
@@ -300,7 +309,7 @@ void get_numbers()
     list[i] = i + 1;
   for (count = 0, upper = UPPER; count < NUMBERS; count++, upper--) {
     /* the random() function returns a long integer 0 <= r < upper */
-    r = random( (long)upper );
+    r = lotto_rand( (long)upper );
     numbers[count] = list[r];
     for (i = r; i < upper; i++)
       list[i] = list[i+1];
@@ -359,6 +368,7 @@ void open_all()
 #define SMALL  10000
 #define MEDIUM 31415821
 
+#if !defined(_STDC_STDLIB_H_)
 long random( upper )
   long upper;
 {
@@ -370,6 +380,7 @@ long random( upper )
 
   return (upper);
 }
+#endif
 
 /***************
 *  RANDOM MULT
@@ -400,4 +411,7 @@ void randomize()
 
   DateStamp( &ds );
   random_variable = ds.ds_Tick;
+#if defined(_STDC_STDLIB_H_)
+  srand(random_variable);
+#endif
 }
