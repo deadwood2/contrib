@@ -254,7 +254,9 @@ char	   *source;   /* Pattern to compile	    */
    register int   c;	      /* Current character	   */
    int		  o;	      /* Temp			   */
    char 	  *spp;       /* Save beginning of pattern */
+#if !defined(__AROS__)
    char 	  *cclass();  /* Compile class routine	   */
+#endif
    s = source;
    if (debug)
       printf("Pattern = \"%s\"\n", s);
@@ -450,7 +452,9 @@ int match()
  */
 {
    register char   *l;	      /* Line pointer	    */
+#if !defined(__AROS__)
    char *pmatch();
+#endif
    for (l = lbuf; *l; l++) {
       if (pmatch(l, pbuf))
 	 return(1);
