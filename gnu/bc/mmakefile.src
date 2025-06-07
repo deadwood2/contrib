@@ -1,9 +1,14 @@
-# Copyright © 2004-2010, The AROS Development Team. All rights reserved.
+# Copyright © 2004-2025, The AROS Development Team. All rights reserved.
 # $Id$
 
 include $(SRCDIR)/config/aros-contrib.cfg
 
 #MM- contrib-gnu : contrib-gnu-bc
 #MM- contrib-gnu-bc : development-bc
+
+NOWARN_FLAGS := $(NOWARN_UNUSED_BUT_SET_VARIABLE) \
+        $(NOWARN_IMPLICIT_FUNCTION_DECL) $(NOWARN_IMPLICIT_INT) \
+        $(NOWARN_BUILTIN_DECLARATION_MISMATCH)
+USER_CFLAGS := $(NOWARN_FLAGS)
 
 %fetch_and_build_gnu_development package=bc version=1.06 suffixes="tar.gz"
