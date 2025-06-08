@@ -6,7 +6,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 COREUTILS_VERSION = 6.9
 ##TODO: update to 9.7
 
-##MM- contrib-gnu : contrib-gnu-coreutils
+#MM- contrib-gnu : contrib-gnu-coreutils
 #MM- contrib-gnu-coreutils : development-coreutils
 
 NOWARN_FLAGS := $(NOWARN_IMPLICIT_FUNCTION_DECL)
