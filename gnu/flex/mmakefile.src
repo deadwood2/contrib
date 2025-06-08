@@ -1,7 +1,11 @@
-# Copyright © 2004-2019, The AROS Development Team. All rights reserved.
+# Copyright © 2004-2025, The AROS Development Team. All rights reserved.
 # $Id$
 
 include $(SRCDIR)/config/aros-contrib.cfg
+
+FLEX_VERSBASE = 2.5.4
+FLEX_VERSION = $(FLEX_VERSBASE)a
+ARCHBASE := flex-$(FLEX_VERSBASE)
 
 #MM- contrib-gnu : contrib-gnu-flex
 #MM- contrib-gnu-flex : development-flex
@@ -11,5 +15,8 @@ REPOSITORIES := \
  http://www.theflatnet.de/pub/linux/system \
  http://download.nust.na/pub2/openpkg1/sources/DST/flex
 
-%fetch_and_build_gnu_development package=flex version=2.5.4a srcdir=flex-2.5.4 patch=yes \
+NOWARN_FLAGS := $(NOWARN_IMPLICIT_FUNCTION_DECL)
+USER_CFLAGS := $(CFLAGS_GNU99) $(NOWARN_FLAGS)
+
+%fetch_and_build_gnu_development package=flex version=$(FLEX_VERSION) srcdir=$(ARCHBASE) patch=yes \
     package_repo=$(REPOSITORIES) suffixes="tar.gz"
