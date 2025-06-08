@@ -5,7 +5,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 
 M4_VERSION = 1.4.5
 
-##MM- contrib-gnu : contrib-gnu-m4
+#MM- contrib-gnu : contrib-gnu-m4
 #MM- contrib-gnu-m4 : development-m4
 
 NOWARN_FLAGS := $(NOWARN_IMPLICIT_FUNCTION_DECL)

@@ -5,7 +5,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 
 GREP_VERSION = 2.5.1
 
-##MM- contrib-gnu : contrib-gnu-grep
+#MM- contrib-gnu : contrib-gnu-grep
 #MM- contrib-gnu-grep : development-grep
 #MM- development-grep : contrib-development-parsers-pcre
 
