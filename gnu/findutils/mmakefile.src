@@ -6,7 +6,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 FINDUTILS_VERSION = 4.2.31
 ##TODO: update to 4.10.0
 
-##MM- contrib-gnu : contrib-gnu-findutils
+#MM- contrib-gnu : contrib-gnu-findutils
 #MM- contrib-gnu-findutils : development-findutils
 
 NOWARN_FLAGS := $(NOWARN_IMPLICIT_FUNCTION_DECL)
