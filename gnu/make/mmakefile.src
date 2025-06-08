@@ -5,7 +5,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 
 MAKE_VERSION = 3.81
 
-##MM- contrib-gnu : contrib-gnu-make
+#MM- contrib-gnu : contrib-gnu-make
 #MM- contrib-gnu-make : development-make
 
 NOWARN_FLAGS := $(NOWARN_IMPLICIT_FUNCTION_DECL)
