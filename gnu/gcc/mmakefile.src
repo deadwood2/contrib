@@ -1,11 +1,12 @@
-# Copyright © 2004-2020, The AROS Development Team. All rights reserved.
+# Copyright © 2004-2025, The AROS Development Team. All rights reserved.
 # $Id$
 
 include $(SRCDIR)/config/aros-contrib.cfg
 
 #MM- contrib-gnu : contrib-gnu-gcc
 #MM- contrib-gnu-gcc : development-collect-aros development-gcc
-#MM- development-gcc : development-gmp development-mpfr development-mpc contrib-development-libs-gc
+#MM- development-gcc : development-gmp development-mpfr development-mpc
+#MM- development-gcc : contrib-development-libs-gc
 
 #
 # default build values and flags...
@@ -95,6 +96,11 @@ development-gcc-genwrappers : $(GENDIR)/$(CURDIR)/.gcc.tool.wrappers
 development-gcc--TARGET_CC := $(TOOLDIR)/$(AROS_TARGET_CPU)-aros-gcc
 development-gcc--TARGET_CXX := $(TOOLDIR)/$(AROS_TARGET_CPU)-aros-g++
 # END ISA WORKAROUND
+
+NOWARN_FLAGS := $(NOWARN_IMPLICIT_FUNCTION_DECL) $(NOWARN_INT_CONVERSION)
+USER_CPPFLAGS := -DNO_AMIGA_LINKAGE_TYPES
+USER_CFLAGS := $(NOWARN_FLAGS) $(USER_CPPFLAGS)
+GCC_HOST_VARS += CPPFLAGS_FOR_BUILD="$(USER_CPPFLAGS)"
 
 #
 # Rules to build the native GCC compiler.
