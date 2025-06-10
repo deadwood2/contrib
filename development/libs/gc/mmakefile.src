@@ -1,16 +1,28 @@
-# Copyright © 2015, The AROS Development Team. All rights reserved.
+# Copyright © 2015-2025, The AROS Development Team. All rights reserved.
 # $Id$
 
 include $(SRCDIR)/config/aros-contrib.cfg
 
-REPOSITORIES = github://ivmai/bdwgc/archive
-ARCHBASE := gc7_4_2
-PATCHSPEC := $(ARCHBASE)-aros.diff:bdwgc-$(ARCHBASE):-p1
+GCVERSION = 7_4_2
+#GCVERSION = 8.2.2
 
-GC_SOURCE := $(PORTSDIR)/gc/bdwgc-$(ARCHBASE)
+ifeq (,$(findstring _,$(GCVERSION)))
+REPOSITORIES = github://ivmai/bdwgc/releases/download/v$(GCVERSION)
+ARCHBASE := gc-$(GCVERSION)
+ARCHSRCDIR := $(ARCHBASE)
+else
+REPOSITORIES = github://ivmai/bdwgc/archive
+ARCHBASE := gc$(GCVERSION)
+ARCHSRCDIR := bdwgc-$(ARCHBASE)
+endif
+
+PATCHSPEC := $(ARCHBASE)-aros.diff:$(ARCHSRCDIR):-p1
+GC_SOURCE := $(PORTSDIR)/gc/$(ARCHSRCDIR)
 
 ifneq (,)
 GC_EXTRA_OPTS := \
+        -DBUILD_SHARED_LIBS=OFF \
+        -DENABLE_THREADS=OFF \
         -Denable_cplusplus=YES \
         -Denable_gcj_support=YES
 endif
@@ -24,7 +36,10 @@ endif
     patches_specs=$(PATCHSPEC)
 
 %create_patch mmake=contrib-development-libs-gc-create-patch \
-    archive=$(ARCHBASE) srcdir=bdwgc-$(ARCHBASE) destination=$(PORTSDIR)/gc
+    archive=$(ARCHBASE) srcdir=$(ARCHSRCDIR) destination=$(PORTSDIR)/gc
+
+NOWARN_FLAGS := $(NOWARN_IMPLICIT_FUNCTION_DECL) $(NOWARN_INT_CONVERSION)
+USER_CFLAGS := $(CXXFLAGS_GNU98) $(CFLAGS_GNU99) $(NOWARN_FLAGS)
 
 %build_with_cmake mmake=contrib-development-libs-gc		\
 	srcdir=$(GC_SOURCE) prefix="$(AROS_DEVELOPMENT)"
