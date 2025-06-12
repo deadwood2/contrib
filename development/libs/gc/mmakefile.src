@@ -19,12 +19,19 @@ endif
 PATCHSPEC := $(ARCHBASE)-aros.diff:$(ARCHSRCDIR):-p1
 GC_SOURCE := $(PORTSDIR)/gc/$(ARCHSRCDIR)
 
+NOWARN_FLAGS := $(NOWARN_IMPLICIT_FUNCTION_DECL) $(NOWARN_INT_CONVERSION)
+USER_CFLAGS := $(CFLAGS_GNU99) $(NOWARN_FLAGS)
+USER_CXXFLAGS := $(CXXFLAGS_GNU11)
+
 ifneq (,)
 GC_EXTRA_OPTS := \
         -DBUILD_SHARED_LIBS=OFF \
         -DENABLE_THREADS=OFF \
         -Denable_cplusplus=YES \
         -Denable_gcj_support=YES
+else
+GC_EXTRA_OPTS := \
+        -DCMAKE_CXX_FLAGS="$(USER_CXXFLAGS)"
 endif
 
 #MM- contrib-development : contrib-development-libs-gc
@@ -37,9 +44,6 @@ endif
 
 %create_patch mmake=contrib-development-libs-gc-create-patch \
     archive=$(ARCHBASE) srcdir=$(ARCHSRCDIR) destination=$(PORTSDIR)/gc
-
-NOWARN_FLAGS := $(NOWARN_IMPLICIT_FUNCTION_DECL) $(NOWARN_INT_CONVERSION)
-USER_CFLAGS := $(CXXFLAGS_GNU98) $(CFLAGS_GNU99) $(NOWARN_FLAGS)
 
 %build_with_cmake mmake=contrib-development-libs-gc		\
 	srcdir=$(GC_SOURCE) prefix="$(AROS_DEVELOPMENT)"
