@@ -295,7 +295,7 @@ extern struct Image
 #define CTYPE_MRAD  6
 
 struct ConfigGadget {
-    char type;
+    signed char type;
     char value;
     int nameentry;
     short x,y;
