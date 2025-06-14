@@ -19,7 +19,6 @@ USER_INCLUDES := \
     -idirafter $(SRCDIR)/$(CURDIR)/../../../include
 
 USER_CPPFLAGS := \
-    -D_XOPEN_SOURCE=600 \
     -D__UTILITY_STDLIBBASE__ \
     -D__LOCALE_STDLIBBASE__ \
     -D__TIMER_STDLIBBASE__
