@@ -1,4 +1,4 @@
-# Copyright © 2004-2019, The AROS Development Team. All rights reserved.
+# Copyright © 2004-2025, The AROS Development Team. All rights reserved.
 # $Id$
 
 include $(SRCDIR)/config/aros-contrib.cfg
@@ -20,7 +20,7 @@ REPOSITORIES := https://www.libsdl.org/projects/SDL_image/release \
  http://ftp.riken.jp/Linux/momonga/1/PKGS/SOURCES \
  http://kaneda.bohater.net/slackware/packages/source
 
-%fetch_and_build_gnu_development package=SDL_image version=$(SDLIMAGEVERS) patch=no \
+%fetch_and_build_gnu_development package=SDL_image version=$(SDLIMAGEVERS) patch=yes \
     package_repo="$(REPOSITORIES)" \
     suffixes="tar.gz" extraoptions="libdir=$(AROS_LIB)"
 
