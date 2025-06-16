@@ -7,6 +7,7 @@ NOWARN_FLAGS := \
     $(NOWARN_FORMAT_OVERFLOW)
 
 USER_CFLAGS := $(NOWARN_FLAGS)
+USER_CPPFLAGS := -D__GNU_SOURCE
 
 %build_prog mmake=aminet-games-board-backgammon \
     progname=Backgammon targetdir=$(EXEDIR) \
