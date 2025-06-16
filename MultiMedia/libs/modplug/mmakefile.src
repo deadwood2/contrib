@@ -17,6 +17,8 @@ endif
 
 MODPLUG_ENVFLAGS := ac_cv_c_bigendian=$(BIGENDIAN)
 
+USER_CPPFLAGS := -D__GNU_SOURCE
+
 %fetch_and_build_gnu_development package=libmodplug version=0.8.8.5 patch=yes \
     package_repo="$(REPOSITORIES)" \
     suffixes="tar.gz" extraoptions="--libdir=$(AROS_LIB)" \
