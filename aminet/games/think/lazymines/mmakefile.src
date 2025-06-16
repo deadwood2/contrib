@@ -2,17 +2,17 @@
 
 include $(SRCDIR)/config/aros-contrib.cfg
 
+#MM aminet-games-think-lazymines : aminet-dev-src-chunkyiclass setup-aminet-lazymines-catalogs
+
 FILES	:= lazymines button counter field highscores images layout \
 	    localize requesters timer tooltypes lazymines_strings
 
 EXEDIR	:= $(AROS_CONTRIB)/Games/Board/LazyMines
-
-#MM aminet-games-think-lazymines : aminet-dev-src-chunkyiclass setup-aminet-lazymines-catalogs
+USER_CPPFLAGS := -D__GNU_SOURCE
 
 %build_prog mmake=aminet-games-think-lazymines \
     progname=LazyMines targetdir=$(EXEDIR) \
     files=$(FILES) uselibs="chunkyiclass"
-
 
 FILES := lazymines.guide lazymines.guide.info
 %copy_files_q mmake=aminet-games-think-lazymines dst=$(EXEDIR)
