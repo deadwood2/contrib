@@ -6,7 +6,9 @@ FILES := hextris stdsys arosio shape
 
 EXEDIR := $(AROS_CONTRIB)/Games/Puzzle/CXHextris
 
-USER_CPPFLAGS = -DHIGHSCOREFILE=\""S:chextris-scores"\"
+USER_CPPFLAGS = \
+      -D__GNU_SOURCE \
+      -DHIGHSCOREFILE=\""S:chextris-scores"\"
 
 #MM- contrib-games : contrib-games-cxhextris
 #MM- contrib-games-cxhextris : contrib-games-cxhextris-docs
