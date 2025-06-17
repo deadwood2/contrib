@@ -14,5 +14,7 @@ ICONV_OPTS := \
     --bindir=$(AROS_DEVELOPMENT)/$(AROS_DIR_BIN) \
     --libdir=$(AROS_LIB)
 
+USER_CFLAGS := $(CFLAGS_GNU11)
+
 %fetch_and_build_gnu_development package=libiconv version=$(ICONV_VERS) patch=no \
     suffixes="tar.gz" extraoptions="$(ICONV_OPTS)"
