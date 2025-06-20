@@ -1,4 +1,4 @@
-# Copyright © 2012-2020, The AROS Development Team. All rights reserved.
+# Copyright © 2012-2025, The AROS Development Team. All rights reserved.
 # $Id$
 
 include $(SRCDIR)/config/aros-contrib.cfg
@@ -30,7 +30,9 @@ REPOSITORIES := https://cairographics.org/releases \
  https://releases.linaro.org/archive/13.05/openembedded/sources \
  http://bbgentoo.ilb.ru/distfiles
 
+USER_CPPFLAGS := -DCHROMIUM_ZLIB_NO_CHROMECONF
+CAIRO_ENV=ac_cv_lib_z_compress=yes
+
 %fetch_and_build_gnu_development package=cairo version=1.12.14 patch=yes \
     package_repo="$(REPOSITORIES)" suffixes="tar.xz" \
-    extraoptions="$(CAIRO_OPTIONS)" nlsflag=no
-
+    extraoptions="$(CAIRO_OPTIONS)" config_env_extra="$(CAIRO_ENV)" nlsflag=no
