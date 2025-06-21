@@ -12,6 +12,7 @@
 #include <exec/lists.h>
 #include <guigfx/guigfx.h>
 
+#include "Mystic_Global.h"
 
 struct FakeGadgetList
 {
@@ -125,10 +126,10 @@ enum FGADSTATUS
 
 void DeleteFakeGadgetList(struct FakeGadgetList *fgl);
 #define CreateFakeGadgetList(win, ...) \
-    ({ IPTR args[] = { __VA_ARGS__ }; CreateFakeGadgetListA(win, args); })
+    ({ IPTR args[] = { AROS_PP_VARIADIC_CAST2IPTR(__VA_ARGS__) }; CreateFakeGadgetListA(win, args); })
 struct FakeGadgetList *CreateFakeGadgetListA(struct Window *win, IPTR *args);
 #define CreateFakeGadget(id, type, ...) \
-    ({ IPTR args[] = { __VA_ARGS__ }; CreateFakeGadgetA(id, type, args); })
+    ({ IPTR args[] = { AROS_PP_VARIADIC_CAST2IPTR(__VA_ARGS__) }; CreateFakeGadgetA(id, type, args); })
 struct FakeGadget *CreateFakeGadgetA(ULONG id, ULONG type, IPTR *args);
 void RemFakeGadget(struct FakeGadget *fg);
 void DeleteFakeGadget(struct FakeGadget *fg);

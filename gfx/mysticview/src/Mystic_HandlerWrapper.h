@@ -70,7 +70,7 @@ extern BOOL AppendPicHandler(struct pichandler *ph, char **filepatterns);
 
 extern struct pichandler *CreatePicHandlerA(char **filepatternlist, BOOL asyncscanning, IPTR *args);
 #define CreatePicHandler(filepatternlist, asyncscanning, ...) \
-    ({ IPTR args[] = { __VA_ARGS__ }; CreatePicHandlerA(filepatternlist, asyncscanning, args); });
+    ({ IPTR args[] = { AROS_PP_VARIADIC_CAST2IPTR(__VA_ARGS__) }; CreatePicHandlerA(filepatternlist, asyncscanning, args); });
 extern void DeletePicHandler(struct pichandler *pichandler);
 extern ULONG NewPicSignal(struct pichandler *pichandler);
 

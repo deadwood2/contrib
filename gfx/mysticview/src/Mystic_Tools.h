@@ -14,6 +14,7 @@
 #include "Mystic_Settings.h"
 #include "Mystic_Window.h"
 
+#include "Mystic_Global.h"
 
 extern void WindowClear(struct mvwindow *win);
 extern void WindowBackFill(struct mvwindow *win, UWORD width, UWORD height, UWORD winxoffs, UWORD winyoffs);
@@ -54,6 +55,6 @@ extern BOOL CallSubTask(LONG (* function)(APTR data), APTR data, int prio, int s
 
 extern STRPTR _StrDupCatA(CONST_STRPTR *args);
 #define _StrDupCat(...) \
-    ({ CONST_STRPTR args[] = { __VA_ARGS__, NULL  }; _StrDupCatA(args); })
+    ({ CONST_STRPTR args[] = { AROS_PP_VARIADIC_CAST2TYPE(CONST_STRPTR, __VA_ARGS__), NULL  }; _StrDupCatA(args); })
 
 #endif

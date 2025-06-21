@@ -12,7 +12,6 @@
 
 #include "Mystic_Global.h"
 
-
 /*--------------------------------------------------------------------
 
 	main settings structure
@@ -170,12 +169,15 @@ struct pathsettings
 
 extern struct mainsettings *CreateMainSettingsA(char **ttypes, struct mainsettings *oldsettings, IPTR *args);
 #define CreateMainSettings(ttypes, oldsettings, ...) \
-    ({ IPTR args[] = { __VA_ARGS__ }; CreateMainSettingsA(ttypes, oldsettings, args); })
+    ({ IPTR args[] = { AROS_PP_VARIADIC_CAST2IPTR(__VA_ARGS__) }; CreateMainSettingsA(ttypes, oldsettings, args); })
+
+
 extern void DeleteMainSettings(struct mainsettings *settings);
 
 extern struct pathsettings *CreatePathSettingsA(char **ttypes, struct pathsettings *oldsettings, IPTR *args);
 #define CreatePathSettings(ttypes, oldsettings, ...) \
-    ({ IPTR args[] = { __VA_ARGS__ }; CreatePathSettingsA(ttypes, oldsettings, args); })
+    ({ IPTR args[] = { AROS_PP_VARIADIC_CAST2IPTR(__VA_ARGS__) }; CreatePathSettingsA(ttypes, oldsettings, args); })
+
 extern void DeletePathSettings(struct pathsettings *settings);
 
 extern BOOL GetBooleanSetting(char **ttypes, char *name, BOOL def);

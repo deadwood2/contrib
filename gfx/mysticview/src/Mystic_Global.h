@@ -22,6 +22,13 @@
 
 #include <proto/exec.h>
 
+#if defined(__AROS__)
+#include <aros/preprocessor/variadic/cast2iptr.hpp>
+#include <aros/preprocessor/variadic/cast2type.hpp>
+#else
+#define AROS_PP_VARIADIC_CAST2IPTR(x) x
+#define AROS_PP_VARIADIC_CAST2TYPE(x,y) y
+#endif
 
 /*--------------------------------------------------------------------
 
