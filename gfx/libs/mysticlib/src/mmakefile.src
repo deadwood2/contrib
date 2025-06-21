@@ -6,7 +6,8 @@ include $(SRCDIR)/config/aros-contrib.cfg
 #MM- contrib-gfx-libs-mysticview : linklibs contrib-gfx-libs-guigfx 
 #MM- contrib-gfx-libs-mysticview-includes : includes contrib-gfx-libs-guigfx-includes
 
-USER_CFLAGS := -DNDEBUG
+USER_CPPFLAGS := -DNDEBUG
+USER_CFLAGS := -fno-tree-vectorize -fno-tree-slp-vectorize
 
 FILES := mystic_data 	 \
 	 mystic_global 	 \
