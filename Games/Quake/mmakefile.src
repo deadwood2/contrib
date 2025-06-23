@@ -6,8 +6,20 @@ INSTDIR  := $(AROS_CONTRIB)/Games/Fps/Quake
 
 #MM- contrib-games : contrib-games-quake-$(AROS_TARGET_CPU)
 #MM- contrib-games-quake-i386 : contrib-games-quake
+##MM- contrib-games-quake-x86_64 : contrib-games-quake
+#MM contrib-games-quake : contrib-games-quake-fetch
 
 #MM contrib-games-quake : linklibs includes
+
+%fetch mmake=contrib-games-quake-fetch \
+    archive_origins="https://archive.org/download/quake_pak_202306/quake_pak.zip" \
+    archive="pak0.pak" suffixes="" location=$(INSTDIR)
+
+%fetch mmake=contrib-games-quake-fetch \
+    archive_origins="https://archive.org/download/quake_pak_202306/quake_pak.zip" \
+    archive="pak1.pak" suffixes="" location=$(INSTDIR)
+
+#MM- contrib-games-quake-fetch : contrib-games-quake-pak0-fetch contrib-games-quake-pak1-fetch
 
 VERSION=1.09
 
@@ -21,7 +33,7 @@ NOWARN_FLAGS := \
     $(NOWARN_FORMAT_OVERFLOW) \
     $(NOWARN_STRINGOP_TRUNCATION)
 
-USER_CFLAGS := -nix $(NOWARN_FLAGS)
+USER_CFLAGS := $(CFLAGS_GNU99) -nix $(NOWARN_FLAGS)
 USER_CPPFLAGS := -DAROS -Dstricmp=strcasecmp
 
 USER_AFLAGS := -DELF -x assembler-with-cpp
