@@ -251,7 +251,9 @@ STATIC void IterateList( void (* callback)( struct TimerEntry *te, void *userDat
 
                                 te->te_Addr = tr;
                                 _snprintf(te->te_Address, sizeof(te->te_Address), ADDRESS_FORMAT, tr);
-                                GetTaskName(tr->Request.io_Message.mn_ReplyPort->mp_SigTask, te->te_Name, sizeof(te->te_Name));
+                                GetTaskName(
+                                            (tr->Request.io_Message.mn_ReplyPort) ? tr->Request.io_Message.mn_ReplyPort->mp_SigTask : NULL,
+                                            te->te_Name, sizeof(te->te_Name));
                                 _snprintf(te->te_ReplyPort, sizeof(te->te_ReplyPort), ADDRESS_FORMAT, tr->Request.io_Message.mn_ReplyPort);
                                 stccpy(te->te_Unit, txtTimerMicroHz, sizeof(te->te_Unit));
                             #if defined(USE_NATIVE_64BIT_MATH)
@@ -354,7 +356,9 @@ STATIC void IterateList( void (* callback)( struct TimerEntry *te, void *userDat
 
                                 te->te_Addr = tr;
                                 _snprintf(te->te_Address, sizeof(te->te_Address), ADDRESS_FORMAT, tr);
-                                GetTaskName(tr->Request.io_Message.mn_ReplyPort->mp_SigTask, te->te_Name, sizeof(te->te_Name));
+                                GetTaskName(
+                                        (tr->Request.io_Message.mn_ReplyPort) ? tr->Request.io_Message.mn_ReplyPort->mp_SigTask : NULL ,
+                                        te->te_Name, sizeof(te->te_Name));
                                 _snprintf(te->te_ReplyPort, sizeof(te->te_ReplyPort), ADDRESS_FORMAT, tr->Request.io_Message.mn_ReplyPort);
                                 stccpy(te->te_Unit, txtTimerVBlank, sizeof(te->te_Unit));
                             #if defined(USE_NATIVE_64BIT_MATH)
