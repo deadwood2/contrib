@@ -30,7 +30,7 @@ REPOSITORIES := https://www.freedesktop.org/software/fontconfig/release \
  https://download.videolan.org/contrib/fontconfig \
  http://sources.openelec.tv/mirror/fontconfig
 
-USER_CPPFLAGS := -D__GNU_SOURCE
+USER_CPPFLAGS := -D_GNU_SOURCE
 
 %fetch_and_build_gnu_development package=fontconfig version=$(FONTCONFIG_VERS) \
     srcdir=fontconfig-$(FONTCONFIG_VERS) patch=yes suffixes="tar.xz tar.bz2 tar.gz" \
