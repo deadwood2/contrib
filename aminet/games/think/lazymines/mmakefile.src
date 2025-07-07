@@ -8,7 +8,7 @@ FILES	:= lazymines button counter field highscores images layout \
 	    localize requesters timer tooltypes lazymines_strings
 
 EXEDIR	:= $(AROS_CONTRIB)/Games/Board/LazyMines
-USER_CPPFLAGS := -D__GNU_SOURCE
+USER_CPPFLAGS := -D_GNU_SOURCE
 
 %build_prog mmake=aminet-games-think-lazymines \
     progname=LazyMines targetdir=$(EXEDIR) \
