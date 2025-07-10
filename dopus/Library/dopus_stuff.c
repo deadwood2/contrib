@@ -285,7 +285,9 @@ int __saveds DoReadConfig(register char *name __asm("a0"),register struct Config
             config->menu[a].name=getstringcopy(buf2);
             config->menu[a].pad2[0]=0;
             config->menu[a].pad2[1]=0;
+#if (__WORDSIZE!=64)
             config->menu[a].pad2[2]=0;
+#endif
         }
     }
     if (config->version<=CONFIG_CHANGE_ARROWS)
@@ -507,7 +509,9 @@ int __saveds DoReadConfig(register char *name __asm("a0"),register struct Config
                     bank->gadgets[gad].name=getstringcopy(buf);
                     bank->gadgets[gad].pad2[0]=0;
                     bank->gadgets[gad].pad2[1]=0;
+#if (__WORDSIZE!=64)
                     bank->gadgets[gad].pad2[2]=0;
+#endif
                 }
             }
             if (pos==-1) break;

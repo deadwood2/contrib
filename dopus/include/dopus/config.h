@@ -31,6 +31,8 @@ the existing commercial status of Directory Opus 5.
 
 */
 
+#include <aros/cpu.h> // for __WORDSIZE
+
 #define CONFIG_VERSION         10022
 #define CONFIG_MAGIC          0xFACE
 
@@ -166,7 +168,11 @@ struct dopusfunction {
 
 struct newdopusfunction {
     char *name;
+#if (__WORDSIZE==64)
+    int pad2[2];
+#else
     int pad2[3];
+#endif
     int which,stack;
     unsigned char key,qual;
     char type,pri,delay;
