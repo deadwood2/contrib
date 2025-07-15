@@ -36,7 +36,7 @@ int __saveds DoSendPacket(register struct MsgPort *port __asm("a0"), register in
     struct MsgPort *repport;
     struct Process *myproc;
     int count,res1=0;
-    ULONG *pargs;
+    SIPTR *pargs;
 
     if (packet=AllocMem(sizeof(struct StandardPacket),MEMF_PUBLIC|MEMF_CLEAR))
      {
@@ -47,7 +47,7 @@ int __saveds DoSendPacket(register struct MsgPort *port __asm("a0"), register in
         packet->sp_Pkt.dp_Port=repport;
         packet->sp_Pkt.dp_Type=action;
 
-        pargs=(ULONG *)&(packet->sp_Pkt.dp_Arg1);
+        pargs=(SIPTR *)&(packet->sp_Pkt.dp_Arg1);
         if (nargs>7) nargs=7;
         for (count=0;count<nargs;count++) pargs[count]=args[count];
 
