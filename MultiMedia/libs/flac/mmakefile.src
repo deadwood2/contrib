@@ -6,6 +6,9 @@ include $(SRCDIR)/config/aros-contrib.cfg
 #MM- contrib-multimedia : development-flac
 #MM development-flac : development-libogg
 
+#FLAC_VERSION=1.5.0
+FLAC_VERSION=1.3.2
+
 EXTRAOPTS := --disable-doxygen-docs --disable-xmms-plugin --disable-valgrind-testing --disable-exhaustive-tests --disable-thorough-tests 
 
 USER_CPPFLAGS := -D_GNU_SOURCE
@@ -17,6 +20,6 @@ REPOSITORIES := http://downloads.xiph.org/releases/flac \
  https://download.videolan.org/videolan/testing/contrib/flac \
  http://meanwhile.dreamhost.com/pub/blfs/conglomeration/flac
 
-%fetch_and_build_gnu_development package=flac version=1.3.2 patch=no \
+%fetch_and_build_gnu_development package=flac version=$(FLAC_VERSION) patch=no \
     package_repo="$(REPOSITORIES)" suffixes="tar.xz" \
     extraoptions=$(EXTRAOPTS) nlsflag=no xflag=no

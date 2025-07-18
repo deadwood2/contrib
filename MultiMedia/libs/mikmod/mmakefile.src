@@ -7,7 +7,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 
 MIKMODVERSION=3.3.13
 REPOSITORIES := http://prdownloads.sourceforge.net/mikmod/outdated_versions \
-https://sourceforge.net/projects/mikmod/files/outdated_versions/libmikmod/3.3.10/
+https://sourceforge.net/projects/mikmod/files/outdated_versions/libmikmod/$(MIKMODVERSION)/
 ARCHNAME     := libmikmod
 ARCHBASE     := $(ARCHNAME)-$(MIKMODVERSION)
 ARCHSUFFIX   := "tar.gz"
