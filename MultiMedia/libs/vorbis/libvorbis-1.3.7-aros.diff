@@ -1,0 +1,26 @@
+diff -ruN libvorbis-1.3.7/lib/os.h libvorbis-1.3.7.aros/lib/os.h
+--- libvorbis-1.3.7/lib/os.h	2020-07-03 16:22:20.000000000 +0000
++++ libvorbis-1.3.7.aros/lib/os.h	2009-11-06 21:08:24.000000000 +0000
+@@ -51,6 +51,10 @@
+ #  define FAST_HYPOT(a, b) sqrt((a)*(a) + (b)*(b))
+ #endif
+ 
++#if defined(__AROS__)
++#  define rint(x)   (floor((x)+0.5f))
++#endif
++
+ #if defined(__SYMBIAN32__) && defined(__WINS__)
+ void *_alloca(size_t size);
+ #  define alloca _alloca
+diff -ruN libvorbis-1.3.7/Makefile.in libvorbis-1.3.7.aros/Makefile.in
+--- libvorbis-1.3.7/Makefile.in	2020-07-04 06:20:16.000000000 +0000
++++ libvorbis-1.3.7.aros/Makefile.in	2025-07-18 15:18:03.749522799 +0000
+@@ -384,7 +384,7 @@
+ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
+ AUTOMAKE_OPTIONS = foreign 1.11 dist-zip dist-xz
+-SUBDIRS = m4 include vq lib test doc $(am__append_1)
++SUBDIRS = m4 include vq lib doc $(am__append_1)
+ m4datadir = $(datadir)/aclocal
+ m4data_DATA = vorbis.m4
+ pkgconfigdir = $(libdir)/pkgconfig

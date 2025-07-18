@@ -7,13 +7,15 @@ include $(SRCDIR)/config/aros-contrib.cfg
 
 #MM- development-libvorbis : development-libogg
 
+VORBIS_VERSION=1.3.7
+
 REPOSITORIES := http://downloads.xiph.org/releases/vorbis \
  https://ftp.osuosl.org/pub/xiph/releases/vorbis \
  http://mirror.csclub.uwaterloo.ca/xiph/releases/vorbis \
- https://launchpad.net/vorbis/trunk/1.2.3/+download \
- http://repository.timesys.com/buildsources/l/libvorbis/libvorbis-1.2.3
+ https://launchpad.net/vorbis/trunk/$(VORBIS_VERSION)/+download \
+ http://repository.timesys.com/buildsources/l/libvorbis/libvorbis-$(VORBIS_VERSION)
 
-%fetch_and_build_gnu_development package=libvorbis version=1.2.3 patch=yes \
+%fetch_and_build_gnu_development package=libvorbis version=$(VORBIS_VERSION) patch=yes \
     package_repo="$(REPOSITORIES)" \
     extraoptions="libdir=$(AROS_LIB)"
 
