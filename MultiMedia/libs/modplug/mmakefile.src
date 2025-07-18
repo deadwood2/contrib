@@ -6,6 +6,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 #MM- contrib-development : contrib-libmodplug
 #MM- contrib-libmodplug : development-libmodplug
 
+MODPLUG_VERSION=0.8.9.0
 REPOSITORIES := sf://modplug-xmms \
  https://download.videolan.org/pub/contrib/modplug
 
@@ -19,7 +20,7 @@ MODPLUG_ENVFLAGS := ac_cv_c_bigendian=$(BIGENDIAN)
 
 USER_CPPFLAGS := -D_GNU_SOURCE
 
-%fetch_and_build_gnu_development package=libmodplug version=0.8.8.5 patch=yes \
+%fetch_and_build_gnu_development package=libmodplug version=$(MODPLUG_VERSION) patch=yes \
     package_repo="$(REPOSITORIES)" \
     suffixes="tar.gz" extraoptions="--libdir=$(AROS_LIB)" \
     config_env_extra="$(MODPLUG_ENVFLAGS)" nlsflag=no xflag=no
