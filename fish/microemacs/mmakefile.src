@@ -18,7 +18,11 @@ FILES := ansi \
 	vt52 \
 	window \
 	word
+	
+NOWARN_FLAGS := \
+    $(NOWARN_OLD_STYLE_DEFINITION)
 
+USER_CFLAGS := $(NOWARN_FLAGS)
 CFLAGS := $(filter-out -Werror-implicit-function-declaration,$(CFLAGS))
 
 %build_prog mmake=fish-microemacs \

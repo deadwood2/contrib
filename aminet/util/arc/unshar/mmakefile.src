@@ -8,6 +8,11 @@ FILES := unshar
 
 EXEDIR := $(AROS_CONTRIB)/Misc/aminet/C
 
+NOWARN_FLAGS := \
+    $(NOWARN_OLD_STYLE_DEFINITION)
+
+USER_CFLAGS := $(NOWARN_FLAGS)
+
 #MM aminet-util-arc-unshar : includes linklibs
 
 %build_prog mmake=aminet-util-arc-unshar \

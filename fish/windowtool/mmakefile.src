@@ -8,6 +8,11 @@ FILES := checkstartup functions gadgets windowtool
 
 EXEDIR := $(AROS_CONTRIB)/Misc/fish
 
+NOWARN_FLAGS := \
+    $(NOWARN_OLD_STYLE_DEFINITION)
+
+USER_CFLAGS := $(NOWARN_FLAGS)
+
 #MM fish-windowtool : includes linklibs
 
 %build_prog mmake=fish-windowtool \

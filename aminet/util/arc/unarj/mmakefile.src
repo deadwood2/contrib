@@ -10,7 +10,10 @@ EXEDIR := $(AROS_CONTRIB)/Misc/aminet/C
 
 #MM aminet-util-arc-unarj : includes linklibs
 
-NOWARN_FLAGS := $(NOWARN_FORMAT_SECURITY)
+NOWARN_FLAGS := \
+    $(NOWARN_FORMAT_SECURITY) \
+    $(NOWARN_OLD_STYLE_DEFINITION)
+
 USER_CFLAGS := $(NOWARN_FLAGS)
 
 %build_prog mmake=aminet-util-arc-unarj \

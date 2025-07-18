@@ -4,7 +4,8 @@ include $(SRCDIR)/config/aros-contrib.cfg
 #MM fish-worldtime : fish-worldtime-files
 
 NOWARN_FLAGS := \
-    $(NOWARN_FORMAT_OVERFLOW)
+    $(NOWARN_FORMAT_OVERFLOW) \
+    $(NOWARN_OLD_STYLE_DEFINITION)
 
 USER_CFLAGS := $(NOWARN_FLAGS)
 

@@ -2,7 +2,8 @@
 include $(SRCDIR)/config/aros-contrib.cfg
 
 NOWARN_FLAGS := \
-    $(NOWARN_FORMAT_OVERFLOW)
+    $(NOWARN_FORMAT_OVERFLOW)\
+    $(NOWARN_OLD_STYLE_DEFINITION)
 
 USER_CFLAGS := $(NOWARN_FLAGS)
 

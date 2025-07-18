@@ -11,6 +11,11 @@ FILES := cmath \
 	symbol \
 	tree
 
+NOWARN_FLAGS := \
+    $(NOWARN_OLD_STYLE_DEFINITION)
+
+USER_CFLAGS := $(NOWARN_FLAGS)
+
 %build_prog mmake=fish-icalc \
     progname=icalc targetdir=$(AROS_CONTRIB)/Misc/fish \
     files=$(FILES)

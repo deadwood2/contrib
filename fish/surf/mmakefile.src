@@ -5,6 +5,11 @@ FILES := bezpt control fasttrig gadgetdef gadgetuse getfilenames \
 	main mapcalc mapimgpix mapstuff menudef mouse packer poly \
 	readilbm revolve scrndef scrnio scrnops writeilbm
 
+NOWARN_FLAGS := \
+    $(NOWARN_OLD_STYLE_DEFINITION)
+
+USER_CFLAGS := $(NOWARN_FLAGS)
+
 %build_prog mmake=fish-surf \
     progname=surf targetdir=$(AROS_CONTRIB)/Misc/fish \
     files=$(FILES)
