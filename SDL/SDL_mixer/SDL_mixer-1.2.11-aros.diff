@@ -31,7 +31,7 @@ diff -ruN SDL_mixer-1.2.11/configure SDL_mixer-1.2.11.aros/configure
    ac_cs_awk_cr='\\r'
 diff -ruN SDL_mixer-1.2.11/dynamic_mod.h SDL_mixer-1.2.11.aros/dynamic_mod.h
 --- SDL_mixer-1.2.11/dynamic_mod.h	2009-11-07 05:00:12.000000000 +0000
-+++ SDL_mixer-1.2.11.aros/dynamic_mod.h	2025-06-07 10:57:18.046349248 +0000
++++ SDL_mixer-1.2.11.aros/dynamic_mod.h	2017-01-04 20:34:37.423517751 +0000
 @@ -31,11 +31,11 @@
  	void (*MikMod_Exit)(void);
  	CHAR* (*MikMod_InfoDriver)(void);
@@ -46,6 +46,18 @@ diff -ruN SDL_mixer-1.2.11/dynamic_mod.h SDL_mixer-1.2.11.aros/dynamic_mod.h
  	BOOL (*Player_Active)(void);
  	void (*Player_Free)(MODULE*);
  	MODULE* (*Player_LoadGeneric)(MREADER*,int,BOOL);
+diff -ruN SDL_mixer-1.2.11/dynamic_ogg.h SDL_mixer-1.2.11.aros/dynamic_ogg.h
+--- SDL_mixer-1.2.11/dynamic_ogg.h	2009-11-07 05:00:12.000000000 +0000
++++ SDL_mixer-1.2.11.aros/dynamic_ogg.h	2025-07-18 22:20:59.409594433 +0000
+@@ -32,7 +32,7 @@
+ 	void *handle;
+ 	int (*ov_clear)(OggVorbis_File *vf);
+ 	vorbis_info *(*ov_info)(OggVorbis_File *vf,int link);
+-	int (*ov_open_callbacks)(void *datasource, OggVorbis_File *vf, char *initial, long ibytes, ov_callbacks callbacks);
++	int (*ov_open_callbacks)(void *datasource, OggVorbis_File *vf, const char *initial, long ibytes, ov_callbacks callbacks);
+ 	ogg_int64_t (*ov_pcm_total)(OggVorbis_File *vf,int i);
+ #ifdef OGG_USE_TREMOR
+ 	long (*ov_read)(OggVorbis_File *vf,char *buffer,int length, int *bitstream);
 diff -ruN SDL_mixer-1.2.11/Makefile.in SDL_mixer-1.2.11.aros/Makefile.in
 --- SDL_mixer-1.2.11/Makefile.in	2009-10-12 23:06:53.000000000 +0000
 +++ SDL_mixer-1.2.11.aros/Makefile.in	2017-01-04 20:34:37.423517751 +0000
@@ -152,7 +164,7 @@ diff -ruN SDL_mixer-1.2.11/mixer.c SDL_mixer-1.2.11.aros/mixer.c
  	if ( SDL_ConvertAudio(&wavecvt) < 0 ) {
 diff -ruN SDL_mixer-1.2.11/music_mod.c SDL_mixer-1.2.11.aros/music_mod.c
 --- SDL_mixer-1.2.11/music_mod.c	2009-11-12 07:48:25.000000000 +0000
-+++ SDL_mixer-1.2.11.aros/music_mod.c	2025-06-07 10:54:05.758349113 +0000
++++ SDL_mixer-1.2.11.aros/music_mod.c	2017-01-04 20:34:37.423517751 +0000
 @@ -165,7 +165,7 @@
  	SDL_RWops *rw;
  } LMM_MREADER;
