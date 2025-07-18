@@ -1,0 +1,19 @@
+# Copyright 2025, The AROS Development Team. All rights reserved.
+# $Id$
+
+include $(SRCDIR)/config/aros-contrib.cfg
+
+#MM- contrib-multimedia : development-opus
+
+OPUS_VERSION=1.5.2
+
+REPOSITORIES := http://downloads.xiph.org/releases/opus \
+ https://ftp.osuosl.org/pub/xiph/releases/opus \
+ https://download.videolan.org/contrib/opus \
+ http://bbgentoo.ilb.ru/distfiles
+
+OPUS_OPTIONS=--disable-stack-protector
+
+%fetch_and_build_gnu_development package=opus version=$(OPUS_VERSION) \
+    package_repo="$(REPOSITORIES)" suffixes="tar.gz" nlsflag=no xflag=no\
+    extraoptions="$(OPUS_OPTIONS)"
