@@ -5,11 +5,13 @@ include $(SRCDIR)/config/aros-contrib.cfg
 
 #MM- contrib-multimedia : development-speex
 
+SPEEX_VERSION=1.2.1
+
 REPOSITORIES := http://downloads.xiph.org/releases/speex \
  https://ftp.osuosl.org/pub/xiph/releases/speex \
  https://download.videolan.org/contrib/speex \
  http://bbgentoo.ilb.ru/distfiles
 
-%fetch_and_build_gnu_development package=speex version=1.2.0 \
+%fetch_and_build_gnu_development package=speex version=$(SPEEX_VERSION) \
     package_repo="$(REPOSITORIES)" suffixes="tar.gz" nlsflag=no xflag=no
 
