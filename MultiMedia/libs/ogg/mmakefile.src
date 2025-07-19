@@ -15,5 +15,5 @@ REPOSITORIES := http://downloads.xiph.org/releases/ogg \
 
 %fetch_and_build_gnu_development package=libogg version=$(OGG_VERSION) \
     package_repo="$(REPOSITORIES)" suffixes="tar.gz" \
-    extraoptions="libdir=$(AROS_LIB)"
+    extraoptions="libdir=$(AROS_LIB)" patch=yes
 
