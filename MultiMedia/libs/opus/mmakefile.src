@@ -16,4 +16,4 @@ OPUS_OPTIONS=--disable-stack-protector
 
 %fetch_and_build_gnu_development package=opus version=$(OPUS_VERSION) \
     package_repo="$(REPOSITORIES)" suffixes="tar.gz" nlsflag=no xflag=no\
-    extraoptions="$(OPUS_OPTIONS)"
+    extraoptions="$(OPUS_OPTIONS)" patch=yes

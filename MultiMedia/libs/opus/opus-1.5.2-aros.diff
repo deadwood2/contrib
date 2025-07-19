@@ -1,0 +1,17 @@
+diff -ruN opus-1.5.2/celt/arm/armcpu.c opus-1.5.2.aros/celt/arm/armcpu.c
+--- opus-1.5.2/celt/arm/armcpu.c	2024-04-09 17:13:14.000000000 +0000
++++ opus-1.5.2.aros/celt/arm/armcpu.c	2025-07-19 18:43:40.493864398 +0000
+@@ -238,7 +238,12 @@
+ 
+   return (flags);
+ }
+-
++#elif defined(__AROS__)
++static opus_uint32 opus_cpu_capabilities(void)
++{
++  opus_uint32 flags = 0;
++  return (flags);
++}
+ #else
+ /* The feature registers which can tell us what the processor supports are
+  * accessible in priveleged modes only, so we can't have a general user-space
