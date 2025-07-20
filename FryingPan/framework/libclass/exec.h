@@ -271,6 +271,7 @@ typedef void* AVLKey;
       PROC0(                  dummy13, 0);
 // some morphos enhancements 
       FUNC4(void*,            NewSetFunction, 132, Library*, lib, a0, void*, call, a1, sint, offset, d0, const TagItem*, tags, a2);
+      FUNC4(STRPTR,           VNewRawDoFmt, 137, CONST_STRPTR, formatString, a0, VOID_FUNC, PutChProc, a2, void *, PutChData, a3, va_list, args, a1);
    ENDDECL
 
 #endif /*_EXECIFACE_H_*/

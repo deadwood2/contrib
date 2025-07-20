@@ -196,6 +196,21 @@ int String::FormatStr(const char *sFmtStr, IPTR pParams)
    return 0;
 }
 
+int String::FormatStr(const char *sFmtStr, ...)
+{
+   char *temp = new char[65535];
+   ASSERT(Exec != 0);
+   va_list ap;
+   va_start(ap, sFmtStr);
+#if defined(__AROS__)
+   Exec->VNewRawDoFmt(sFmtStr, 0, temp, ap);
+#endif
+   va_end (ap);
+   Assign(temp);
+   delete [] temp;
+   return 0;
+}
+
 void String::AddPath(const char* sElement)
 {
    if ((strlen(sElement) + lLength) >= (lMaxLen-4))    // if you need,

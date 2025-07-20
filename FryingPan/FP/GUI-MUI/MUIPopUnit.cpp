@@ -95,7 +95,7 @@ IPTR MUIPopUnit::construct(IPTR, IPTR arg)
    e->product  = d->sd_DeviceName;
    e->lun      = d->sd_Unit;
 
-   e->name.FormatStr("%ld: %s - %s", ARRAY((IPTR)e->lun, (IPTR)e->vendor.Data(), (IPTR)e->product.Data()));
+   e->name.FormatStr("%ld: %s - %s", e->lun, e->vendor.Data(), e->product.Data());
 
    return (IPTR)e;
 }

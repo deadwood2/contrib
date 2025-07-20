@@ -50,6 +50,7 @@ namespace GenNS
       void           SetLength(unsigned long lLength);                  // sets length of element + adds pad zero
       void           Update();                                          // recalc length
       int            FormatStr(const char *sFmtStr, IPTR pParams);
+      int            FormatStr(const char *sFmtStr, ...);
       operator char*() const;
       operator unsigned char*() const;
       String        &operator =  (const String & sStr);
