@@ -27,17 +27,17 @@
 
 using namespace GenNS;
 
-IPTR GenericBOOPSI::DoMtd(Object* pObject, IPTR pMsg)
+IPTR GenericBOOPSI::DoMtd(Object* pObject, Msg pMsg)
 {
-   return Utility->CallHookPkt((const Hook*)OCLASS(pObject), (IPTR)pObject, pMsg);
+   return Utility->CallHookPkt((const Hook*)OCLASS(pObject), (IPTR)pObject, (IPTR)pMsg);
 }
 
-IPTR GenericBOOPSI::DoSuperMtd(IClass *pClass, Object* pObject, IPTR pMsg)
+IPTR GenericBOOPSI::DoSuperMtd(IClass *pClass, Object* pObject, Msg pMsg)
 {
-   return Utility->CallHookPkt((Hook*)pClass->cl_Super, (IPTR)pObject, pMsg);
+   return Utility->CallHookPkt((Hook*)pClass->cl_Super, (IPTR)pObject, (IPTR)pMsg);
 }
 
-IPTR GenericBOOPSI::NewObj(char* Name, IPTR FirstTag, ...)          // me hates mos for that.
+Object *GenericBOOPSI::NewObj(char* Name, IPTR FirstTag, ...)          // me hates mos for that.
 {
    va_list ap;
    IPTR *params = new IPTR [128];
@@ -54,10 +54,10 @@ IPTR GenericBOOPSI::NewObj(char* Name, IPTR FirstTag, ...)          // me hates 
 
    pos = (IPTR)Intuition->NewObjectA(0, Name, (struct TagItem*)params);
    delete [] params;
-   return pos;
+   return (Object *)pos;
 }
 
-IPTR GenericBOOPSI::NewObj(Class* cls, IPTR FirstTag, ...)          // me hates mos for that.
+Object *GenericBOOPSI::NewObj(Class* cls, IPTR FirstTag, ...)          // me hates mos for that.
 {
    va_list ap;
    IPTR *params = new IPTR [128];
@@ -75,20 +75,20 @@ IPTR GenericBOOPSI::NewObj(Class* cls, IPTR FirstTag, ...)          // me hates 
    pos = (IPTR)Intuition->NewObjectA((IClass*)cls, 0, (struct TagItem*)params);
    
    delete [] params;
-   return pos;
+   return (Object *)pos;
 }
 
-void GenericBOOPSI::DisposeObj(IPTR *obj)
+void GenericBOOPSI::DisposeObj(Object *obj)
 {
    Intuition->DisposeObject(obj);
 }
 
-void GenericBOOPSI::AddChildObj(Object *parent, IPTR *child)
+void GenericBOOPSI::AddChildObj(Object *parent, Object *child)
 {
    DoMtd(parent, ARRAY(OM_ADDMEMBER, (IPTR)child));
 }
 
-void GenericBOOPSI::RemChildObj(Object *parent, IPTR *child)
+void GenericBOOPSI::RemChildObj(Object *parent, Object *child)
 {
    DoMtd(parent, ARRAY(OM_REMMEMBER, (IPTR)child));
 }

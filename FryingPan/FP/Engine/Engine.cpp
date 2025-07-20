@@ -961,7 +961,11 @@ const char* Engine::findMatchingDOSDevice()
    {
       if ((IPTR)dn->dn_Startup > 1024)
       {
+#if defined(__AROS__)
+         fs = (FileSysStartupMsg*)BADDR(dn->dn_Startup);
+#else
          fs = (FileSysStartupMsg*)((IPTR)dn->dn_Startup << 2);
+#endif
          if ((fs != 0) && (fs->fssm_Device))
          {
             s.BstrCpy(dn->dn_Name);

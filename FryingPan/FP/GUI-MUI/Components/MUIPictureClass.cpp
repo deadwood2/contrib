@@ -78,27 +78,28 @@ MUIPictureClass::~MUIPictureClass()
    }
 }
 
-IPTR MUIPictureClass::DoMtd(Object *obj, IPTR msg)
+IPTR MUIPictureClass::DoMtd(Object *obj, Msg msg)
 {
    uint16  *minmax;
    IPTR      k;
 
-   switch (((IPTR *)msg)[0]) 
+   switch (msg->MethodID) 
    {
       case OM_NEW:
          {
+            struct opSet *msgNew = (struct opSet *)msg;
             if (!(obj = (Object *)DoSuperMtd(parent, obj, msg))) 
                return 0;
 
-            k = (IPTR)Utility->GetTagData(MUIA_Picture_NormalImage, 0, (TagItem*)((IPTR *)msg)[1]);
+            k = (IPTR)Utility->GetTagData(MUIA_Picture_NormalImage, 0, msgNew->ops_AttrList);
             if (k != 0)
                image1 = (char*)k;
-            k = (IPTR)Utility->GetTagData(MUIA_Picture_SelectedImage, 0, (TagItem*)((IPTR *)msg)[1]);
+            k = (IPTR)Utility->GetTagData(MUIA_Picture_SelectedImage, 0, msgNew->ops_AttrList);
             if (k != 0)
                image2 = (char*)k;
 
-            isDisabled = Utility->GetTagData(MUIA_Disabled, 0, (struct TagItem*)((IPTR *)msg)[1]) ? true : false;
-            isSelected = Utility->GetTagData(MUIA_Selected, 0, (struct TagItem*)((IPTR *)msg)[1]) ? true : false;
+            isDisabled = Utility->GetTagData(MUIA_Disabled, 0, msgNew->ops_AttrList) ? true : false;
+            isSelected = Utility->GetTagData(MUIA_Selected, 0, msgNew->ops_AttrList) ? true : false;
 
             openImages();
 

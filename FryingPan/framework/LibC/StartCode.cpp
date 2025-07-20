@@ -44,7 +44,6 @@
    struct Library         *__InternalUtilityBase;
    struct Library         *SysBase;
 
-
 #ifdef __AMIGAOS4__
    struct DOSIFace        *__InternalDOSIFace;
    struct IntuitionIFace  *__InternalIntuitionIFace;
@@ -67,7 +66,7 @@ int __setup()
    // 1. if we have no exec, QUIT!
    if (0 == SysBase)
       return false;
-   
+
    // 2. Initialize semaphore
    InitSemaphore(&__InternalSemaphore);
 
@@ -90,8 +89,16 @@ int __setup()
       __stdout   = Output();
    }
 
+#ifndef __x86_64__
+   #define POOL_PUDDLE 65536
+   #define POOL_THRESH 65536
+#else
+   #define POOL_PUDDLE 131072
+   #define POOL_THRESH 131072
+#endif
+
    // 3. Set up a memory pool. we will need it for our initializations (mem allocs etc)
-   __InternalMemPool = CreatePool(MEMF_PUBLIC | MEMF_SHARED, 65536, 65536);
+   __InternalMemPool = CreatePool(MEMF_PUBLIC | MEMF_SHARED, POOL_PUDDLE, POOL_THRESH);
    if (0 == __InternalMemPool)
       return false;
 
@@ -204,22 +211,22 @@ void __main()
 extern "C" {
 void _error(const char* text, ...)
 {
-#ifndef __AMIGAOS4__
-   struct Library* DOSBase       = __InternalDOSBase;
-   struct Library* IntuitionBase = __InternalIntuitionBase;
-#else
+#ifdef __amigaos4__
    struct DOSIFace        *IDOS        = __InternalDOSIFace;
    struct IntuitionIFace  *IIntuition  = __InternalIntuitionIFace;
-#endif
-   // 20! really 20 -- OS4 has some extra fields, and i am preserving space.
-   const IPTR es[] = 
-   { 
-      20,                              // size
-      0,                               // window
-      (IPTR)"<< ERROR >>",    // title
-      (IPTR)text,             // body
-      (IPTR)"OK"              // gadgets
+   const IPTR es[] = { 20, 0, (IPTR)"<< ERROR >>", (IPTR)text, (IPTR)"OK"};
+#else
+   struct Library* DOSBase       = __InternalDOSBase;
+   struct Library* IntuitionBase = __InternalIntuitionBase;
+   struct EasyStruct es =
+   {
+      .es_StructSize = sizeof(struct EasyStruct),
+      .es_Flags = 0,
+      .es_Title = "\xAB ERROR \xBB",
+      .es_TextFormat = text,
+      .es_GadgetFormat = "OK"
    };
+#endif
 
    AROS_SLOWSTACKFORMAT_PRE(text);
    if (0 != __InternalIntuitionBase)

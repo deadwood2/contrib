@@ -45,7 +45,7 @@ namespace GenNS
 
    private:
       void                      *getDispatcher();
-      virtual IPTR               dispatch(IClass *cls, Object* obj, IPTR msg);
+      virtual IPTR               dispatch(IClass *cls, Object* obj, Msg msg);
 
    protected:
       MUI_CustomClass           *pMUIClass;
@@ -61,7 +61,7 @@ namespace GenNS
       AROS_UFP4(static IPTR, FDispatchCaller,
          AROS_UFPA(struct IClass *, pClass, A0),
          AROS_UFPA(Object *, pObject, A2),
-         AROS_UFPA(IPTR, pMessage, A1),
+         AROS_UFPA(Msg, pMessage, A1),
          AROS_UFPA(APTR, data, A6));
 #elif defined (__AMIGAOS4__)
       static unsigned long       FDispatchCaller(IClass *pClass, Object* pObject, unsigned long *pMessage);

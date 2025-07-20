@@ -32,11 +32,11 @@ void *MUICustomClass::getDispatcher()
    return (void*)&FDispatchCaller;
 }
 
-IPTR MUICustomClass::dispatch(IClass *cls, Object* obj, IPTR msg)
+IPTR MUICustomClass::dispatch(IClass *cls, Object* obj, Msg msg)
 {
-   GenericBOOPSI       *co;
-   GenericBOOPSI      **ptr;
-   unsigned long     ret = 0;
+   GenericBOOPSI    *co;
+   GenericBOOPSI    **ptr;
+   IPTR             ret = 0;
 
    /*
     * man, this was tricky.
@@ -47,7 +47,7 @@ IPTR MUICustomClass::dispatch(IClass *cls, Object* obj, IPTR msg)
     * you dont wanna dig too deep here...
     */
 
-   switch (*((IPTR *)msg))
+   switch (msg->MethodID)
    {
       case OM_NEW:
          co    = createObject(cls);
@@ -119,6 +119,8 @@ MUICustomClass::~MUICustomClass()
 {
    if (NULL != pMUIClass)
       MUIMaster->MUI_DeleteCustomClass(pMUIClass);
+    pMUIClass = 0;
+    pClass = 0;
 }
    
 Object *MUICustomClass::Create(IPTR lTag1, ...)
@@ -148,20 +150,20 @@ Object *MUICustomClass::Create(IPTR lTag1, ...)
 
 
 #ifdef __AROS__
-AROS_UFH4(IPTR, GenNS::MUICustomClass::FDispatchCaller,
+AROS_UFH4(IPTR, MUICustomClass::FDispatchCaller,
    AROS_UFHA(struct IClass *, pClass, A0),
    AROS_UFHA(Object *, pObject, A2),
-   AROS_UFHA(IPTR, pMessage, A1),
+   AROS_UFHA(Msg, pMessage, A1),
    AROS_UFHA(APTR, data, A6))
 {
    AROS_USERFUNC_INIT
 
-   return ((MUICustomClass*)pClass->cl_UserData)->dispatch(pClass, pObject,
-      pMessage);
+   MUICustomClass* self = (MUICustomClass*)pClass->cl_UserData;
+   return self->dispatch(pClass, pObject, pMessage);
 
    AROS_USERFUNC_EXIT
 }
-    
+
 #elif defined (__AMIGAOS4__)
 
 unsigned long MUICustomClass::FDispatchCaller(IClass *pClass, Object* pObject, unsigned long *pMessage)

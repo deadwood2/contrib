@@ -56,7 +56,7 @@ protected:
 public:
                      MUIPictureClass(IClass* parent);
    virtual          ~MUIPictureClass();                  
-   virtual IPTR      DoMtd(Object *obj, IPTR msg);
+   virtual IPTR      DoMtd(Object *obj, Msg msg);
 };
 
 #endif

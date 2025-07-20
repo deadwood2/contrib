@@ -19,19 +19,28 @@
 
 #include "LibC.h"
 
-void operator delete(void* mem)
-{
+void operator delete(void* mem) {
    Allocator** d = (Allocator**)mem;
    --d;
    (*d)->free(*d, d);
 }
 
-void operator delete[](void* mem)
-{
+void operator delete[](void* mem) {
    operator delete(mem);
 }
 
-void operator delete(void* mem, std::size_t sz)
-{
+void operator delete(void* mem, std::size_t sz) {
    operator delete(mem);
+}
+
+void operator delete(void* ptr, std::align_val_t) {
+    if (ptr) {
+        void* raw = reinterpret_cast<void**>(ptr)[-1];
+        Allocator* a = reinterpret_cast<Allocator**>(raw)[0]; // allocator is stored at raw
+        a->free(a, raw);
+    }
+}
+
+void operator delete[](void* ptr, std::align_val_t align) {
+    operator delete(ptr, align);
 }

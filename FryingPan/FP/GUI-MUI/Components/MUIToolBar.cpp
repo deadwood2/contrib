@@ -151,8 +151,8 @@ IPTR MUIToolBar::getObject()
 IPTR MUIToolBar::createButton(const MUIToolBar::Button *def)
 {
    IPTR btn;
-   IPTR label = 0;
-   IPTR image = 0;
+   Object *label = 0;
+   Object *image = 0;
    String            s;
 
    if ((false == showImages) && (Label_None == labelPosition))
@@ -160,7 +160,7 @@ IPTR MUIToolBar::createButton(const MUIToolBar::Button *def)
 
    if (true == showImages)
    {
-      image = (IPTR)pPicture->Create(
+      image = (Object *)pPicture->Create(
          MUIPictureClass::MUIA_Picture_NormalImage,      def->image1RelPath.Data(),
          MUIPictureClass::MUIA_Picture_SelectedImage,    def->image2RelPath.Data(),
          MUIA_ShowSelState,                              true,
@@ -171,7 +171,7 @@ IPTR MUIToolBar::createButton(const MUIToolBar::Button *def)
 
    if (Label_None != labelPosition)
    {
-      label = (IPTR)TextObject,
+      label = (Object *)TextObject,
          MUIA_Font,           MUIV_Font_Tiny,
          MUIA_Text_Contents,  def->label.Data(),
          MUIA_Text_PreParse,  "\033c",

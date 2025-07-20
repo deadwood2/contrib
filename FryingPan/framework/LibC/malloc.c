@@ -35,7 +35,7 @@ void* malloc(size_t lSize)
    if (0 == lSize)
       return 0;
 
-   lSize = ((lSize + 7) & ~7) + 8;
+   lSize = ((lSize + 7) & ~7) + (sizeof(IPTR) << 1);
 
    if (0 != __InternalMemPool)
    {
@@ -59,7 +59,7 @@ void* malloc(size_t lSize)
 #else
       uint32 i;
       IPTR *pMem2 = 0;
-      lSize += 128;
+      lSize += (sizeof(IPTR) << 4);
 
 #ifndef __amigaos4__
       ObtainSemaphore(&__InternalSemaphore);                   // we wait only for our tasks!
@@ -75,22 +75,22 @@ void* malloc(size_t lSize)
          pMem2   = &pMem[lSize>>2];
          pMem[0] = 0;                                          // set mem pool
          pMem[1] = lSize;                                      // set mem size
-         pMem    = &pMem[2+(128>>3)];                          // set mem handle
-         for (i=1; i<=(128>>3); i++)
+         pMem    = &pMem[2+(16)];                          // set mem handle
+         for (i=1; i<=(16); i++)
          {
             pMem[-i]    = 0xC0DEDBAD;
             pMem2[-i]   = 0xC0DEDBAD;
          }
       }      
 
-      lSize -= 128;
+      lSize -= (sizeof(IPTR) << 4);
 #endif
    }   
 
    if (pMem == 0)
    {
       _error("Unable to allocate %ld bytes of memory!!!\nClick 'OK' to retry", lSize);
-      return malloc(lSize-8);
+      return malloc(lSize - (sizeof(IPTR) << 1));
    }
    return pMem;                                                // return mem :)
 }
@@ -103,15 +103,15 @@ void* malloc_pooled(void* pPool, size_t lSize)
    if (0 == lSize)
       return 0;
 
-   lSize = ((lSize + 7) & ~7) + 8;
+   lSize = ((lSize + 7) & ~7) + (sizeof(IPTR) << 1);
 
    if (0 != pPool)
    {      
 #ifndef DEBUG
 #ifndef __amigaos4__
-      pMem = (IPTR*)AllocPooled(pPool, lSize+8);             // Get memory. I assume we dont need syncing here.
+      pMem = (IPTR*)AllocPooled(pPool, lSize);             // Get memory. I assume we dont need syncing here.
 #else
-      pMem = (IPTR*)IExec->AllocPooled(pPool, lSize+8);             // Get memory. I assume we dont need syncing here.
+      pMem = (IPTR*)IExec->AllocPooled(pPool, lSize);             // Get memory. I assume we dont need syncing here.
 #endif
 
       if (0 != pMem)
@@ -123,7 +123,7 @@ void* malloc_pooled(void* pPool, size_t lSize)
 #else
       uint32 i;
       IPTR *pMem2 = 0;
-      lSize += 128;
+      lSize += (sizeof(IPTR) << 4);
 
 #ifndef __amigaos4__
       pMem = (IPTR*)AllocPooled(pPool, lSize);   // Get memory
@@ -136,10 +136,10 @@ void* malloc_pooled(void* pPool, size_t lSize)
          pMem2   = &pMem[lSize>>2];
          pMem[0] = (IPTR)pPool;                              // set mem pool
          pMem[1] = lSize;                                      // set mem size
-         pMem    = &pMem[2+(128>>3)];                          // set mem handle
+         pMem    = &pMem[2+(16)];                          // set mem handle
       }      
 
-      for (i=1; i<=(128>>3); i++)
+      for (i=1; i<=(16); i++)
       {
          pMem[-i]    = 0xC0DEDBAD;
          pMem2[-i]   = 0xC0DEDBAD;

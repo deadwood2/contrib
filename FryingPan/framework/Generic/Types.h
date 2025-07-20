@@ -22,56 +22,58 @@
 
 #include "Generic.h"
 
+#include <intuition/classusr.h>
+
 /** \file Types.h
  * \brief This file defines types for all four architectures.\n
  * Carries all the type specifications, array macros and other defines.
  */
 
+#if defined(__AROS__)
+#include <aros/cpu.h>
+#endif
+
 /*
  * default common types & platform specific includes */
-#if defined(__AROS__)
-#include <exec/types.h>
-#include <stddef.h>
-#include <sys/types.h>
-
-typedef UQUAD              uint64;  /**< @brief unsigned 64bit integer */
-typedef ULONG              uint32;  /**< @brief unsigned 32bit integer */
-typedef UWORD              uint16;  /**< @brief unsigned 16bit integer */
-typedef UBYTE              uint8;   /**< @brief unsigned 8bit integer  */
-typedef QUAD               int64;   /**< @brief signed 64bit integer */
-typedef LONG               int32;   /**< @brief signed 32bit integer */
-typedef WORD               int16;   /**< @brief signed 16bit integer */
-typedef BYTE               int8;    /**< @brief signed 8bit integer  */
-
-typedef SIPTR              sint;    /**< @brief architecture specific signed int: sizeof(s_int) = sizeof(void*) */
-// Disabled because it conflicts with uint definition in C library
-// FIXME: This probably breaks FP in many places, review usage of uint and replace with uintptr_t
-//typedef IPTR               uint;    /**< @brief architecture specific unsigned int: sizeof(u_int) = sizeof(void*) */
-
+#ifdef AROS_64BIT_TYPE
+typedef unsigned AROS_64BIT_TYPE    uint64;
+typedef signed AROS_64BIT_TYPE      int64;
 #else
 typedef unsigned long long uint64;  /**< @brief unsigned 64bit integer */
+typedef signed long long   int64;   /**< @brief signed 64bit integer */
+#endif
+#ifdef AROS_32BIT_TYPE
+typedef unsigned AROS_32BIT_TYPE    uint32;
+typedef signed AROS_32BIT_TYPE      int32;
+#else
 typedef unsigned long int  uint32;  /**< @brief unsigned 32bit integer */
+typedef signed long int    int32;   /**< @brief signed 32bit integer */
+#endif
 typedef unsigned short     uint16;  /**< @brief unsigned 16bit integer */
 typedef unsigned char      uint8;   /**< @brief unsigned 8bit integer  */
-typedef signed long long   int64;   /**< @brief signed 64bit integer */
-typedef signed long int    int32;   /**< @brief signed 32bit integer */
 typedef signed short       int16;   /**< @brief signed 16bit integer */
 typedef signed char        int8;    /**< @brief signed 8bit integer  */
 
+#ifdef AROS_INTPTR_TYPE
+typedef signed AROS_INTPTR_TYPE     sint;
+typedef unsigned AROS_INTPTR_TYPE   uint;
+#else
 typedef signed long        sint;    /**< @brief architecture specific signed int: sizeof(s_int) = sizeof(void*) */
 typedef unsigned long      uint;    /**< @brief architecture specific unsigned int: sizeof(u_int) = sizeof(void*) */
+#endif
 
-# if defined(__mc68000)
+#if defined(__AROS__)
+typedef long unsigned int size_t;
+#elif defined(__mc68000)
 typedef long unsigned int size_t;
 typedef long IPTR;
-#  elif defined(__AMIGAOS4__)
+#elif defined(__AMIGAOS4__)
 typedef unsigned int size_t;
 typedef long IPTR;
-#  elif defined(__MORPHOS__)
+#elif defined(__MORPHOS__)
 typedef unsigned int size_t;
-#  else
+#else
 #error no size_t defined
-#  endif
 #endif
 
 #if (0)
@@ -102,43 +104,104 @@ enum TriState
 #include <cstdint>
 #include <array>
 
+//! Safer, cross-platform tag array initializers
+
 template <std::size_t N>
-struct IPTRArray
+struct ArrayImpl
 {
     template <typename... Ts>
-    constexpr IPTRArray(Ts &&... vs)
-        : array_(iptrarray(std::forward<Ts>(vs)...))
+    constexpr ArrayImpl(Ts&&... vs)
+        : array_(siptrarray(std::forward<Ts>(vs)...))
     {}
 
-    operator IPTR ()
+    operator SIPTR() const
     {
-        return (IPTR)array_.data();
+        return (SIPTR)array_.data();
     }
 
-    operator TagItem* ()
+    operator TagItem*() const
     {
-        return (TagItem *)(char*)array_.data();
+        return (TagItem*)(char*)array_.data();
     }
 
-    operator APTR ()
+    operator Msg() const
+    {
+        return (Msg)(char*)array_.data();
+    }
+
+    operator APTR() const
     {
         return (APTR)(char*)array_.data();
     }
 
 private:
-    std::array<IPTR, N> array_;
+    std::array<SIPTR, N> array_;
 
     template <typename... Ts>
-    static auto iptrarray(Ts &&... vs)
+    static auto siptrarray(Ts&&... vs) -> std::array<SIPTR, N>
     {
-        return std::array<IPTR, N> { (IPTR)std::forward<Ts>(vs)... };
+        return std::array<SIPTR, N>{ (SIPTR)std::forward<Ts>(vs)... };
     }
 };
 
-//! Use this template instead of varargs. Maintains compatibility across platforms.
+//! Factory function – call this as ARRAY(...)
 template <typename... Ts>
-IPTRArray<sizeof...(Ts)> ARRAY(Ts &&... vs) {
+ArrayImpl<sizeof...(Ts)> ARRAY(Ts&&... vs)
+{
     return { std::forward<Ts>(vs)... };
+}
+
+template <size_t N>
+struct SizeArrayImpl
+{
+    template <typename... Ts>
+    SizeArrayImpl(Ts&&... vs)
+        : array_(makeArray(std::forward<Ts>(vs)...))
+    {}
+
+    operator IPTR () {
+        return (IPTR)&array_[1];
+    }
+
+    operator TagItem* () {
+        return (TagItem *)(char*)&array_[1];
+    }
+
+    operator Msg() const
+    {
+        return (Msg)(char*)&array_[1];
+    }
+
+    operator APTR () {
+        return (APTR)(char*)&array_[1];
+    }
+
+private:
+    std::array<SIPTR, N + 1> array_;
+
+    template <typename... Ts>
+    static std::array<SIPTR, N + 1> makeArray(Ts&&... vs)
+    {
+        // Store size in first element, rest in order
+        return makeArrayImpl<0, Ts...>(std::forward<Ts>(vs)...);
+    }
+
+    template <size_t Index, typename... Ts>
+    static std::array<SIPTR, N + 1> makeArrayImpl(SIPTR value, Ts&&... rest)
+    {
+        std::array<SIPTR, N + 1> arr = {{N}};
+        SIPTR values[] = { (SIPTR)std::forward<Ts>(rest)... };
+        for (size_t i = 0; i < N; ++i)
+            arr[i + 1] = values[i];
+        return arr;
+    }
+};
+
+//! Factory function – call this as SIZEARRAY(...)
+template <typename... Ts>
+SizeArrayImpl<sizeof...(Ts)> SIZEARRAY(Ts&&... vs)
+{
+    return SizeArrayImpl<sizeof...(Ts)>(std::forward<Ts>(vs)...);
 }
 
 #endif

@@ -245,6 +245,8 @@ bool GUI::start()
       Menu->setHook(hAction);
    }
 
+   Object *pMenu = Menu->getObject();
+
    _dx(Lvl_Info, "Building main application");
    if (pApp == 0)
    {  // Create application object
@@ -256,7 +258,7 @@ bool GUI::start()
             SubWindow,                    (IPTR)(pWin = WindowObject,
                MUIA_Window_Title,            (IPTR)"FryingPan 1.4",
                MUIA_Window_ID,               MAKE_ID('M', 'A', 'I', 'N'),
-               MUIA_Window_Menustrip,        Menu->getObject(),
+               MUIA_Window_Menustrip,        (IPTR)pMenu,
                MUIA_Window_AppWindow,        true,
                WindowContents,               (IPTR)VGroup,
                   Child,                        (IPTR)(elements = VGroup,

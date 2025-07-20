@@ -59,12 +59,24 @@ enum StartupFlag
 #endif
 
 #ifdef __cplusplus
+#if __cplusplus < 201703L
+namespace std {
+    enum class align_val_t : size_t {};
+}
+#endif
+
 extern void*   operator new(size_t size);
 extern void*   operator new(size_t size, const struct Allocator *a);
+extern void*   operator new(size_t lSize, std::align_val_t align);
+extern void*   operator new(size_t lSize, const Allocator* a, std::align_val_t align);
 extern void    operator delete(void* mem);
+extern void    operator delete(void* mem, std::align_val_t);
 extern void*   operator new[](size_t lSize);
 extern void*   operator new[](size_t lSize, const struct Allocator *a);
+extern void*   operator new[](size_t lSize, std::align_val_t align) ;
+extern void*   operator new[](size_t lSize, const Allocator* a, std::align_val_t align);
 extern void    operator delete[](void* mem);
+extern void    operator delete[](void* ptr, std::align_val_t align);
 extern const struct Allocator* set_default_allocator(const struct Allocator *a);
 #endif
 
@@ -77,6 +89,7 @@ extern const struct Allocator* set_default_allocator(const struct Allocator *a);
 extern "C"
 {
 #endif
+
    /* Startup Code */
    extern int     _go();                           // here we do have the exec base.
    extern void    __main();                        // can be replaced i suppose
@@ -88,6 +101,7 @@ extern "C"
 
    /* regular c code */
    extern void*   malloc(size_t size);
+
    extern void*   malloc_pooled(void* pool, size_t size);
    extern void    free(void* mem);
    extern void*   realloc(void*, size_t);

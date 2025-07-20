@@ -22,21 +22,20 @@
 
 int32 request(const char* title, const char* message, const char* gadgets, const IPTR params)
 {
+#ifdef __amigaos4__
+   const IPTR es[] = { 20, 0, (IPTR)title, (IPTR)message, (IPTR)gadgets};
+   if (__InternalIntuitionIFace)
+      return __InternalIntuitionIFace->EasyRequestArgs(0, (struct EasyStruct*)&es, 0, (void*)params);
+#else
    struct EasyStruct es;
    es.es_StructSize = sizeof(es);
    es.es_Flags = 0;
    es.es_Title = title;
    es.es_TextFormat = message;
    es.es_GadgetFormat = gadgets;
-#ifndef __amigaos4__
    register struct Library *IntuitionBase = __InternalIntuitionBase;
    if (__InternalIntuitionBase)
       return EasyRequestArgs(0, (struct EasyStruct*)&es, 0, (void*)params);
-#else
-   if (__InternalIntuitionIFace)
-      return __InternalIntuitionIFace->EasyRequestArgs(0, (struct EasyStruct*)&es, 0, (void*)params);
-#endif
-
+ #endif
    return 0;
 };
-

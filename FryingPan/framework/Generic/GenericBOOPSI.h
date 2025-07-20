@@ -29,15 +29,15 @@ namespace GenNS
    class GenericBOOPSI 
    {
    public:
-                              GenericBOOPSI();
-      virtual                ~GenericBOOPSI();  
-      virtual IPTR          DoMtd(Object* pObject, IPTR pMsg);
-      virtual IPTR          DoSuperMtd(IClass *pClass, Object* pObject, IPTR pMsg);
-      virtual IPTR         NewObj(char* Name, IPTR FirstTag, ...);
-      virtual IPTR         NewObj(Class* cls, IPTR FirstTag, ...);
-      virtual void            DisposeObj(IPTR *obj);
-      virtual void            AddChildObj(Object *parent, IPTR *child);
-      virtual void            RemChildObj(Object *parent, IPTR *child);
+                            GenericBOOPSI();
+      virtual               ~GenericBOOPSI();  
+      virtual IPTR          DoMtd(Object* pObject, Msg pMsg);
+      virtual IPTR          DoSuperMtd(IClass *pClass, Object* pObject, Msg pMsg);
+      virtual Object        *NewObj(char* Name, IPTR FirstTag, ...);
+      virtual Object        *NewObj(Class* cls, IPTR FirstTag, ...);
+      virtual void          DisposeObj(Object *obj);
+      virtual void          AddChildObj(Object *parent, Object *child);
+      virtual void          RemChildObj(Object *parent, Object *child);
    };
 };
 #endif

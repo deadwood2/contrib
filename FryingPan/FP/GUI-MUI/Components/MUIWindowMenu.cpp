@@ -19,6 +19,7 @@
 
 #include "MUIWindowMenu.h"
 #include <libclass/intuition.h>
+#include <libraries/gadtools.h>
 #include <libraries/mui.h>
 #include <Generic/LibrarySpool.h> 
 
@@ -43,9 +44,9 @@ MUIWindowMenu::~MUIWindowMenu()
 {
 }
 
-IPTR MUIWindowMenu::getObject()
+Object *MUIWindowMenu::getObject()
 {
-   return (IPTR)pMain;
+   return pMain;
 }
 
 void MUIWindowMenu::addItem(const char *tTitle, IPTR lParam, const char* tShort)
@@ -63,7 +64,7 @@ void MUIWindowMenu::addItem(const char *tTitle, IPTR lParam, const char* tShort)
 void MUIWindowMenu::addSeparator()
 {
    Object *pObj = MenuObject,
-                     MUIA_Menu_Title,    0xffffffff,
+                     MUIA_Menu_Title,    (IPTR)NM_BARLABEL,
                   End;
 
    DoMtd(pMenu, ARRAY(MUIM_Family_AddTail, (IPTR)pObj)); 
@@ -88,7 +89,7 @@ void MUIWindowMenu::addRadio(const char *tTitle)
 {
    Object *pObj = MenuObject,
                      MUIA_Menu_Title, tTitle,
-                     MUIA_UserData,       0xffffffff,
+                     MUIA_UserData,       0XFFFFFFFF,
                   End;
 
    DoMtd(pMenu, ARRAY(MUIM_Family_AddTail, (IPTR)pObj)); 
@@ -106,7 +107,7 @@ void MUIWindowMenu::addRadioOption(const char *tTitle, bool bSelected, IPTR lPar
                      MUIA_Menuitem_Checkit,  true,
                      MUIA_UserData,          lParam,
                      ((tShort != 0) && (tShort[0] != 0)) ? MUIA_Menuitem_Shortcut : TAG_IGNORE, tShort,
-                     MUIA_Menuitem_Exclude,  0xffffffff,
+                     MUIA_Menuitem_Exclude,  0XFFFFFFFF,
                   End;
 
    DoMtd(pObj, ARRAY(MUIM_Notify, MUIA_Menuitem_Trigger, MUIV_EveryTime, (IPTR)pObj, 3, MUIM_CallHook, (IPTR)hLocal.GetHook(), lParam));

@@ -40,7 +40,7 @@ public:
                            MUIWindowMenu();
    virtual                ~MUIWindowMenu();
 
-   virtual IPTR            getObject();
+   virtual Object          *getObject();
    virtual void            addMenu(const char* tTitle);
    virtual void            addSeparator();
    virtual void            addItem(const char* tTitle, IPTR lParam, const char *tShort = 0);
