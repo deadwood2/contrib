@@ -54,13 +54,13 @@ uint32 Port::GetSignals()
    return (1<<pPort->mp_SigBit);
 }
 
-void Port::DoAsync(sint ACmd, void* AData)
+void Port::DoAsync(siptr ACmd, void* AData)
 {
    if (!pPort) return;
    Exec->PutMsg(pPort, new Msg(false, ACmd, AData));
 }
 
-uint Port::DoSync(sint ACmd, void* AData)
+iptr Port::DoSync(siptr ACmd, void* AData)
 {
    unsigned long lRes = 0;
    if (!pPort) return 0;
@@ -84,7 +84,7 @@ void Port::HandleSignals()
             if (pMessage == 0) 
                break;
             Msg *pMsg = (Msg*)pMessage->mn_Node.ln_Name;
-            uint lVal = Handler(pMsg->GetCommand(), pMsg->GetData());
+            iptr lVal = Handler(pMsg->GetCommand(), pMsg->GetData());
             pMsg->Reply(lVal);
          }  
       }  

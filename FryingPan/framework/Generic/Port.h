@@ -30,13 +30,13 @@ namespace GenNS
    {
       struct MsgPort      *pPort;
    public:
-      HookAttrT<sint, void*>  Handler;
+      HookAttrT<siptr, void*>  Handler;
 
       Port(const struct Hook *pHook);
       virtual             ~Port();
       uint32               GetSignals();
-      void                 DoAsync(sint ACmd, void* AData);
-      uint                 DoSync(sint ACmd, void* AData);
+      void                 DoAsync(siptr ACmd, void* AData);
+      iptr                 DoSync(siptr ACmd, void* AData);
       void                 HandleSignals();
    };
 };

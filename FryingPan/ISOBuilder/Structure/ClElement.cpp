@@ -327,7 +327,7 @@ const char *ClElement::getComment() const
  */
 void ClElement::arrangeISODirTable()
 {
-   uint tmp, cur=0;
+   uint16 tmp, cur=0;
    /*
     * remove extensions in this order
     */

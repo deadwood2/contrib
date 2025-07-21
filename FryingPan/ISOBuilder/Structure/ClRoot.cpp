@@ -285,7 +285,7 @@ bool ClRoot::generate(const Hook* data)
       if (isISOEntry())
       {
          _d(Lvl_Debug, "Writing primary volume descriptor");
-         bRes = HookAttrT<void*, sint>::Call(data, hPrimary.getData(), 2048);
+         bRes = HookAttrT<void*, siptr>::Call(data, hPrimary.getData(), 2048);
          if (!bRes)
             return false;
       }
@@ -293,14 +293,14 @@ bool ClRoot::generate(const Hook* data)
       if (isJolietEntry())
       {
          _d(Lvl_Debug, "Writing supplementary volume descriptor");
-         bRes = HookAttrT<void*, sint>::Call(data, &hSupplementary, 2048);
+         bRes = HookAttrT<void*, siptr>::Call(data, &hSupplementary, 2048);
          if (!bRes)
             return false;
       }
 
       {  /* terminator */
          _d(Lvl_Debug, "Writing end descriptor");
-         bRes = HookAttrT<void*, sint>::Call(data, &hDesc, 2048);
+         bRes = HookAttrT<void*, siptr>::Call(data, &hDesc, 2048);
          if (!bRes)
             return false;
       }
@@ -326,7 +326,7 @@ bool ClRoot::generate(const Hook* data)
 //#warning removed!
                lPathPos += hDirVec[lCur]->buildISOPathTableEntry((ISOPathRecord*)&pPathRec[lPathPos], false);
             }
-            bRes = HookAttrT<void*, sint>::Call(data, pPathRec, lPathRec);
+            bRes = HookAttrT<void*, siptr>::Call(data, pPathRec, lPathRec);
             if (bRes == false)
             {
                delete [] pPathRec;
@@ -343,7 +343,7 @@ bool ClRoot::generate(const Hook* data)
 //#warning removed!
                lPathPos += hDirVec[lCur]->buildISOPathTableEntry((ISOPathRecord*)&pPathRec[lPathPos], true);
             }
-            bRes = HookAttrT<void*, sint>::Call(data, pPathRec, lPathRec);
+            bRes = HookAttrT<void*, siptr>::Call(data, pPathRec, lPathRec);
             if (bRes == false)
             {
                delete [] pPathRec;
@@ -373,7 +373,7 @@ bool ClRoot::generate(const Hook* data)
             {
                lPathPos += hDirVec[lCur]->buildJolietPathTableEntry((ISOPathRecord*)&pPathRec[lPathPos], false);
             }
-            bRes = HookAttrT<void*, sint>::Call(data, pPathRec, lPathRec);
+            bRes = HookAttrT<void*, siptr>::Call(data, pPathRec, lPathRec);
             if (bRes == false)
             {
                delete [] pPathRec;
@@ -389,7 +389,7 @@ bool ClRoot::generate(const Hook* data)
             {
                lPathPos += hDirVec[lCur]->buildJolietPathTableEntry((ISOPathRecord*)&pPathRec[lPathPos], true);
             }
-            bRes = HookAttrT<void*, sint>::Call(data, pPathRec, lPathRec);
+            bRes = HookAttrT<void*, siptr>::Call(data, pPathRec, lPathRec);
             if (bRes == false)
             {
                delete [] pPathRec;
@@ -428,7 +428,7 @@ bool ClRoot::generate(const Hook* data)
             memset(pDirRec, 0, lDirSize);
 
             hDirVec[lCur]->buildISODirTable((ISODirRecord*)pDirRec);
-            bRes = HookAttrT<void*, sint>::Call(data, pDirRec, lDirSize);
+            bRes = HookAttrT<void*, siptr>::Call(data, pDirRec, lDirSize);
             if (bRes == false)
                break;
          }
@@ -465,7 +465,7 @@ bool ClRoot::generate(const Hook* data)
             memset(pDirRec, 0, lDirSize);
 
             hDirVec[lCur]->buildJolietDirTable((ISOWDirRecord*)pDirRec);
-            bRes = HookAttrT<void*, sint>::Call(data, pDirRec, lDirSize);
+            bRes = HookAttrT<void*, siptr>::Call(data, pDirRec, lDirSize);
             if (bRes == false)
                break;
          }

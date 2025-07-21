@@ -43,7 +43,7 @@ Object *GenericBOOPSI::NewObj(char* Name, IPTR FirstTag, ...)          // me hat
    IPTR *params = new IPTR [128];
    IPTR pos = 0;
    va_start(ap, FirstTag);
-      
+
    params[pos] = FirstTag;
    while (params[pos++] != 0)
    {
@@ -63,7 +63,7 @@ Object *GenericBOOPSI::NewObj(Class* cls, IPTR FirstTag, ...)          // me hat
    IPTR *params = new IPTR [128];
    IPTR pos = 0;
    va_start(ap, FirstTag);
-      
+
    params[pos] = FirstTag;
    while (params[pos++] != 0)
    {
@@ -73,7 +73,7 @@ Object *GenericBOOPSI::NewObj(Class* cls, IPTR FirstTag, ...)          // me hat
    }
 
    pos = (IPTR)Intuition->NewObjectA((IClass*)cls, 0, (struct TagItem*)params);
-   
+
    delete [] params;
    return (Object *)pos;
 }

@@ -77,15 +77,15 @@ namespace GenNS
                         Localization(LocaleSet set[] = 0, const char* group=0);
       virtual          ~Localization();
       void              Add(LocaleSet set[], const char* group=0);
-      const String&     operator[] (IPTR key);
-      const String&     Str(IPTR key);
-      const char        Accel(IPTR key);        // give back single char
-      const char*       Shortcut(IPTR key);     // give back complete string
-      bool              ReadCatalog(const char* name, sint version=0);
+      const String&     operator[] (iptr key);
+      const String&     Str(iptr key);
+      const char        Accel(iptr key);        // give back single char
+      const char*       Shortcut(iptr key);     // give back complete string
+      bool              ReadCatalog(const char* name, siptr version=0);
 
-      bool              ExportCD(const char* filename, sint version=0);
-      bool              ExportCT(const char* filename, sint version=0);
-      String            FormatNumber(sint integer, sint millionth=0);
+      bool              ExportCD(const char* filename, siptr version=0);
+      bool              ExportCT(const char* filename, siptr version=0);
+      String            FormatNumber(siptr integer, siptr millionth=0);
    };
 
 };

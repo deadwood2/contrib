@@ -173,7 +173,7 @@ void Track::cleanUp()
 
 int Track::read(const IOptItem *optItem, void* mem, const Hook* hk) const
 {
-   HookAttrT<void*, uint> hook(hk);
+   HookAttrT<void*, iptr> hook(hk);
    
    uint16 cnt = optItem->getPacketSize();
    uint32 total = optItem->getDataBlockCount();

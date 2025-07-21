@@ -190,7 +190,8 @@ const IPTR MUIPopString::getSelectedEntry()
 IPTR MUIPopString::getObject()
 {
    MUIPopup::getObject();
-   DoMtd((Object *)list, ARRAY(MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, (IPTR)popup, 2, MUIM_Popstring_Close, true));
+   if (list)
+      DoMtd((Object *)list, ARRAY(MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, (IPTR)popup, 2, MUIM_Popstring_Close, true));
 
 //   if (NULL != string)
 //      DoMtd(string, ARRAY(MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, (long)popup, 2, MUIM_Popstring_Close, true));

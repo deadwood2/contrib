@@ -111,7 +111,7 @@ namespace GenNS
          long              maxlen;
          bool              dynamic; 
          ExtAHISampleInfo *fndsample;
-         HookAttrT<void*, uint> hData;
+         HookAttrT<void*, iptr> hData;
          Thread           *update;
       };
 

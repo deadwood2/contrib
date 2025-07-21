@@ -126,7 +126,7 @@ bool ClFile::getData(const Hook *h, void* mem, uint32 len)
       res += 2047;
       res &= ~2047;
 
-      bRes  = HookAttrT<void*, sint>::Call(h, mem, res);
+      bRes  = HookAttrT<void*, siptr>::Call(h, mem, res);
       if (false == bRes)
          break;
 

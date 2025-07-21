@@ -426,7 +426,7 @@ void Drive::AnalyseDrive(void)
    Cfg->onWrite();
 }
 
-uintptr_t Drive::HandleMessages(uint ACmd, uintptr_t *msg)
+iptr Drive::HandleMessages(iptr ACmd, iptr *msg)
 {
    if (drive_status == DRT_DriveStatus_NotOpened)
       return (unsigned)ODE_NoHandler;
@@ -667,13 +667,13 @@ long Drive::LockDrive(long lLockType)
 }
 
 
-uintptr_t Drive::GetDriveAttrs(uint tag, uintptr_t attr)
+iptr Drive::GetDriveAttrs(iptr tag, iptr attr)
 {
    if (drive_status == DRT_DriveStatus_NotOpened)
       return 0;
   
    register Disc* d = current_disc.ObtainRead(); 
-   register uintptr_t res = 0;
+   register iptr res = 0;
       
    switch (tag)
    {
@@ -684,7 +684,7 @@ uintptr_t Drive::GetDriveAttrs(uint tag, uintptr_t attr)
           break;
 
       case DRA_DeviceName:                   
-          res = (uintptr_t)drive_name.Data();
+          res = (iptr)drive_name.Data();
           break;
 
       case DRA_UnitNumber:                   
@@ -705,11 +705,11 @@ uintptr_t Drive::GetDriveAttrs(uint tag, uintptr_t attr)
 
 
       case DRA_Drive_ReadSpeeds:             
-          res = d ? (uintptr_t)d->GetReadSpeeds() : 0;
+          res = d ? (iptr)d->GetReadSpeeds() : 0;
           break;
 
       case DRA_Drive_WriteSpeeds:
-          res = d ? (uintptr_t)d->GetWriteSpeeds() : 0;
+          res = d ? (iptr)d->GetWriteSpeeds() : 0;
           break;
 
       case DRA_Drive_CurrentOperation:       
@@ -721,7 +721,7 @@ uintptr_t Drive::GetDriveAttrs(uint tag, uintptr_t attr)
           break;
 
       case DRA_Drive_SenseData:
-          res = (uintptr_t)driveio->Sense();
+          res = (iptr)driveio->Sense();
           break;
 
       case DRA_Drive_Status:
@@ -741,19 +741,19 @@ uintptr_t Drive::GetDriveAttrs(uint tag, uintptr_t attr)
           break;
 
       case DRA_Drive_Vendor:                 
-          res = (uintptr_t)((inquiry) ? inquiry->VendorID() : "");
+          res = (iptr)((inquiry) ? inquiry->VendorID() : "");
           break;
 
       case DRA_Drive_Product:                
-          res = (uintptr_t)((inquiry) ? inquiry->ProductID() : "");
+          res = (iptr)((inquiry) ? inquiry->ProductID() : "");
           break;
 
       case DRA_Drive_Version:                
-          res = (uintptr_t)((inquiry) ? inquiry->ProductVersion() : "");
+          res = (iptr)((inquiry) ? inquiry->ProductVersion() : "");
           break;
 
       case DRA_Drive_Firmware:               
-          res = (uintptr_t)((inquiry) ? inquiry->FirmwareVersion() : "");
+          res = (iptr)((inquiry) ? inquiry->FirmwareVersion() : "");
           break;
 
       case DRA_Drive_ReadsMedia:             
@@ -818,7 +818,7 @@ uintptr_t Drive::GetDriveAttrs(uint tag, uintptr_t attr)
           break;
 
       case DRA_Disc_Contents:                
-          res = d ? (uintptr_t)d->GetContents() : 0;
+          res = d ? (iptr)d->GetContents() : 0;
           break;
 
       case DRA_Disc_SubType:                 
@@ -870,7 +870,7 @@ uintptr_t Drive::GetDriveAttrs(uint tag, uintptr_t attr)
           break;
 
       case DRA_Disc_NextWritableTrack:       
-         res = d ? (uintptr_t)d->GetNextWritableTrack((IOptItem*)attr) : 0;
+         res = d ? (iptr)d->GetNextWritableTrack((IOptItem*)attr) : 0;
          break;
 
       case DRA_Disc_WriteMethod:             
@@ -882,7 +882,7 @@ uintptr_t Drive::GetDriveAttrs(uint tag, uintptr_t attr)
          break;
 
       case DRA_Disc_Vendor:                  
-         res = d ? (uintptr_t)d->DiscVendor() : 0;
+         res = d ? (iptr)d->DiscVendor() : 0;
          break;
 
       default:
@@ -894,12 +894,12 @@ uintptr_t Drive::GetDriveAttrs(uint tag, uintptr_t attr)
    return res;
 }
 
-uint Drive::SetDriveAttrs(uint tag, uint value)
+iptr Drive::SetDriveAttrs(iptr tag, iptr value)
 {
    if (drive_status == DRT_DriveStatus_NotOpened)
       return (unsigned)ODE_NoHandler;
    
-   register uint res = 0;
+   register iptr res = 0;
    register Disc *d = current_disc.ObtainRead();
 
    switch (tag)
@@ -1042,20 +1042,20 @@ uint32 Drive::ScanDevice(char* sDeviceName)
    _NDS("Device Scan");
    DriveIO    *pIO  = new DriveIO(DEBUG_ENGINE);   // has to be here, called once debug is initialized.
 
-   _D(Lvl_Info, "Checking if device %s is harmless...", (uintptr_t)sDeviceName);
+   _D(Lvl_Info, "Checking if device %s is harmless...", (iptr)sDeviceName);
    switch (Cfg->Drivers()->isHarmful(sDeviceName))
    {
       case stYes:
          {
             _D(Lvl_Warning, "Device is harmful.");
-            request("Error", "Device %s is considered harmful\nOperation aborted.", "Ok", ARRAY((uintptr_t)sDeviceName));
+            request("Error", "Device %s is considered harmful\nOperation aborted.", "Ok", ARRAY((iptr)sDeviceName));
          }
          break;
 
       case stUnknown:
          {
             _D(Lvl_Warning, "Device is not recorded yet.");
-            if (0 == request("Warning", "Device %s is not known and may be harmful.\nDo you want to continue?", "Yes|No", ARRAY((uintptr_t)sDeviceName)))
+            if (0 == request("Warning", "Device %s is not known and may be harmful.\nDo you want to continue?", "Yes|No", ARRAY((iptr)sDeviceName)))
             {
                Cfg->Drivers()->addDevice(sDeviceName, true);
                break;
@@ -1427,13 +1427,13 @@ uint32 DriveClient::Send(uint32 *msg)
    return drive->SendMessage(msg);
 }
 
-uint DriveClient::GetDriveAttrs(TagItem *ti)
+iptr DriveClient::GetDriveAttrs(TagItem *ti)
 {
    TagItem  *t;
    
    while ((t = Utility->NextTagItem(&ti))!=0)
    {
-      int* dest = (int*)((long)t->ti_Data);
+      iptr* dest = (iptr*)((iptr)t->ti_Data);
       ASSERT(dest);
       ASSERT(drive);
       *dest = drive->GetDriveAttrs(t->ti_Tag, *dest);
@@ -1441,9 +1441,9 @@ uint DriveClient::GetDriveAttrs(TagItem *ti)
    return 0x0;
 }
 
-uint DriveClient::GetDriveAttrs(uint tag)
+iptr DriveClient::GetDriveAttrs(iptr tag)
 {
-   long lRet = drive->GetDriveAttrs(tag, 0UL);
+   iptr lRet = drive->GetDriveAttrs(tag, 0UL);
    return lRet;
 }
 

@@ -74,7 +74,7 @@ class Drive
    bool                       bLockInterOperations;   // true if we dont want additional operations inbetween our calls
 
    HookT<Drive, Thread*, void*>                 hHkProcMsgs;
-   HookT<Drive, uint, uintptr_t*>                  hHkProcHandle;
+   HookT<Drive, iptr, iptr*>                  hHkProcHandle;
    
    CfgHardware         *hwconfig;
 
@@ -145,11 +145,11 @@ public:
    CfgHardware         *GetHardwareConfig()
       {  return hwconfig;                    };
 
-   uintptr_t                        GetDriveAttrs(uint, uintptr_t);
-   uint                             SetDriveAttrs(uint, uint);
+   iptr                             GetDriveAttrs(iptr, iptr);
+   iptr                             SetDriveAttrs(iptr, iptr);
 
-   uint32                            SetDriveAttrs(TagItem*);
-   uintptr_t                         HandleMessages(uint Cmd, uintptr_t *Msg);
+   uint32                           SetDriveAttrs(TagItem*);
+   iptr                             HandleMessages(iptr Cmd, iptr *Msg);
 
    Page<Page_Write>                &GetWritePage();
    Page<Page_Capabilities>         &GetCapabilitiesPage();
@@ -247,8 +247,8 @@ class DriveClient
    uint32               GetDriveStatus(void);
    uint32               Send(uint32*);
    uint32               WaitForDisc(int lDuration);
-   uint                 GetDriveAttrs(TagItem*);
-   uint                 GetDriveAttrs(uint);
+   iptr                 GetDriveAttrs(TagItem*);
+   iptr                 GetDriveAttrs(iptr);
 };
 
 class DriveSpool 

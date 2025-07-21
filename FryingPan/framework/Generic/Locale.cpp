@@ -66,19 +66,19 @@ void GenNS::Localization::Add(GenNS::Localization::LocaleSet set[], const char* 
    }
 }
 
-const GenNS::String& GenNS::Localization::operator[] (uintptr_t val)
+const GenNS::String& GenNS::Localization::operator[] (iptr val)
 {
    return hash.GetVal(val).str;
 }
 
-bool GenNS::Localization::ReadCatalog(const char* name, sint version)
+bool GenNS::Localization::ReadCatalog(const char* name, siptr version)
 {
    LocaleIFace *locale = LocaleIFace::GetInstance(0);
    bool res = false;
 
    if (locale != 0)
    {
-      Catalog *cat = locale->OpenCatalogA(0, name, ARRAY(OC_Version, static_cast<IPTR>(version), TAG_DONE, 0)); //CODE 2
+      Catalog *cat = locale->OpenCatalogA(0, name, ARRAY(OC_Version, static_cast<iptr>(version), TAG_DONE, 0)); //CODE 2
       if (cat != 0)
       {
          res = true;
@@ -99,12 +99,12 @@ bool GenNS::Localization::ReadCatalog(const char* name, sint version)
    return res;
 }
       
-const GenNS::String& GenNS::Localization::Str(IPTR key)
+const GenNS::String& GenNS::Localization::Str(iptr key)
 {
    return (*this)[key];
 }
 
-bool GenNS::Localization::ExportCD(const char* filename, sint version)
+bool GenNS::Localization::ExportCD(const char* filename, siptr version)
 {
    ASSERT(DOS != 0);
    if (DOS == 0)
@@ -151,7 +151,7 @@ bool GenNS::Localization::ExportCD(const char* filename, sint version)
    return false;
 }
 
-bool GenNS::Localization::ExportCT(const char* filename, sint version)
+bool GenNS::Localization::ExportCT(const char* filename, siptr version)
 {
    ASSERT(DOS != 0);
    if (DOS == 0)
@@ -162,7 +162,7 @@ bool GenNS::Localization::ExportCT(const char* filename, sint version)
    if (fh != 0)
    {
       String s;
-      DOS->VFPrintf(fh, "##version %s %ld.0\n", (void *)ARRAY((IPTR)filename, static_cast<IPTR>(version)));
+      DOS->VFPrintf(fh, "##version %s %ld.0\n", (void *)ARRAY((iptr)filename, static_cast<iptr>(version)));
       DOS->VFPrintf(fh, "##language english\n", 0);
       DOS->VFPrintf(fh, ";\n", 0);
       for (int i=0; i<hash.Count(); i++)
@@ -177,18 +177,18 @@ bool GenNS::Localization::ExportCT(const char* filename, sint version)
             g = set.group;
 
          if (set.id == 0)
-            s.FormatStr("%s_%ld", ARRAY((IPTR)g, key));
+            s.FormatStr("%s_%ld", ARRAY((iptr)g, key));
          else
-            s.FormatStr("%s_%s", ARRAY((IPTR)g, (IPTR)set.id));
+            s.FormatStr("%s_%s", ARRAY((iptr)g, (iptr)set.id));
 
-         DOS->VFPrintf(fh, "%s\n", (void *)ARRAY((IPTR)s.Data()));
+         DOS->VFPrintf(fh, "%s\n", (void *)ARRAY((iptr)s.Data()));
          s = set.str;
          s.Substitute("\n", "\\n");
          s.Substitute("\033", "\\033");
          if (set.accel[0] == 0)
-            DOS->VFPrintf(fh, "%s\n", (void *)ARRAY((IPTR)s.Data()));
+            DOS->VFPrintf(fh, "%s\n", (void *)ARRAY((iptr)s.Data()));
          else
-            DOS->VFPrintf(fh, "%lc&%s\n", (void *)ARRAY((IPTR)set.accel[0], (IPTR)s.Data()));
+            DOS->VFPrintf(fh, "%lc&%s\n", (void *)ARRAY((iptr)set.accel[0], (IPTR)s.Data()));
          DOS->VFPrintf(fh, ";\n", 0);
       }
 
@@ -212,19 +212,19 @@ void GenNS::Localization::split(GenNS::String s, char &accelerator, GenNS::Strin
    }
 }
 
-const char GenNS::Localization::Accel(IPTR key)
+const char GenNS::Localization::Accel(iptr key)
 {
    //request("Info", "accelerator: %s", "Ok", ARRAY((uint)hash.GetVal(key).accel[0]));
    return hash.GetVal(key).accel[0];
 }
 
-const char* GenNS::Localization::Shortcut(IPTR key)
+const char* GenNS::Localization::Shortcut(iptr key)
 {
    //request("Info", "shortcut: %s", "Ok", ARRAY((uint)&hash.GetVal(key).accel));
    return (const char*)(&hash.GetVal(key).accel);
 }
       
-GenNS::String GenNS::Localization::FormatNumber(sint integer, sint millionth)
+GenNS::String GenNS::Localization::FormatNumber(siptr integer, siptr millionth)
 {
    char temp[32];
   
@@ -237,7 +237,7 @@ GenNS::String GenNS::Localization::FormatNumber(sint integer, sint millionth)
    int gpos = 0;
    int part = 0;
    bool sign = false;
-   uint pos = sizeof(temp);
+   uint8 pos = sizeof(temp);
 
    if (integer < 0)
    {

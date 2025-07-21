@@ -68,7 +68,7 @@ uint32 GenNS::Msg::WaitFor()
    return 0;
 }
 
-sint GenNS::Msg::GetCommand()
+siptr GenNS::Msg::GetCommand()
 {
    return lCmd;
 }

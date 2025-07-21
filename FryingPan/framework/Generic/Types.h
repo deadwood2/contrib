@@ -54,12 +54,9 @@ typedef unsigned char      uint8;   /**< @brief unsigned 8bit integer  */
 typedef signed short       int16;   /**< @brief signed 16bit integer */
 typedef signed char        int8;    /**< @brief signed 8bit integer  */
 
-#ifdef AROS_INTPTR_TYPE
-typedef signed AROS_INTPTR_TYPE     sint;
-typedef unsigned AROS_INTPTR_TYPE   uint;
-#else
-typedef signed long        sint;    /**< @brief architecture specific signed int: sizeof(s_int) = sizeof(void*) */
-typedef unsigned long      uint;    /**< @brief architecture specific unsigned int: sizeof(u_int) = sizeof(void*) */
+typedef signed int        sint;    /**< @brief architecture specific signed int */
+#if !defined(__posixc_misctypes_defined)
+typedef unsigned int      uint;    /**< @brief architecture specific unsigned int */
 #endif
 
 #if defined(__AROS__)
@@ -76,9 +73,14 @@ typedef unsigned int size_t;
 #error no size_t defined
 #endif
 
-#if (0)
-typedef uint*              sized_iptr; /**< @brief type returned by #SIZEARRAY to differentiate it from normal pointers */
-typedef uint*              iptr;       /**< @brief type returned by #ARRAY to differentiate it from normal pointers */
+/**< @brief architecture specific signed int, large enough to hold a pointer: sizeof(s_int) = sizeof(void*) */
+/**< @brief architecture specific unsigned int, large enough to hold a pointer: sizeof(u_int) = sizeof(void*) */
+#ifdef AROS_INTPTR_TYPE
+typedef signed AROS_INTPTR_TYPE     siptr;
+typedef unsigned AROS_INTPTR_TYPE   iptr;
+#else
+typedef signed long        siptr;    
+typedef unsigned long      iptr;
 #endif
 
 #define PACKED __attribute__((packed))

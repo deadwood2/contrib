@@ -28,16 +28,16 @@ namespace GenNS
    class Msg : public Message
    {
       bool                 bSync;
-      sint                 lCmd;
+      siptr                lCmd;
       void                *pData;
       MsgPort             *pPort;
-      sint                 lResult;
+      siptr                lResult;
    public:
       Msg(bool ASynchronous, unsigned long ACmd, void* AData);
       virtual             ~Msg();
       void                 Reply(unsigned long AResult);
       uint32               WaitFor();
-      sint                 GetCommand();
+      siptr                GetCommand();
       void                *GetData();
    };
 };
