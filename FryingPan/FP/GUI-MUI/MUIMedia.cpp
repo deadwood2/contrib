@@ -605,7 +605,7 @@ String MUIMedia::contentsToString()
       oi = oi->getChild(oi->getChildCount()-1);
       sess = oi->getItemNumber();
       trks = oi->getChild(oi->getChildCount()-1)->getItemNumber();
-      s.FormatStr(Glb.Loc[loc_TextContents], ARRAY(trks, sess));
+      s.FormatStr(Glb.Loc[loc_TextContents], trks, sess);
    }
 
    Glb.CurrentEngine->Release();
@@ -641,11 +641,11 @@ String MUIMedia::sizeToString()
       }
 
 
-      s.FormatStr("%ld.%02ld%s", ARRAY(
+      s.FormatStr("%ld.%02ld%s",
                size,
                (IPTR)((fsize * 100) >> 10) % 100,
                (IPTR)pfx.Data()
-      ));
+      );
    }
 
    Glb.CurrentEngine->Release();

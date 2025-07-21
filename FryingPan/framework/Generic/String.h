@@ -28,6 +28,12 @@
 #undef String
 #endif
 
+#if defined(__GNUC__) || defined(__clang__)
+# define ATTR_PRINTF(fmt_idx, arg_idx) __attribute__((format(printf, fmt_idx, arg_idx)))
+#else
+# define ATTR_PRINTF(fmt_idx, arg_idx)
+#endif
+
 namespace GenNS
 {
    class String 
@@ -50,7 +56,7 @@ namespace GenNS
       void           SetLength(unsigned long lLength);                  // sets length of element + adds pad zero
       void           Update();                                          // recalc length
       int            FormatStr(const char *sFmtStr, IPTR pParams);
-      int            FormatStr(const char *sFmtStr, ...);
+      int            FormatStr(const char *sFmtStr, ...) ATTR_PRINTF(2, 3);
       operator char*() const;
       operator unsigned char*() const;
       String        &operator =  (const String & sStr);

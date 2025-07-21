@@ -311,7 +311,7 @@ IPTR MUIContents::display(const char** arr, Entry* e)
       s1 = Glb.Loc.FormatNumber(len, fraction * 100000);
       s2 = Glb.Loc.FormatNumber(e->item->getStartAddress());
       s3 = Glb.Loc.FormatNumber(e->item->getEndAddress());
-      e->info.FormatStr("%s %s  (%s - %s)", ARRAY((IPTR)s1.Data(), (IPTR)suffix, (IPTR)s2.Data(), (IPTR)s3.Data()));
+      e->info.FormatStr("%s %s  (%s - %s)", s1.Data(), suffix, s2.Data(), s3.Data());
 
       arr[0] = e->number.Data();
       arr[1] = e->name.Data();
@@ -426,7 +426,7 @@ IPTR MUIContents::button(BtnID id, IPTR)
                   continue;
                }
 
-               fname.FormatStr("%02ld.Track.img", ARRAY(item->item->getItemNumber()));
+               fname.FormatStr("%02ld.Track.img", item->item->getItemNumber());
                pname.AddPath(fname);
                eng->downloadTrack(item->item, pname);
             }

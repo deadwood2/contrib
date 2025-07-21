@@ -25,6 +25,10 @@
 #include <LibC/LibC.h>
 #include "Debug.h"
 
+#if defined(__AROS__)
+#include <dos/bptr.h>
+#endif
+
 using namespace GenNS;
 
 #if defined(mc68000) && !defined(__AROS__)
@@ -581,7 +585,7 @@ void String::BstrCpy(BSTR src)
 #ifndef __AROS__   
    StrLCpy(&((char*)((IPTR)src<<2))[1], ((char*)((IPTR)src<<2))[0]);
 #else
-   *this = (char*)src;
+   StrLCpy(AROS_BSTR_ADDR(src), AROS_BSTR_strlen(src));
 #endif
 }
 

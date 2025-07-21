@@ -126,18 +126,18 @@ void JobLayout::analyse(EOpticalError ret)
             suff = "GB";
          }
 
-         layout.FormatStr("%ld.%02ld%% (%ld.%02ld%s / %ld.%02ld%s, %ld / %ld sectors)", ARRAY(
+         layout.FormatStr("%ld.%02ld%% (%ld.%02ld%s / %ld.%02ld%s, %ld / %ld sectors)",
                   pi,
                   pf,
                   curr,
                   ((fcurr * 100) >> 10) % 100,
-                  (IPTR)suff.Data(),
+                  suff.Data(),
                   size,
                   ((fsize * 100) >> 10) % 100,
-                  (IPTR)suff.Data(),
+                  suff.Data(),
                   scurr,
                   ssize
-                  ));
+                  );
          numblocks = scurr;
       }
    }

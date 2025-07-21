@@ -175,14 +175,14 @@ IPTR MUITracksSession::display(const char** arr, Entry* e)
 
          case Item_Session:
             {
-               e->number.FormatStr("%ld", ARRAY(e->item->getItemNumber()));
+               e->number.FormatStr("%ld", e->item->getItemNumber());
                e->name  = Glb.Loc[loc_TypeSession];
             }
             break;
 
          case Item_Track:
             {
-               e->number.FormatStr("%ld", ARRAY(e->item->getItemNumber()));
+               e->number.FormatStr("%ld", e->item->getItemNumber());
                if (e->item->getDataType() == Data_Audio)
                {
                   e->name  = Glb.Loc[loc_TypeAudioTrack];
@@ -196,7 +196,7 @@ IPTR MUITracksSession::display(const char** arr, Entry* e)
 
          case Item_Index:
             {
-               e->number.FormatStr("%ld", ARRAY(e->item->getItemNumber()));
+               e->number.FormatStr("%ld", e->item->getItemNumber());
                e->name  = Glb.Loc[loc_TypeIndex];
             }
             break;

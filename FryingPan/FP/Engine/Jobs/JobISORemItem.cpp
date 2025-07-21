@@ -27,7 +27,7 @@ JobISORemItem::JobISORemItem(unsigned long drv, IBrowser* b, ClElement *el) :
    elem = el;
    dir = b->getCurrDir();
 
-   action.FormatStr("Removing %s", ARRAY((uintptr_t)elem->getNormalName()));
+   action.FormatStr("Removing %s", elem->getNormalName());
 }
 
 JobISORemItem::~JobISORemItem()

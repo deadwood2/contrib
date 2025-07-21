@@ -340,12 +340,12 @@ IPTR MUITracksISOBuilder::filesDisplay(const char** arr, Entry* e)
    {
       if (e->elem->isDirectory())
       {
-         e->s1.FormatStr("\0333%s", ARRAY((IPTR)e->elem->getNormalName()));
+         e->s1.FormatStr("\0333%s", (IPTR)e->elem->getNormalName());
          e->s2 = "\0333<DIR>";
       }
       else
       {
-         e->s1.FormatStr("%s", ARRAY((IPTR)e->elem->getNormalName()));
+         e->s1.FormatStr("%s", (IPTR)e->elem->getNormalName());
          e->s2 = Glb.Loc.FormatNumber(e->elem->getISOSize(), 0);
       }
 
