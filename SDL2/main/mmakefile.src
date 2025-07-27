@@ -1,0 +1,187 @@
+# Copyright © 2025, The AROS Development Team. All rights reserved.
+# $Id$
+
+include $(SRCDIR)/config/aros-contrib.cfg
+
+#MM- contrib-sdl2 : SDL2-aros
+#MM- SDL2-aros-lib : SDL2-aros-sharedlib
+#MM- SDL2-aros : SDL2-aros-lib SDL2-aros-tests
+##MM- SDL2-aros-tests : SDL2-aros-standardtests SDL2-aros-gltests
+
+# Special target
+#MM- development-sdl2 : SDL2-aros-copy-includes SDL2-aros-sharedlib-includes SDL2-aros-sharedlib-linklib
+
+#MM SDL2-aros-sharedlib : contrib-sdl2-fetch SDL2-aros-copy-includes workbench-devs-AHI workbench-libs-mesa-linklib \
+#MM  development-libiconv
+
+REPOSITORIES := http://www.libsdl.org/release/
+ARCHVER      := 2.32.8
+ARCHBASE     := SDL2-$(ARCHVER)
+
+ARCHSRCDIR := $(PORTSDIR)/SDL2/$(ARCHBASE)
+
+%fetch mmake=contrib-sdl2-fetch archive=$(ARCHBASE) suffixes="tar.gz" \
+    location=$(PORTSSOURCEDIR) destination=$(PORTSDIR)/SDL2 \
+    archive_origins=". $(REPOSITORIES)" \
+    patches_specs=$(ARCHBASE)-aros.diff:$(ARCHBASE):-p1
+
+%create_patch mmake=contrib-sdl2-create-patch archive=$(ARCHBASE) \
+    suffixes="tar.gz" destination=$(PORTSDIR)/SDL2
+
+MORPHOS := \
+    $(ARCHSRCDIR)/src/core/morphos/SDL_stubs \
+    $(ARCHSRCDIR)/src/core/morphos/SDL_startup \
+    $(ARCHSRCDIR)/src/core/morphos/devenv/sdl-startup \
+    $(ARCHSRCDIR)/src/core/morphos/devenv/sdl-stubs \
+    $(ARCHSRCDIR)/src/joystick/morphos/SDL_sysjoystick
+
+FILES := \
+    $(ARCHSRCDIR)/src/atomic/SDL_atomic \
+    $(ARCHSRCDIR)/src/atomic/SDL_spinlock \
+    $(ARCHSRCDIR)/src/audio/dummy/SDL_dummyaudio \
+    $(ARCHSRCDIR)/src/audio/ahi/SDL_ahi_audio \
+    $(ARCHSRCDIR)/src/audio/SDL_audio \
+    $(ARCHSRCDIR)/src/audio/SDL_audiocvt \
+    $(ARCHSRCDIR)/src/audio/SDL_audiodev \
+    $(ARCHSRCDIR)/src/audio/SDL_audiotypecvt \
+    $(ARCHSRCDIR)/src/audio/SDL_mixer \
+    $(ARCHSRCDIR)/src/audio/SDL_wave \
+    $(ARCHSRCDIR)/src/core/aros/SDL_cpu \
+    $(ARCHSRCDIR)/src/core/morphos/SDL_misc \
+    $(ARCHSRCDIR)/src/cpuinfo/SDL_cpuinfo \
+    $(ARCHSRCDIR)/src/events/imKStoUCS \
+    $(ARCHSRCDIR)/src/events/SDL_clipboardevents \
+    $(ARCHSRCDIR)/src/events/SDL_displayevents \
+    $(ARCHSRCDIR)/src/events/SDL_dropevents \
+    $(ARCHSRCDIR)/src/events/SDL_events \
+    $(ARCHSRCDIR)/src/events/SDL_gesture \
+    $(ARCHSRCDIR)/src/events/SDL_keyboard \
+    $(ARCHSRCDIR)/src/events/SDL_keysym_to_scancode \
+    $(ARCHSRCDIR)/src/events/SDL_mouse \
+    $(ARCHSRCDIR)/src/events/SDL_quit \
+    $(ARCHSRCDIR)/src/events/SDL_scancode_tables \
+    $(ARCHSRCDIR)/src/events/SDL_touch \
+    $(ARCHSRCDIR)/src/events/SDL_windowevents \
+    $(ARCHSRCDIR)/src/file/SDL_rwops \
+    $(ARCHSRCDIR)/src/filesystem/morphos/SDL_sysfilesystem \
+    $(ARCHSRCDIR)/src/haptic/dummy/SDL_syshaptic \
+    $(ARCHSRCDIR)/src/haptic/SDL_haptic \
+    $(ARCHSRCDIR)/src/joystick/dummy/SDL_sysjoystick \
+    $(ARCHSRCDIR)/src/joystick/controller_type \
+    $(ARCHSRCDIR)/src/joystick/SDL_gamecontroller \
+    $(ARCHSRCDIR)/src/joystick/SDL_joystick \
+    $(ARCHSRCDIR)/src/joystick/SDL_steam_virtual_gamepad \
+    $(ARCHSRCDIR)/src/locale/morphos/SDL_syslocale \
+    $(ARCHSRCDIR)/src/locale/SDL_locale \
+    $(ARCHSRCDIR)/src/misc/morphos/SDL_sysurl \
+    $(ARCHSRCDIR)/src/misc/SDL_url \
+    $(ARCHSRCDIR)/src/power/morphos/SDL_syspower \
+    $(ARCHSRCDIR)/src/power/SDL_power \
+    $(ARCHSRCDIR)/src/render/opengl/SDL_render_gl \
+    $(ARCHSRCDIR)/src/render/opengl/SDL_shaders_gl \
+    $(ARCHSRCDIR)/src/render/SDL_d3dmath \
+    $(ARCHSRCDIR)/src/render/SDL_render \
+    $(ARCHSRCDIR)/src/render/SDL_yuv_sw \
+    $(ARCHSRCDIR)/src/render/software/SDL_blendfillrect \
+    $(ARCHSRCDIR)/src/render/software/SDL_blendline \
+    $(ARCHSRCDIR)/src/render/software/SDL_blendpoint \
+    $(ARCHSRCDIR)/src/render/software/SDL_drawline \
+    $(ARCHSRCDIR)/src/render/software/SDL_drawpoint \
+    $(ARCHSRCDIR)/src/render/software/SDL_render_sw \
+    $(ARCHSRCDIR)/src/render/software/SDL_rotate \
+    $(ARCHSRCDIR)/src/render/software/SDL_triangle \
+    $(ARCHSRCDIR)/src/SDL_assert \
+    $(ARCHSRCDIR)/src/SDL_dataqueue \
+    $(ARCHSRCDIR)/src/SDL_error \
+    $(ARCHSRCDIR)/src/SDL_guid \
+    $(ARCHSRCDIR)/src/SDL_hints \
+    $(ARCHSRCDIR)/src/SDL_list \
+    $(ARCHSRCDIR)/src/SDL_log \
+    $(ARCHSRCDIR)/src/SDL_utils \
+    $(ARCHSRCDIR)/src/stdlib/SDL_malloc \
+    $(ARCHSRCDIR)/src/stdlib/SDL_crc16 \
+    $(ARCHSRCDIR)/src/stdlib/SDL_crc32 \
+    $(ARCHSRCDIR)/src/stdlib/SDL_getenv \
+    $(ARCHSRCDIR)/src/stdlib/SDL_iconv \
+    $(ARCHSRCDIR)/src/stdlib/SDL_mslibc \
+    $(ARCHSRCDIR)/src/stdlib/SDL_qsort \
+    $(ARCHSRCDIR)/src/stdlib/SDL_stdlib \
+    $(ARCHSRCDIR)/src/stdlib/SDL_string \
+    $(ARCHSRCDIR)/src/stdlib/SDL_strtokr \
+    $(ARCHSRCDIR)/src/thread/generic/SDL_syscond \
+    $(ARCHSRCDIR)/src/thread/generic/SDL_systls \
+    $(ARCHSRCDIR)/src/thread/morphos/SDL_sysmutex \
+    $(ARCHSRCDIR)/src/thread/morphos/SDL_syssem \
+    $(ARCHSRCDIR)/src/thread/morphos/SDL_systhread \
+    $(ARCHSRCDIR)/src/thread/SDL_thread \
+    $(ARCHSRCDIR)/src/timer/morphos/SDL_systimer \
+    $(ARCHSRCDIR)/src/timer/SDL_timer \
+    $(ARCHSRCDIR)/src/video/dummy/SDL_nullevents \
+    $(ARCHSRCDIR)/src/video/dummy/SDL_nullframebuffer \
+    $(ARCHSRCDIR)/src/video/dummy/SDL_nullvideo \
+    $(ARCHSRCDIR)/src/video/morphos/SDL_mosclipboard \
+    $(ARCHSRCDIR)/src/video/morphos/SDL_mosevents \
+    $(ARCHSRCDIR)/src/video/morphos/SDL_mosframebuffer \
+    $(ARCHSRCDIR)/src/video/morphos/SDL_moskeyboard \
+    $(ARCHSRCDIR)/src/video/morphos/SDL_mosmessagebox \
+    $(ARCHSRCDIR)/src/video/morphos/SDL_mosmodes \
+    $(ARCHSRCDIR)/src/video/morphos/SDL_mosmouse \
+    $(ARCHSRCDIR)/src/video/aros/SDL_arosopengl \
+    $(ARCHSRCDIR)/src/video/morphos/SDL_mosshape \
+    $(ARCHSRCDIR)/src/video/aros/SDL_arosvideo \
+    $(ARCHSRCDIR)/src/video/morphos/SDL_moswindow \
+    $(ARCHSRCDIR)/src/video/SDL_blit \
+    $(ARCHSRCDIR)/src/video/SDL_blit_0 \
+    $(ARCHSRCDIR)/src/video/SDL_blit_1 \
+    $(ARCHSRCDIR)/src/video/SDL_blit_A \
+    $(ARCHSRCDIR)/src/video/SDL_blit_auto \
+    $(ARCHSRCDIR)/src/video/SDL_blit_copy \
+    $(ARCHSRCDIR)/src/video/SDL_blit_N \
+    $(ARCHSRCDIR)/src/video/SDL_blit_slow \
+    $(ARCHSRCDIR)/src/video/SDL_bmp \
+    $(ARCHSRCDIR)/src/video/SDL_clipboard \
+    $(ARCHSRCDIR)/src/video/SDL_egl \
+    $(ARCHSRCDIR)/src/video/SDL_fillrect \
+    $(ARCHSRCDIR)/src/video/SDL_pixels \
+    $(ARCHSRCDIR)/src/video/SDL_rect \
+    $(ARCHSRCDIR)/src/video/SDL_RLEaccel \
+    $(ARCHSRCDIR)/src/video/SDL_shape \
+    $(ARCHSRCDIR)/src/video/SDL_stretch \
+    $(ARCHSRCDIR)/src/video/SDL_surface \
+    $(ARCHSRCDIR)/src/video/SDL_video \
+    $(ARCHSRCDIR)/src/video/SDL_vulkan_utils \
+    $(ARCHSRCDIR)/src/video/SDL_yuv \
+    $(ARCHSRCDIR)/src/video/yuv2rgb/yuv_rgb_lsx \
+    $(ARCHSRCDIR)/src/video/yuv2rgb/yuv_rgb_sse \
+    $(ARCHSRCDIR)/src/video/yuv2rgb/yuv_rgb_std \
+    $(ARCHSRCDIR)/src/SDL
+
+SDLINCDIR := $(AROS_INCLUDES)/SDL2
+
+NOWARN_FLAGS := $(NOWARN_STRINGOP_TRUNCATION)
+USER_CFLAGS := $(CFLAGS_GNU99) $(NOWARN_FLAGS)
+
+USER_INCLUDES := -I$(SDLINCDIR) -I$(ARCHSRCDIR) -I$(ARCHSRCDIR)/src -I$(AROS_CONTRIB_INCLUDES)
+USER_CPPFLAGS := \
+        -DSDL_AROS_SHARED \
+        -DADATE="\"$(shell date '+%d.%m.%Y')\"" \
+        -DLACKS_SYS_MMAN_H
+        
+USER_LDFLAGS := -L$(AROS_CONTRIB_LIB)
+
+%build_module mmake=SDL2-aros-sharedlib \
+    modname=SDL2 modtype=library \
+    files="SDL2_library SDL2_arosstubs $(FILES)" conffile=SDL2.conf \
+    uselibs="iconv GL_rel"
+
+USER_CPPFLAGS :=
+
+%build_linklib mmake=SDL2-aros-staticlib libname=SDL_static \
+    files="$(FILES)"
+
+%copy_dir_recursive mmake=SDL2-aros-copy-includes \
+    src=$(ARCHSRCDIR)/include/. dst="$(AROS_INCLUDES)/SDL2"
+
+#MM SDL2-aros-copy-includes : contrib-sdl2-fetch
+
+%common
