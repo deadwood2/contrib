@@ -7,7 +7,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 #MM- SDL-aros-lib : contrib-sdl-sdl-main-fetch SDL-aros-sharedlib
 ##MM- SDL-aros-lib : contrib-sdl-sdl-main-fetch SDL-aros-staticlib
 #MM- SDL-aros : SDL-aros-lib SDL-aros-tests
-##MM- SDL-aros-tests : SDL-aros-standardtests SDL-aros-gltests
+#MM- SDL-aros-tests : SDL-aros-standardtests SDL-aros-gltests
 
 # Special target
 #MM- development-sdl : SDL-aros-includes SDL-aros-sharedlib-includes SDL-aros-sharedlib-linklib
@@ -169,15 +169,15 @@ TESTGLFILES := \
 DISABLEDTESTFILES := \
     $(ARCHSRCDIR)/test/testloadso
 
-USER_INCLUDES := -I$(SDLINCDIR) -I$(ARCHSRCDIR)/test
+USER_INCLUDES := -I$(SDLINCDIR)  -I$(AROS_CONTRIB_INCLUDES) -I$(ARCHSRCDIR)/test
 
 %build_progs mmake=SDL-aros-standardtests \
     files=$(TESTFILES) targetdir=$(TESTEXEDIR) \
-    uselibs="SDL"
+    uselibs="SDL" usetree=yes srcdir=$(ARCHSRCDIR)/test
 
 %build_progs mmake=SDL-aros-gltests \
     files=$(TESTGLFILES) targetdir=$(TESTEXEDIR) \
-    uselibs="SDL GL"
+    uselibs="SDL GL" usetree=yes srcdir=$(ARCHSRCDIR)/test
 
 INCLUDEFILES := \
     SDL.h  \
