@@ -183,3 +183,4 @@ extern void SDL_GL_DeleteContext_REAL(SDL_GLContext context);
 extern int SDL_GL_SetSwapInterval_REAL(int interval);
 extern int SDL_GL_GetSwapInterval_REAL();
 extern void SDL_GL_SwapWindow_REAL(SDL_Window *window);
+extern void SDL_LogMessageV_REAL(int category, SDL_LogPriority priority, const char *fmt, va_list ap);

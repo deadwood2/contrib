@@ -14036,6 +14036,18 @@ diff -ruN SDL2-2.32.8/src/cpuinfo/SDL_cpuinfo.c SDL2-2.32.8.aros/src/cpuinfo/SDL
  #ifdef __VITA__
          if (SDL_SystemRAM <= 0) {
              /* Vita has 512MiB on SoC, that's split into 256MiB(+109MiB in extended memory mode) for app
+diff -ruN SDL2-2.32.8/src/dynapi/SDL_dynapi.h SDL2-2.32.8.aros/src/dynapi/SDL_dynapi.h
+--- SDL2-2.32.8/src/dynapi/SDL_dynapi.h	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.8.aros/src/dynapi/SDL_dynapi.h	2025-07-27 22:21:23.459501912 +0000
+@@ -69,6 +69,8 @@
+ #define SDL_DYNAMIC_API 0 /* devkitARM doesn't support dynamic linking */
+ #elif defined(DYNAPI_NEEDS_DLOPEN) && !defined(HAVE_DLOPEN)
+ #define SDL_DYNAMIC_API 0 /* we need dlopen(), but don't have it.... */
++#elif defined(__AROS__) && !defined(SDL2_AROS_SHARED)
++#define SDL_DYNAMIC_API 0
+ #endif
+ 
+ /* everyone else. This is where we turn on the API if nothing forced it off. */
 diff -ruN SDL2-2.32.8/src/events/scancodes_morphos.h SDL2-2.32.8.aros/src/events/scancodes_morphos.h
 --- SDL2-2.32.8/src/events/scancodes_morphos.h	1970-01-01 00:00:00.000000000 +0000
 +++ SDL2-2.32.8.aros/src/events/scancodes_morphos.h	2025-07-27 14:24:13.720841324 +0000
@@ -15827,7 +15839,7 @@ diff -ruN SDL2-2.32.8/src/SDL_error.c SDL2-2.32.8.aros/src/SDL_error.c
  {
 diff -ruN SDL2-2.32.8/src/SDL_log.c SDL2-2.32.8.aros/src/SDL_log.c
 --- SDL2-2.32.8/src/SDL_log.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/SDL_log.c	2025-07-27 14:24:21.672841408 +0000
++++ SDL2-2.32.8.aros/src/SDL_log.c	2025-07-27 22:24:59.499329935 +0000
 @@ -40,6 +40,10 @@
  #include <android/log.h>
  #endif
@@ -15839,7 +15851,31 @@ diff -ruN SDL2-2.32.8/src/SDL_log.c SDL2-2.32.8.aros/src/SDL_log.c
  #include "stdlib/SDL_vacopy.h"
  
  /* The size of the stack buffer to use for rendering log messages. */
-@@ -573,6 +577,10 @@
+@@ -47,6 +51,7 @@
+ 
+ #define DEFAULT_CATEGORY -1
+ 
++#if !defined(__AROS__) || defined(SDL2_AROS_SHARED)
+ typedef struct SDL_LogLevel
+ {
+     int category;
+@@ -296,6 +301,7 @@
+     }
+     SDL_forced_priority = SDL_FALSE;
+ }
++#endif
+ 
+ void SDL_Log(SDL_PRINTF_FORMAT_STRING const char *fmt, ...)
+ {
+@@ -369,6 +375,7 @@
+     va_end(ap);
+ }
+ 
++#if !defined(__AROS__) || defined(SDL2_AROS_SHARED)
+ #ifdef __ANDROID__
+ static const char *GetCategoryPrefix(int category)
+ {
+@@ -573,6 +580,10 @@
              (void)fclose(pFile);
          }
      }
@@ -15850,6 +15886,13 @@ diff -ruN SDL2-2.32.8/src/SDL_log.c SDL2-2.32.8.aros/src/SDL_log.c
  #elif defined(__3DS__)
      {
          FILE *pFile;
+@@ -607,5 +618,6 @@
+     SDL_log_function = callback;
+     SDL_log_userdata = userdata;
+ }
++#endif
+ 
+ /* vi: set ts=4 sw=4 expandtab: */
 diff -ruN SDL2-2.32.8/src/stdlib/SDL_stdlib.c SDL2-2.32.8.aros/src/stdlib/SDL_stdlib.c
 --- SDL2-2.32.8/src/stdlib/SDL_stdlib.c	2025-01-01 15:47:53.000000000 +0000
 +++ SDL2-2.32.8.aros/src/stdlib/SDL_stdlib.c	2025-07-27 14:24:17.192841344 +0000

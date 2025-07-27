@@ -4,14 +4,17 @@
 include $(SRCDIR)/config/aros-contrib.cfg
 
 #MM- contrib-sdl2 : SDL2-aros
-#MM- SDL2-aros-lib : SDL2-aros-sharedlib
-#MM- SDL2-aros : SDL2-aros-lib SDL2-aros-tests
-##MM- SDL2-aros-tests : SDL2-aros-standardtests SDL2-aros-gltests
+#MM- SDL2-aros-lib : SDL2-aros-sharedlib-linklib
+#MM- SDL2-aros : SDL2-aros-sharedlib SDL2-aros-tests
+#MM- SDL2-aros-tests : SDL2-aros-tests-main
+##MM SDL2-aros-tests-main : includes linklibs contrib-sdl2-fetch development-sdl2
+##MM SDL2-aros-tests-gl : includes linklibs contrib-sdl2-fetch development-sdl2
+##MM SDL2-aros-tests-utils : includes linklibs contrib-sdl2-fetch development-sdl2
 
 # Special target
 #MM- development-sdl2 : SDL2-aros-copy-includes SDL2-aros-sharedlib-includes SDL2-aros-sharedlib-linklib
 
-#MM SDL2-aros-sharedlib : contrib-sdl2-fetch SDL2-aros-copy-includes workbench-devs-AHI workbench-libs-mesa-linklib \
+#MM SDL2-aros-sharedlib : includes linklibs  contrib-sdl2-fetch SDL2-aros-copy-includes workbench-devs-AHI workbench-libs-mesa-linklib \
 #MM  development-libiconv
 
 REPOSITORIES := http://www.libsdl.org/release/
@@ -19,6 +22,7 @@ ARCHVER      := 2.32.8
 ARCHBASE     := SDL2-$(ARCHVER)
 
 ARCHSRCDIR := $(PORTSDIR)/SDL2/$(ARCHBASE)
+TESTEXEDIR := $(AROS_TESTS)/SDL2
 
 %fetch mmake=contrib-sdl2-fetch archive=$(ARCHBASE) suffixes="tar.gz" \
     location=$(PORTSSOURCEDIR) destination=$(PORTSDIR)/SDL2 \
@@ -156,22 +160,31 @@ FILES := \
     $(ARCHSRCDIR)/src/video/yuv2rgb/yuv_rgb_std \
     $(ARCHSRCDIR)/src/SDL
 
-SDLINCDIR := $(AROS_INCLUDES)/SDL2
+SDL2INCDIR := $(AROS_INCLUDES)/SDL2
 
 NOWARN_FLAGS := $(NOWARN_STRINGOP_TRUNCATION)
 USER_CFLAGS := $(CFLAGS_GNU99) $(NOWARN_FLAGS)
 
-USER_INCLUDES := -I$(SDLINCDIR) -I$(ARCHSRCDIR) -I$(ARCHSRCDIR)/src -I$(AROS_CONTRIB_INCLUDES)
+USER_INCLUDES := -I$(SDL2INCDIR) -I$(ARCHSRCDIR) -I$(ARCHSRCDIR)/src -I$(AROS_CONTRIB_INCLUDES)
+USER_LDFLAGS := -L$(AROS_CONTRIB_LIB)
 USER_CPPFLAGS := \
-        -DSDL_AROS_SHARED \
         -DADATE="\"$(shell date '+%d.%m.%Y')\"" \
         -DLACKS_SYS_MMAN_H
-        
-USER_LDFLAGS := -L$(AROS_CONTRIB_LIB)
+
+SDL2_LOGSTUB=$(GENDIR)/$(CURDIR)/SDL2/linklib/SDL_liblog.o
+$(SDL2_LOGSTUB): $(ARCHSRCDIR)/src/SDL_log.c
+	%compile_q cmd="$(strip $(TARGET_CC) $(TARGET_SYSROOT))" opt="$(strip $(CFLAGS) $(CPPFLAGS))" iquote="$(CFLAGS_IQUOTE)" iquote_end="$(CFLAGS_IQUOTE_END)"
+
+USER_CPPFLAGS := \
+        -DSDL2_AROS_SHARED \
+        -DADATE="\"$(shell date '+%d.%m.%Y')\"" \
+        -DLACKS_SYS_MMAN_H
 
 %build_module mmake=SDL2-aros-sharedlib \
     modname=SDL2 modtype=library \
-    files="SDL2_library SDL2_arosstubs $(FILES)" conffile=SDL2.conf \
+    files="SDL2_library SDL2_arosstubs $(FILES)" \
+    linklibobjs="$(SDL2_LOGSTUB)" \
+    conffile=SDL2.conf \
     uselibs="iconv GL_rel"
 
 USER_CPPFLAGS :=
@@ -180,7 +193,7 @@ USER_CPPFLAGS :=
     files="$(FILES)"
 
 %copy_dir_recursive mmake=SDL2-aros-copy-includes \
-    src=$(ARCHSRCDIR)/include/. dst="$(SDLINCDIR)"
+    src=$(ARCHSRCDIR)/include/. dst="$(SDL2INCDIR)"
 
 #MM SDL2-aros-copy-includes : contrib-sdl2-fetch
 

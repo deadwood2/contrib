@@ -82,7 +82,7 @@ AROS_LH1(int, SDL_InitSubSystem,
 {
     AROS_LIBFUNC_INIT
 
-    SDL_InitSubSystem_REAL(flags);
+    return SDL_InitSubSystem_REAL(flags);
 
     AROS_LIBFUNC_EXIT
 }
@@ -106,7 +106,7 @@ AROS_LH1(Uint32, SDL_WasInit,
 {
     AROS_LIBFUNC_INIT
 
-    SDL_WasInit_REAL(flags);
+    return SDL_WasInit_REAL(flags);
 
     AROS_LIBFUNC_EXIT
 }
@@ -258,6 +258,8 @@ AROS_LH3(VOID, SDL_GetWindowPosition,
 {
     AROS_LIBFUNC_INIT
 
+    SDL_GetWindowPosition_REAL(window, x, y);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -269,6 +271,8 @@ AROS_LH3(VOID, SDL_GetWindowSize,
 )
 {
     AROS_LIBFUNC_INIT
+
+    SDL_GetWindowSize_REAL(window, w, h);
 
     AROS_LIBFUNC_EXIT
 }
@@ -282,6 +286,8 @@ AROS_LH3(VOID, SDL_SetWindowPosition,
 {
     AROS_LIBFUNC_INIT
 
+    SDL_SetWindowPosition_REAL(window, x, y);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -294,6 +300,8 @@ AROS_LH3(VOID, SDL_SetWindowSize,
 {
     AROS_LIBFUNC_INIT
 
+    SDL_SetWindowSize_REAL(window, w, h);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -304,6 +312,8 @@ AROS_LH1(SDL_Surface*, SDL_GetWindowSurface,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_GetWindowSurface_REAL(window);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -313,6 +323,8 @@ AROS_LH1(int, SDL_UpdateWindowSurface,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_UpdateWindowSurface_REAL(window);
 
     AROS_LIBFUNC_EXIT
 }
@@ -326,6 +338,8 @@ AROS_LH3(int, SDL_UpdateWindowSurfaceRects,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_UpdateWindowSurfaceRects_REAL(window, rects, numrects);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -335,6 +349,8 @@ AROS_LH1(int, SDL_PollEvent,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_PollEvent_REAL(event);
 
     AROS_LIBFUNC_EXIT
 }
@@ -346,18 +362,23 @@ AROS_LH1(int, SDL_WaitEvent,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_WaitEvent_REAL(event);
+
     AROS_LIBFUNC_EXIT
 }
 
-AROS_LH4(int, SDL_PeepEvents,
+AROS_LH5(int, SDL_PeepEvents,
          AROS_LHA(SDL_Event *, events, A0),
          AROS_LHA(int, numevents, D0),
          AROS_LHA(SDL_eventaction, action, D1),
-         AROS_LHA(Uint32, mask, D2),
+         AROS_LHA(Uint32, minType, D2),
+         AROS_LHA(Uint32, maxType, D3),
          LIBBASETYPEPTR, SDL2Base, 32, SDL2
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_PeepEvents_REAL(events, numevents, action, minType, maxType);
 
     AROS_LIBFUNC_EXIT
 }
@@ -369,6 +390,8 @@ AROS_LH1(int, SDL_PushEvent,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_PushEvent_REAL(event);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -377,6 +400,8 @@ AROS_LH0(VOID, SDL_PumpEvents,
 )
 {
     AROS_LIBFUNC_INIT
+
+    SDL_PumpEvents_REAL();
 
     AROS_LIBFUNC_EXIT
 }
@@ -387,6 +412,8 @@ AROS_LH0(Uint32, SDL_GetTicks,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_GetTicks_REAL();
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -396,6 +423,8 @@ AROS_LH1(VOID, SDL_Delay,
 )
 {
     AROS_LIBFUNC_INIT
+
+    SDL_Delay_REAL(ms);
 
     AROS_LIBFUNC_EXIT
 }
@@ -409,6 +438,8 @@ AROS_LH3(SDL_Renderer*, SDL_CreateRenderer,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_CreateRenderer_REAL(window, index, flags);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -418,6 +449,8 @@ AROS_LH1(int, SDL_RenderClear,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_RenderClear_REAL(renderer);
 
     AROS_LIBFUNC_EXIT
 }
@@ -429,6 +462,8 @@ AROS_LH1(VOID, SDL_RenderPresent,
 {
     AROS_LIBFUNC_INIT
 
+    SDL_RenderPresent_REAL(renderer);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -438,6 +473,8 @@ AROS_LH1(VOID, SDL_DestroyRenderer,
 )
 {
     AROS_LIBFUNC_INIT
+
+    SDL_DestroyRenderer_REAL(renderer);
 
     AROS_LIBFUNC_EXIT
 }
@@ -453,6 +490,8 @@ AROS_LH5(int, SDL_SetRenderDrawColor,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_SetRenderDrawColor_REAL(renderer, r, g, b, a);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -467,6 +506,8 @@ AROS_LH5(int, SDL_RenderDrawLine,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_RenderDrawLine_REAL(renderer, x1, y1, x2, y2);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -478,6 +519,8 @@ AROS_LH2(int, SDL_RenderDrawRect,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_RenderDrawRect_REAL(renderer, rect);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -488,6 +531,8 @@ AROS_LH2(int, SDL_RenderFillRect,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_RenderFillRect_REAL(renderer, rect);
 
     AROS_LIBFUNC_EXIT
 }
@@ -503,6 +548,8 @@ AROS_LH5(int, SDL_CreateWindowAndRenderer,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_CreateWindowAndRenderer_REAL(width, height, window_flags, window, renderer);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -514,6 +561,8 @@ AROS_LH2(int, SDL_SetHint,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_SetHint_REAL(name, value);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -523,6 +572,8 @@ AROS_LH1(const char*, SDL_GetHint,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_GetHint_REAL(name);
 
     AROS_LIBFUNC_EXIT
 }
@@ -535,6 +586,8 @@ AROS_LH2(SDL_RWops*, SDL_RWFromFile,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_RWFromFile_REAL(file, mode);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -546,6 +599,8 @@ AROS_LH2(SDL_RWops*, SDL_RWFromMem,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_RWFromMem_REAL(mem, size);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -554,6 +609,8 @@ AROS_LH0(SDL_RWops*, SDL_AllocRW,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_AllocRW_REAL();
 
     AROS_LIBFUNC_EXIT
 }
@@ -565,6 +622,8 @@ AROS_LH1(VOID, SDL_FreeRW,
 {
     AROS_LIBFUNC_INIT
 
+    SDL_FreeRW_REAL(area);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -575,6 +634,8 @@ AROS_LH2(SDL_Surface*, SDL_LoadBMP_RW,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_LoadBMP_RW_REAL(src, freesrc);
 
     AROS_LIBFUNC_EXIT
 }
@@ -588,6 +649,8 @@ AROS_LH3(int, SDL_SaveBMP_RW,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_SaveBMP_RW_REAL(surface, dst, freedst);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -600,6 +663,8 @@ AROS_LH3(SDL_Surface*, SDL_ConvertSurface,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_ConvertSurface_REAL(src, fmt, flags);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -609,6 +674,12 @@ AROS_LH1(SDL_Surface*, SDL_DisplayFormat,
 )
 {
     AROS_LIBFUNC_INIT
+
+#if (0)
+    return SDL_DisplayFormat_REAL(surface);
+#else
+    return NULL;
+#endif
 
     AROS_LIBFUNC_EXIT
 }
@@ -620,6 +691,12 @@ AROS_LH1(SDL_Surface*, SDL_DisplayFormatAlpha,
 {
     AROS_LIBFUNC_INIT
 
+#if (0)
+    return SDL_DisplayFormatAlpha_REAL(surface);
+#else
+    return NULL;
+#endif
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -629,6 +706,8 @@ AROS_LH1(VOID, SDL_FreeSurface,
 )
 {
     AROS_LIBFUNC_INIT
+
+    SDL_FreeSurface_REAL(surface);
 
     AROS_LIBFUNC_EXIT
 }
@@ -642,6 +721,8 @@ AROS_LH3(int, SDL_SetColorKey,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_SetColorKey_REAL(surface, flag, key);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -654,6 +735,12 @@ AROS_LH3(int, SDL_SetAlpha,
 {
     AROS_LIBFUNC_INIT
 
+#if (0)
+    return SDL_SetAlpha_REAL(surface, flag, alpha);
+#else
+    return 0;
+#endif
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -665,6 +752,8 @@ AROS_LH3(int, SDL_FillRect,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_FillRect_REAL(dst, dstrect, color);
 
     AROS_LIBFUNC_EXIT
 }
@@ -679,6 +768,8 @@ AROS_LH4(int, SDL_UpperBlit,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_UpperBlit_REAL(src, srcrect, dst, dstrect);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -692,6 +783,8 @@ AROS_LH4(int, SDL_LowerBlit,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_LowerBlit_REAL(src, srcrect, dst, dstrect);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -701,15 +794,19 @@ AROS_LH0(int, SDL_NumJoysticks,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_NumJoysticks_REAL();
+
     AROS_LIBFUNC_EXIT
 }
 
 AROS_LH1(const char*, SDL_JoystickName,
-         AROS_LHA(int, device_index, D0),
+         AROS_LHA(SDL_Joystick *, joystick, D0),
          LIBBASETYPEPTR, SDL2Base, 64, SDL2
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_JoystickName_REAL(joystick);
 
     AROS_LIBFUNC_EXIT
 }
@@ -721,6 +818,8 @@ AROS_LH1(SDL_Joystick*, SDL_JoystickOpen,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_JoystickOpen_REAL(device_index);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -730,6 +829,12 @@ AROS_LH1(int, SDL_JoystickOpened,
 )
 {
     AROS_LIBFUNC_INIT
+
+#if (0)
+    return SDL_JoystickOpened_REAL(device_index);
+#else
+    return 0;
+#endif
 
     AROS_LIBFUNC_EXIT
 }
@@ -741,6 +846,12 @@ AROS_LH1(int, SDL_JoystickIndex,
 {
     AROS_LIBFUNC_INIT
 
+#if (0)
+    return SDL_JoystickIndex_REAL(joystick);
+#else
+    return 0;
+#endif
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -750,6 +861,8 @@ AROS_LH1(int, SDL_JoystickNumAxes,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_JoystickNumAxes_REAL(joystick);
 
     AROS_LIBFUNC_EXIT
 }
@@ -761,6 +874,8 @@ AROS_LH1(int, SDL_JoystickNumBalls,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_JoystickNumBalls_REAL(joystick);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -771,6 +886,8 @@ AROS_LH1(int, SDL_JoystickNumHats,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_JoystickNumHats_REAL(joystick);
+    
     AROS_LIBFUNC_EXIT
 }
 
@@ -781,6 +898,8 @@ AROS_LH1(int, SDL_JoystickNumButtons,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_JoystickNumButtons_REAL(joystick);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -789,6 +908,8 @@ AROS_LH0(VOID, SDL_JoystickUpdate,
 )
 {
     AROS_LIBFUNC_INIT
+
+    SDL_JoystickUpdate_REAL();
 
     AROS_LIBFUNC_EXIT
 }
@@ -799,6 +920,8 @@ AROS_LH1(int, SDL_JoystickEventState,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_JoystickEventState_REAL(state);
 
     AROS_LIBFUNC_EXIT
 }
@@ -811,6 +934,8 @@ AROS_LH2(Sint16, SDL_JoystickGetAxis,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_JoystickGetAxis_REAL(joystick, axis);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -821,6 +946,8 @@ AROS_LH2(Uint8, SDL_JoystickGetHat,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_JoystickGetHat_REAL(joystick, hat);
 
     AROS_LIBFUNC_EXIT
 }
@@ -835,6 +962,8 @@ AROS_LH4(int, SDL_JoystickGetBall,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_JoystickGetBall_REAL(joystick, ball, dx, dy);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -846,6 +975,8 @@ AROS_LH2(Uint8, SDL_JoystickGetButton,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_JoystickGetButton_REAL(joystick, button);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -855,6 +986,8 @@ AROS_LH1(VOID, SDL_JoystickClose,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_JoystickClose_REAL(joystick);
 
     AROS_LIBFUNC_EXIT
 }
@@ -866,6 +999,8 @@ AROS_LH1(int, SDL_SetClipboardText,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_SetClipboardText_REAL(text);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -875,6 +1010,8 @@ AROS_LH0(char*, SDL_GetClipboardText,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_GetClipboardText_REAL();
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -883,6 +1020,8 @@ AROS_LH0(SDL_bool, SDL_HasClipboardText,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_HasClipboardText_REAL();
 
     AROS_LIBFUNC_EXIT
 }
@@ -898,6 +1037,8 @@ AROS_LH5(SDL_AudioSpec*, SDL_LoadWAV_RW,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_LoadWAV_RW_REAL(src, freesrc, spec, audio_buf, audio_len);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -907,6 +1048,8 @@ AROS_LH1(VOID, SDL_FreeWAV,
 )
 {
     AROS_LIBFUNC_INIT
+
+    SDL_FreeWAV_REAL(audio_buf);
 
     AROS_LIBFUNC_EXIT
 }
@@ -919,6 +1062,8 @@ AROS_LH2(int, SDL_OpenAudio,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_OpenAudio_REAL(desired, obtained);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -929,6 +1074,8 @@ AROS_LH1(VOID, SDL_PauseAudio,
 {
     AROS_LIBFUNC_INIT
 
+    SDL_PauseAudio_REAL(pause_on);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -938,6 +1085,8 @@ AROS_LH0(SDL_AudioStatus, SDL_GetAudioStatus,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_GetAudioStatus_REAL();
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -946,6 +1095,8 @@ AROS_LH0(VOID, SDL_CloseAudio,
 )
 {
     AROS_LIBFUNC_INIT
+
+    SDL_CloseAudio_REAL();
 
     AROS_LIBFUNC_EXIT
 }
@@ -959,6 +1110,8 @@ AROS_LH3(SDL_TimerID, SDL_AddTimer,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_AddTimer_REAL(interval, callback, param);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -968,6 +1121,8 @@ AROS_LH1(SDL_bool, SDL_RemoveTimer,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_RemoveTimer_REAL(t);
 
     AROS_LIBFUNC_EXIT
 }
@@ -980,6 +1135,12 @@ AROS_LH2(int, SDL_SetTimer,
 {
     AROS_LIBFUNC_INIT
 
+#if (0)
+    return SDL_SetTimer_REAL(interval, callback);
+#else
+    return 0;
+#endif
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -989,6 +1150,8 @@ AROS_LH1(SDL_sem*, SDL_CreateSemaphore,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_CreateSemaphore_REAL(initial_value);
 
     AROS_LIBFUNC_EXIT
 }
@@ -1000,6 +1163,8 @@ AROS_LH1(VOID, SDL_DestroySemaphore,
 {
     AROS_LIBFUNC_INIT
 
+    SDL_DestroySemaphore_REAL(sem);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1010,6 +1175,8 @@ AROS_LH1(int, SDL_SemWait,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_SemWait_REAL(sem);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1019,6 +1186,8 @@ AROS_LH1(int, SDL_SemTryWait,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_SemTryWait_REAL(sem);
 
     AROS_LIBFUNC_EXIT
 }
@@ -1031,6 +1200,8 @@ AROS_LH2(int, SDL_SemWaitTimeout,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_SemWaitTimeout_REAL(sem, timeout);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1040,6 +1211,8 @@ AROS_LH1(int, SDL_SemPost,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_SemPost_REAL(sem);
 
     AROS_LIBFUNC_EXIT
 }
@@ -1051,6 +1224,8 @@ AROS_LH1(Uint32, SDL_SemValue,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_SemValue_REAL(sem);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1059,6 +1234,8 @@ AROS_LH0(SDL_mutex*, SDL_CreateMutex,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_CreateMutex_REAL();
 
     AROS_LIBFUNC_EXIT
 }
@@ -1070,6 +1247,8 @@ AROS_LH1(VOID, SDL_DestroyMutex,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_DestroyMutex_REAL(mutex);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1079,6 +1258,8 @@ AROS_LH1(int, SDL_LockMutex,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_LockMutex_REAL(mutex);
 
     AROS_LIBFUNC_EXIT
 }
@@ -1090,6 +1271,8 @@ AROS_LH1(int, SDL_UnlockMutex,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_UnlockMutex_REAL(mutex);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1098,6 +1281,8 @@ AROS_LH0(SDL_cond*, SDL_CreateCond,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_CreateCond_REAL();
 
     AROS_LIBFUNC_EXIT
 }
@@ -1109,6 +1294,8 @@ AROS_LH1(VOID, SDL_DestroyCond,
 {
     AROS_LIBFUNC_INIT
 
+    SDL_DestroyCond_REAL(cond);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1118,6 +1305,8 @@ AROS_LH1(int, SDL_CondSignal,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_CondSignal_REAL(cond);
 
     AROS_LIBFUNC_EXIT
 }
@@ -1129,6 +1318,8 @@ AROS_LH1(int, SDL_CondBroadcast,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_CondBroadcast_REAL(cond);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1139,6 +1330,8 @@ AROS_LH2(int, SDL_CondWait,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_CondWait_REAL(cond, mutex);
 
     AROS_LIBFUNC_EXIT
 }
@@ -1152,6 +1345,8 @@ AROS_LH3(int, SDL_CondWaitTimeout,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_CondWaitTimeout_REAL(cond, mutex, timeout);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1161,6 +1356,8 @@ AROS_LH1(int, SDL_GetNumAudioDevices,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_GetNumAudioDevices_REAL(iscapture);
 
     AROS_LIBFUNC_EXIT
 }
@@ -1172,6 +1369,8 @@ AROS_LH2(const char*, SDL_GetAudioDeviceName,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_GetAudioDeviceName_REAL(index, iscapture);
 
     AROS_LIBFUNC_EXIT
 }
@@ -1187,6 +1386,8 @@ AROS_LH5(SDL_AudioDeviceID, SDL_OpenAudioDevice,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_OpenAudioDevice_REAL(device, iscapture, desired, obtained, allowed_changes);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1196,6 +1397,8 @@ AROS_LH1(VOID, SDL_CloseAudioDevice,
 )
 {
     AROS_LIBFUNC_INIT
+
+    SDL_CloseAudioDevice_REAL(dev);
 
     AROS_LIBFUNC_EXIT
 }
@@ -1208,6 +1411,8 @@ AROS_LH2(VOID, SDL_PauseAudioDevice,
 {
     AROS_LIBFUNC_INIT
 
+    SDL_PauseAudioDevice_REAL(dev, pause_on);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1219,6 +1424,8 @@ AROS_LH2(Uint32, SDL_GetMouseState,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_GetMouseState_REAL(x,y);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1229,6 +1436,8 @@ AROS_LH2(Uint32, SDL_GetRelativeMouseState,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_GetRelativeMouseState_REAL(x, y);
 
     AROS_LIBFUNC_EXIT
 }
@@ -1242,6 +1451,8 @@ AROS_LH3(VOID, SDL_WarpMouseInWindow,
 {
     AROS_LIBFUNC_INIT
 
+    SDL_WarpMouseInWindow_REAL(window, x, y);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1252,6 +1463,8 @@ AROS_LH1(int, SDL_SetRelativeMouseMode,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_SetRelativeMouseMode_REAL(enabled);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1260,6 +1473,8 @@ AROS_LH0(SDL_bool, SDL_GetRelativeMouseMode,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_GetRelativeMouseMode_REAL();
 
     AROS_LIBFUNC_EXIT
 }
@@ -1271,14 +1486,18 @@ AROS_LH1(int, SDL_ShowCursor,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_ShowCursor_REAL(toggle);
+
     AROS_LIBFUNC_EXIT
 }
 
-AROS_LH0(int, SDL_GetCursor,
+AROS_LH0(SDL_Cursor *, SDL_GetCursor,
          LIBBASETYPEPTR, SDL2Base, 119, SDL2
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_GetCursor_REAL();
 
     AROS_LIBFUNC_EXIT
 }
@@ -1290,6 +1509,8 @@ AROS_LH1(VOID, SDL_FreeCursor,
 {
     AROS_LIBFUNC_INIT
 
+    SDL_FreeCursor_REAL(cursor);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1299,6 +1520,8 @@ AROS_LH1(SDL_Cursor*, SDL_CreateSystemCursor,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_CreateSystemCursor_REAL(id);
 
     AROS_LIBFUNC_EXIT
 }
@@ -1312,6 +1535,8 @@ AROS_LH3(SDL_Cursor*, SDL_CreateColorCursor,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_CreateColorCursor_REAL(surface, hot_x, hot_y);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1322,6 +1547,8 @@ AROS_LH1(VOID, SDL_SetCursor,
 {
     AROS_LIBFUNC_INIT
 
+    SDL_SetCursor_REAL(cursor);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1330,6 +1557,8 @@ AROS_LH0(int, SDL_GetNumVideoDisplays,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_GetNumVideoDisplays_REAL();
 
     AROS_LIBFUNC_EXIT
 }
@@ -1341,6 +1570,8 @@ AROS_LH1(const char*, SDL_GetDisplayName,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_GetDisplayName_REAL(displayIndex);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1351,6 +1582,8 @@ AROS_LH2(int, SDL_GetDisplayBounds,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_GetDisplayBounds_REAL(displayIndex, rect);
 
     AROS_LIBFUNC_EXIT
 }
@@ -1365,6 +1598,8 @@ AROS_LH4(int, SDL_GetDisplayDPI,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_GetDisplayDPI_REAL(displayIndex, ddpi, hdpi, vdpi);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1376,6 +1611,8 @@ AROS_LH2(int, SDL_SetWindowFullscreen,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_SetWindowFullscreen_REAL(window, flags);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1386,6 +1623,8 @@ AROS_LH2(int, SDL_SetRenderTarget,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_SetRenderTarget_REAL(renderer, texture);
 
     AROS_LIBFUNC_EXIT
 }
@@ -1399,6 +1638,8 @@ AROS_LH4(int, SDL_RenderCopy,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_RenderCopy_REAL(renderer, texture, srcrect, dstrect);
 
     AROS_LIBFUNC_EXIT
 }
@@ -1416,6 +1657,8 @@ AROS_LH7(int, SDL_RenderCopyEx,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_RenderCopyEx_REAL(renderer, texture, srcrect, dstrect, angle, center, flip);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1427,6 +1670,8 @@ AROS_LH3(int, SDL_RenderDrawPoint,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_RenderDrawPoint_REAL(renderer, x, y);
 
     AROS_LIBFUNC_EXIT
 }
@@ -1440,6 +1685,8 @@ AROS_LH3(int, SDL_RenderDrawPoints,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_RenderDrawPoints_REAL(renderer, points, count);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1451,6 +1698,8 @@ AROS_LH3(int, SDL_RenderDrawLines,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_RenderDrawLines_REAL(renderer, points, count);
 
     AROS_LIBFUNC_EXIT
 }
@@ -1466,6 +1715,8 @@ AROS_LH5(SDL_Texture*, SDL_CreateTexture,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_CreateTexture_REAL(renderer, format, access, w, h);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1475,6 +1726,8 @@ AROS_LH1(VOID, SDL_DestroyTexture,
 )
 {
     AROS_LIBFUNC_INIT
+
+    SDL_DestroyTexture_REAL(texture);
 
     AROS_LIBFUNC_EXIT
 }
@@ -1487,6 +1740,8 @@ AROS_LH2(int, SDL_SetRenderDrawBlendMode,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_SetRenderDrawBlendMode_REAL(renderer, blendMode);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1497,6 +1752,8 @@ AROS_LH2(SDL_RWops*, SDL_RWFromMem,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_RWFromMem_REAL(mem, size);
 
     AROS_LIBFUNC_EXIT
 }
@@ -1512,6 +1769,8 @@ AROS_LH5(int, SDL_RenderReadPixels,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_RenderReadPixels_REAL(renderer, rect, format, pixels, pitch);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1522,6 +1781,8 @@ AROS_LH1(VOID, SDL_LogSetAllPriority,
 {
     AROS_LIBFUNC_INIT
 
+    SDL_LogSetAllPriority_REAL(priority);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1531,6 +1792,8 @@ AROS_LH1(SDL_LogPriority, SDL_LogGetPriority,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_LogGetPriority_REAL(category);
 
     AROS_LIBFUNC_EXIT
 }
@@ -1543,6 +1806,8 @@ AROS_LH2(SDL_RWops*, SDL_RWFromConstMem,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_RWFromConstMem_REAL(mem, size);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1552,6 +1817,8 @@ AROS_LH0(VOID, SDL_ClearError,
 {
     AROS_LIBFUNC_INIT
 
+    SDL_ClearError_REAL();
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1560,6 +1827,8 @@ AROS_LH0(const char*, SDL_GetError,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_GetError_REAL();
 
     AROS_LIBFUNC_EXIT
 }
@@ -1572,6 +1841,8 @@ AROS_LH2(int, SDL_SetWindowOpacity,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_SetWindowOpacity_REAL(window, opacity);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1583,6 +1854,8 @@ AROS_LH2(int, SDL_GetWindowOpacity,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_GetWindowOpacity_REAL(window, opacity);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1591,6 +1864,8 @@ AROS_LH0(int, SDL_GetNumVideoDrivers,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_GetNumVideoDrivers_REAL();
 
     AROS_LIBFUNC_EXIT
 }
@@ -1602,6 +1877,8 @@ AROS_LH1(const char*, SDL_GetVideoDriver,
 {
     AROS_LIBFUNC_INIT
 
+    return SDL_GetVideoDriver_REAL(index);
+
     AROS_LIBFUNC_EXIT
 }
 
@@ -1610,6 +1887,8 @@ AROS_LH0(int, SDL_GetNumRenderDrivers,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_GetNumRenderDrivers_REAL();
 
     AROS_LIBFUNC_EXIT
 }
@@ -1621,6 +1900,8 @@ AROS_LH2(int, SDL_GetRenderDriverInfo,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_GetRenderDriverInfo_REAL(index, info);
 
     AROS_LIBFUNC_EXIT
 }
@@ -1634,6 +1915,8 @@ AROS_LH4(int, SDL_SetTextureColorMod,
 )
 {
     AROS_LIBFUNC_INIT
+
+    return SDL_SetTextureColorMod_REAL(texture, r, g, b);
 
     AROS_LIBFUNC_EXIT
 }
@@ -1758,6 +2041,22 @@ AROS_LH1(VOID, SDL_GL_SwapWindow,
     AROS_LIBFUNC_INIT
 
     SDL_GL_SwapWindow_REAL(window);
+
+    AROS_LIBFUNC_EXIT
+}
+
+
+AROS_LH4(VOID, SDL_LogMessageV,
+         AROS_LHA(int, category, D0),
+         AROS_LHA(SDL_LogPriority, priority, D1),
+         AROS_LHA(const char *, fmt, A0),
+         AROS_LHA(va_list, ap, A1),
+         LIBBASETYPEPTR, SDL2Base, 139, SDL2
+)
+{
+    AROS_LIBFUNC_INIT
+
+    SDL_LogMessageV_REAL(category, priority, fmt, ap);
 
     AROS_LIBFUNC_EXIT
 }
