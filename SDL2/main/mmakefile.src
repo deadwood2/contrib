@@ -180,7 +180,7 @@ USER_CPPFLAGS :=
     files="$(FILES)"
 
 %copy_dir_recursive mmake=SDL2-aros-copy-includes \
-    src=$(ARCHSRCDIR)/include/. dst="$(AROS_INCLUDES)/SDL2"
+    src=$(ARCHSRCDIR)/include/. dst="$(SDLINCDIR)"
 
 #MM SDL2-aros-copy-includes : contrib-sdl2-fetch
 
