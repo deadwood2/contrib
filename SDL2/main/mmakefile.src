@@ -142,17 +142,17 @@ SDL2AROSCOREFILES = \
     $(ARCHSRCDIR)/src/thread/aros/SDL_syssem \
     $(ARCHSRCDIR)/src/thread/aros/SDL_systhread \
     $(ARCHSRCDIR)/src/timer/morphos/SDL_systimer \
+    $(ARCHSRCDIR)/src/video/aros/SDL_arosclipboard \
+    $(ARCHSRCDIR)/src/video/aros/SDL_arosevents \
+    $(ARCHSRCDIR)/src/video/aros/SDL_arosframebuffer \
+    $(ARCHSRCDIR)/src/video/aros/SDL_aroskeyboard \
+    $(ARCHSRCDIR)/src/video/aros/SDL_arosmessagebox \
+    $(ARCHSRCDIR)/src/video/aros/SDL_arosmodes \
+    $(ARCHSRCDIR)/src/video/aros/SDL_arosmouse \
     $(ARCHSRCDIR)/src/video/aros/SDL_arosopengl \
+    $(ARCHSRCDIR)/src/video/aros/SDL_arosshape \
     $(ARCHSRCDIR)/src/video/aros/SDL_arosvideo \
-    $(ARCHSRCDIR)/src/video/morphos/SDL_mosclipboard \
-    $(ARCHSRCDIR)/src/video/morphos/SDL_mosevents \
-    $(ARCHSRCDIR)/src/video/morphos/SDL_mosframebuffer \
-    $(ARCHSRCDIR)/src/video/morphos/SDL_moskeyboard \
-    $(ARCHSRCDIR)/src/video/morphos/SDL_mosmessagebox \
-    $(ARCHSRCDIR)/src/video/morphos/SDL_mosmodes \
-    $(ARCHSRCDIR)/src/video/morphos/SDL_mosmouse \
-    $(ARCHSRCDIR)/src/video/morphos/SDL_mosshape \
-    $(ARCHSRCDIR)/src/video/morphos/SDL_moswindow
+    $(ARCHSRCDIR)/src/video/aros/SDL_aroswindow
 
 FILES += $(SDL2AROSCOREFILES)
 
