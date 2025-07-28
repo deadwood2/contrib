@@ -7,9 +7,9 @@ include $(SRCDIR)/config/aros-contrib.cfg
 #MM- SDL2-aros-lib : SDL2-aros-sharedlib-linklib
 #MM- SDL2-aros : SDL2-aros-sharedlib SDL2-aros-tests
 #MM- SDL2-aros-tests : SDL2-aros-tests-main
-##MM SDL2-aros-tests-main : includes linklibs contrib-sdl2-fetch development-sdl2
-##MM SDL2-aros-tests-gl : includes linklibs contrib-sdl2-fetch development-sdl2
-##MM SDL2-aros-tests-utils : includes linklibs contrib-sdl2-fetch development-sdl2
+#MM SDL2-aros-tests-main : includes linklibs contrib-sdl2-fetch development-sdl2
+#MM SDL2-aros-tests-gl : includes linklibs contrib-sdl2-fetch development-sdl2
+#MM SDL2-aros-tests-utils : includes linklibs contrib-sdl2-fetch development-sdl2
 
 # Special target
 #MM- development-sdl2 : SDL2-aros-copy-includes SDL2-aros-sharedlib-includes SDL2-aros-sharedlib-linklib
@@ -114,9 +114,9 @@ FILES := \
     $(ARCHSRCDIR)/src/stdlib/SDL_strtokr \
     $(ARCHSRCDIR)/src/thread/generic/SDL_syscond \
     $(ARCHSRCDIR)/src/thread/generic/SDL_systls \
-    $(ARCHSRCDIR)/src/thread/morphos/SDL_sysmutex \
-    $(ARCHSRCDIR)/src/thread/morphos/SDL_syssem \
-    $(ARCHSRCDIR)/src/thread/morphos/SDL_systhread \
+    $(ARCHSRCDIR)/src/thread/aros/SDL_sysmutex \
+    $(ARCHSRCDIR)/src/thread/aros/SDL_syssem \
+    $(ARCHSRCDIR)/src/thread/aros/SDL_systhread \
     $(ARCHSRCDIR)/src/thread/SDL_thread \
     $(ARCHSRCDIR)/src/timer/morphos/SDL_systimer \
     $(ARCHSRCDIR)/src/timer/SDL_timer \
@@ -196,5 +196,124 @@ USER_CPPFLAGS :=
     src=$(ARCHSRCDIR)/include/. dst="$(SDL2INCDIR)"
 
 #MM SDL2-aros-copy-includes : contrib-sdl2-fetch
+
+USER_INCLUDES := -I$(SDL2INCDIR)  -I$(AROS_CONTRIB_INCLUDES) -I$(ARCHSRCDIR)/test
+
+SDL2TESTSFILES := \
+    $(ARCHSRCDIR)/test/checkkeys \
+    $(ARCHSRCDIR)/test/checkkeysthreads \
+    $(ARCHSRCDIR)/test/loopwave \
+    $(ARCHSRCDIR)/test/testatomic \
+    $(ARCHSRCDIR)/test/testaudiocapture \
+    $(ARCHSRCDIR)/test/testaudioinfo \
+    $(ARCHSRCDIR)/test/testerror \
+    $(ARCHSRCDIR)/test/testfilesystem \
+    $(ARCHSRCDIR)/test/testgesture \
+    $(ARCHSRCDIR)/test/testhaptic \
+    $(ARCHSRCDIR)/test/testhittesting \
+    $(ARCHSRCDIR)/test/testhotplug \
+    $(ARCHSRCDIR)/test/testintersections \
+    $(ARCHSRCDIR)/test/testjoystick \
+    $(ARCHSRCDIR)/test/testkeys \
+    $(ARCHSRCDIR)/test/testloadso \
+    $(ARCHSRCDIR)/test/testlocale \
+    $(ARCHSRCDIR)/test/testlock \
+    $(ARCHSRCDIR)/test/testmessage \
+    $(ARCHSRCDIR)/test/testmouse \
+    $(ARCHSRCDIR)/test/testoffscreen \
+    $(ARCHSRCDIR)/test/testplatform \
+    $(ARCHSRCDIR)/test/testpower \
+    $(ARCHSRCDIR)/test/testqsort \
+    $(ARCHSRCDIR)/test/testrelative \
+    $(ARCHSRCDIR)/test/testresample \
+    $(ARCHSRCDIR)/test/testrumble \
+    $(ARCHSRCDIR)/test/testscale \
+    $(ARCHSRCDIR)/test/testsem \
+    $(ARCHSRCDIR)/test/testshape \
+    $(ARCHSRCDIR)/test/testsprite2 \
+    $(ARCHSRCDIR)/test/testsurround \
+    $(ARCHSRCDIR)/test/testthread \
+    $(ARCHSRCDIR)/test/testtimer \
+    $(ARCHSRCDIR)/test/testurl \
+    $(ARCHSRCDIR)/test/testver \
+    $(ARCHSRCDIR)/test/testwm2 \
+    $(ARCHSRCDIR)/test/testyuv \
+    $(ARCHSRCDIR)/test/torturethread
+
+SDL2TESTSUTILSFILES := \
+    $(ARCHSRCDIR)/test/controllermap \
+    $(ARCHSRCDIR)/test/loopwavequeue \
+    $(ARCHSRCDIR)/test/testmultiaudio \
+    $(ARCHSRCDIR)/test/testaudiohotplug \
+    $(ARCHSRCDIR)/test/testgamecontroller \
+    $(ARCHSRCDIR)/test/testgeometry \
+    $(ARCHSRCDIR)/test/testiconv \
+    $(ARCHSRCDIR)/test/testime \
+    $(ARCHSRCDIR)/test/testoverlay2 \
+    $(ARCHSRCDIR)/test/testrendertarget \
+    $(ARCHSRCDIR)/test/testspriteminimal \
+    $(ARCHSRCDIR)/test/teststreaming \
+    $(ARCHSRCDIR)/test/testviewport \
+    $(ARCHSRCDIR)/test/testrendercopyex \
+    $(ARCHSRCDIR)/test/testnative
+
+SDL2GLTESTSFILES := \
+    $(ARCHSRCDIR)/test/testgl2 \
+    $(ARCHSRCDIR)/test/testgles \
+    $(ARCHSRCDIR)/test/testgles2 \
+    $(ARCHSRCDIR)/test/testshader
+
+SDL2DISABLEDTESTS := \
+    $(ARCHSRCDIR)/test/testcustomcursor \
+    $(ARCHSRCDIR)/test/testbounds \
+    $(ARCHSRCDIR)/test/testdisplayinfo \
+    $(ARCHSRCDIR)/test/testdrawchessboard \
+    $(ARCHSRCDIR)/test/testdraw2 \
+    $(ARCHSRCDIR)/test/testfile \
+    $(ARCHSRCDIR)/test/testdropfile
+
+SDL2AUTTESTSFILES := \
+    $(ARCHSRCDIR)/test/testautomation \
+    $(ARCHSRCDIR)/test/testautomation_audio \
+    $(ARCHSRCDIR)/test/testautomation_clipboard \
+    $(ARCHSRCDIR)/test/testautomation_events \
+    $(ARCHSRCDIR)/test/testautomation_guid \
+    $(ARCHSRCDIR)/test/testautomation_joystick \
+    $(ARCHSRCDIR)/test/testautomation_keyboard \
+    $(ARCHSRCDIR)/test/testautomation_log \
+    $(ARCHSRCDIR)/test/testautomation_main \
+    $(ARCHSRCDIR)/test/testautomation_math \
+    $(ARCHSRCDIR)/test/testautomation_mouse \
+    $(ARCHSRCDIR)/test/testautomation_pixels \
+    $(ARCHSRCDIR)/test/testautomation_platform \
+    $(ARCHSRCDIR)/test/testautomation_rect \
+    $(ARCHSRCDIR)/test/testautomation_render \
+    $(ARCHSRCDIR)/test/testautomation_rwops \
+    $(ARCHSRCDIR)/test/testautomation_sdltest \
+    $(ARCHSRCDIR)/test/testautomation_stdlib \
+    $(ARCHSRCDIR)/test/testautomation_subsystems \
+    $(ARCHSRCDIR)/test/testautomation_surface \
+    $(ARCHSRCDIR)/test/testautomation_syswm \
+    $(ARCHSRCDIR)/test/testautomation_timer \
+    $(ARCHSRCDIR)/test/testautomation_video \
+    $(ARCHSRCDIR)/test/testautomation_hints
+
+%build_linklib mmake=SDL2-aros-test-utillib libname=testutils \
+    files=$(ARCHSRCDIR)/test/testutils libdir="$(GENDIR)/$(CURDIR)/lib"
+
+%build_progs mmake=SDL2-aros-tests-main \
+    files=$(SDL2TESTSFILES) targetdir=$(TESTEXEDIR) \
+    uselibs="SDL2" usetree=yes srcdir=$(ARCHSRCDIR)/test
+
+%build_progs mmake=SDL2-aros-tests-gl \
+    files=$(SDL2GLTESTSFILES) targetdir=$(TESTEXEDIR) \
+    uselibs="SDL2 GL" usetree=yes srcdir=$(ARCHSRCDIR)/test
+
+USER_LDFLAGS := -L$(GENDIR)/$(CURDIR)/lib
+
+%build_progs mmake=SDL2-aros-tests-utils \
+    files=$(SDL2TESTSUTILSFILES) targetdir=$(TESTEXEDIR) \
+    uselibs="SDL2 testutils" usetree=yes srcdir=$(ARCHSRCDIR)/test
+
 
 %common
