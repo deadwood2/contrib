@@ -175,8 +175,7 @@ USER_CFLAGS := $(CFLAGS_GNU99) $(NOWARN_FLAGS)
 USER_INCLUDES := -I$(SDL2INCDIR) -I$(ARCHSRCDIR) -I$(ARCHSRCDIR)/src -I$(AROS_CONTRIB_INCLUDES)
 USER_LDFLAGS := -L$(AROS_CONTRIB_LIB)
 USER_CPPFLAGS := \
-        -DADATE="\"$(shell date '+%d.%m.%Y')\"" \
-        -DLACKS_SYS_MMAN_H
+        -DADATE="\"$(shell date '+%d.%m.%Y')\""
 
 SDL2_ERRORSTUB=$(GENDIR)/$(CURDIR)/SDL2/linklib/SDL_liberror.o
 $(SDL2_ERRORSTUB): $(ARCHSRCDIR)/src/SDL_error.c
@@ -202,8 +201,7 @@ SDL2LINKLIBOBJS := \
 
 USER_CPPFLAGS := \
         -DSDL2_AROS_SHARED \
-        -DADATE="\"$(shell date '+%d.%m.%Y')\"" \
-        -DLACKS_SYS_MMAN_H
+        -DADATE="\"$(shell date '+%d.%m.%Y')\""
 
 %build_module mmake=SDL2-aros-sharedlib \
     modname=SDL2 modtype=library \
