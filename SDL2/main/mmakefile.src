@@ -6,10 +6,10 @@ include $(SRCDIR)/config/aros-contrib.cfg
 #MM- contrib-sdl2 : SDL2-aros
 #MM- SDL2-aros-lib : SDL2-aros-sharedlib-linklib
 #MM- SDL2-aros : SDL2-aros-sharedlib SDL2-aros-tests
-#MM- SDL2-aros-tests : SDL2-aros-tests-main
-#MM SDL2-aros-tests-main : includes linklibs contrib-sdl2-fetch development-sdl2
+#MM- SDL2-aros-tests : SDL2-aros-tests-main SDL2-aros-tests-gl SDL2-aros-tests-utils
+#MM SDL2-aros-tests-main : includes linklibs contrib-sdl2-fetch development-sdl2 SDL2-aros-test-commonlib
 #MM SDL2-aros-tests-gl : includes linklibs contrib-sdl2-fetch development-sdl2
-#MM SDL2-aros-tests-utils : includes linklibs contrib-sdl2-fetch development-sdl2
+#MM SDL2-aros-tests-utils : includes linklibs contrib-sdl2-fetch development-sdl2 SDL2-aros-test-commonlib SDL2-aros-test-utillib
 
 # Special target
 #MM- development-sdl2 : SDL2-aros-copy-includes SDL2-aros-sharedlib-includes SDL2-aros-sharedlib-linklib
@@ -177,9 +177,27 @@ USER_CPPFLAGS := \
         -DADATE="\"$(shell date '+%d.%m.%Y')\"" \
         -DLACKS_SYS_MMAN_H
 
+SDL2_ERRORSTUB=$(GENDIR)/$(CURDIR)/SDL2/linklib/SDL_liberror.o
+$(SDL2_ERRORSTUB): $(ARCHSRCDIR)/src/SDL_error.c
+	%compile_q cmd="$(strip $(TARGET_CC) $(TARGET_SYSROOT))" opt="$(strip $(CFLAGS) $(CPPFLAGS))" iquote="$(CFLAGS_IQUOTE)" iquote_end="$(CFLAGS_IQUOTE_END)"
+
 SDL2_LOGSTUB=$(GENDIR)/$(CURDIR)/SDL2/linklib/SDL_liblog.o
 $(SDL2_LOGSTUB): $(ARCHSRCDIR)/src/SDL_log.c
 	%compile_q cmd="$(strip $(TARGET_CC) $(TARGET_SYSROOT))" opt="$(strip $(CFLAGS) $(CPPFLAGS))" iquote="$(CFLAGS_IQUOTE)" iquote_end="$(CFLAGS_IQUOTE_END)"
+
+SDL2_STRINGSTUB=$(GENDIR)/$(CURDIR)/SDL2/linklib/SDL_libstring.o
+$(SDL2_STRINGSTUB): $(ARCHSRCDIR)/src/stdlib/SDL_string.c
+	%compile_q cmd="$(strip $(TARGET_CC) $(TARGET_SYSROOT))" opt="$(strip $(CFLAGS) $(CPPFLAGS))" iquote="$(CFLAGS_IQUOTE)" iquote_end="$(CFLAGS_IQUOTE_END)"
+
+SDL2_THREADSTUB=$(GENDIR)/$(CURDIR)/SDL2/linklib/SDL_libthread.o
+$(SDL2_THREADSTUB): $(ARCHSRCDIR)/src/thread/SDL_thread.c
+	%compile_q cmd="$(strip $(TARGET_CC) $(TARGET_SYSROOT))" opt="$(strip $(CFLAGS) $(CPPFLAGS))" iquote="$(CFLAGS_IQUOTE)" iquote_end="$(CFLAGS_IQUOTE_END)"
+
+SDL2LINKLIBOBJS := \
+    $(SDL2_LOGSTUB) \
+    $(SDL2_STRINGSTUB) \
+    $(SDL2_ERRORSTUB) \
+    $(SDL2_THREADSTUB)
 
 USER_CPPFLAGS := \
         -DSDL2_AROS_SHARED \
@@ -189,7 +207,7 @@ USER_CPPFLAGS := \
 %build_module mmake=SDL2-aros-sharedlib \
     modname=SDL2 modtype=library \
     files="SDL2_library $(FILES)" \
-    linklibobjs="$(SDL2_LOGSTUB)" \
+    linklibobjs="$(SDL2LINKLIBOBJS)" \
     conffile=SDL2.conf \
     uselibs="iconv GL_rel"
 
@@ -208,7 +226,6 @@ USER_INCLUDES := -I$(SDL2INCDIR)  -I$(AROS_CONTRIB_INCLUDES) -I$(ARCHSRCDIR)/tes
 SDL2TESTSFILES := \
     $(ARCHSRCDIR)/test/checkkeys \
     $(ARCHSRCDIR)/test/checkkeysthreads \
-    $(ARCHSRCDIR)/test/loopwave \
     $(ARCHSRCDIR)/test/testatomic \
     $(ARCHSRCDIR)/test/testaudiocapture \
     $(ARCHSRCDIR)/test/testaudioinfo \
@@ -233,35 +250,36 @@ SDL2TESTSFILES := \
     $(ARCHSRCDIR)/test/testrelative \
     $(ARCHSRCDIR)/test/testresample \
     $(ARCHSRCDIR)/test/testrumble \
-    $(ARCHSRCDIR)/test/testscale \
     $(ARCHSRCDIR)/test/testsem \
     $(ARCHSRCDIR)/test/testshape \
-    $(ARCHSRCDIR)/test/testsprite2 \
     $(ARCHSRCDIR)/test/testsurround \
     $(ARCHSRCDIR)/test/testthread \
     $(ARCHSRCDIR)/test/testtimer \
     $(ARCHSRCDIR)/test/testurl \
     $(ARCHSRCDIR)/test/testver \
     $(ARCHSRCDIR)/test/testwm2 \
-    $(ARCHSRCDIR)/test/testyuv \
     $(ARCHSRCDIR)/test/torturethread
 
 SDL2TESTSUTILSFILES := \
     $(ARCHSRCDIR)/test/controllermap \
+    $(ARCHSRCDIR)/test/loopwave \
     $(ARCHSRCDIR)/test/loopwavequeue \
-    $(ARCHSRCDIR)/test/testmultiaudio \
     $(ARCHSRCDIR)/test/testaudiohotplug \
     $(ARCHSRCDIR)/test/testgamecontroller \
     $(ARCHSRCDIR)/test/testgeometry \
     $(ARCHSRCDIR)/test/testiconv \
     $(ARCHSRCDIR)/test/testime \
+    $(ARCHSRCDIR)/test/testmultiaudio \
+    $(ARCHSRCDIR)/test/testnative \
     $(ARCHSRCDIR)/test/testoverlay2 \
     $(ARCHSRCDIR)/test/testrendertarget \
+    $(ARCHSRCDIR)/test/testscale \
+    $(ARCHSRCDIR)/test/testsprite2 \
     $(ARCHSRCDIR)/test/testspriteminimal \
     $(ARCHSRCDIR)/test/teststreaming \
     $(ARCHSRCDIR)/test/testviewport \
     $(ARCHSRCDIR)/test/testrendercopyex \
-    $(ARCHSRCDIR)/test/testnative
+    $(ARCHSRCDIR)/test/testyuv
 
 SDL2GLTESTSFILES := \
     $(ARCHSRCDIR)/test/testgl2 \
@@ -275,8 +293,8 @@ SDL2DISABLEDTESTS := \
     $(ARCHSRCDIR)/test/testdisplayinfo \
     $(ARCHSRCDIR)/test/testdrawchessboard \
     $(ARCHSRCDIR)/test/testdraw2 \
-    $(ARCHSRCDIR)/test/testfile \
-    $(ARCHSRCDIR)/test/testdropfile
+    $(ARCHSRCDIR)/test/testdropfile \
+    $(ARCHSRCDIR)/test/testfile
 
 SDL2AUTTESTSFILES := \
     $(ARCHSRCDIR)/test/testautomation \
@@ -304,12 +322,29 @@ SDL2AUTTESTSFILES := \
     $(ARCHSRCDIR)/test/testautomation_video \
     $(ARCHSRCDIR)/test/testautomation_hints
 
+SDL2TESTCOMMONLIBFILES := \
+    $(ARCHSRCDIR)/src/test/SDL_test_assert \
+    $(ARCHSRCDIR)/src/test/SDL_test_common \
+    $(ARCHSRCDIR)/src/test/SDL_test_compare \
+    $(ARCHSRCDIR)/src/test/SDL_test_crc32 \
+    $(ARCHSRCDIR)/src/test/SDL_test_font \
+    $(ARCHSRCDIR)/src/test/SDL_test_fuzzer \
+    $(ARCHSRCDIR)/src/test/SDL_test_harness \
+    $(ARCHSRCDIR)/src/test/SDL_test_imageBlit \
+    $(ARCHSRCDIR)/src/test/SDL_test_imageBlitBlend \
+    $(ARCHSRCDIR)/src/test/SDL_test_imageFace \
+    $(ARCHSRCDIR)/src/test/SDL_test_imagePrimitives \
+    $(ARCHSRCDIR)/src/test/SDL_test_imagePrimitivesBlend \
+    $(ARCHSRCDIR)/src/test/SDL_test_log \
+    $(ARCHSRCDIR)/src/test/SDL_test_md5 \
+    $(ARCHSRCDIR)/src/test/SDL_test_random \
+    $(ARCHSRCDIR)/src/test/SDL_test_memory
+
+%build_linklib mmake=SDL2-aros-test-commonlib libname=testcommon \
+    files="$(SDL2TESTCOMMONLIBFILES)" libdir="$(GENDIR)/$(CURDIR)/lib"
+
 %build_linklib mmake=SDL2-aros-test-utillib libname=testutils \
     files=$(ARCHSRCDIR)/test/testutils libdir="$(GENDIR)/$(CURDIR)/lib"
-
-%build_progs mmake=SDL2-aros-tests-main \
-    files=$(SDL2TESTSFILES) targetdir=$(TESTEXEDIR) \
-    uselibs="SDL2" usetree=yes srcdir=$(ARCHSRCDIR)/test
 
 %build_progs mmake=SDL2-aros-tests-gl \
     files=$(SDL2GLTESTSFILES) targetdir=$(TESTEXEDIR) \
@@ -317,9 +352,13 @@ SDL2AUTTESTSFILES := \
 
 USER_LDFLAGS := -L$(GENDIR)/$(CURDIR)/lib
 
+%build_progs mmake=SDL2-aros-tests-main \
+    files=$(SDL2TESTSFILES) targetdir=$(TESTEXEDIR) \
+    uselibs="testcommon SDL2" usetree=yes srcdir=$(ARCHSRCDIR)/test
+
 %build_progs mmake=SDL2-aros-tests-utils \
     files=$(SDL2TESTSUTILSFILES) targetdir=$(TESTEXEDIR) \
-    uselibs="SDL2 testutils" usetree=yes srcdir=$(ARCHSRCDIR)/test
+    uselibs="testutils testcommon SDL2" usetree=yes srcdir=$(ARCHSRCDIR)/test
 
 
 %common

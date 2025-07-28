@@ -15830,8 +15830,8 @@ diff -ruN SDL2-2.32.8/src/SDL.c SDL2-2.32.8.aros/src/SDL.c
  #elif defined(__NGAGE__)
 diff -ruN SDL2-2.32.8/src/SDL_error.c SDL2-2.32.8.aros/src/SDL_error.c
 --- SDL2-2.32.8/src/SDL_error.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/SDL_error.c	2025-07-27 14:24:21.632841407 +0000
-@@ -60,6 +60,42 @@
++++ SDL2-2.32.8.aros/src/SDL_error.c	2025-07-28 14:48:26.642876493 +0000
+@@ -60,6 +60,43 @@
      return -1;
  }
  
@@ -15871,9 +15871,17 @@ diff -ruN SDL2-2.32.8/src/SDL_error.c SDL2-2.32.8.aros/src/SDL_error.c
 +}
 +#endif
 +
++#if !defined(__AROS__) || defined(SDL2_AROS_SHARED)
  /* Available for backwards compatibility */
  const char *SDL_GetError(void)
  {
+@@ -120,4 +157,6 @@
+     return errstr;
+ }
+ 
++#endif
++
+ /* vi: set ts=4 sw=4 expandtab: */
 diff -ruN SDL2-2.32.8/src/SDL_log.c SDL2-2.32.8.aros/src/SDL_log.c
 --- SDL2-2.32.8/src/SDL_log.c	2025-01-01 15:47:53.000000000 +0000
 +++ SDL2-2.32.8.aros/src/SDL_log.c	2025-07-28 10:45:12.391737819 +0000
@@ -15953,9 +15961,12 @@ diff -ruN SDL2-2.32.8/src/stdlib/SDL_stdlib.c SDL2-2.32.8.aros/src/stdlib/SDL_st
  SDL_atan(double x)
 diff -ruN SDL2-2.32.8/src/stdlib/SDL_string.c SDL2-2.32.8.aros/src/stdlib/SDL_string.c
 --- SDL2-2.32.8/src/stdlib/SDL_string.c	2025-03-10 22:45:43.000000000 +0000
-+++ SDL2-2.32.8.aros/src/stdlib/SDL_string.c	2025-07-27 14:24:17.200841344 +0000
-@@ -56,20 +56,20 @@
++++ SDL2-2.32.8.aros/src/stdlib/SDL_string.c	2025-07-28 14:40:07.194826335 +0000
+@@ -54,22 +54,23 @@
+     return 0;
+ }
  
++#if !defined(__AROS__) || defined(SDL2_AROS_SHARED)
  #if !defined(HAVE_VSSCANF) || !defined(HAVE_STRTOL) || !defined(HAVE_STRTOUL) || !defined(HAVE_STRTOD)
  /**
 - * Parses an unsigned long long and returns the unsigned value and sign bit.
@@ -15979,7 +15990,7 @@ diff -ruN SDL2-2.32.8/src/stdlib/SDL_string.c SDL2-2.32.8.aros/src/stdlib/SDL_st
      SDL_bool negative = SDL_FALSE;
      SDL_bool overflow = SDL_FALSE;
  
-@@ -92,7 +92,7 @@
+@@ -92,7 +93,7 @@
          }
          number_start = text;
          do {
@@ -15988,7 +15999,7 @@ diff -ruN SDL2-2.32.8/src/stdlib/SDL_string.c SDL2-2.32.8.aros/src/stdlib/SDL_st
              if (*text >= '0' && *text <= '9') {
                  digit = *text - '0';
              } else if (radix > 10) {
-@@ -145,7 +145,7 @@
+@@ -145,7 +146,7 @@
  static size_t SDL_ScanLong(const char *text, int count, int radix, long *valuep)
  {
      const unsigned long long_max = (~0UL) >> 1;
@@ -15997,7 +16008,7 @@ diff -ruN SDL2-2.32.8/src/stdlib/SDL_string.c SDL2-2.32.8.aros/src/stdlib/SDL_st
      SDL_bool negative;
      size_t len = SDL_ScanUnsignedLongLongInternal(text, count, radix, &value, &negative);
      if (negative) {
-@@ -167,7 +167,7 @@
+@@ -167,7 +168,7 @@
  static size_t SDL_ScanUnsignedLong(const char *text, int count, int radix, unsigned long *valuep)
  {
      const unsigned long ulong_max = ~0UL;
@@ -16006,7 +16017,7 @@ diff -ruN SDL2-2.32.8/src/stdlib/SDL_string.c SDL2-2.32.8.aros/src/stdlib/SDL_st
      SDL_bool negative;
      size_t len = SDL_ScanUnsignedLongLongInternal(text, count, radix, &value, &negative);
      if (negative) {
-@@ -190,7 +190,7 @@
+@@ -190,7 +191,7 @@
  static size_t SDL_ScanUintPtrT(const char *text, int radix, uintptr_t *valuep)
  {
      const uintptr_t uintptr_max = ~(uintptr_t)0;
@@ -16015,7 +16026,7 @@ diff -ruN SDL2-2.32.8/src/stdlib/SDL_string.c SDL2-2.32.8.aros/src/stdlib/SDL_st
      SDL_bool negative;
      size_t len = SDL_ScanUnsignedLongLongInternal(text, 0, 16, &value, &negative);
      if (negative) {
-@@ -212,12 +212,12 @@
+@@ -212,12 +213,12 @@
  #if !defined(HAVE_VSSCANF) || !defined(HAVE_STRTOLL) || !defined(HAVE_STRTOULL)
  static size_t SDL_ScanLongLong(const char *text, int count, int radix, Sint64 *valuep)
  {
@@ -16031,7 +16042,7 @@ diff -ruN SDL2-2.32.8/src/stdlib/SDL_string.c SDL2-2.32.8.aros/src/stdlib/SDL_st
          if (value == 0 || value > abs_llong_min) {
              value = 0ULL - abs_llong_min;
          } else {
-@@ -234,7 +234,7 @@
+@@ -234,7 +235,7 @@
  #if !defined(HAVE_VSSCANF) || !defined(HAVE_STRTOULL)
  static size_t SDL_ScanUnsignedLongLong(const char *text, int count, int radix, Uint64 *valuep)
  {
@@ -16040,7 +16051,7 @@ diff -ruN SDL2-2.32.8/src/stdlib/SDL_string.c SDL2-2.32.8.aros/src/stdlib/SDL_st
      SDL_bool negative;
      size_t len = SDL_ScanUnsignedLongLongInternal(text, count, radix, valuep, &negative);
      if (negative) {
-@@ -927,7 +927,7 @@
+@@ -927,7 +928,7 @@
  #if defined(HAVE_STRTOLL)
      return strtoll(string, endp, base);
  #else
@@ -16049,7 +16060,7 @@ diff -ruN SDL2-2.32.8/src/stdlib/SDL_string.c SDL2-2.32.8.aros/src/stdlib/SDL_st
      size_t len = SDL_ScanLongLong(string, 0, base, &value);
      if (endp) {
          *endp = (char *)string + len;
-@@ -941,7 +941,7 @@
+@@ -941,7 +942,7 @@
  #if defined(HAVE_STRTOULL)
      return strtoull(string, endp, base);
  #else
@@ -16058,7 +16069,39 @@ diff -ruN SDL2-2.32.8/src/stdlib/SDL_string.c SDL2-2.32.8.aros/src/stdlib/SDL_st
      size_t len = SDL_ScanUnsignedLongLong(string, 0, base, &value);
      if (endp) {
          *endp = (char *)string + len;
-@@ -1744,7 +1744,7 @@
+@@ -1058,6 +1059,7 @@
+     return result;
+ #endif /* HAVE_STRNCASECMP */
+ }
++#endif /* !__AROS__ */
+ 
+ int SDL_sscanf(const char *text, SDL_SCANF_FORMAT_STRING const char *fmt, ...)
+ {
+@@ -1069,6 +1071,7 @@
+     return rc;
+ }
+ 
++#if !defined(__AROS__) || defined(SDL2_AROS_SHARED)
+ #ifdef HAVE_VSSCANF
+ int SDL_vsscanf(const char *text, const char *fmt, va_list ap)
+ {
+@@ -1470,6 +1473,7 @@
+     return retval;
+ }
+ #endif /* HAVE_VSSCANF */
++#endif /* !__AROS__ */
+ 
+ int SDL_snprintf(SDL_OUT_Z_CAP(maxlen) char *text, size_t maxlen, SDL_PRINTF_FORMAT_STRING const char *fmt, ...)
+ {
+@@ -1483,6 +1487,7 @@
+     return retval;
+ }
+ 
++#if !defined(__AROS__) || defined(SDL2_AROS_SHARED)
+ #if defined(HAVE_LIBC) && defined(__WATCOMC__)
+ /* _vsnprintf() doesn't ensure nul termination */
+ int SDL_vsnprintf(SDL_OUT_Z_CAP(maxlen) char *text, size_t maxlen, const char *fmt, va_list ap)
+@@ -1744,7 +1749,7 @@
          return SDL_PrintString(text, maxlen, info, NULL);
      }
  
@@ -16067,6 +16110,27 @@ diff -ruN SDL2-2.32.8/src/stdlib/SDL_string.c SDL2-2.32.8.aros/src/stdlib/SDL_st
      length = SDL_PrintString(text, maxlen, info, "0x");
      return length + SDL_PrintString(TEXT_AND_LEN_ARGS, info, num);
  }
+@@ -1969,6 +1974,7 @@
+ 
+ #undef TEXT_AND_LEN_ARGS
+ #endif /* HAVE_VSNPRINTF */
++#endif /* !__AROS__ */
+ 
+ int SDL_asprintf(char **strp, SDL_PRINTF_FORMAT_STRING const char *fmt, ...)
+ {
+@@ -1982,6 +1988,7 @@
+     return retval;
+ }
+ 
++#if !defined(__AROS__) || defined(SDL2_AROS_SHARED)
+ int SDL_vasprintf(char **strp, const char *fmt, va_list ap)
+ {
+     int retval;
+@@ -2026,3 +2033,4 @@
+         }
+     }
+ }
++#endif
 Binary files SDL2-2.32.8/src/thread/aros/SDL_syscond.c.old:Zone.Identifier and SDL2-2.32.8.aros/src/thread/aros/SDL_syscond.c.old:Zone.Identifier differ
 diff -ruN SDL2-2.32.8/src/thread/aros/SDL_sysmutex.c SDL2-2.32.8.aros/src/thread/aros/SDL_sysmutex.c
 --- SDL2-2.32.8/src/thread/aros/SDL_sysmutex.c	1970-01-01 00:00:00.000000000 +0000
@@ -17670,8 +17734,8 @@ diff -ruN SDL2-2.32.8/src/thread/SDL_systhread.h SDL2-2.32.8.aros/src/thread/SDL
  SDL_CreateThreadInternal(int(SDLCALL *fn)(void *), const char *name,
 diff -ruN SDL2-2.32.8/src/thread/SDL_thread.c SDL2-2.32.8.aros/src/thread/SDL_thread.c
 --- SDL2-2.32.8/src/thread/SDL_thread.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/thread/SDL_thread.c	2025-07-27 14:24:17.828841353 +0000
-@@ -28,15 +28,6 @@
++++ SDL2-2.32.8.aros/src/thread/SDL_thread.c	2025-07-28 15:10:01.651006095 +0000
+@@ -28,15 +28,7 @@
  #include "SDL_hints.h"
  #include "../SDL_error_c.h"
  
@@ -17684,10 +17748,11 @@ diff -ruN SDL2-2.32.8/src/thread/SDL_thread.c SDL2-2.32.8.aros/src/thread/SDL_th
 -    SDL_SYS_InitTLSData();
 -}
 -
++#if !defined(__AROS__) || defined(SDL2_AROS_SHARED)
  SDL_TLSID SDL_TLSCreate(void)
  {
      static SDL_atomic_t SDL_tls_id;
-@@ -62,13 +53,6 @@
+@@ -62,13 +54,6 @@
          return SDL_InvalidParamError("id");
      }
  
@@ -17701,7 +17766,7 @@ diff -ruN SDL2-2.32.8/src/thread/SDL_thread.c SDL2-2.32.8.aros/src/thread/SDL_th
      storage = SDL_SYS_GetTLSData();
      if (!storage || (id > storage->limit)) {
          unsigned int i, oldlimit, newlimit;
-@@ -85,10 +69,8 @@
+@@ -85,10 +70,8 @@
              storage->array[i].destructor = NULL;
          }
          if (SDL_SYS_SetTLSData(storage) != 0) {
@@ -17712,7 +17777,7 @@ diff -ruN SDL2-2.32.8/src/thread/SDL_thread.c SDL2-2.32.8.aros/src/thread/SDL_th
      }
  
      storage->array[id - 1].data = SDL_const_cast(void *, value);
-@@ -100,7 +82,6 @@
+@@ -100,7 +83,6 @@
  {
      SDL_TLSData *storage;
  
@@ -17720,7 +17785,7 @@ diff -ruN SDL2-2.32.8/src/thread/SDL_thread.c SDL2-2.32.8.aros/src/thread/SDL_th
      storage = SDL_SYS_GetTLSData();
      if (storage) {
          unsigned int i;
-@@ -111,18 +92,6 @@
+@@ -111,18 +93,6 @@
          }
          SDL_SYS_SetTLSData(NULL);
          SDL_free(storage);
@@ -17739,7 +17804,7 @@ diff -ruN SDL2-2.32.8/src/thread/SDL_thread.c SDL2-2.32.8.aros/src/thread/SDL_th
      }
  }
  
-@@ -144,27 +113,40 @@
+@@ -144,27 +114,40 @@
  static SDL_mutex *SDL_generic_TLS_mutex;
  static SDL_TLSEntry *SDL_generic_TLS;
  
@@ -17787,7 +17852,7 @@ diff -ruN SDL2-2.32.8/src/thread/SDL_thread.c SDL2-2.32.8.aros/src/thread/SDL_th
  
      return storage;
  }
-@@ -173,8 +155,8 @@
+@@ -173,8 +156,8 @@
  {
      SDL_threadID thread = SDL_ThreadID();
      SDL_TLSEntry *prev, *entry;
@@ -17797,7 +17862,7 @@ diff -ruN SDL2-2.32.8/src/thread/SDL_thread.c SDL2-2.32.8.aros/src/thread/SDL_th
      SDL_LockMutex(SDL_generic_TLS_mutex);
      prev = NULL;
      for (entry = SDL_generic_TLS; entry; entry = entry->next) {
-@@ -193,44 +175,21 @@
+@@ -193,46 +176,25 @@
          }
          prev = entry;
      }
@@ -17845,8 +17910,26 @@ diff -ruN SDL2-2.32.8/src/thread/SDL_thread.c SDL2-2.32.8.aros/src/thread/SDL_th
 +    return 0;
  }
  
++#endif /* !__AROS__*/
++
  /* Non-thread-safe global error variable */
-@@ -369,8 +328,6 @@
+ static SDL_error *SDL_GetStaticErrBuf(void)
+ {
+@@ -243,6 +205,13 @@
+     return &SDL_global_error;
+ }
+ 
++#if defined(__AROS__) && !defined(SDL2_AROS_SHARED)
++/* Routine to get the thread-specific error variable */
++SDL_error *SDL_GetErrBuf(void)
++{
++    return SDL_GetStaticErrBuf();
++}
++#else
+ #ifndef SDL_THREADS_DISABLED
+ static void SDLCALL SDL_FreeErrBuf(void *data)
+ {
+@@ -369,8 +338,6 @@
      SDL_Thread *thread;
      int ret;
  
@@ -17855,6 +17938,13 @@ diff -ruN SDL2-2.32.8/src/thread/SDL_thread.c SDL2-2.32.8.aros/src/thread/SDL_th
      /* Allocate memory for the thread info structure */
      thread = (SDL_Thread *)SDL_calloc(1, sizeof(*thread));
      if (!thread) {
+@@ -515,4 +482,6 @@
+     }
+ }
+ 
++#endif /* !__AROS__*/
++
+ /* vi: set ts=4 sw=4 expandtab: */
 diff -ruN SDL2-2.32.8/src/thread/SDL_thread_c.h SDL2-2.32.8.aros/src/thread/SDL_thread_c.h
 --- SDL2-2.32.8/src/thread/SDL_thread_c.h	2025-01-01 15:47:53.000000000 +0000
 +++ SDL2-2.32.8.aros/src/thread/SDL_thread_c.h	2025-07-27 14:24:17.836841353 +0000
