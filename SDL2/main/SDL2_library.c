@@ -41,7 +41,6 @@
 
 struct SDL2Base   *GlobalBase = NULL;
 
-struct ExecBase      *SysBase = NULL;
 struct DosLibrary    *DOSBase = NULL;
 struct IntuitionBase *IntuitionBase = NULL;
 struct GfxBase       *GfxBase = NULL;
@@ -52,18 +51,11 @@ struct Library       *WorkbenchBase = NULL;
 struct Library       *IconBase = NULL;
 struct Library       *MUIMasterBase = NULL;
 struct Library       *CxBase = NULL;
-struct Library       *ScreenNotifyBase = NULL;
 struct Library       *TimerBase = NULL;
 struct Library       *LocaleBase = NULL;
-struct Library       *SensorsBase = NULL;
 struct Library       *IFFParseBase = NULL;
-struct Library       *CharsetsBase = NULL;
-struct Library       *IConvBase = NULL;
-struct Library       *ThreadPoolBase = NULL;
-struct Library       *DynLoadBase = NULL;
 struct Library       *OpenURLBase = NULL;
 struct Library       *GadToolsBase = NULL;
-// struct Library		*LowLevelBase = NULL;
 
 struct timerequest   GlobalTimeReq;
 
@@ -73,25 +65,7 @@ struct timerequest   GlobalTimeReq;
 
 static void init_system(LIBBASETYPEPTR LIBBASE)
 {
-#if (0)
-	u_int32_t value;
-
-	NewGetSystemAttrsA(&value, sizeof(value), SYSTEMINFOTYPE_PPC_DCACHEL1LINESIZE, NULL);
-
-	if (value < 32)
-		value = 32;
-
-	DataL1LineSize = value;
-
-	ULONG Altivec = 0;
-	if (NewGetSystemAttrsA(&Altivec,sizeof(Altivec),SYSTEMINFOTYPE_PPC_ALTIVEC,NULL))
-    {
-		if (Altivec)
-		{
-			HasAltiVec = 1;
-		}
-	}
-#endif
+	// Detect platform/chipset feature availability
 }
 
 /**********************************************************************
@@ -108,7 +82,6 @@ static int init_libs(LIBBASETYPEPTR LIBBASE)
 	{
 		TimerBase = (struct Library *)GlobalTimeReq.tr_node.io_Device;
 
-//		sort_ctdt(LIBBASE);
 		init_system(LIBBASE);
 
 		return 1;
@@ -123,24 +96,9 @@ static int init_libs(LIBBASETYPEPTR LIBBASE)
 
 static int SDL2LIB_Init(LIBBASETYPEPTR LIBBASE)
 {
-#if (0)
-	register char *r13;
-#endif
 
 	GlobalBase = LIBBASE;
-//	SysBase = sysBase;
-
-#if (0)
-	LIBBASE->_lib.lib_Node.ln_Pri = -5;
-	LIBBASE->_lib.lib_Revision = COMPILE_REVISION;
-	asm volatile ("lis %0,__r13_init@ha; addi %0,%0,__r13_init@l" : "=r" (r13));
-	LIBBASE->SegList   = SegList;
-	LIBBASE->DataSeg   = r13 - R13_OFFSET;
-	LIBBASE->DataSize  = __dbsize();
-#endif
 	LIBBASE->Parent    = NULL;
-//	LIBBASE->MySysBase = sysBase;
-//	NEWLIST(&LIBBASE->TaskContext.TaskList);
 
 	InitSemaphore(&LIBBASE->Semaphore);
 
@@ -156,10 +114,8 @@ static int SDL2LIB_Init(LIBBASETYPEPTR LIBBASE)
 	DeleteLib
 **********************************************************************/
 
-static BOOL DeleteLib(LIBBASETYPEPTR LIBBASE, struct ExecBase *SysBase)
+static BOOL DeleteLib(LIBBASETYPEPTR LIBBASE)
 {
-	BPTR SegList = 0;
-
 	if (LIBBASE->_lib.lib_OpenCnt == 0)
 	{
 		CloseLibrary((struct Library *)LIBBASE->MyGfxBase);
@@ -168,12 +124,6 @@ static BOOL DeleteLib(LIBBASETYPEPTR LIBBASE, struct ExecBase *SysBase)
 		CloseLibrary(UtilityBase);
 		CloseDevice(&GlobalTimeReq.tr_node);
 		return TRUE;
-#if (0)
-		SegList = LIBBASE->SegList;
-
-		REMOVE(&LIBBASE->_lib.lib_Node);
-		FreeMem((APTR)((IPTR)(LIBBASE) - (IPTR)(LIBBASE->_lib.lib_NegSize)), LIBBASE->_lib.lib_NegSize + LIBBASE->_lib.lib_PosSize);
-#endif
 	}
 
 	return FALSE;
@@ -191,14 +141,8 @@ static void UserLibClose(LIBBASETYPEPTR LIBBASE, struct ExecBase *SysBase)
 	CloseLibrary(LIBBASE->MyIconBase);
 	CloseLibrary(LIBBASE->MyMUIMasterBase);
 	CloseLibrary(LIBBASE->MyCxBase);
-	CloseLibrary(LIBBASE->MyScreenNotifyBase);
 	CloseLibrary(LocaleBase);
-	CloseLibrary(SensorsBase);
 	CloseLibrary(IFFParseBase);
-	CloseLibrary(CharsetsBase);
-	CloseLibrary(IConvBase);
-	CloseLibrary(ThreadPoolBase);
-	CloseLibrary(DynLoadBase);
 	CloseLibrary(OpenURLBase);
 	CloseLibrary(GadToolsBase);
 
@@ -208,15 +152,9 @@ static void UserLibClose(LIBBASETYPEPTR LIBBASE, struct ExecBase *SysBase)
 	IconBase         = LIBBASE->MyIconBase         = NULL;
     MUIMasterBase    = LIBBASE->MyMUIMasterBase    = NULL;
 	CxBase           = LIBBASE->MyCxBase           = NULL;
-	ScreenNotifyBase = LIBBASE->MyScreenNotifyBase = NULL;
 
 	LocaleBase = NULL;
-	SensorsBase = NULL;
 	IFFParseBase = NULL;
-	CharsetsBase = NULL;
-	IConvBase = NULL;
-	ThreadPoolBase = NULL;
-	DynLoadBase = NULL;
 	OpenURLBase = NULL;
 	GadToolsBase = NULL;
 }
@@ -228,7 +166,7 @@ static void UserLibClose(LIBBASETYPEPTR LIBBASE, struct ExecBase *SysBase)
 static int SDL2LIB_Expunge(LIBBASETYPEPTR LIBBASE)
 {
 	LIBBASE->_lib.lib_Flags |= LIBF_DELEXP;
-	return DeleteLib(LIBBASE, LIBBASE->MySysBase);
+	return DeleteLib(LIBBASE);
 }
 
 /**********************************************************************
@@ -237,23 +175,6 @@ static int SDL2LIB_Expunge(LIBBASETYPEPTR LIBBASE)
 
 static void SDL2LIB_Close(LIBBASETYPEPTR LIBBASE)
 {
-	struct ExecBase *SysBase = LIBBASE->MySysBase;
-
-	if (LIBBASE->Parent)
-	{
-		struct SDL2Base *ChildBase = LIBBASE;
-
-		if ((--ChildBase->_lib.lib_OpenCnt) > 0)
-			return;
-
-		LIBBASE = ChildBase->Parent;
-
-//		REMOVE(&ChildBase->TaskContext.TaskNode.Node);
-
-//		AROS_Cleanup(ChildBase);
-//		FreeVecTaskPooled((APTR)((IPTR)(ChildBase) - (IPTR)(ChildBase->_lib.lib_NegSize)));
-	}
-
 	ObtainSemaphore(&LIBBASE->Semaphore);
 
 	LIBBASE->_lib.lib_OpenCnt--;
@@ -266,7 +187,7 @@ static void SDL2LIB_Close(LIBBASETYPEPTR LIBBASE)
 	ReleaseSemaphore(&LIBBASE->Semaphore);
 
 	if (LIBBASE->_lib.lib_Flags & LIBF_DELEXP)
-		DeleteLib(LIBBASE, SysBase);
+		DeleteLib(LIBBASE);
 
 	return;
 }
@@ -278,7 +199,6 @@ static void SDL2LIB_Close(LIBBASETYPEPTR LIBBASE)
 static int SDL2LIB_Open(LIBBASETYPEPTR LIBBASE)
 {
 	struct SDL2Base	*newbase, *childbase;
-	struct ExecBase *SysBase = LIBBASE->MySysBase;
 	struct Task *MyTask = FindTask(NULL);
 	struct TaskNode *ChildNode;
 	IPTR MyBaseSize;
@@ -290,128 +210,13 @@ static int SDL2LIB_Open(LIBBASETYPEPTR LIBBASE)
 	 && ((IconBase         = LIBBASE->MyIconBase         = (APTR)OpenLibrary("icon.library"         ,  0)) != NULL)
 	 && ((MUIMasterBase    = LIBBASE->MyMUIMasterBase    = (APTR)OpenLibrary("muimaster.library"    , 19)) != NULL)
 	 && ((CxBase           = LIBBASE->MyCxBase           = (APTR)OpenLibrary("commodities.library"  , 37)) != NULL)
-	 && ((ScreenNotifyBase = LIBBASE->MyScreenNotifyBase = (APTR)OpenLibrary("screennotify.library" ,  0)) != NULL)
 	 && ((LocaleBase       =                                     OpenLibrary("locale.library"       ,  0)) != NULL)
-	 && ((SensorsBase      =                                     OpenLibrary("sensors.library"      , 53)) != NULL)
 	 && ((IFFParseBase     =                                     OpenLibrary("iffparse.library"     ,  0)) != NULL)
-	 && ((CharsetsBase     =                                     OpenLibrary("charsets.library"     , 53)) != NULL)
-	 && ((IConvBase        =                                     OpenLibrary("iconv.library"        ,  0)) != NULL)
-	 && ((ThreadPoolBase   =                                     OpenLibrary("threadpool.library"   , 53)) != NULL)
-	 && ((DynLoadBase      =                                     OpenLibrary("dynload.library"      ,  0)) != NULL)
 	 && ((GadToolsBase	   =									 OpenLibrary("gadtools.library"		,  0)) != NULL)
 	 && ((OpenURLBase 	   = 									 OpenLibrary("openurl.library"		,  0)) != NULL))
 	{
 		return TRUE;
 	}
-#if (0)
-	/* Has this task already opened a child? */
-	ForeachNode(&LIBBASE->TaskContext.TaskList, ChildNode)
-	{
-		if (ChildNode->Task == MyTask)
-		{
-			/* Yep, return it */
-			childbase = (APTR)(((IPTR)ChildNode) - offsetof(struct SDL2Base, TaskContext.TaskNode.Node));
-			childbase->Library.lib_Flags &= ~LIBF_DELEXP;
-			childbase->Library.lib_OpenCnt++;
-
-			return TRUE;
-		}
-	}
-
-	childbase  = NULL;
-	
-	MyBaseSize = LIBBASE->_lib.lib_NegSize + LIBBASE->_lib.lib_PosSize;
-	LIBBASE->_lib.lib_Flags &= ~LIBF_DELEXP;
-	LIBBASE->_lib.lib_OpenCnt++;
-
-	ObtainSemaphore(&LIBBASE->Semaphore);
-
-	if (LIBBASE->Alloc == 0)
-	{
-		if (((IntuitionBase    = LIBBASE->MyIntuiBase        = (APTR)OpenLibrary("intuition.library"    , 39)) != NULL)
-		 && ((CyberGfxBase     = LIBBASE->MyCyberGfxBase     = (APTR)OpenLibrary("cybergraphics.library", 40)) != NULL)
-		 && ((KeymapBase       = LIBBASE->MyKeymapBase       = (APTR)OpenLibrary("keymap.library"       , 36)) != NULL)
-		 && ((WorkbenchBase    = LIBBASE->MyWorkbenchBase    = (APTR)OpenLibrary("workbench.library"    ,  0)) != NULL)
-		 && ((IconBase         = LIBBASE->MyIconBase         = (APTR)OpenLibrary("icon.library"         ,  0)) != NULL)
-		 && ((MUIMasterBase    = LIBBASE->MyMUIMasterBase    = (APTR)OpenLibrary("muimaster.library"    , 19)) != NULL)
-		 && ((CxBase           = LIBBASE->MyCxBase           = (APTR)OpenLibrary("commodities.library"  , 37)) != NULL)
-		 && ((ScreenNotifyBase = LIBBASE->MyScreenNotifyBase = (APTR)OpenLibrary("screennotify.library" ,  0)) != NULL)
-		 && ((LocaleBase       =                                     OpenLibrary("locale.library"       ,  0)) != NULL)
-		 && ((SensorsBase      =                                     OpenLibrary("sensors.library"      , 53)) != NULL)
-		 && ((IFFParseBase     =                                     OpenLibrary("iffparse.library"     ,  0)) != NULL)
-		 && ((CharsetsBase     =                                     OpenLibrary("charsets.library"     , 53)) != NULL)
-		 && ((IConvBase        =                                     OpenLibrary("iconv.library"        ,  0)) != NULL)
-		 && ((ThreadPoolBase   =                                     OpenLibrary("threadpool.library"   , 53)) != NULL)
-         && ((DynLoadBase      =                                     OpenLibrary("dynload.library"      ,  0)) != NULL)
-		 && ((GadToolsBase	   =									 OpenLibrary("gadtools.library"		,  0)) != NULL)
-		 && ((OpenURLBase 	   = 									 OpenLibrary("openurl.library"		,  0)) != NULL))
-		{
-			LIBBASE->Alloc = 1;
-		}
-		else
-		{
-			goto error;
-		}
-	}
-
-	if ((newbase = AllocVecTaskPooled(MyBaseSize + LIBBASE->DataSize + 15)) != NULL)
-	{
-		CopyMem((APTR)((IPTR)LIBBASE - (IPTR)LIBBASE->_lib.lib_NegSize), newbase, MyBaseSize);
-
-		childbase = (APTR)((IPTR)newbase + (IPTR)LIBBASE->_lib.lib_NegSize);
-
-		if (LIBBASE->DataSize)
-		{
-			char *orig   = LIBBASE->DataSeg;
-			LONG *relocs = (LONG *) __datadata_relocs;
-			int mem = ((int)newbase + MyBaseSize + 15) & (unsigned int) ~15;
-
-			CopyMem(orig, (char *)mem, LIBBASE->DataSize);
-
-			if (relocs[0] > 0)
-			{
-				int i, num_relocs = relocs[0];
-
-				for (i = 0, relocs++; i < num_relocs; ++i, ++relocs)
-				{
-					*(long *)(mem + *relocs) -= (int)orig - mem;
-				}
-			}
-
-			childbase->DataSeg = (char *)mem + R13_OFFSET;
-
-			if (AROS_Startup(childbase) == 0)
-			{
-				AROS_Cleanup(childbase);
-				FreeVecTaskPooled(newbase);
-				childbase = 0;
-				goto error;
-			}
-		}
-
-		childbase->Parent = LIBBASE;
-		childbase->Library.lib_OpenCnt = 1;
-
-		/* Register which task opened this child */
-		childbase->TaskContext.TaskNode.Task = MyTask;
-		ADDTAIL(&LIBBASE->TaskContext.TaskList, &childbase->TaskContext.TaskNode.Node);
-	}
-	else
-	{
-error:
-		LIBBASE->_lib.lib_OpenCnt--;
-
-		if (LIBBASE->_lib.lib_OpenCnt == 0)
-		{
-			LIBBASE->Alloc	= 0;
-			UserLibClose(LIBBASE, SysBase);
-		}
-	}
-
-	ReleaseSemaphore(&LIBBASE->Semaphore);
-
-	return (struct Library *)childbase;
-#endif
 	return FALSE;
 }
 
