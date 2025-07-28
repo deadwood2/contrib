@@ -15699,7 +15699,7 @@ diff -ruN SDL2-2.32.8/src/render/opengl/SDL_shaders_gl.c SDL2-2.32.8.aros/src/re
  #include "SDL_shaders_gl.h"
 diff -ruN SDL2-2.32.8/src/SDL.c SDL2-2.32.8.aros/src/SDL.c
 --- SDL2-2.32.8/src/SDL.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/SDL.c	2025-07-27 14:24:21.604841407 +0000
++++ SDL2-2.32.8.aros/src/SDL.c	2025-07-28 20:45:10.753574555 +0000
 @@ -49,7 +49,6 @@
  #include "haptic/SDL_haptic_c.h"
  #include "joystick/SDL_joystick_c.h"
@@ -15819,7 +15819,16 @@ diff -ruN SDL2-2.32.8/src/SDL.c SDL2-2.32.8.aros/src/SDL.c
  
      SDL_bInMainQuit = SDL_FALSE;
  }
-@@ -636,6 +619,8 @@
+@@ -580,6 +563,8 @@
+     return "AIX";
+ #elif defined(__ANDROID__)
+     return "Android";
++#elif defined(__AROS__)
++    return "AROS";
+ #elif defined(__BSDI__)
+     return "BSDI";
+ #elif defined(__DREAMCAST__)
+@@ -636,6 +621,8 @@
      return "PlayStation 2";
  #elif defined(__PSP__)
      return "PlayStation Portable";
