@@ -6,7 +6,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 #MM- contrib-sdl2 : SDL2-aros
 #MM- SDL2-aros-lib : SDL2-aros-sharedlib-linklib
 #MM- SDL2-aros : SDL2-aros-sharedlib SDL2-aros-tests
-#MM- SDL2-aros-tests : SDL2-aros-tests-main SDL2-aros-tests-gl SDL2-aros-tests-utils SDL2-aros-tests-aut
+#MM- SDL2-aros-tests : SDL2-aros-tests-main SDL2-aros-tests-gl SDL2-aros-tests-utils SDL2-aros-tests-aut SDL2-aros-tests-copyfiles
 #MM SDL2-aros-tests-main : includes linklibs contrib-sdl2-fetch development-sdl2 SDL2-aros-test-commonlib
 #MM SDL2-aros-tests-gl : includes linklibs contrib-sdl2-fetch development-sdl2
 #MM SDL2-aros-tests-utils : includes linklibs contrib-sdl2-fetch development-sdl2 SDL2-aros-test-commonlib SDL2-aros-test-utillib
@@ -366,5 +366,22 @@ USER_LDFLAGS := -L$(SDL2TESTLIBDIR)
 %build_prog mmake=SDL2-aros-tests-aut progname=testautomation \
     files="$(SDL2AUTTESTSFILES)" targetdir=$(TESTEXEDIR) \
     uselibs="testcommon SDL2"
+
+SDL2TESTDATAFILES = \
+    axis.bmp \
+	button.bmp \
+	controllermap.bmp \
+	controllermap_back.bmp \
+	icon.bmp \
+	moose.dat \
+	sample.bmp \
+	sample.wav \
+	testgles2_sdf_img_normal.bmp \
+	testgles2_sdf_img_sdf.bmp \
+	testyuv.bmp \
+	unifont-13.0.06.hex \
+	utf8.txt
+
+%copy_files_q mmake=SDL2-aros-tests-copyfiles files="$(SDL2TESTDATAFILES)" src=$(ARCHSRCDIR)/test dst=$(TESTEXEDIR)
 
 %common
