@@ -16123,7 +16123,6 @@ diff -ruN SDL2-2.32.8/src/stdlib/SDL_string.c SDL2-2.32.8.aros/src/stdlib/SDL_st
      }
  }
 +#endif
-Binary files SDL2-2.32.8/src/thread/aros/SDL_syscond.c.old:Zone.Identifier and SDL2-2.32.8.aros/src/thread/aros/SDL_syscond.c.old:Zone.Identifier differ
 diff -ruN SDL2-2.32.8/src/thread/aros/SDL_sysmutex.c SDL2-2.32.8.aros/src/thread/aros/SDL_sysmutex.c
 --- SDL2-2.32.8/src/thread/aros/SDL_sysmutex.c	1970-01-01 00:00:00.000000000 +0000
 +++ SDL2-2.32.8.aros/src/thread/aros/SDL_sysmutex.c	2025-07-28 10:23:45.073287295 +0000
@@ -16258,8 +16257,6 @@ diff -ruN SDL2-2.32.8/src/thread/aros/SDL_sysmutex_c.h SDL2-2.32.8.aros/src/thre
 +*/
 +#include "../../SDL_internal.h"
 +/* vi: set ts=4 sw=4 expandtab: */
-Binary files SDL2-2.32.8/src/thread/aros/SDL_sysmutex_c.h:Zone.Identifier and SDL2-2.32.8.aros/src/thread/aros/SDL_sysmutex_c.h:Zone.Identifier differ
-Binary files SDL2-2.32.8/src/thread/aros/SDL_sysmutex.c:Zone.Identifier and SDL2-2.32.8.aros/src/thread/aros/SDL_sysmutex.c:Zone.Identifier differ
 diff -ruN SDL2-2.32.8/src/thread/aros/SDL_syssem.c SDL2-2.32.8.aros/src/thread/aros/SDL_syssem.c
 --- SDL2-2.32.8/src/thread/aros/SDL_syssem.c	1970-01-01 00:00:00.000000000 +0000
 +++ SDL2-2.32.8.aros/src/thread/aros/SDL_syssem.c	2025-07-27 14:24:17.420841400 +0000
@@ -16536,7 +16533,6 @@ diff -ruN SDL2-2.32.8/src/thread/aros/SDL_syssem.c SDL2-2.32.8.aros/src/thread/a
 +
 +#endif /* SDL_THREADS_DISABLED */
 +/* vi: set ts=4 sw=4 expandtab: */
-Binary files SDL2-2.32.8/src/thread/aros/SDL_syssem.c:Zone.Identifier and SDL2-2.32.8.aros/src/thread/aros/SDL_syssem.c:Zone.Identifier differ
 diff -ruN SDL2-2.32.8/src/thread/aros/SDL_systhread.c SDL2-2.32.8.aros/src/thread/aros/SDL_systhread.c
 --- SDL2-2.32.8/src/thread/aros/SDL_systhread.c	1970-01-01 00:00:00.000000000 +0000
 +++ SDL2-2.32.8.aros/src/thread/aros/SDL_systhread.c	2025-07-28 10:27:58.744712368 +0000
@@ -16673,9 +16669,6 @@ diff -ruN SDL2-2.32.8/src/thread/aros/SDL_systhread_c.h SDL2-2.32.8.aros/src/thr
 +#include "../../SDL_internal.h"
 +
 +typedef ssize_t SYS_ThreadHandle;
-Binary files SDL2-2.32.8/src/thread/aros/SDL_systhread_c.h:Zone.Identifier and SDL2-2.32.8.aros/src/thread/aros/SDL_systhread_c.h:Zone.Identifier differ
-Binary files SDL2-2.32.8/src/thread/aros/SDL_systhread.c:Zone.Identifier and SDL2-2.32.8.aros/src/thread/aros/SDL_systhread.c:Zone.Identifier differ
-Binary files SDL2-2.32.8/src/thread/aros/SDL_systls.c.old:Zone.Identifier and SDL2-2.32.8.aros/src/thread/aros/SDL_systls.c.old:Zone.Identifier differ
 diff -ruN SDL2-2.32.8/src/thread/generic/SDL_systls.c SDL2-2.32.8.aros/src/thread/generic/SDL_systls.c
 --- SDL2-2.32.8/src/thread/generic/SDL_systls.c	2025-01-01 15:47:53.000000000 +0000
 +++ SDL2-2.32.8.aros/src/thread/generic/SDL_systls.c	2025-07-27 14:24:17.384841346 +0000
@@ -18506,7 +18499,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosopengl.h SDL2-2.32.8.aros/src/video
 +#endif /* _SDL_arosopengl_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosvideo.c SDL2-2.32.8.aros/src/video/aros/SDL_arosvideo.c
 --- SDL2-2.32.8/src/video/aros/SDL_arosvideo.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosvideo.c	2025-07-27 14:24:21.364841403 +0000
++++ SDL2-2.32.8.aros/src/video/aros/SDL_arosvideo.c	2025-07-28 16:50:51.343183814 +0000
 @@ -0,0 +1,399 @@
 +/*
 +  Simple DirectMedia Layer
@@ -18604,9 +18597,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosvideo.c SDL2-2.32.8.aros/src/video/
 +
 +size_t getv(APTR obj, size_t attr)
 +{
-+	size_t val;
++	IPTR val = 0;
 +	GetAttr(attr, obj, (IPTR *)&val);
-+	return val;
++	return (size_t)val;
 +}
 +
 +void
@@ -21215,8 +21208,8 @@ diff -ruN SDL2-2.32.8/src/video/morphos/SDL_mosmodes.h SDL2-2.32.8.aros/src/vide
 +#endif /* _SDL_mosmodes_h */
 diff -ruN SDL2-2.32.8/src/video/morphos/SDL_mosmouse.c SDL2-2.32.8.aros/src/video/morphos/SDL_mosmouse.c
 --- SDL2-2.32.8/src/video/morphos/SDL_mosmouse.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/morphos/SDL_mosmouse.c	2025-07-27 14:24:19.328841374 +0000
-@@ -0,0 +1,342 @@
++++ SDL2-2.32.8.aros/src/video/morphos/SDL_mosmouse.c	2025-07-28 17:15:03.251182604 +0000
+@@ -0,0 +1,348 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -21239,6 +21232,7 @@ diff -ruN SDL2-2.32.8/src/video/morphos/SDL_mosmouse.c SDL2-2.32.8.aros/src/vide
 +*/
 +
 +#if defined(__AROS__)
++#define DEBUG 1
 +#include <aros/debug.h>
 +#endif
 +
@@ -21268,7 +21262,7 @@ diff -ruN SDL2-2.32.8/src/video/morphos/SDL_mosmouse.c SDL2-2.32.8.aros/src/vide
 +static SDL_Cursor *
 +MOS_CreateCursor(SDL_Surface * surface, int hot_x, int hot_y)
 +{
-+	D(bug("[SDL2] %s()\n", __func__));
++	D(bug("[SDL2] %s(0x%p, %d, %d)\n", __func__, surface, hot_x, hot_y));
 +
 +	SDL_MOSCursor *cursor = SDL_malloc(sizeof(*cursor));
 +
@@ -21291,13 +21285,14 @@ diff -ruN SDL2-2.32.8/src/video/morphos/SDL_mosmouse.c SDL2-2.32.8.aros/src/vide
 +
 +			if (SDL_LockSurface(surface) == 0) {
 +				WritePixelArray(surface->pixels, 0, 0, surface->pitch, &rp, 0, 0, surface->w, surface->h, RECTFMT_ARGB);
-+				Object *mouseptr = NewObject(NULL,POINTERCLASS,
++				Object *mouseptr = NewObject(NULL, POINTERCLASS,
 +								POINTERA_BitMap, bmp,
 +								POINTERA_XOffset, -hot_x,
 +								POINTERA_YOffset, -hot_y,
 +								TAG_DONE);
 +
 +				cursor->Pointer.mouseptr = mouseptr;
++				D(bug("[SDL2] %s: allocated pointerobject @ 0x%p\n", __func__, cursor->Pointer.mouseptr));
 +				SDL_UnlockSurface(surface);
 +			}
 +
@@ -21305,6 +21300,7 @@ diff -ruN SDL2-2.32.8/src/video/morphos/SDL_mosmouse.c SDL2-2.32.8.aros/src/vide
 +		} else {
 +			SDL_free(cursor);
 +			cursor = NULL;
++			return NULL;
 +		}
 +	}
 +
@@ -21338,6 +21334,9 @@ diff -ruN SDL2-2.32.8/src/video/morphos/SDL_mosmouse.c SDL2-2.32.8.aros/src/vide
 +			case SDL_SYSTEM_CURSOR_HAND:      type = POINTERTYPE_SELECTLINK; break;
 +		}
 +		cursor->driverdata = (APTR)type;
++#else
++		cursor->next = NULL;
++		cursor->driverdata = NULL;
 +#endif
 +	} else {
 +		SDL_OutOfMemory();
@@ -22755,8 +22754,8 @@ diff -ruN SDL2-2.32.8/src/video/morphos/SDL_mosvideo.h SDL2-2.32.8.aros/src/vide
 +#endif /* _SDL_mosvideo_h */
 diff -ruN SDL2-2.32.8/src/video/morphos/SDL_moswindow.c SDL2-2.32.8.aros/src/video/morphos/SDL_moswindow.c
 --- SDL2-2.32.8/src/video/morphos/SDL_moswindow.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/morphos/SDL_moswindow.c	2025-07-27 14:24:19.384841375 +0000
-@@ -0,0 +1,1091 @@
++++ SDL2-2.32.8.aros/src/video/morphos/SDL_moswindow.c	2025-07-28 17:07:30.235186071 +0000
+@@ -0,0 +1,1096 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -22827,6 +22826,9 @@ diff -ruN SDL2-2.32.8/src/video/morphos/SDL_moswindow.c SDL2-2.32.8.aros/src/vid
 +#if defined(__AROS__)
 +#include <string.h>
 +#include <math.h>
++#define MOSWIN_TAGTYPE	IPTR
++#else
++#define MOSWIN_TAGTYPE	size_t
 +#endif
 +
 +struct NewMenu SDL_NewMenu[] =
@@ -23313,13 +23315,15 @@ diff -ruN SDL2-2.32.8/src/video/morphos/SDL_moswindow.c SDL2-2.32.8.aros/src/vid
 +		if (data->win) {
 +			if (IS_SYSTEM_CURSOR(vd->CurrentPointer)) {
 +#if !defined(__AROS__)
-+				size_t pointertags[] = { WA_PointerType, vd->CurrentPointer == NULL ? POINTERTYPE_INVISIBLE : (size_t)vd->CurrentPointer->driverdata, TAG_DONE };
++				MOSWIN_TAGTYPE pointertags[] = { WA_PointerType, vd->CurrentPointer == NULL ? POINTERTYPE_INVISIBLE : (MOSWIN_TAGTYPE)vd->CurrentPointer->driverdata, TAG_DONE };
 +				SetAttrsA(data->win, (struct TagItem *)&pointertags);
 +#endif
 +			} else{
 +				SDL_MOSCursor *ac = (SDL_MOSCursor *)vd->CurrentPointer;
 +				if (ac->Pointer.mouseptr) {
-+					SetWindowPointer(data->win,WA_Pointer,(size_t)ac->Pointer.mouseptr,TAG_DONE);
++#if !defined(__AROS__)
++					SetWindowPointer(data->win, WA_Pointer, (MOSWIN_TAGTYPE)ac->Pointer.mouseptr,TAG_DONE);
++#endif
 +				}
 +			}
 +
