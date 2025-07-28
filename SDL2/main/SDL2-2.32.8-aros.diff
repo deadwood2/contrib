@@ -18422,8 +18422,8 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosclipboard.h SDL2-2.32.8.aros/src/vi
 +#endif /* _SDL_arosclipboard_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.c
 --- SDL2-2.32.8/src/video/aros/SDL_arosevents.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.c	2025-07-28 19:08:02.714037837 +0000
-@@ -0,0 +1,788 @@
++++ SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.c	2025-07-28 21:11:41.798896722 +0000
+@@ -0,0 +1,787 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -18455,7 +18455,6 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video
 +#include "../../events/SDL_events_c.h"
 +#include "../../events/SDL_mouse_c.h"
 +#include "../../events/scancodes_morphos.h"
-+#include "../../core/morphos/SDL_library.h"
 +
 +#include "SDL_arosvideo.h"
 +#include "SDL_aroswindow.h"
@@ -18764,7 +18763,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video
 +	es.es_StructSize   = sizeof(struct EasyStruct);
 +	es.es_Flags        = 0;
 +	es.es_Title        = "SDL2 Joystick/GameController";
-+	es.es_TextFormat   = "SDL %ld.%ld.%ld -MorphOS-\n\n%s\n%s";
++	es.es_TextFormat   = "SDL %ld.%ld.%ld -AROS-\n\n%s\n%s";
 +	es.es_GadgetFormat = "Ok";
 +
 +	EasyRequest(window, &es, NULL, SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL, (IPTR)text2, (IPTR)text1);
@@ -19080,13 +19079,13 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video
 +{
 +	SDL_VideoData *data = (SDL_VideoData *) _this->driverdata;
 +
++#if !defined(__AROS__)
 +	for (;;) {
 +		struct ScreenNotifyMessage *snm;
 +
 +		while ((snm = (struct ScreenNotifyMessage *)GetMsg(&data->ScreenNotifyPort)) != NULL) {
 +			D(bug("[SDL2:arosevt] %s: check ScreenNotifyMessage\n", __func__));
 +
-+#if !defined(__AROS__)
 +			switch ((size_t)snm->snm_Value) {
 +				case FALSE:
 +					AROS_HideApp(_this, FALSE);
@@ -19096,7 +19095,6 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video
 +					AROS_ShowApp(_this);
 +					break;
 +			}
-+#endif
 +		}
 +
 +		if (data->WScreen)
@@ -19104,6 +19102,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video
 +
 +		WaitPort(&data->ScreenNotifyPort);
 +	}
++#endif
 +}
 +
 +static void
@@ -21743,8 +21742,8 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosvideo.h SDL2-2.32.8.aros/src/video/
 +#endif /* _SDL_arosvideo_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video/aros/SDL_aroswindow.c
 --- SDL2-2.32.8/src/video/aros/SDL_aroswindow.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_aroswindow.c	2025-07-28 19:07:16.906239776 +0000
-@@ -0,0 +1,1073 @@
++++ SDL2-2.32.8.aros/src/video/aros/SDL_aroswindow.c	2025-07-28 21:17:26.398345333 +0000
+@@ -0,0 +1,1079 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -22263,10 +22262,14 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +		if (fullscreen)
 +			win_top = SDL_TRUE;
 +		
-+#if !defined(__AROS__)
 +		if (data->window_title == NULL)
++		{
++#if !defined(__AROS__)
 +			data->window_title = AROS_ConvertText(window->title, MIBENUM_UTF_8, MIBENUM_SYSTEM);
++#else
++			data->window_title = window->title;
 +#endif
++		}
 +		D(bug("[SDL2:aroswindow] %s: min %ld/%ld, normal %ld/%ld, max %ld/%ld\n", __FUNCTION__, min_w, min_h, w, h, max_w, max_h));
 +
 +		ULONG opacity_value = ((window->opacity) * (ULONG_MAX));
@@ -22615,7 +22618,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +			AROS_CloseDisplay(_this);
 +		}
 +
++#if (0)
 +		SDL_free(data->window_title);
++#endif
 +		SDL_free(data);
 +	}
 +}
