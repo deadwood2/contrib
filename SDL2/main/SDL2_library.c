@@ -198,11 +198,6 @@ static void SDL2LIB_Close(LIBBASETYPEPTR LIBBASE)
 
 static int SDL2LIB_Open(LIBBASETYPEPTR LIBBASE)
 {
-	struct SDL2Base	*newbase, *childbase;
-	struct Task *MyTask = FindTask(NULL);
-	struct TaskNode *ChildNode;
-	IPTR MyBaseSize;
-
 	if (((IntuitionBase    = LIBBASE->MyIntuiBase        = (APTR)OpenLibrary("intuition.library"    , 39)) != NULL)
 	 && ((CyberGfxBase     = LIBBASE->MyCyberGfxBase     = (APTR)OpenLibrary("cybergraphics.library", 40)) != NULL)
 	 && ((KeymapBase       = LIBBASE->MyKeymapBase       = (APTR)OpenLibrary("keymap.library"       , 36)) != NULL)
