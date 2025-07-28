@@ -32,26 +32,15 @@ TESTEXEDIR := $(AROS_TESTS)/SDL2
 %create_patch mmake=contrib-sdl2-create-patch archive=$(ARCHBASE) \
     suffixes="tar.gz" destination=$(PORTSDIR)/SDL2
 
-MORPHOS := \
-    $(ARCHSRCDIR)/src/core/morphos/SDL_stubs \
-    $(ARCHSRCDIR)/src/core/morphos/SDL_startup \
-    $(ARCHSRCDIR)/src/core/morphos/devenv/sdl-startup \
-    $(ARCHSRCDIR)/src/core/morphos/devenv/sdl-stubs \
-    $(ARCHSRCDIR)/src/joystick/morphos/SDL_sysjoystick
-
 FILES := \
     $(ARCHSRCDIR)/src/atomic/SDL_atomic \
     $(ARCHSRCDIR)/src/atomic/SDL_spinlock \
-    $(ARCHSRCDIR)/src/audio/dummy/SDL_dummyaudio \
-    $(ARCHSRCDIR)/src/audio/ahi/SDL_ahi_audio \
     $(ARCHSRCDIR)/src/audio/SDL_audio \
     $(ARCHSRCDIR)/src/audio/SDL_audiocvt \
     $(ARCHSRCDIR)/src/audio/SDL_audiodev \
     $(ARCHSRCDIR)/src/audio/SDL_audiotypecvt \
     $(ARCHSRCDIR)/src/audio/SDL_mixer \
     $(ARCHSRCDIR)/src/audio/SDL_wave \
-    $(ARCHSRCDIR)/src/core/aros/SDL_cpu \
-    $(ARCHSRCDIR)/src/core/morphos/SDL_misc \
     $(ARCHSRCDIR)/src/cpuinfo/SDL_cpuinfo \
     $(ARCHSRCDIR)/src/events/imKStoUCS \
     $(ARCHSRCDIR)/src/events/SDL_clipboardevents \
@@ -67,19 +56,14 @@ FILES := \
     $(ARCHSRCDIR)/src/events/SDL_touch \
     $(ARCHSRCDIR)/src/events/SDL_windowevents \
     $(ARCHSRCDIR)/src/file/SDL_rwops \
-    $(ARCHSRCDIR)/src/filesystem/morphos/SDL_sysfilesystem \
-    $(ARCHSRCDIR)/src/haptic/dummy/SDL_syshaptic \
     $(ARCHSRCDIR)/src/haptic/SDL_haptic \
-    $(ARCHSRCDIR)/src/joystick/dummy/SDL_sysjoystick \
+    $(ARCHSRCDIR)/src/hidapi/SDL_hidapi \
     $(ARCHSRCDIR)/src/joystick/controller_type \
     $(ARCHSRCDIR)/src/joystick/SDL_gamecontroller \
     $(ARCHSRCDIR)/src/joystick/SDL_joystick \
     $(ARCHSRCDIR)/src/joystick/SDL_steam_virtual_gamepad \
-    $(ARCHSRCDIR)/src/locale/morphos/SDL_syslocale \
     $(ARCHSRCDIR)/src/locale/SDL_locale \
-    $(ARCHSRCDIR)/src/misc/morphos/SDL_sysurl \
     $(ARCHSRCDIR)/src/misc/SDL_url \
-    $(ARCHSRCDIR)/src/power/morphos/SDL_syspower \
     $(ARCHSRCDIR)/src/power/SDL_power \
     $(ARCHSRCDIR)/src/render/opengl/SDL_render_gl \
     $(ARCHSRCDIR)/src/render/opengl/SDL_shaders_gl \
@@ -102,6 +86,7 @@ FILES := \
     $(ARCHSRCDIR)/src/SDL_list \
     $(ARCHSRCDIR)/src/SDL_log \
     $(ARCHSRCDIR)/src/SDL_utils \
+    $(ARCHSRCDIR)/src/sensor/SDL_sensor \
     $(ARCHSRCDIR)/src/stdlib/SDL_malloc \
     $(ARCHSRCDIR)/src/stdlib/SDL_crc16 \
     $(ARCHSRCDIR)/src/stdlib/SDL_crc32 \
@@ -114,26 +99,11 @@ FILES := \
     $(ARCHSRCDIR)/src/stdlib/SDL_strtokr \
     $(ARCHSRCDIR)/src/thread/generic/SDL_syscond \
     $(ARCHSRCDIR)/src/thread/generic/SDL_systls \
-    $(ARCHSRCDIR)/src/thread/aros/SDL_sysmutex \
-    $(ARCHSRCDIR)/src/thread/aros/SDL_syssem \
-    $(ARCHSRCDIR)/src/thread/aros/SDL_systhread \
     $(ARCHSRCDIR)/src/thread/SDL_thread \
-    $(ARCHSRCDIR)/src/timer/morphos/SDL_systimer \
     $(ARCHSRCDIR)/src/timer/SDL_timer \
     $(ARCHSRCDIR)/src/video/dummy/SDL_nullevents \
     $(ARCHSRCDIR)/src/video/dummy/SDL_nullframebuffer \
     $(ARCHSRCDIR)/src/video/dummy/SDL_nullvideo \
-    $(ARCHSRCDIR)/src/video/morphos/SDL_mosclipboard \
-    $(ARCHSRCDIR)/src/video/morphos/SDL_mosevents \
-    $(ARCHSRCDIR)/src/video/morphos/SDL_mosframebuffer \
-    $(ARCHSRCDIR)/src/video/morphos/SDL_moskeyboard \
-    $(ARCHSRCDIR)/src/video/morphos/SDL_mosmessagebox \
-    $(ARCHSRCDIR)/src/video/morphos/SDL_mosmodes \
-    $(ARCHSRCDIR)/src/video/morphos/SDL_mosmouse \
-    $(ARCHSRCDIR)/src/video/aros/SDL_arosopengl \
-    $(ARCHSRCDIR)/src/video/morphos/SDL_mosshape \
-    $(ARCHSRCDIR)/src/video/aros/SDL_arosvideo \
-    $(ARCHSRCDIR)/src/video/morphos/SDL_moswindow \
     $(ARCHSRCDIR)/src/video/SDL_blit \
     $(ARCHSRCDIR)/src/video/SDL_blit_0 \
     $(ARCHSRCDIR)/src/video/SDL_blit_1 \
@@ -160,6 +130,42 @@ FILES := \
     $(ARCHSRCDIR)/src/video/yuv2rgb/yuv_rgb_std \
     $(ARCHSRCDIR)/src/SDL
 
+# Platform Files
+SDL2AROSCOREFILES = \
+    $(ARCHSRCDIR)/src/core/aros/SDL_cpu \
+    $(ARCHSRCDIR)/src/core/morphos/SDL_misc \
+    $(ARCHSRCDIR)/src/filesystem/morphos/SDL_sysfilesystem \
+    $(ARCHSRCDIR)/src/locale/morphos/SDL_syslocale \
+    $(ARCHSRCDIR)/src/misc/morphos/SDL_sysurl \
+    $(ARCHSRCDIR)/src/thread/aros/SDL_sysmutex \
+    $(ARCHSRCDIR)/src/thread/aros/SDL_syssem \
+    $(ARCHSRCDIR)/src/thread/aros/SDL_systhread \
+    $(ARCHSRCDIR)/src/timer/morphos/SDL_systimer \
+    $(ARCHSRCDIR)/src/video/aros/SDL_arosopengl \
+    $(ARCHSRCDIR)/src/video/aros/SDL_arosvideo \
+    $(ARCHSRCDIR)/src/video/morphos/SDL_mosclipboard \
+    $(ARCHSRCDIR)/src/video/morphos/SDL_mosevents \
+    $(ARCHSRCDIR)/src/video/morphos/SDL_mosframebuffer \
+    $(ARCHSRCDIR)/src/video/morphos/SDL_moskeyboard \
+    $(ARCHSRCDIR)/src/video/morphos/SDL_mosmessagebox \
+    $(ARCHSRCDIR)/src/video/morphos/SDL_mosmodes \
+    $(ARCHSRCDIR)/src/video/morphos/SDL_mosmouse \
+    $(ARCHSRCDIR)/src/video/morphos/SDL_mosshape \
+    $(ARCHSRCDIR)/src/video/morphos/SDL_moswindow
+
+FILES += $(SDL2AROSCOREFILES)
+
+# Hardware support files
+SDL2AROSHWFILES = \
+    $(ARCHSRCDIR)/src/audio/dummy/SDL_dummyaudio \
+    $(ARCHSRCDIR)/src/audio/ahi/SDL_ahi_audio \
+    $(ARCHSRCDIR)/src/haptic/dummy/SDL_syshaptic \
+    $(ARCHSRCDIR)/src/joystick/dummy/SDL_sysjoystick \
+    $(ARCHSRCDIR)/src/power/morphos/SDL_syspower \
+    $(ARCHSRCDIR)/src/sensor/dummy/SDL_dummysensor
+
+FILES += $(SDL2AROSHWFILES)
+
 SDL2INCDIR := $(AROS_INCLUDES)/SDL2
 
 NOWARN_FLAGS := $(NOWARN_STRINGOP_TRUNCATION)
@@ -182,7 +188,7 @@ USER_CPPFLAGS := \
 
 %build_module mmake=SDL2-aros-sharedlib \
     modname=SDL2 modtype=library \
-    files="SDL2_library SDL2_arosstubs $(FILES)" \
+    files="SDL2_library $(FILES)" \
     linklibobjs="$(SDL2_LOGSTUB)" \
     conffile=SDL2.conf \
     uselibs="iconv GL_rel"

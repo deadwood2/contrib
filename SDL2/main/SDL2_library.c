@@ -220,6 +220,20 @@ static int SDL2LIB_Open(LIBBASETYPEPTR LIBBASE)
 	return FALSE;
 }
 
+int SDL_LoadObject(void)
+{ 
+	return 0;
+}
+
+int SDL_LoadFunction(void)
+{
+	return 0;
+}
+
+int SDL_UnloadObject(void)
+{
+	return 0;
+}
 
 ADD2INITLIB(SDL2LIB_Init, 0);
 ADD2OPENLIB(SDL2LIB_Open, 0);
