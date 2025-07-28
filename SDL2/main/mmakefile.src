@@ -340,11 +340,15 @@ SDL2TESTCOMMONLIBFILES := \
     $(ARCHSRCDIR)/src/test/SDL_test_random \
     $(ARCHSRCDIR)/src/test/SDL_test_memory
 
+SDL2TESTUTILSLIBFILES := \
+    $(ARCHSRCDIR)/test/testutils \
+    $(ARCHSRCDIR)/test/testyuv_cvt
+
 %build_linklib mmake=SDL2-aros-test-commonlib libname=testcommon \
     files="$(SDL2TESTCOMMONLIBFILES)" libdir="$(GENDIR)/$(CURDIR)/lib"
 
 %build_linklib mmake=SDL2-aros-test-utillib libname=testutils \
-    files=$(ARCHSRCDIR)/test/testutils libdir="$(GENDIR)/$(CURDIR)/lib"
+    files="$(SDL2TESTUTILSLIBFILES)" libdir="$(GENDIR)/$(CURDIR)/lib"
 
 %build_progs mmake=SDL2-aros-tests-gl \
     files=$(SDL2GLTESTSFILES) targetdir=$(TESTEXEDIR) \
