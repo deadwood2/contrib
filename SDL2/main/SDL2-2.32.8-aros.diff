@@ -586,7 +586,7 @@ diff -ruN SDL2-2.32.8/include/begin_code.h SDL2-2.32.8.aros/include/begin_code.h
  #   define DECLSPEC
 diff -ruN SDL2-2.32.8/include/SDL_config_aros.h SDL2-2.32.8.aros/include/SDL_config_aros.h
 --- SDL2-2.32.8/include/SDL_config_aros.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/include/SDL_config_aros.h	2025-07-27 14:24:11.976841315 +0000
++++ SDL2-2.32.8.aros/include/SDL_config_aros.h	2025-07-28 16:03:48.979186309 +0000
 @@ -0,0 +1,490 @@
 +/*
 +  Simple DirectMedia Layer
@@ -15884,7 +15884,7 @@ diff -ruN SDL2-2.32.8/src/SDL_error.c SDL2-2.32.8.aros/src/SDL_error.c
  /* vi: set ts=4 sw=4 expandtab: */
 diff -ruN SDL2-2.32.8/src/SDL_log.c SDL2-2.32.8.aros/src/SDL_log.c
 --- SDL2-2.32.8/src/SDL_log.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/SDL_log.c	2025-07-28 10:45:12.391737819 +0000
++++ SDL2-2.32.8.aros/src/SDL_log.c	2025-07-28 15:51:50.239183490 +0000
 @@ -40,6 +40,10 @@
  #include <android/log.h>
  #endif
@@ -15931,15 +15931,7 @@ diff -ruN SDL2-2.32.8/src/SDL_log.c SDL2-2.32.8.aros/src/SDL_log.c
  #elif defined(__3DS__)
      {
          FILE *pFile;
-@@ -584,6 +595,7 @@
-     }
- #endif
- #if defined(HAVE_STDIO_H) && \
-+    !defined(__AROS__) && \
-     !(defined(__APPLE__) && (defined(SDL_VIDEO_DRIVER_COCOA) || defined(SDL_VIDEO_DRIVER_UIKIT)))
-     fprintf(stderr, "%s: %s\n", SDL_priority_prefixes[priority], message);
- #ifdef __NACL__
-@@ -607,5 +619,6 @@
+@@ -607,5 +618,6 @@
      SDL_log_function = callback;
      SDL_log_userdata = userdata;
  }
