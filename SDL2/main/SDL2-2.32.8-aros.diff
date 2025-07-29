@@ -2909,9 +2909,9 @@ diff -ruN SDL2-2.32.8/src/locale/morphos/SDL_syslocale.c SDL2-2.32.8.aros/src/lo
 +		snprintf(buf, buflen, "en_GB");  
 +
 +}
-diff -ruN SDL2-2.32.8/src/misc/morphos/SDL_sysurl.c SDL2-2.32.8.aros/src/misc/morphos/SDL_sysurl.c
---- SDL2-2.32.8/src/misc/morphos/SDL_sysurl.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/misc/morphos/SDL_sysurl.c	2025-07-27 14:24:16.128841337 +0000
+diff -ruN SDL2-2.32.8/src/misc/amigaos/SDL_sysurl.c SDL2-2.32.8.aros/src/misc/amigaos/SDL_sysurl.c
+--- SDL2-2.32.8/src/misc/amigaos/SDL_sysurl.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.8.aros/src/misc/amigaos/SDL_sysurl.c	2025-07-27 14:24:16.128841337 +0000
 @@ -0,0 +1,48 @@
 +/*
 +  Simple DirectMedia Layer
