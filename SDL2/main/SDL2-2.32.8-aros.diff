@@ -14065,9 +14065,9 @@ diff -ruN SDL2-2.32.8/src/dynapi/SDL_dynapi.h SDL2-2.32.8.aros/src/dynapi/SDL_dy
  #endif
  
  /* everyone else. This is where we turn on the API if nothing forced it off. */
-diff -ruN SDL2-2.32.8/src/events/scancodes_morphos.h SDL2-2.32.8.aros/src/events/scancodes_morphos.h
---- SDL2-2.32.8/src/events/scancodes_morphos.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/events/scancodes_morphos.h	2025-07-27 14:24:13.720841324 +0000
+diff -ruN SDL2-2.32.8/src/events/scancodes_amigaos.h SDL2-2.32.8.aros/src/events/scancodes_amigaos.h
+--- SDL2-2.32.8/src/events/scancodes_amigaos.h	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.8.aros/src/events/scancodes_amigaos.h	2025-07-29 10:33:58.597401006 +0000
 @@ -0,0 +1,144 @@
 +/*
 +  Simple DirectMedia Layer
@@ -14096,7 +14096,7 @@ diff -ruN SDL2-2.32.8/src/events/scancodes_morphos.h SDL2-2.32.8.aros/src/events
 +   - AmigaOS wiki
 +*/
 +/* *INDENT-OFF* */
-+static SDL_Scancode const morphos_scancode_table[] = {
++static SDL_Scancode const amigaos_scancode_table[] = {
 +    /*  0 */    SDL_SCANCODE_GRAVE,
 +    /*  1 */    SDL_SCANCODE_1,
 +    /*  2 */    SDL_SCANCODE_2,
@@ -18247,7 +18247,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosclipboard.c SDL2-2.32.8.aros/src/vi
 +  3. This notice may not be removed or altered from any source distribution.
 +*/
 +
-+#define DEBUG 1
++//#define DEBUG 1
 +#include <aros/debug.h>
 +
 +#include "../../SDL_internal.h"
@@ -18546,7 +18546,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosclipboard.h SDL2-2.32.8.aros/src/vi
 +#endif /* _SDL_arosclipboard_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.c
 --- SDL2-2.32.8/src/video/aros/SDL_arosevents.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.c	2025-07-28 21:11:41.798896722 +0000
++++ SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.c	2025-07-29 10:35:06.777400865 +0000
 @@ -0,0 +1,787 @@
 +/*
 +  Simple DirectMedia Layer
@@ -18569,7 +18569,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video
 +  3. This notice may not be removed or altered from any source distribution.
 +*/
 +
-+#define DEBUG 1
++//#define DEBUG 1
 +#include <aros/debug.h>
 +
 +#include "../../SDL_internal.h"
@@ -18578,7 +18578,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video
 +#include "../SDL_sysvideo.h"
 +#include "../../events/SDL_events_c.h"
 +#include "../../events/SDL_mouse_c.h"
-+#include "../../events/scancodes_morphos.h"
++#include "../../events/scancodes_amigaos.h"
 +
 +#include "SDL_arosvideo.h"
 +#include "SDL_aroswindow.h"
@@ -18699,8 +18699,8 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video
 +			break;
 +
 +		default:
-+			if (rawkey < sizeof(morphos_scancode_table) / sizeof(morphos_scancode_table[0])) {
-+                SDL_Scancode s = morphos_scancode_table[rawkey];
++			if (rawkey < sizeof(amigaos_scancode_table) / sizeof(amigaos_scancode_table[0])) {
++                SDL_Scancode s = amigaos_scancode_table[rawkey];
 +                if (m->Code < 128) {
 +                    char text[5] = { 0 };
 +					int length = AROS_TranslateUnicode(m, text);
@@ -19393,7 +19393,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosframebuffer.c SDL2-2.32.8.aros/src/
 +  3. This notice may not be removed or altered from any source distribution.
 +*/
 +
-+#define DEBUG 1
++//#define DEBUG 1
 +#include <aros/debug.h>
 +
 +#include "../../SDL_internal.h"
@@ -19543,7 +19543,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosframebuffer.h SDL2-2.32.8.aros/src/
 +#endif /* _SDL_arosframebuffer_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroskeyboard.c SDL2-2.32.8.aros/src/video/aros/SDL_aroskeyboard.c
 --- SDL2-2.32.8/src/video/aros/SDL_aroskeyboard.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_aroskeyboard.c	2025-07-28 19:07:53.934076430 +0000
++++ SDL2-2.32.8.aros/src/video/aros/SDL_aroskeyboard.c	2025-07-29 10:35:37.629400200 +0000
 @@ -0,0 +1,88 @@
 +/*
 +  Simple DirectMedia Layer
@@ -19566,14 +19566,14 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroskeyboard.c SDL2-2.32.8.aros/src/vid
 +  3. This notice may not be removed or altered from any source distribution.
 +*/
 +
-+#define DEBUG 1
++//#define DEBUG 1
 +#include <aros/debug.h>
 +
 +#include "../../SDL_internal.h"
 +
 +#include "../SDL_sysvideo.h"
 +#include "../../events/SDL_keyboard_c.h"
-+#include "../../events/scancodes_morphos.h"
++#include "../../events/scancodes_amigaos.h"
 +
 +#include <proto/keymap.h>
 +
@@ -19605,9 +19605,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroskeyboard.c SDL2-2.32.8.aros/src/vid
 +
 +    SDL_GetDefaultKeymap(keymap);
 +
-+    for (int i = 0; i < SDL_arraysize(morphos_scancode_table); i++) {
++    for (int i = 0; i < SDL_arraysize(amigaos_scancode_table); i++) {
 +        /* Make sure this scancode is a valid character scancode */
-+        const SDL_Scancode scancode  = morphos_scancode_table[i];
++        const SDL_Scancode scancode  = amigaos_scancode_table[i];
 +        if (scancode == SDL_SCANCODE_UNKNOWN)
 +            continue;
 +
@@ -19690,7 +19690,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmessagebox.c SDL2-2.32.8.aros/src/v
 +  3. This notice may not be removed or altered from any source distribution.
 +*/
 +
-+#define DEBUG 1
++//#define DEBUG 1
 +#include <aros/debug.h>
 +
 +#include "../../SDL_internal.h"
@@ -19836,7 +19836,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmodes.c SDL2-2.32.8.aros/src/video/
 +  3. This notice may not be removed or altered from any source distribution.
 +*/
 +
-+#define DEBUG 1
++//#define DEBUG 1
 +#include <aros/debug.h>
 +
 +#include "../../SDL_internal.h"
@@ -20375,7 +20375,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmouse.c SDL2-2.32.8.aros/src/video/
 +  3. This notice may not be removed or altered from any source distribution.
 +*/
 +
-+#define DEBUG 1
++//#define DEBUG 1
 +#include <aros/debug.h>
 +
 +#include "../../SDL_internal.h"
@@ -20782,7 +20782,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosopengl.c SDL2-2.32.8.aros/src/video
 +#include "../../SDL_internal.h"
 +
 +#if SDL_VIDEO_OPENGL_AGL
-+#define DEBUG 1
++//#define DEBUG 1
 +#include <aros/debug.h>
 +
 +#include "SDL_error.h"
@@ -21187,7 +21187,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosshape.c SDL2-2.32.8.aros/src/video/
 +  3. This notice may not be removed or altered from any source distribution.
 +*/
 +
-+#define DEBUG 1
++//#define DEBUG 1
 +#include <aros/debug.h>
 +
 +#include "../../SDL_internal.h"
@@ -21421,7 +21421,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosvideo.c SDL2-2.32.8.aros/src/video/
 +  3. This notice may not be removed or altered from any source distribution.
 +*/
 +
-+#define DEBUG 1
++//#define DEBUG 1
 +#include <aros/debug.h>
 +
 +#include <dos/bptr.h>
@@ -21937,7 +21937,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +  3. This notice may not be removed or altered from any source distribution.
 +*/
 +
-+#define DEBUG 1
++//#define DEBUG 1
 +#include <aros/debug.h>
 +
 +#include "../../SDL_internal.h"
