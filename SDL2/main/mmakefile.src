@@ -141,7 +141,7 @@ SDL2AROSCOREFILES = \
     $(ARCHSRCDIR)/src/thread/aros/SDL_sysmutex \
     $(ARCHSRCDIR)/src/thread/aros/SDL_syssem \
     $(ARCHSRCDIR)/src/thread/aros/SDL_systhread \
-    $(ARCHSRCDIR)/src/timer/morphos/SDL_systimer \
+    $(ARCHSRCDIR)/src/timer/aros/SDL_systimer \
     $(ARCHSRCDIR)/src/video/aros/SDL_arosclipboard \
     $(ARCHSRCDIR)/src/video/aros/SDL_arosevents \
     $(ARCHSRCDIR)/src/video/aros/SDL_arosframebuffer \
