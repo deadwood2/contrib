@@ -6,10 +6,11 @@ include $(SRCDIR)/config/aros-contrib.cfg
 #MM- contrib-sdl2 : SDL2-aros
 #MM- SDL2-aros-lib : SDL2-aros-sharedlib-linklib
 #MM- SDL2-aros : SDL2-aros-sharedlib SDL2-aros-tests
-#MM- SDL2-aros-tests : SDL2-aros-tests-main SDL2-aros-tests-gl SDL2-aros-tests-utils SDL2-aros-tests-aut SDL2-aros-tests-copyfiles
+#MM- SDL2-aros-tests : SDL2-aros-tests-main SDL2-aros-tests-gl SDL2-aros-tests-utils SDL2-aros-tests-native SDL2-aros-tests-aut SDL2-aros-tests-copyfiles
 #MM SDL2-aros-tests-main : includes linklibs contrib-sdl2-fetch development-sdl2 SDL2-aros-test-commonlib
 #MM SDL2-aros-tests-gl : includes linklibs contrib-sdl2-fetch development-sdl2
 #MM SDL2-aros-tests-utils : includes linklibs contrib-sdl2-fetch development-sdl2 SDL2-aros-test-commonlib SDL2-aros-test-utillib
+#MM SDL2-aros-tests-native : includes linklibs contrib-sdl2-fetch development-sdl2 SDL2-aros-test-commonlib SDL2-aros-test-utillib
 #MM SDL2-aros-tests-aut : includes linklibs contrib-sdl2-fetch development-sdl2 SDL2-aros-test-commonlib
 
 # Special target
@@ -162,7 +163,7 @@ SDL2AROSHWFILES = \
     $(ARCHSRCDIR)/src/audio/ahi/SDL_ahi_audio \
     $(ARCHSRCDIR)/src/haptic/dummy/SDL_syshaptic \
     $(ARCHSRCDIR)/src/joystick/dummy/SDL_sysjoystick \
-    $(ARCHSRCDIR)/src/power/morphos/SDL_syspower \
+    $(ARCHSRCDIR)/src/power/aros/SDL_syspower \
     $(ARCHSRCDIR)/src/sensor/dummy/SDL_dummysensor
 
 FILES += $(SDL2AROSHWFILES)
@@ -208,7 +209,7 @@ USER_CPPFLAGS := \
     files="SDL2_library $(FILES)" \
     linklibobjs="$(SDL2LINKLIBOBJS)" \
     conffile=SDL2.conf \
-    uselibs="iconv GL_rel"
+    uselibs="iconv GL"
 
 USER_CPPFLAGS :=
 
@@ -276,7 +277,6 @@ SDL2TESTSUTILSFILES := \
     $(ARCHSRCDIR)/test/testiconv \
     $(ARCHSRCDIR)/test/testime \
     $(ARCHSRCDIR)/test/testmultiaudio \
-    $(ARCHSRCDIR)/test/testnative \
     $(ARCHSRCDIR)/test/testoverlay2 \
     $(ARCHSRCDIR)/test/testrendertarget \
     $(ARCHSRCDIR)/test/testscale \
@@ -292,6 +292,10 @@ SDL2GLTESTSFILES := \
     $(ARCHSRCDIR)/test/testgles \
     $(ARCHSRCDIR)/test/testgles2 \
     $(ARCHSRCDIR)/test/testshader
+
+SDL2NATIVETESTSFILES := \
+    $(ARCHSRCDIR)/test/testnative \
+    $(ARCHSRCDIR)/test/testnativeamigaos
 
 SDL2AUTTESTSFILES := \
     $(ARCHSRCDIR)/test/testautomation \
@@ -349,11 +353,14 @@ SDL2TESTLIBDIR := $(GENDIR)/$(CURDIR)/lib
 %build_linklib mmake=SDL2-aros-test-utillib libname=testutils \
     files="$(SDL2TESTUTILSLIBFILES)" libdir="$(SDL2TESTLIBDIR)"
 
+USER_CPPFLAGS := -DHAVE_OPENGL
+USER_LDFLAGS := -L$(SDL2TESTLIBDIR)
+
 %build_progs mmake=SDL2-aros-tests-gl \
     files=$(SDL2GLTESTSFILES) targetdir=$(TESTEXEDIR) \
-    uselibs="SDL2 GL" usetree=yes srcdir=$(ARCHSRCDIR)/test
+    uselibs="testcommon SDL2 GL" usetree=yes srcdir=$(ARCHSRCDIR)/test
 
-USER_LDFLAGS := -L$(SDL2TESTLIBDIR)
+USER_CPPFLAGS :=
 
 %build_progs mmake=SDL2-aros-tests-main \
     files=$(SDL2TESTSFILES) targetdir=$(TESTEXEDIR) \
@@ -362,6 +369,10 @@ USER_LDFLAGS := -L$(SDL2TESTLIBDIR)
 %build_progs mmake=SDL2-aros-tests-utils \
     files=$(SDL2TESTSUTILSFILES) targetdir=$(TESTEXEDIR) \
     uselibs="testutils testcommon SDL2" usetree=yes srcdir=$(ARCHSRCDIR)/test
+
+%build_prog mmake=SDL2-aros-tests-native progname=testnative \
+    files="$(SDL2NATIVETESTSFILES)" targetdir=$(TESTEXEDIR) \
+    uselibs="testutils testcommon SDL2"
 
 %build_prog mmake=SDL2-aros-tests-aut progname=testautomation \
     files="$(SDL2AUTTESTSFILES)" targetdir=$(TESTEXEDIR) \

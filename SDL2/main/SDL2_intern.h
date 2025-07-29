@@ -20,10 +20,6 @@ struct SDL2Base
 	struct Library          *MyIconBase;
 	struct Library          *MyMUIMasterBase;
 	struct Library          *MyCxBase;
-	APTR                    aglcontext;
-    struct Library          **GLABasePtr;
-	void                    **GLAContext;
-	unsigned int		    (*MyGetMaximumContextVersion)(struct Library *GLABase);
 
 	// library management
 	struct SignalSemaphore Semaphore;

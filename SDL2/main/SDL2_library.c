@@ -19,7 +19,9 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
+//#define DEBUG 1
 #include <aros/debug.h>
+
 #include <aros/atomic.h>
 #include <aros/symbolsets.h>
 
@@ -38,6 +40,8 @@
 #include LC_LIBDEFS_FILE
 
 #include "SDL2_intern.h"
+
+extern void 	SDL_Quit(void);
 
 struct SDL2Base   *GlobalBase = NULL;
 
@@ -65,6 +69,7 @@ struct timerequest   GlobalTimeReq;
 
 static void init_system(LIBBASETYPEPTR LIBBASE)
 {
+    D(bug("[SDL2] %s(0x%p)\n", __func__, LIBBASE));
 	// Detect platform/chipset feature availability
 }
 
@@ -74,6 +79,8 @@ static void init_system(LIBBASETYPEPTR LIBBASE)
 
 static int init_libs(LIBBASETYPEPTR LIBBASE)
 {
+    D(bug("[SDL2] %s(0x%p)\n", __func__, LIBBASE));
+
 	if ((GfxBase = LIBBASE->MyGfxBase = (APTR)OpenLibrary("graphics.library", 39)) != NULL)
 	if ((DOSBase = LIBBASE->MyDOSBase = (APTR)OpenLibrary("dos.library", 36)) != NULL)
 	if ((IntuitionBase = LIBBASE->MyIntuiBase = (APTR)OpenLibrary("intuition.library", 39)) != NULL)
@@ -100,6 +107,8 @@ static int SDL2LIB_Init(LIBBASETYPEPTR LIBBASE)
 	GlobalBase = LIBBASE;
 	LIBBASE->Parent    = NULL;
 
+    D(bug("[SDL2] %s(0x%p)\n", __func__, LIBBASE));
+
 	InitSemaphore(&LIBBASE->Semaphore);
 
 	if (init_libs(LIBBASE) == 0)
@@ -116,6 +125,8 @@ static int SDL2LIB_Init(LIBBASETYPEPTR LIBBASE)
 
 static BOOL DeleteLib(LIBBASETYPEPTR LIBBASE)
 {
+    D(bug("[SDL2] %s(0x%p)\n", __func__, LIBBASE));
+
 	if (LIBBASE->_lib.lib_OpenCnt == 0)
 	{
 		CloseLibrary((struct Library *)LIBBASE->MyGfxBase);
@@ -135,6 +146,8 @@ static BOOL DeleteLib(LIBBASETYPEPTR LIBBASE)
 
 static void UserLibClose(LIBBASETYPEPTR LIBBASE, struct ExecBase *SysBase)
 {
+    D(bug("[SDL2] %s(0x%p)\n", __func__, LIBBASE));
+
 	CloseLibrary(LIBBASE->MyCyberGfxBase);
 	CloseLibrary(LIBBASE->MyKeymapBase);
 	CloseLibrary(LIBBASE->MyWorkbenchBase);
@@ -165,7 +178,11 @@ static void UserLibClose(LIBBASETYPEPTR LIBBASE, struct ExecBase *SysBase)
 
 static int SDL2LIB_Expunge(LIBBASETYPEPTR LIBBASE)
 {
-	LIBBASE->_lib.lib_Flags |= LIBF_DELEXP;
+    D(bug("[SDL2] %s(0x%p)\n", __func__, LIBBASE));
+
+	if (LIBBASE->_lib.lib_Flags & LIBF_DELEXP)
+		return FALSE;
+
 	return DeleteLib(LIBBASE);
 }
 
@@ -175,19 +192,22 @@ static int SDL2LIB_Expunge(LIBBASETYPEPTR LIBBASE)
 
 static void SDL2LIB_Close(LIBBASETYPEPTR LIBBASE)
 {
+    D(bug("[SDL2] %s(0x%p)\n", __func__, LIBBASE));
+
 	ObtainSemaphore(&LIBBASE->Semaphore);
 
-	LIBBASE->_lib.lib_OpenCnt--;
+	SDL_Quit();
 
+	LIBBASE->_lib.lib_OpenCnt--;
 	if (LIBBASE->_lib.lib_OpenCnt == 0)
 	{
 		UserLibClose(LIBBASE, SysBase);
 	}
+	else
+		LIBBASE->_lib.lib_Flags |= LIBF_DELEXP;
 
 	ReleaseSemaphore(&LIBBASE->Semaphore);
 
-	if (LIBBASE->_lib.lib_Flags & LIBF_DELEXP)
-		DeleteLib(LIBBASE);
 
 	return;
 }
@@ -198,6 +218,8 @@ static void SDL2LIB_Close(LIBBASETYPEPTR LIBBASE)
 
 static int SDL2LIB_Open(LIBBASETYPEPTR LIBBASE)
 {
+    D(bug("[SDL2] %s(0x%p)\n", __func__, LIBBASE));
+
 	if (((IntuitionBase    = LIBBASE->MyIntuiBase        = (APTR)OpenLibrary("intuition.library"    , 39)) != NULL)
 	 && ((CyberGfxBase     = LIBBASE->MyCyberGfxBase     = (APTR)OpenLibrary("cybergraphics.library", 40)) != NULL)
 	 && ((KeymapBase       = LIBBASE->MyKeymapBase       = (APTR)OpenLibrary("keymap.library"       , 36)) != NULL)
@@ -216,17 +238,20 @@ static int SDL2LIB_Open(LIBBASETYPEPTR LIBBASE)
 }
 
 int SDL_LoadObject(void)
-{ 
+{
+    D(bug("[SDL2] %s()\n", __func__));
 	return 0;
 }
 
 int SDL_LoadFunction(void)
 {
+    D(bug("[SDL2] %s()\n", __func__));
 	return 0;
 }
 
 int SDL_UnloadObject(void)
 {
+    D(bug("[SDL2] %s()\n", __func__));
 	return 0;
 }
 
