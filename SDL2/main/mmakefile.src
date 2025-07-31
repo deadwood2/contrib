@@ -19,6 +19,8 @@ include $(SRCDIR)/config/aros-contrib.cfg
 #MM SDL2-aros-sharedlib : includes linklibs  contrib-sdl2-fetch SDL2-aros-copy-includes workbench-devs-AHI workbench-libs-mesa-linklib \
 #MM  development-libiconv
 
+#MM SDL2-aros-staticlib : includes linklibs  contrib-sdl2-fetch SDL2-aros-copy-includes workbench-devs-AHI
+
 REPOSITORIES := http://www.libsdl.org/release/
 ARCHVER      := 2.32.8
 ARCHBASE     := SDL2-$(ARCHVER)
@@ -211,10 +213,12 @@ USER_CPPFLAGS := \
     conffile=SDL2.conf \
     uselibs="iconv GL"
 
-USER_CPPFLAGS :=
+USER_CPPFLAGS := \
+        -DSDL2_AROS_STATIC \
+        -DADATE="\"$(shell date '+%d.%m.%Y')\""
 
-%build_linklib mmake=SDL2-aros-staticlib libname=SDL_static \
-    files="$(FILES)"
+%build_linklib mmake=SDL2-aros-staticlib libname=SDL2_static \
+    files="SDL2_static $(FILES)"
 
 %copy_dir_recursive mmake=SDL2-aros-copy-includes \
     src=$(ARCHSRCDIR)/include/. dst="$(SDL2INCDIR)"

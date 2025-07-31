@@ -3240,7 +3240,7 @@ diff -ruN SDL2-2.32.8/src/SDL.c SDL2-2.32.8.aros/src/SDL.c
  #elif defined(__NGAGE__)
 diff -ruN SDL2-2.32.8/src/SDL_error.c SDL2-2.32.8.aros/src/SDL_error.c
 --- SDL2-2.32.8/src/SDL_error.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/SDL_error.c	2025-07-28 14:48:26.642876493 +0000
++++ SDL2-2.32.8.aros/src/SDL_error.c	2025-07-30 18:46:14.000000000 +0000
 @@ -60,6 +60,43 @@
      return -1;
  }
@@ -3281,7 +3281,7 @@ diff -ruN SDL2-2.32.8/src/SDL_error.c SDL2-2.32.8.aros/src/SDL_error.c
 +}
 +#endif
 +
-+#if !defined(__AROS__) || defined(SDL2_AROS_SHARED)
++#if !defined(__AROS__) || defined(SDL2_AROS_SHARED) || defined(SDL2_AROS_STATIC)
  /* Available for backwards compatibility */
  const char *SDL_GetError(void)
  {
@@ -3294,7 +3294,7 @@ diff -ruN SDL2-2.32.8/src/SDL_error.c SDL2-2.32.8.aros/src/SDL_error.c
  /* vi: set ts=4 sw=4 expandtab: */
 diff -ruN SDL2-2.32.8/src/SDL_log.c SDL2-2.32.8.aros/src/SDL_log.c
 --- SDL2-2.32.8/src/SDL_log.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/SDL_log.c	2025-07-28 15:51:50.239183490 +0000
++++ SDL2-2.32.8.aros/src/SDL_log.c	2025-07-30 18:47:19.000000000 +0000
 @@ -40,6 +40,10 @@
  #include <android/log.h>
  #endif
@@ -3310,7 +3310,7 @@ diff -ruN SDL2-2.32.8/src/SDL_log.c SDL2-2.32.8.aros/src/SDL_log.c
  
  #define DEFAULT_CATEGORY -1
  
-+#if !defined(__AROS__) || defined(SDL2_AROS_SHARED)
++#if !defined(__AROS__) || defined(SDL2_AROS_SHARED) || defined(SDL2_AROS_STATIC)
  typedef struct SDL_LogLevel
  {
      int category;
@@ -3326,7 +3326,7 @@ diff -ruN SDL2-2.32.8/src/SDL_log.c SDL2-2.32.8.aros/src/SDL_log.c
      va_end(ap);
  }
  
-+#if !defined(__AROS__) || defined(SDL2_AROS_SHARED)
++#if !defined(__AROS__) || defined(SDL2_AROS_SHARED) || defined(SDL2_AROS_STATIC)
  #ifdef __ANDROID__
  static const char *GetCategoryPrefix(int category)
  {
@@ -3363,12 +3363,12 @@ diff -ruN SDL2-2.32.8/src/stdlib/SDL_stdlib.c SDL2-2.32.8.aros/src/stdlib/SDL_st
  SDL_atan(double x)
 diff -ruN SDL2-2.32.8/src/stdlib/SDL_string.c SDL2-2.32.8.aros/src/stdlib/SDL_string.c
 --- SDL2-2.32.8/src/stdlib/SDL_string.c	2025-03-10 22:45:43.000000000 +0000
-+++ SDL2-2.32.8.aros/src/stdlib/SDL_string.c	2025-07-28 14:40:07.194826335 +0000
++++ SDL2-2.32.8.aros/src/stdlib/SDL_string.c	2025-07-30 18:43:56.000000000 +0000
 @@ -54,22 +54,23 @@
      return 0;
  }
  
-+#if !defined(__AROS__) || defined(SDL2_AROS_SHARED)
++#if !defined(__AROS__) || defined(SDL2_AROS_SHARED) || defined(SDL2_AROS_STATIC)
  #if !defined(HAVE_VSSCANF) || !defined(HAVE_STRTOL) || !defined(HAVE_STRTOUL) || !defined(HAVE_STRTOD)
  /**
 - * Parses an unsigned long long and returns the unsigned value and sign bit.
@@ -3483,7 +3483,7 @@ diff -ruN SDL2-2.32.8/src/stdlib/SDL_string.c SDL2-2.32.8.aros/src/stdlib/SDL_st
      return rc;
  }
  
-+#if !defined(__AROS__) || defined(SDL2_AROS_SHARED)
++#if !defined(__AROS__) || defined(SDL2_AROS_SHARED) || defined(SDL2_AROS_STATIC)
  #ifdef HAVE_VSSCANF
  int SDL_vsscanf(const char *text, const char *fmt, va_list ap)
  {
@@ -3499,7 +3499,7 @@ diff -ruN SDL2-2.32.8/src/stdlib/SDL_string.c SDL2-2.32.8.aros/src/stdlib/SDL_st
      return retval;
  }
  
-+#if !defined(__AROS__) || defined(SDL2_AROS_SHARED)
++#if !defined(__AROS__) || defined(SDL2_AROS_SHARED) || defined(SDL2_AROS_STATIC)
  #if defined(HAVE_LIBC) && defined(__WATCOMC__)
  /* _vsnprintf() doesn't ensure nul termination */
  int SDL_vsnprintf(SDL_OUT_Z_CAP(maxlen) char *text, size_t maxlen, const char *fmt, va_list ap)
@@ -3524,7 +3524,7 @@ diff -ruN SDL2-2.32.8/src/stdlib/SDL_string.c SDL2-2.32.8.aros/src/stdlib/SDL_st
      return retval;
  }
  
-+#if !defined(__AROS__) || defined(SDL2_AROS_SHARED)
++#if !defined(__AROS__) || defined(SDL2_AROS_SHARED) || defined(SDL2_AROS_STATIC)
  int SDL_vasprintf(char **strp, const char *fmt, va_list ap)
  {
      int retval;
@@ -5129,7 +5129,7 @@ diff -ruN SDL2-2.32.8/src/thread/SDL_systhread.h SDL2-2.32.8.aros/src/thread/SDL
  SDL_CreateThreadInternal(int(SDLCALL *fn)(void *), const char *name,
 diff -ruN SDL2-2.32.8/src/thread/SDL_thread.c SDL2-2.32.8.aros/src/thread/SDL_thread.c
 --- SDL2-2.32.8/src/thread/SDL_thread.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/thread/SDL_thread.c	2025-07-28 15:10:01.651006095 +0000
++++ SDL2-2.32.8.aros/src/thread/SDL_thread.c	2025-07-31 14:39:34.385811973 +0000
 @@ -28,15 +28,7 @@
  #include "SDL_hints.h"
  #include "../SDL_error_c.h"
@@ -5143,7 +5143,7 @@ diff -ruN SDL2-2.32.8/src/thread/SDL_thread.c SDL2-2.32.8.aros/src/thread/SDL_th
 -    SDL_SYS_InitTLSData();
 -}
 -
-+#if !defined(__AROS__) || defined(SDL2_AROS_SHARED)
++#if !defined(__AROS__) || defined(SDL2_AROS_SHARED) || defined(SDL2_AROS_STATIC)
  SDL_TLSID SDL_TLSCreate(void)
  {
      static SDL_atomic_t SDL_tls_id;
@@ -5314,7 +5314,7 @@ diff -ruN SDL2-2.32.8/src/thread/SDL_thread.c SDL2-2.32.8.aros/src/thread/SDL_th
      return &SDL_global_error;
  }
  
-+#if defined(__AROS__) && !defined(SDL2_AROS_SHARED)
++#if defined(__AROS__) && !(defined(SDL2_AROS_SHARED) || defined(SDL2_AROS_STATIC))
 +/* Routine to get the thread-specific error variable */
 +SDL_error *SDL_GetErrBuf(void)
 +{
