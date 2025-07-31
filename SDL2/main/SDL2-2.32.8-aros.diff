@@ -9324,8 +9324,8 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosvideo.h SDL2-2.32.8.aros/src/video/
 +#endif /* _SDL_arosvideo_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video/aros/SDL_aroswindow.c
 --- SDL2-2.32.8/src/video/aros/SDL_aroswindow.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_aroswindow.c	2025-07-29 12:07:38.757399853 +0000
-@@ -0,0 +1,1087 @@
++++ SDL2-2.32.8.aros/src/video/aros/SDL_aroswindow.c	2025-07-31 08:38:37.000000000 +0000
+@@ -0,0 +1,1097 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -9469,6 +9469,10 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +                ReplyMsg(&msg->ExecMessage);
 +            }
 +        }
++#if defined(__AROS__)
++		win->UserPort = NULL;
++		ModifyIDCMP(win, 0);
++#endif
 +		SDL_WindowData *data = (SDL_WindowData *) sdlwin->driverdata;
 +		if (data->menuactive == TRUE) {
 +            ClearMenuStrip(win);
@@ -9884,7 +9888,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +			WA_FrontWindow, win_top ? TRUE : FALSE,
 +#endif
 +			WA_AutoAdjust, TRUE,
++#if !defined(__AROS__)
 +			WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEMOVE | IDCMP_DELTAMOVE | IDCMP_MOUSEBUTTONS | IDCMP_REFRESHWINDOW | IDCMP_ACTIVEWINDOW | IDCMP_INACTIVEWINDOW | IDCMP_CHANGEWINDOW | IDCMP_GADGETUP | IDCMP_MENUPICK,
++#endif
 +			vd->CustomScreen ? TAG_IGNORE : WA_ExtraTitlebarGadgets, ETG_ICONIFY,
 +			TAG_DONE);
 +
@@ -9902,6 +9908,10 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +#endif
 +				}
 +			}
++#if defined(__AROS__)
++			data->win->UserPort = &vd->WinPort;
++			ModifyIDCMP(data->win, IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEMOVE | IDCMP_DELTAMOVE | IDCMP_MOUSEBUTTONS | IDCMP_REFRESHWINDOW | IDCMP_ACTIVEWINDOW | IDCMP_INACTIVEWINDOW | IDCMP_CHANGEWINDOW | IDCMP_GADGETUP | IDCMP_MENUPICK);
++#endif
 +
 +			data->curr_x = data->win->LeftEdge;
 +			data->curr_y = data->win->TopEdge;
