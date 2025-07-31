@@ -751,7 +751,7 @@ diff -ruN SDL2-2.32.8/sdl2-config SDL2-2.32.8.aros/sdl2-config
 +done
 diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/ahi/SDL_ahi_audio.c
 --- SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/audio/ahi/SDL_ahi_audio.c	2025-07-29 13:03:25.929402194 +0000
++++ SDL2-2.32.8.aros/src/audio/ahi/SDL_ahi_audio.c	2025-07-30 18:16:51.000000000 +0000
 @@ -0,0 +1,358 @@
 +/*
 +  Simple DirectMedia Layer
@@ -903,7 +903,7 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +	hidden->ahiport.mp_Node.ln_Pri = 60;
 +	hidden->ahiport.mp_Flags = PA_SIGNAL;
 +	hidden->ahiport.mp_SigBit = SIGBREAKB_CTRL_E;
-+	hidden->ahiport.mp_SigTask = SysBase->ThisTask;
++	hidden->ahiport.mp_SigTask = FindTask(NULL);
 +
 +	NEWLIST(&hidden->ahiport.mp_MsgList);
 +
@@ -3945,7 +3945,7 @@ diff -ruN SDL2-2.32.8/src/thread/aros/SDL_syssem.c SDL2-2.32.8.aros/src/thread/a
 +/* vi: set ts=4 sw=4 expandtab: */
 diff -ruN SDL2-2.32.8/src/thread/aros/SDL_systhread.c SDL2-2.32.8.aros/src/thread/aros/SDL_systhread.c
 --- SDL2-2.32.8/src/thread/aros/SDL_systhread.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/thread/aros/SDL_systhread.c	2025-07-28 10:27:58.744712368 +0000
++++ SDL2-2.32.8.aros/src/thread/aros/SDL_systhread.c	2025-07-30 18:10:51.000000000 +0000
 @@ -0,0 +1,105 @@
 +/*
 +  Simple DirectMedia Layer
@@ -4004,7 +4004,7 @@ diff -ruN SDL2-2.32.8/src/thread/aros/SDL_systhread.c SDL2-2.32.8.aros/src/threa
 +void
 +SDL_SYS_SetupThread(const char *name)
 +{
-+	struct Task *t = SysBase->ThisTask;
++	struct Task *t = FindTask(NULL);
 +
 +	t->tc_Node.ln_Name = (STRPTR)name;
 +}
@@ -4035,7 +4035,7 @@ diff -ruN SDL2-2.32.8/src/thread/aros/SDL_systhread.c SDL2-2.32.8.aros/src/threa
 +            break;
 +    }
 +	
-+	SetTaskPri(SysBase->ThisTask, pri);
++	SetTaskPri(FindTask(NULL), pri);
 +	return 0;
 +}
 +
@@ -5378,7 +5378,7 @@ diff -ruN SDL2-2.32.8/src/thread/SDL_thread_c.h SDL2-2.32.8.aros/src/thread/SDL_
  
 diff -ruN SDL2-2.32.8/src/timer/aros/SDL_systimer.c SDL2-2.32.8.aros/src/timer/aros/SDL_systimer.c
 --- SDL2-2.32.8/src/timer/aros/SDL_systimer.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/timer/aros/SDL_systimer.c	2025-07-29 09:34:23.349399224 +0000
++++ SDL2-2.32.8.aros/src/timer/aros/SDL_systimer.c	2025-07-30 18:12:50.000000000 +0000
 @@ -0,0 +1,119 @@
 +/*
 +  Simple DirectMedia Layer
@@ -5475,7 +5475,7 @@ diff -ruN SDL2-2.32.8/src/timer/aros/SDL_systimer.c SDL2-2.32.8.aros/src/timer/a
 +{
 +	port->mp_SigBit = SIGB_SINGLE;
 +	port->mp_Flags = PA_SIGNAL;
-+	port->mp_SigTask = SysBase->ThisTask;
++	port->mp_SigTask = FindTask(NULL);
 +	NEWLIST(&port->mp_MsgList);
 +}
 +
@@ -8781,7 +8781,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosshape.h SDL2-2.32.8.aros/src/video/
 +#endif /* _SDL_arosshape_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosvideo.c SDL2-2.32.8.aros/src/video/aros/SDL_arosvideo.c
 --- SDL2-2.32.8/src/video/aros/SDL_arosvideo.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosvideo.c	2025-07-29 12:05:50.865399456 +0000
++++ SDL2-2.32.8.aros/src/video/aros/SDL_arosvideo.c	2025-07-31 14:25:00.569817510 +0000
 @@ -0,0 +1,421 @@
 +/*
 +  Simple DirectMedia Layer
@@ -9061,7 +9061,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosvideo.c SDL2-2.32.8.aros/src/video/
 +{
 +	port->mp_Node.ln_Name = "SDL";
 +	port->mp_Flags = PA_SIGNAL;
-+	port->mp_SigTask = SysBase->ThisTask;
++	port->mp_SigTask = FindTask(NULL);
 +	NEWLIST(&port->mp_MsgList);
 +	port->mp_SigBit = AllocSignal(-1);
 +}
