@@ -3109,6 +3109,18 @@ diff -ruN SDL2-2.32.8/src/render/opengl/SDL_shaders_gl.c SDL2-2.32.8.aros/src/re
  #include "SDL_opengl.h"
  #include "SDL_video.h"
  #include "SDL_shaders_gl.h"
+diff -ruN SDL2-2.32.8/src/render/SDL_render.c SDL2-2.32.8.aros/src/render/SDL_render.c
+--- SDL2-2.32.8/src/render/SDL_render.c	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.8.aros/src/render/SDL_render.c	2025-07-31 07:38:53.000000000 +0000
+@@ -111,7 +111,7 @@
+     &METAL_RenderDriver,
+ #endif
+ #if SDL_VIDEO_RENDER_OGL
+-    &GL_RenderDriver,
++//    &GL_RenderDriver,
+ #endif
+ #if SDL_VIDEO_RENDER_OGL_ES2
+     &GLES2_RenderDriver,
 diff -ruN SDL2-2.32.8/src/SDL.c SDL2-2.32.8.aros/src/SDL.c
 --- SDL2-2.32.8/src/SDL.c	2025-01-01 15:47:53.000000000 +0000
 +++ SDL2-2.32.8.aros/src/SDL.c	2025-07-28 20:45:10.753574555 +0000
