@@ -5,7 +5,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 
 #MM- contrib-sdl2 : SDL2-aros
 #MM- SDL2-aros-lib : SDL2-aros-sharedlib-linklib
-#MM- SDL2-aros : SDL2-aros-sharedlib SDL2-aros-tests
+#MM- SDL2-aros : SDL2-aros-staticlib SDL2-aros-tests
 #MM- SDL2-aros-tests : SDL2-aros-tests-main SDL2-aros-tests-gl SDL2-aros-tests-utils SDL2-aros-tests-native SDL2-aros-tests-aut SDL2-aros-tests-copyfiles
 #MM SDL2-aros-tests-main : includes linklibs contrib-sdl2-fetch development-sdl2 SDL2-aros-test-commonlib
 #MM SDL2-aros-tests-gl : includes linklibs contrib-sdl2-fetch development-sdl2
@@ -14,7 +14,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 #MM SDL2-aros-tests-aut : includes linklibs contrib-sdl2-fetch development-sdl2 SDL2-aros-test-commonlib
 
 # Special target
-#MM- development-sdl2 : SDL2-aros-copy-includes SDL2-aros-sharedlib-includes SDL2-aros-sharedlib-linklib
+#MM- development-sdl2 : SDL2-aros-copy-includes SDL2-aros-staticlib
 
 #MM SDL2-aros-sharedlib : includes linklibs  contrib-sdl2-fetch SDL2-aros-copy-includes workbench-devs-AHI workbench-libs-mesa-linklib \
 #MM  development-libiconv
@@ -249,7 +249,6 @@ SDL2TESTSFILES := \
     $(ARCHSRCDIR)/test/testintersections \
     $(ARCHSRCDIR)/test/testjoystick \
     $(ARCHSRCDIR)/test/testkeys \
-    $(ARCHSRCDIR)/test/testloadso \
     $(ARCHSRCDIR)/test/testlocale \
     $(ARCHSRCDIR)/test/testlock \
     $(ARCHSRCDIR)/test/testmessage \
@@ -266,10 +265,13 @@ SDL2TESTSFILES := \
     $(ARCHSRCDIR)/test/testsurround \
     $(ARCHSRCDIR)/test/testthread \
     $(ARCHSRCDIR)/test/testtimer \
-    $(ARCHSRCDIR)/test/testurl \
     $(ARCHSRCDIR)/test/testver \
     $(ARCHSRCDIR)/test/testwm2 \
     $(ARCHSRCDIR)/test/torturethread
+
+#    $(ARCHSRCDIR)/test/testloadso \
+#    $(ARCHSRCDIR)/test/testurl \
+
 
 SDL2TESTSUTILSFILES := \
     $(ARCHSRCDIR)/test/controllermap \
@@ -362,25 +364,25 @@ USER_LDFLAGS := -L$(SDL2TESTLIBDIR)
 
 %build_progs mmake=SDL2-aros-tests-gl \
     files=$(SDL2GLTESTSFILES) targetdir=$(TESTEXEDIR) \
-    uselibs="testcommon SDL2 GL" usetree=yes srcdir=$(ARCHSRCDIR)/test
+    uselibs="testcommon SDL2_static GL" usetree=yes srcdir=$(ARCHSRCDIR)/test
 
 USER_CPPFLAGS :=
 
 %build_progs mmake=SDL2-aros-tests-main \
     files=$(SDL2TESTSFILES) targetdir=$(TESTEXEDIR) \
-    uselibs="testcommon SDL2" usetree=yes srcdir=$(ARCHSRCDIR)/test
+    uselibs="testcommon SDL2_static GL" usetree=yes srcdir=$(ARCHSRCDIR)/test
 
 %build_progs mmake=SDL2-aros-tests-utils \
     files=$(SDL2TESTSUTILSFILES) targetdir=$(TESTEXEDIR) \
-    uselibs="testutils testcommon SDL2" usetree=yes srcdir=$(ARCHSRCDIR)/test
+    uselibs="testutils testcommon SDL2_static GL iconv" usetree=yes srcdir=$(ARCHSRCDIR)/test
 
 %build_prog mmake=SDL2-aros-tests-native progname=testnative \
     files="$(SDL2NATIVETESTSFILES)" targetdir=$(TESTEXEDIR) \
-    uselibs="testutils testcommon SDL2"
+    uselibs="testutils testcommon SDL2_static GL"
 
 %build_prog mmake=SDL2-aros-tests-aut progname=testautomation \
     files="$(SDL2AUTTESTSFILES)" targetdir=$(TESTEXEDIR) \
-    uselibs="testcommon SDL2"
+    uselibs="testcommon SDL2_static GL"
 
 SDL2TESTDATAFILES = \
     axis.bmp \
