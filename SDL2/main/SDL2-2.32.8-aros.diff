@@ -6654,8 +6654,8 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.h SDL2-2.32.8.aros/src/video
 +#endif /* _SDL_arosevents_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosframebuffer.c SDL2-2.32.8.aros/src/video/aros/SDL_arosframebuffer.c
 --- SDL2-2.32.8/src/video/aros/SDL_arosframebuffer.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosframebuffer.c	2025-07-29 12:12:25.233400024 +0000
-@@ -0,0 +1,139 @@
++++ SDL2-2.32.8.aros/src/video/aros/SDL_arosframebuffer.c	2025-07-31 07:59:36.000000000 +0000
+@@ -0,0 +1,156 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
@@ -6709,6 +6709,10 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosframebuffer.c SDL2-2.32.8.aros/src/
 +        FreeBitMap(data->bitmap);
 +        data->bitmap = NULL;
 +    }
++    if (data->memfb) {
++        FreeVec(data->memfb);
++        data->memfb = NULL;
++    }
 +}
 +
 +int
@@ -6725,6 +6729,10 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosframebuffer.c SDL2-2.32.8.aros/src/
 +    if (data->bitmap) {
 +		D(bug("[SDL2:arosfb] %s: freeing existing bitmap @ 0x%p\n", __func__, data->bitmap));
 +        FreeBitMap(data->bitmap);
++    }
++    if (data->memfb) {
++        FreeVec(data->memfb);
++        data->memfb = NULL;
 +    }
 +
 +	if (!data->win) {
@@ -6762,7 +6770,12 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosframebuffer.c SDL2-2.32.8.aros/src/
 +
 +        FreeBitMap(data->bitmap);
 +        data->bitmap = NULL;
-+        return SDL_SetError("Failed to lock framebuffer bitmap");
++        data->memfb = AllocVec(window->w * window->h * 4, MEMF_CLEAR);
++        *pixels = data->memfb;
++        *pitch = window->w * 4;
++        if (*pixels == NULL)
++            return SDL_SetError("Failed to lock framebuffer bitmap");
++        return 0;
 +    }
 +
 +	D(bug("[SDL2:arosfb] %s: done\n", __func__));
@@ -6776,7 +6789,8 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosframebuffer.c SDL2-2.32.8.aros/src/
 +	D(bug("[SDL2:arosfb] %s()\n", __func__));
 +
 +	SDL_WindowData *data = (SDL_WindowData *) window->driverdata;
-+	if (data->bitmap && data->win) {
++
++	if ((data->bitmap || data->memfb) && data->win) {
 +		
 +		const struct IBox windowBox = {
 +                data->win->BorderLeft,
@@ -6790,7 +6804,10 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosframebuffer.c SDL2-2.32.8.aros/src/
 +			int dy = r->y + windowBox.Top;
 +		    int w =  MIN(r->w, windowBox.Width);
 +			int h = MIN(r->h, windowBox.Height);
-+			BltBitMapRastPort(data->bitmap,  r->x, r->y, data->win->RPort, dx, dy, w, h, 0xc0);
++			if (data->bitmap)
++				BltBitMapRastPort(data->bitmap,  r->x, r->y, data->win->RPort, dx, dy, w, h, 0xc0);
++			if (data->memfb)
++				WritePixelArray(data->memfb, r->x, r->y, window->w * 4, data->win->RPort, dx, dy, w, h, RECTFMT_BGRA32);
 +		}
 +	}
 +	return 0;
@@ -10398,8 +10415,8 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +}
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.h SDL2-2.32.8.aros/src/video/aros/SDL_aroswindow.h
 --- SDL2-2.32.8/src/video/aros/SDL_aroswindow.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_aroswindow.h	2025-07-28 18:04:23.689199026 +0000
-@@ -0,0 +1,136 @@
++++ SDL2-2.32.8.aros/src/video/aros/SDL_aroswindow.h	2025-07-31 07:43:42.000000000 +0000
+@@ -0,0 +1,137 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -10492,6 +10509,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.h SDL2-2.32.8.aros/src/video
 +	BOOL menuactive;
 +	
 +	struct BitMap *bitmap;
++	APTR memfb;
 +	
 +} SDL_WindowData;
 +
