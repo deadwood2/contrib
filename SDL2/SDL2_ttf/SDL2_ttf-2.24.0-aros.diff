@@ -1,0 +1,12 @@
+diff -ruN SDL2_ttf-2.24.0/Makefile.in SDL2_ttf-2.24.0.aros/Makefile.in
+--- SDL2_ttf-2.24.0/Makefile.in	2025-01-02 15:29:28.000000000 +0000
++++ SDL2_ttf-2.24.0.aros/Makefile.in	2025-08-01 18:53:29.211807343 +0000
+@@ -1392,7 +1392,7 @@
+ 
+ showfont$(EXEEXT): $(showfont_OBJECTS) $(showfont_DEPENDENCIES) $(EXTRA_showfont_DEPENDENCIES) 
+ 	@rm -f showfont$(EXEEXT)
+-	$(AM_V_CCLD)$(LINK) $(showfont_OBJECTS) $(showfont_LDADD) $(LIBS)
++	$(AM_V_CCLD)$(LINK) $(showfont_OBJECTS) $(showfont_LDADD) $(LIBS) -liconv
+ 
+ mostlyclean-compile:
+ 	-rm -f *.$(OBJEXT)

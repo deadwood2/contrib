@@ -20,7 +20,7 @@ REPOSITORIES := https://www.libsdl.org/projects/SDL_ttf/release \
  http://ftp.riken.jp/Linux/momonga/1/PKGS/SOURCES \
  http://kaneda.bohater.net/slackware/packages/source
 
-%fetch_and_build_gnu_development package=SDL2_ttf version=$(SDL2IMAGEVERS) patch=no \
+%fetch_and_build_gnu_development package=SDL2_ttf version=$(SDL2IMAGEVERS) patch=yes \
     package_repo="$(REPOSITORIES)" \
     suffixes="tar.gz" extraoptions="libdir=$(AROS_LIB) --disable-harfbuzz"
 
