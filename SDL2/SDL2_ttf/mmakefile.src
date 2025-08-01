@@ -1,0 +1,26 @@
+# Copyright © 2025, The AROS Development Team. All rights reserved.
+# $Id$
+
+include $(SRCDIR)/config/aros-contrib.cfg
+
+#MM- contrib-sdl2-sdl-ttf : development-SDL2_ttf
+
+#MM- development-SDL2_ttf : \
+#MM    SDL2-aros-lib \
+#MM    workbench-libs-z \
+#MM    workbench-libs-png-linklib \
+#MM    workbench-libs-jpeg-linklib
+
+USER_INCLUDES := -I$(AROS_INCLUDES)/SDL2 -I$(AROS_CONTRIB_INCLUDES)
+USER_LDFLAGS := -L$(AROS_CONTRIB_LIB)
+
+SDL2IMAGEVERS := 2.24.0
+REPOSITORIES := https://www.libsdl.org/projects/SDL_ttf/release \
+ http://downloads.openmoko.org/sources \
+ http://ftp.riken.jp/Linux/momonga/1/PKGS/SOURCES \
+ http://kaneda.bohater.net/slackware/packages/source
+
+%fetch_and_build_gnu_development package=SDL2_ttf version=$(SDL2IMAGEVERS) patch=no \
+    package_repo="$(REPOSITORIES)" \
+    suffixes="tar.gz" extraoptions="libdir=$(AROS_LIB) --disable-harfbuzz"
+
