@@ -217,7 +217,7 @@ USER_CPPFLAGS := \
         -DSDL2_AROS_STATIC \
         -DADATE="\"$(shell date '+%d.%m.%Y')\""
 
-%build_linklib mmake=SDL2-aros-staticlib libname=SDL2_static \
+%build_linklib mmake=SDL2-aros-staticlib libname=SDL2 \
     files="SDL2_static $(FILES)"
 
 %copy_dir_recursive mmake=SDL2-aros-copy-includes \
@@ -396,25 +396,25 @@ USER_LDFLAGS := -L$(SDL2TESTLIBDIR)
 
 %build_progs mmake=SDL2-aros-tests-gl \
     files=$(SDL2GLTESTSFILES) targetdir=$(TESTEXEDIR) \
-    uselibs="testcommon SDL2_static GL" usetree=yes srcdir=$(ARCHSRCDIR)/test
+    uselibs="testcommon SDL2 GL" usetree=yes srcdir=$(ARCHSRCDIR)/test
 
 USER_CPPFLAGS :=
 
 %build_progs mmake=SDL2-aros-tests-main \
     files=$(SDL2TESTSFILES) targetdir=$(TESTEXEDIR) \
-    uselibs="testcommon SDL2_static GL" usetree=yes srcdir=$(ARCHSRCDIR)/test
+    uselibs="testcommon SDL2 GL" usetree=yes srcdir=$(ARCHSRCDIR)/test
 
 %build_progs mmake=SDL2-aros-tests-utils \
     files=$(SDL2TESTSUTILSFILES) targetdir=$(TESTEXEDIR) \
-    uselibs="testutils testcommon SDL2_static GL iconv" usetree=yes srcdir=$(ARCHSRCDIR)/test
+    uselibs="testutils testcommon SDL2 GL iconv" usetree=yes srcdir=$(ARCHSRCDIR)/test
 
 %build_prog mmake=SDL2-aros-tests-native progname=testnative \
     files="$(SDL2NATIVETESTSFILES)" targetdir=$(TESTEXEDIR) \
-    uselibs="testutils testcommon SDL2_static GL"
+    uselibs="testutils testcommon SDL2 GL"
 
 %build_prog mmake=SDL2-aros-tests-aut progname=testautomation \
     files="$(SDL2AUTTESTSFILES)" targetdir=$(TESTEXEDIR) \
-    uselibs="testcommon SDL2_static GL"
+    uselibs="testcommon SDL2 GL"
 
 SDL2TESTDATAFILES = \
     axis.bmp \
