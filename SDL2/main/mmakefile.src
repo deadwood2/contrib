@@ -5,7 +5,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 
 #MM- contrib-sdl2 : SDL2-aros
 #MM- SDL2-aros-lib : SDL2-aros-sharedlib-linklib
-#MM- SDL2-aros : SDL2-aros-staticlib SDL2-aros-tests
+#MM- SDL2-aros : SDL2-aros-staticlib SDL2-aros-genfiles SDL2-aros-tests
 #MM- SDL2-aros-tests : SDL2-aros-tests-main SDL2-aros-tests-gl SDL2-aros-tests-utils SDL2-aros-tests-native SDL2-aros-tests-aut SDL2-aros-tests-copyfiles
 #MM SDL2-aros-tests-main : includes linklibs contrib-sdl2-fetch development-sdl2 SDL2-aros-test-commonlib
 #MM SDL2-aros-tests-gl : includes linklibs contrib-sdl2-fetch development-sdl2
@@ -14,7 +14,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 #MM SDL2-aros-tests-aut : includes linklibs contrib-sdl2-fetch development-sdl2 SDL2-aros-test-commonlib
 
 # Special target
-#MM- development-sdl2 : SDL2-aros-copy-includes SDL2-aros-staticlib
+#MM- development-sdl2 : SDL2-aros-copy-includes SDL2-aros-staticlib SDL2-aros-genfiles
 
 #MM SDL2-aros-sharedlib : includes linklibs  contrib-sdl2-fetch SDL2-aros-copy-includes workbench-devs-AHI workbench-libs-mesa-linklib \
 #MM  development-libiconv
@@ -222,6 +222,38 @@ USER_CPPFLAGS := \
 
 %copy_dir_recursive mmake=SDL2-aros-copy-includes \
     src=$(ARCHSRCDIR)/include/. dst="$(SDL2INCDIR)"
+
+$(AROS_DEVELOPER)/bin:
+	%mkdir_q dir=$@
+
+$(AROS_DEVELOPER)/bin/sdl2-config: $(SRCDIR)/$(CURDIR)/sdl2-config | $(AROS_DEVELOPER)/bin
+	@$(ECHO) Generating sdl2-config ...
+	@$(CP) $< $@
+	@$(CHMOD) a+x $@
+
+$(AROS_LIB)/pkgconfig:
+	%mkdir_q dir=$@
+
+$(AROS_LIB)/pkgconfig/sdl2.pc: $(ARCHSRCDIR)/sdl2.pc.in | $(AROS_LIB)/pkgconfig
+	@$(ECHO) Generating pkgconfig/sdl2.pc ...
+	@$(SED) \
+		-e 's#@prefix@#/PROGDIR#g' \
+		-e 's#@exec_prefix@#$${prefix}#g' \
+		-e 's#@libdir@#$${exec_prefix}/lib#g' \
+		-e 's#@includedir@#$${prefix}/include#g' \
+		-e 's#@SDL_VERSION@#$(ARCHVER)#g' \
+		-e 's#@PKGCONFIG_DEPENDS@##g' \
+		-e 's#@SDL_RLD_FLAGS@##g' \
+		-e 's#@SDL_LIBS@##g' \
+		-e 's#@PKGCONFIG_LIBS_PRIV@##g' \
+		-e 's#@SDL_STATIC_LIBS@#-lSDL2 -lGL#g' \
+		-e 's#@SDL_CFLAGS@#-D_GNU_SOURCE=1#g' \
+		$< > $@
+	@$(CHMOD) a+x $@
+
+#MM
+SDL2-aros-genfiles : $(AROS_DEVELOPER)/bin/sdl2-config $(AROS_LIB)/pkgconfig/sdl2.pc
+	$(Q)$(NOP)
 
 #MM SDL2-aros-copy-includes : contrib-sdl2-fetch
 
