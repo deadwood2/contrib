@@ -223,10 +223,10 @@ USER_CPPFLAGS := \
 %copy_dir_recursive mmake=SDL2-aros-copy-includes \
     src=$(ARCHSRCDIR)/include/. dst="$(SDL2INCDIR)"
 
-$(AROS_DEVELOPER)/bin:
+$(AROS_DEVELOPMENT)/bin:
 	%mkdir_q dir=$@
 
-$(AROS_DEVELOPER)/bin/sdl2-config: $(SRCDIR)/$(CURDIR)/sdl2-config | $(AROS_DEVELOPER)/bin
+$(AROS_DEVELOPMENT)/bin/sdl2-config: $(SRCDIR)/$(CURDIR)/sdl2-config | $(AROS_DEVELOPMENT)/bin
 	@$(ECHO) Generating sdl2-config ...
 	@$(CP) $< $@
 	@$(CHMOD) a+x $@
@@ -252,7 +252,7 @@ $(AROS_LIB)/pkgconfig/sdl2.pc: $(ARCHSRCDIR)/sdl2.pc.in | $(AROS_LIB)/pkgconfig
 	@$(CHMOD) a+x $@
 
 #MM
-SDL2-aros-genfiles : $(AROS_DEVELOPER)/bin/sdl2-config $(AROS_LIB)/pkgconfig/sdl2.pc
+SDL2-aros-genfiles : $(AROS_DEVELOPMENT)/bin/sdl2-config $(AROS_LIB)/pkgconfig/sdl2.pc
 	$(Q)$(NOP)
 
 #MM SDL2-aros-copy-includes : contrib-sdl2-fetch
