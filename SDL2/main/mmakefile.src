@@ -4,7 +4,7 @@
 include $(SRCDIR)/config/aros-contrib.cfg
 
 #MM- contrib-sdl2 : SDL2-aros
-#MM- SDL2-aros-lib : SDL2-aros-sharedlib-linklib
+#MM- SDL2-aros-lib : development-sdl2
 #MM- SDL2-aros : SDL2-aros-staticlib SDL2-aros-genfiles SDL2-aros-tests
 #MM- SDL2-aros-tests : SDL2-aros-tests-main SDL2-aros-tests-gl SDL2-aros-tests-utils SDL2-aros-tests-native SDL2-aros-tests-aut SDL2-aros-tests-copyfiles
 #MM SDL2-aros-tests-main : includes linklibs contrib-sdl2-fetch development-sdl2 SDL2-aros-test-commonlib
