@@ -22,7 +22,7 @@ OPENALARCHSRCDIR := $(PORTSDIR)/openal-soft/$(OPENALARCHBASE)
 
 %fetch mmake=contrib-openal-fetch archive=$(OPENALARCHBASE) destination=$(PORTSDIR)/openal-soft \
     location=$(PORTSSOURCEDIR) archive_origins=$(OPENALREPOSITORIES) suffixes=$(OPENALARCHSUFFIX) \
-    patches_specs=$(PATCHSPEC)
+    patches_specs=$(OPENALPATCHSPEC)
 
 %create_patch mmake=contrib-openal-create-patch \
     archive=$(OPENALARCHBASE) suffixes=$(OPENALARCHSUFFIX) \
