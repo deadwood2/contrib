@@ -8,13 +8,13 @@ include $(SRCDIR)/config/aros-contrib.cfg
 #MM- contrib-multimedia : contrib-openal
 
 #MM- contrib-openal : contrib-openal-linklib contrib-openal-library
-#MM- contrib-openal-common : includes contrib-openal-includes workbench-devs-AHI
+#MM- contrib-openal-common : includes contrib-openal-includes workbench-devs-AHI contrib-openal-genfiles
 
 #MM contrib-openal-linklib : contrib-openal-common
 #MM contrib-openal-library : contrib-openal-common
 
 OPENAL_VERSION := 1.16.0
-OPENALREPOSITORIES = https://openal-soft.org/openal-releases
+OPENALREPOSITORIES = http://openal-soft.org/openal-releases
 OPENALARCHBASE     := openal-soft-$(OPENAL_VERSION)
 OPENALARCHSUFFIX := "tar.bz2"
 OPENALPATCHSPEC := $(OPENALARCHBASE)-aros.diff:$(OPENALARCHBASE):-f,-p1
@@ -28,18 +28,50 @@ OPENALARCHSRCDIR := $(PORTSDIR)/openal-soft/$(OPENALARCHBASE)
     archive=$(OPENALARCHBASE) suffixes=$(OPENALARCHSUFFIX) \
     srcdir="openal-soft-$(OPENAL_VERSION)" destination=$(PORTSDIR)/openal-soft
 
+OPENAL_VERSION_MAJOR = $(shell echo "$(OPENAL_VERSION)" | cut -d"." -f1)
+OPENAL_VERSION_MINOR = $(shell echo "$(OPENAL_VERSION)" | cut -d"." -f2)
+OPENAL_VERSION_PATCH = $(shell echo "$(OPENAL_VERSION)" | cut -d"." -f3)
+
+ifeq ($(shell [ $(OPENAL_VERSION_MAJOR) -lt 2 ] && echo true),true)
+ifeq ($(shell [ $(OPENAL_VERSION_MINOR) -lt 20 ] && echo true),true)
+OPENALC_CCODE=yes
+ifeq ($(shell [ $(OPENAL_VERSION_MINOR) -lt 18 ] && echo true),true)
+USER_CPPFLAGS+= -DALSOFT_VERSION=\"$(OPENAL_VERSION)\"
+endif
+endif
+endif
+
 USER_INCLUDES := \
+        -I$(GENDIR)/$(CURDIR) \
         -I$(SRCDIR)/$(CURDIR) \
         -I$(OPENALARCHSRCDIR) \
-        -iquote $(OPENALARCHSRCDIR)/include \
+        -iquote $(OPENALARCHSRCDIR)/include
+ifeq ($(OPENALC_CCODE),yes)
+USER_INCLUDES += \
         -I$(OPENALARCHSRCDIR)/OpenAL32/Include \
         -I$(OPENALARCHSRCDIR)/Alc
+ifeq ($(shell [ $(OPENAL_VERSION_MINOR) -gt 16 ] && echo true),true)
+USER_INCLUDES += \
+        -I$(OPENALARCHSRCDIR)/common
+USER_CPPFLAGS += -D_GNU_SOURCE=1
+endif
+else
+USER_INCLUDES += \
+        -I$(OPENALARCHSRCDIR)/alc
+endif
 
 NOWARN_FLAGS := $(NOWARN_ARRAY_BOUNDS) $(NOWARN_VOLATILE_REGISTER_VAR)
 USER_CFLAGS := $(CFLAGS_GNU99) $(CFLAGS_FAST_MATH) -Wall $(NOWARN_FLAGS) -DAL_ALEXT_PROTOTYPES 
 # This is needed for inline functions (ReadRef & Co.) to be actually compiled in --enable-debug builds
 OPTIMIZATION_CFLAGS += -O2
 
+ifeq ($(AROS_TARGET_CPU),x86_64)
+ALC_MIXER_FILES += mixer_sse mixer_sse2
+#ALC_MIXER_FILES += mixer_sse41
+TARGET_ISA_CFLAGS += -msse -mfpmath=sse
+endif
+
+ifeq ($(OPENALC_CCODE),yes)
 OPENAL32_FILES = \
         alAuxEffectSlot \
         alBuffer \
@@ -47,35 +79,48 @@ OPENAL32_FILES = \
         alError \
         alExtension \
         alFilter \
-        alFontsound \
         alListener \
+        alSource \
+        alState \
+        sample_cvt
+
+ifeq ($(shell [ $(OPENAL_VERSION_MINOR) -lt 18 ] && echo true),true)
+OPENAL32_FILES += \
+        alFontsound \
         alMidi \
         alPreset \
         alSoundfont \
-        alSource \
-        alState \
-        alThunk \
-        sample_cvt
+        alThunk
+else
+OPENAL32_FILES += \
+        event
+endif
 
+ifeq ($(shell [ $(OPENAL_VERSION_MINOR) -lt 19 ] && echo true),true)
 ALC_MIXER_FILES = \
         mixer \
         mixer_c
-
-ifeq ($(AROS_TARGET_CPU),x86_64)
-ALC_MIXER_FILES += mixer_sse mixer_sse2
-##mixer_sse41
-TARGET_ISA_CFLAGS += -msse -mfpmath=sse
+else
+ALC_MIXER_FILES = \
+        mixer/mixer_c
 endif
 
 ALC_FILES = \
         ALc \
         ALu \
-        alcConfig \
         bs2b \
         helpers \
         hrtf \
         $(ALC_MIXER_FILES) \
         panning
+
+ifeq ($(shell [ $(OPENAL_VERSION_MINOR) -lt 19 ] && echo true),true)
+ALC_FILES += \
+        alcConfig
+else
+ALC_FILES += \
+        alconfig
+endif
 
 ALCEFFECTS_FILES = \
         autowah \
@@ -84,18 +129,28 @@ ALCEFFECTS_FILES = \
         dedicated \
         distortion \
         echo \
-        equalizer \
-        flanger \
-        modulator \
         ef_null \
+        equalizer \
+        modulator \
         reverb
 
+ifeq ($(shell [ $(OPENAL_VERSION_MINOR) -lt 19 ] && echo true),true)
+ALCEFFECTS_FILES += \
+        flanger
+else
+ALCEFFECTS_FILES += \
+        fshifter \
+        pshifter
+endif
+
+ifeq ($(shell [ $(OPENAL_VERSION_MINOR) -lt 18 ] && echo true),true)
 ALCMIDI_FILES = \
         m_base \
         dummy \
         fluidsynth \
         sf2load \
         soft
+endif
 
 ALCBACKEND_FILES = \
         ahi \
@@ -114,17 +169,57 @@ OPENAL_FILES = \
         $(addprefix Alc/, $(ALC_FILES)) \
         $(addprefix Alc/backends/, $(ALCBACKEND_FILES)) \
         $(addprefix Alc/effects/, $(ALCEFFECTS_FILES)) \
-        $(addprefix Alc/midi/, $(ALCMIDI_FILES)) \
         $(addprefix common/, $(COMMON_FILES))
+ifeq ($(shell [ $(OPENAL_VERSION_MINOR) -lt 18 ] && echo true),true)
+OPENAL_FILES += \
+        $(addprefix Alc/midi/, $(ALCMIDI_FILES))
+else
+OPENAL_GENFILES=$(GENDIR)/$(CURDIR)/version.h
+ifeq ($(shell [ $(OPENAL_VERSION_MINOR) -gt 18 ] && echo true),true)
+OPENAL_GENFILES += $(GENDIR)/$(CURDIR)/bsinc_inc.h
+endif
+endif
+
+OPENAL_CFILES = $(addprefix $(OPENALARCHSRCDIR)/,$(OPENAL_FILES))
+else
+
+endif
 
 %build_linklib mmake=contrib-openal-linklib libname=openal.static \
-    files="$(addprefix $(OPENALARCHSRCDIR)/,$(OPENAL_FILES))" objdir=$(OBJDIR)/static
+    files="$(OPENAL_CFILES)" cxxfiles="$(OPENAL_CXXFILES)" objdir=$(OBJDIR)/static
 
 %build_module mmake=contrib-openal-library modname=openal \
-    modtype=library files="$(addprefix $(OPENALARCHSRCDIR)/,$(OPENAL_FILES))" uselibs="pthread crtmod"
+    modtype=library files="$(OPENAL_CFILES)" cxxfiles="$(OPENAL_CXXFILES)" uselibs="pthread crtmod"
+
+Q=
+OPENAL_VERSION_DEPS+=$(SRCDIR)/$(CURDIR)/mmakefile.src
+$(GENDIR)/$(CURDIR)/version.h: $(OPENAL_VERSION_DEPS) | $(GENDIR)/$(CURDIR)
+	$(Q)$(IF) $(TEST) -f $(OPENALARCHSRCDIR)/version.h.in ; then \
+		$(SED) -e 's#$${LIB_VERSION}#$(OPENAL_VERSION)#g' \
+			-e 's#$${GIT_BRANCH}#UNKNOWN#g' \
+			-e 's#$${GIT_COMMIT_HASH}#unknown#g' \
+			$(OPENALARCHSRCDIR)/version.h.in > $@ ; \
+	fi
+
+Q=@
 
 #MM- contrib-openal : contrib-openal-utils
 #MM- contrib-openal-utils : contrib-openal-library
+
+#MM
+contrib-openal-genfiles : $(OPENAL_GENFILES)
+	$(Q)$(NOP)
+
+%build_prog mmake=contrib-openal-bsincgen \
+    progname=bsincgen compiler=host \
+    targetdir=$(HOSTGENDIR)/$(CURDIR) \
+    objdir=$(HOSTGENDIR)/$(CURDIR)/native-tools files="$(addprefix $(OPENALARCHSRCDIR)/native-tools/,bsincgen)" uselibs="m"
+
+$(GENDIR)/$(CURDIR)/bsinc_inc.h: $(HOSTGENDIR)/$(CURDIR)/bsincgen
+	$(Q)$(ECHO) "Generating bsinc_inc.h"
+	$(Q)$< $@
+
+#MM contrib-openal-bsincgen : contrib-openal-fetch
 
 #
 #  Targets to build the test(s)

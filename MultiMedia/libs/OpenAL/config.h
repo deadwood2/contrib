@@ -1,9 +1,18 @@
+/*
+ * Custom config.h for AROS targets
+  */
+
 /* API declaration export attribute */
 #define AL_API
 #define ALC_API
 
-/* Define to the library version */
-#define ALSOFT_VERSION "1.16.0"
+//Post 1.16.0
+/* Define if HRTF data is embedded in the library */
+/* #undef ALSOFT_EMBED_HRTF_DATA */
+
+//Post 1.18.2
+/* Define if we have the sysconf function */
+/* #undef HAVE_SYSCONF */
 
 /* Define if we have the C11 aligned_alloc function */
 /* #undef HAVE_ALIGNED_ALLOC */
@@ -14,10 +23,27 @@
 /* Define if we have the _aligned_malloc function */
 /* #undef HAVE__ALIGNED_MALLOC */
 
+// post 1.18.2
+/* Define if we have the proc_pidpath function */
+/* #undef HAVE_PROC_PIDPATH */
+
+// post 1.18.2
+/* Define if we have the getopt function */
+/* #undef HAVE_GETOPT */
+
 /* Define if we have SSE CPU extensions */
+#if defined(__x86_64__)
+#define HAVE_SSE 1
+#define HAVE_SSE2 1
+// post 1.16.0
+#define HAVE_SSE3 1
+/* #undef HAVE_SSE4_1 */
+#else
 /* #undef HAVE_SSE */
 /* #undef HAVE_SSE2 */
+/* #undef HAVE_SSE3 */
 /* #undef HAVE_SSE4_1 */
+#endif
 
 /* Define if we have the AHI backend */
 #define HAVE_AHI 1
@@ -25,6 +51,7 @@
 /* Define if we have ARM Neon CPU extensions */
 /* #undef HAVE_NEON */
 
+// pre 1.19.1
 /* Define if we have FluidSynth support */
 /* #undef HAVE_FLUIDSYNTH */
 
@@ -43,8 +70,13 @@
 /* Define if we have the QSA backend */
 /* #undef HAVE_QSA */
 
+// Pre 1.19.1
 /* Define if we have the MMDevApi backend */
 /* #undef HAVE_MMDEVAPI */
+
+// post 1.18.2
+/* Define if we have the WASAPI backend */
+/* #undef HAVE_WASAPI */
 
 /* Define if we have the DSound backend */
 /* #undef HAVE_DSOUND */
@@ -58,11 +90,23 @@
 /* Define if we have the PulseAudio backend */
 /* #undef HAVE_PULSEAUDIO */
 
+// post 1.16.0
+/* Define if we have the JACK backend */
+/* #undef HAVE_JACK */
+
 /* Define if we have the CoreAudio backend */
 /* #undef HAVE_COREAUDIO */
 
+// Post 1.16.0
+/* Define if we have the OpenSL backend */
+/* #undef HAVE_OPENSL */
+
 /* Define if we have the Wave Writer backend */
 #define HAVE_WAVE 1
+
+// Post 1.18.2
+/* Define if we have the SDL2 backend */
+#define HAVE_SDL2
 
 /* Define if we have the stat function */
 #define HAVE_STAT 1
@@ -70,8 +114,28 @@
 /* Define if we have the lrintf function */
 #define HAVE_LRINTF 1
 
+// Post 1.16.0
+/* Define if we have the modff function */
+/* HAVE_MODFF */
+
+//Post 1.16.0
+/* Define if we have the log2f function */
+#define HAVE_LOG2F 1
+
+//Post 1.16.0
+/* Define if we have the cbrtf function */
+#define HAVE_CBRTF 1
+
+//Post 1.16.0
+/* Define if we have the copysignf function */
+#define HAVE_COPYSIGNF 1
+
 /* Define if we have the strtof function */
 /* #undef HAVE_STRTOF */
+
+// Post 1.16.0
+/* Define if we have the strnlen function */
+/* #undef HAVE_STRNLEN */
 
 /* Define if we have the __int64 type */
 #define HAVE___INT64
@@ -94,6 +158,9 @@
 
 /* Define if we have C11 _Alignas support */
 #define HAVE_C11_ALIGNAS 1
+
+/* Define if we have __builtin_assume_aligned */
+#define HAVE_BUILTIN_ASSUME_ALIGNED 1
 #endif
 
 /* Define any available alignment declaration */
@@ -101,6 +168,13 @@
 #define ALIGN(x) _Alignas(x)
 #else
 #define ALIGN(x) __attribute__((aligned(x)))
+#endif
+
+/* Define a built-in call indicating an aligned data pointer */
+#if defined(HAVE_BUILTIN_ASSUME_ALIGNED)
+#define ASSUME_ALIGNED(x, y)  __builtin_assume_aligned(x, y)
+#else
+#define ASSUME_ALIGNED(x, y) x
 #endif
 
 /* Define if we have C11 _Atomic support */
@@ -130,17 +204,24 @@
 /* Define if we have pthread_np.h */
 /* #undef HAVE_PTHREAD_NP_H */
 
+// Pre 1.19.1
 /* Define if we have alloca.h */
 #define HAVE_ALLOCA_H 1
 
 /* Define if we have malloc.h */
 /* #undef HAVE_MALLOC_H */
 
+// Pre 1.19.1
 /* Define if we have ftw.h */
 /* #undef HAVE_FTW_H */
 
+// Pre 1.19.1
 /* Define if we have io.h */
 /* #undef HAVE_IO_H */
+
+// Post 1.16.0
+/* Define if we have dirent.h */
+#define HAVE_DIRENT_H 1
 
 /* Define if we have strings.h */
 #define HAVE_STRINGS_H 1
@@ -164,7 +245,7 @@
 /* #undef HAVE_IEEEFP_H */
 
 /* Define if we have float.h */
-/* #undef HAVE_FLOAT_H */
+#define HAVE_FLOAT_H 1
 
 /* Define if we have fenv.h */
 /* #undef HAVE_FENV_H */
@@ -175,15 +256,25 @@
 /* Define if we have the __cpuid() intrinsic */
 /* #undef HAVE_CPUID_INTRINSIC */
 
+// Post 1.16.0
+/* Define if we have the _BitScanForward64() intrinsic */
+/* #undef HAVE_BITSCANFORWARD64_INTRINSIC */
+
+// Post 1.16.0
+/* Define if we have the _BitScanForward() intrinsic */
+/* #undef HAVE_BITSCANFORWARD_INTRINSIC */
+
 /* Define if we have _controlfp() */
 /* #undef HAVE__CONTROLFP */
 
 /* Define if we have __control87_2() */
 /* #undef HAVE___CONTROL87_2 */
 
+// Pre 1.19.1
 /* Define if we have ftw() */
 /* #undef HAVE_FTW */
 
+// Pre 1.19.1
 /* Define if we have _wfindfirst() */
 /* #undef HAVE__WFINDFIRST */
 
@@ -192,6 +283,14 @@
 
 /* Define if we have pthread_setname_np() */
 /* #undef HAVE_PTHREAD_SETNAME_NP */
+
+// Post 1.16.0
+/* Define if pthread_setname_np() only accepts one parameter */
+/* #undef PTHREAD_SETNAME_NP_ONE_PARAM */
+
+// Post 1.16.0
+/* Define if pthread_setname_np() accepts three parameters */
+/* #undef PTHREAD_SETNAME_NP_THREE_PARAMS */
 
 /* Define if we have pthread_set_name_np() */
 /* #undef HAVE_PTHREAD_SET_NAME_NP */
