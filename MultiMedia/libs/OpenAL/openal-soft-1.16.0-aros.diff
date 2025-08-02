@@ -1,0 +1,1055 @@
+diff -ruN openal-soft-1.16.0/Alc/ALc.c openal-soft-1.16.0.aros/Alc/ALc.c
+--- openal-soft-1.16.0/Alc/ALc.c	2014-08-15 07:06:59.000000000 +0000
++++ openal-soft-1.16.0.aros/Alc/ALc.c	2020-01-15 04:16:20.073910300 +0000
+@@ -61,6 +61,9 @@
+ 
+ #define EmptyFuncs { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL }
+ static struct BackendInfo BackendList[] = {
++#ifdef HAVE_AHI
++    { "ahi", ALCahiBackendFactory_getFactory, NULL, NULL, NULL, EmptyFuncs },
++#endif
+ #ifdef HAVE_PULSEAUDIO
+     { "pulse", ALCpulseBackendFactory_getFactory, NULL, NULL, NULL, EmptyFuncs },
+ #endif
+@@ -955,7 +958,7 @@
+     }
+     FillCPUCaps(capfilter);
+ 
+-#ifdef _WIN32
++#if defined(_WIN32) || defined(__amigaos4__)
+     RTPrioLevel = 1;
+ #else
+     RTPrioLevel = 0;
+diff -ruN openal-soft-1.16.0/Alc/alcConfig.c openal-soft-1.16.0.aros/Alc/alcConfig.c
+--- openal-soft-1.16.0/Alc/alcConfig.c	2014-08-15 07:06:59.000000000 +0000
++++ openal-soft-1.16.0.aros/Alc/alcConfig.c	2020-01-15 04:16:20.076906700 +0000
+@@ -215,10 +215,7 @@
+             if(strcasecmp(section, "general") == 0)
+                 curSection[0] = 0;
+             else
+-            {
+-                strncpy(curSection, section, sizeof(curSection)-1);
+-                curSection[sizeof(curSection)-1] = 0;
+-            }
++                strlcpy(curSection, section, sizeof(curSection));
+ 
+             continue;
+         }
+@@ -319,6 +316,32 @@
+         }
+     }
+ }
++#elif defined(__amigaos4__)
++void ReadALConfig(void)
++{
++    const char *str;
++	FILE *f;
++
++	str = "ENV:alsoft.conf";
++
++    TRACE("Loading config %s...\n", str);
++    f = al_fopen(str, "r");
++    if(f)
++    {
++        LoadConfigFromFile(f);
++        fclose(f);
++    }
++
++	str = "PROGDIR:alsoft.conf";
++
++    TRACE("Loading config %s...\n", str);
++    f = al_fopen(str, "r");
++    if(f)
++    {
++        LoadConfigFromFile(f);
++        fclose(f);
++    }
++}
+ #else
+ void ReadALConfig(void)
+ {
+@@ -338,8 +361,7 @@
+ 
+     if(!(str=getenv("XDG_CONFIG_DIRS")) || str[0] == 0)
+         str = "/etc/xdg";
+-    strncpy(buffer, str, sizeof(buffer)-1);
+-    buffer[sizeof(buffer)-1] = 0;
++    strlcpy(buffer, str, sizeof(buffer));
+     /* Go through the list in reverse, since "the order of base directories
+      * denotes their importance; the first directory listed is the most
+      * important". Ergo, we need to load the settings from the later dirs
+@@ -356,8 +378,7 @@
+         else
+         {
+             size_t len = strlen(next);
+-            strncpy(next+len, "/alsoft.conf", buffer+sizeof(buffer)-next-len);
+-            buffer[sizeof(buffer)-1] = 0;
++            strlcpy(next+len, "/alsoft.conf", buffer+sizeof(buffer)-(next+len));
+ 
+             TRACE("Loading config %s...\n", next);
+             f = al_fopen(next, "r");
+@@ -440,8 +461,7 @@
+         snprintf(key, sizeof(key), "%s/%s", blockName, keyName);
+     else
+     {
+-        strncpy(key, keyName, sizeof(key)-1);
+-        key[sizeof(key)-1] = 0;
++        strlcpy(key, keyName, sizeof(key));
+     }
+ 
+     for(i = 0;i < cfgBlock.entryCount;i++)
+diff -ruN openal-soft-1.16.0/Alc/backends/ahi.c openal-soft-1.16.0.aros/Alc/backends/ahi.c
+--- openal-soft-1.16.0/Alc/backends/ahi.c	1970-01-01 00:00:00.000000000 +0000
++++ openal-soft-1.16.0.aros/Alc/backends/ahi.c	2020-01-15 04:16:20.079906400 +0000
+@@ -0,0 +1,343 @@
++/**
++ * OpenAL cross platform audio library
++ * Copyright (C) 1999-2007 by authors.
++ * This library is free software; you can redistribute it and/or
++ *  modify it under the terms of the GNU Library General Public
++ *  License as published by the Free Software Foundation; either
++ *  version 2 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ *  Library General Public License for more details.
++ *
++ * You should have received a copy of the GNU Library General Public
++ *  License along with this library; if not, write to the
++ *  Free Software Foundation, Inc., 59 Temple Place - Suite 330,
++ *  Boston, MA  02111-1307, USA.
++ * Or go to http://www.gnu.org/copyleft/lgpl.html
++ */
++
++#include "config.h"
++
++#include <sys/ioctl.h>
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <fcntl.h>
++#include <stdlib.h>
++#include <stdio.h>
++#include <string.h>
++#include <unistd.h>
++#include <errno.h>
++#include <math.h>
++
++#include "alMain.h"
++#include "alu.h"
++#include "threads.h"
++#include "compat.h"
++
++#include "backends/base.h"
++
++#include <devices/ahi.h>
++#include <proto/exec.h>
++
++static const ALCchar ahi_device[] = "AHI Default";
++
++static const char *ahi_driver = "ahi.device";
++
++typedef struct ALCplaybackAHI {
++	DERIVE_FROM_TYPE(ALCbackend);
++
++	int ahi_fmt;
++
++	struct MsgPort *ahip;
++	struct AHIRequest *ahir[2];
++	struct AHIRequest *link;
++
++	ALubyte *mix_data[2];
++	int data_size;
++
++	volatile int killNow;
++	althrd_t thread;
++} ALCplaybackAHI;
++
++static int ALCplaybackAHI_mixerProc(void *ptr);
++
++static void ALCplaybackAHI_Construct(ALCplaybackAHI *self, ALCdevice *device);
++static DECLARE_FORWARD(ALCplaybackAHI, ALCbackend, void, Destruct)
++static ALCenum ALCplaybackAHI_open(ALCplaybackAHI *self, const ALCchar *name);
++static void ALCplaybackAHI_close(ALCplaybackAHI *self);
++static ALCboolean ALCplaybackAHI_reset(ALCplaybackAHI *self);
++static ALCboolean ALCplaybackAHI_start(ALCplaybackAHI *self);
++static void ALCplaybackAHI_stop(ALCplaybackAHI *self);
++static DECLARE_FORWARD2(ALCplaybackAHI, ALCbackend, ALCenum, captureSamples, ALCvoid*, ALCuint)
++static DECLARE_FORWARD(ALCplaybackAHI, ALCbackend, ALCuint, availableSamples)
++static DECLARE_FORWARD(ALCplaybackAHI, ALCbackend, ALint64, getLatency)
++static DECLARE_FORWARD(ALCplaybackAHI, ALCbackend, void, lock)
++static DECLARE_FORWARD(ALCplaybackAHI, ALCbackend, void, unlock)
++DECLARE_DEFAULT_ALLOCATORS(ALCplaybackAHI)
++DEFINE_ALCBACKEND_VTABLE(ALCplaybackAHI);
++
++static int ALCplaybackAHI_mixerProc(void *ptr) {
++	ALCplaybackAHI *self = (ALCplaybackAHI*)ptr;
++	ALCdevice *device = STATIC_CAST(ALCbackend, self)->mDevice;
++	struct MsgPort *ahip = self->ahip;
++	ALint frameSize;
++	ALint cb = 0;
++
++    SetRTPriority();
++    althrd_setname(althrd_current(), MIXER_THREAD_NAME);
++
++	ahip->mp_SigTask = FindTask(NULL);
++	ahip->mp_SigBit = AllocSignal(-1);
++	ahip->mp_Flags = PA_SIGNAL;
++
++	frameSize = FrameSizeFromDevFmt(device->FmtChans, device->FmtType);
++
++	while(!self->killNow && device->Connected) {
++		ALint len = self->data_size;
++		ALubyte *WritePtr = self->mix_data[cb];
++		struct AHIRequest *ahir = self->ahir[cb];
++
++		aluMixData(device, WritePtr, len/frameSize);
++
++		ahir->ahir_Std.io_Message.mn_Node.ln_Pri = 127;
++		ahir->ahir_Std.io_Command = CMD_WRITE;
++		ahir->ahir_Std.io_Data    = WritePtr;
++		ahir->ahir_Std.io_Length  = len;
++		ahir->ahir_Frequency = device->Frequency;
++		ahir->ahir_Type      = self->ahi_fmt;
++		ahir->ahir_Volume    = 0x10000;
++		ahir->ahir_Position  = 0x8000;
++		ahir->ahir_Link      = self->link;
++	   	SendIO((struct IORequest*)ahir);
++
++		if(self->link != NULL) {
++			WaitIO((struct IORequest*)self->link);
++		}
++
++		self->link = ahir;
++		cb ^= 1;
++	}
++
++	if(self->link != NULL) {
++		WaitIO((struct IORequest*)self->link);
++	}
++
++	ahip->mp_Flags = PA_IGNORE;
++	FreeSignal(ahip->mp_SigBit);
++	ahip->mp_SigTask = NULL;
++	ahip->mp_SigBit = -1;
++
++	return 0;
++}
++
++static void ALCplaybackAHI_Construct(ALCplaybackAHI *self, ALCdevice *device) {
++	ALCbackend_Construct(STATIC_CAST(ALCbackend, self), device);
++	SET_VTABLE2(ALCplaybackAHI, ALCbackend, self);
++}
++
++static int get_ahi_format(ALCdevice *device) {
++	switch(ChannelsFromDevFmt(device->FmtChans)) {
++	case 1:
++		switch(device->FmtType) {
++		case DevFmtUByte:
++			device->FmtType = DevFmtByte;
++		case DevFmtByte:
++			return AHIST_M8S;
++		case DevFmtUShort:
++			device->FmtType = DevFmtShort;
++		case DevFmtShort:
++			return AHIST_M16S;
++		case DevFmtUInt:
++		case DevFmtFloat:
++			device->FmtType = DevFmtInt;
++		case DevFmtInt:
++			return AHIST_M32S;
++		default:
++			break;
++		}
++		break;
++	case 2:
++		switch(device->FmtType) {
++		case DevFmtUByte:
++			device->FmtType = DevFmtByte;
++		case DevFmtByte:
++			return AHIST_S8S;
++		case DevFmtUShort:
++			device->FmtType = DevFmtShort;
++		case DevFmtShort:
++			return AHIST_S16S;
++		case DevFmtUInt:
++		case DevFmtFloat:
++			device->FmtType = DevFmtInt;
++		case DevFmtInt:
++			return AHIST_S32S;
++		default:
++			break;
++		}
++		break;
++	default:
++		break;
++	}
++	ERR("Unknown format?! chans: %d type: %d\n", device->FmtChans, device->FmtType);
++	return -1;
++}
++
++static ALCenum ALCplaybackAHI_open(ALCplaybackAHI *self, const ALCchar *name) {
++	ALCdevice *device = STATIC_CAST(ALCbackend, self)->mDevice;
++
++	if(!name)
++		name = ahi_device;
++	else if(strcmp(name, ahi_device) != 0)
++		return ALC_INVALID_VALUE;
++
++	self->killNow = 0;
++
++	self->ahi_fmt = get_ahi_format(device);
++	if(self->ahi_fmt == -1)
++		return ALC_INVALID_VALUE;
++
++	self->ahip = CreateMsgPort();
++
++	self->ahir[0] = (struct AHIRequest*)CreateIORequest(self->ahip, sizeof(struct AHIRequest));
++	if(self->ahir[0] == NULL) {
++		return ALC_OUT_OF_MEMORY;
++	}
++
++	self->ahir[0]->ahir_Version = 4;
++
++	if(OpenDevice("ahi.device", AHI_DEFAULT_UNIT, (struct IORequest *)self->ahir[0], 0)
++		!= 0)
++	{
++		return ALC_OUT_OF_MEMORY;
++	}
++
++	self->ahir[1] = (struct AHIRequest*)CreateIORequest(self->ahip, sizeof(struct AHIRequest));
++	if(self->ahir[1] == NULL) {
++		return ALC_OUT_OF_MEMORY;
++	}
++
++        CopyMem(self->ahir[0], self->ahir[1], sizeof(struct AHIRequest));
++
++	al_string_copy_cstr(&device->DeviceName, name);
++
++	return ALC_NO_ERROR;
++}
++
++static void ALCplaybackAHI_close(ALCplaybackAHI *self) {
++	CloseDevice((struct IORequest*)self->ahir[0]);
++	DeleteIORequest(self->ahir[1]);
++	DeleteIORequest(self->ahir[0]);
++	self->ahir[0] = self->ahir[1] = NULL;
++
++	DeleteMsgPort(self->ahip);
++	self->ahip = NULL;
++
++	self->ahi_fmt = -1;
++}
++
++static ALCboolean ALCplaybackAHI_reset(ALCplaybackAHI *self) {
++	ALCdevice *device = STATIC_CAST(ALCbackend, self)->mDevice;
++
++	self->ahi_fmt = get_ahi_format(device);
++	if(self->ahi_fmt == -1)
++		return ALC_FALSE;
++
++	SetDefaultChannelOrder(device);
++
++	return ALC_TRUE;
++}
++
++static ALCboolean ALCplaybackAHI_start(ALCplaybackAHI *self) {
++	ALCdevice *device = STATIC_CAST(ALCbackend, self)->mDevice;
++
++	self->data_size = device->UpdateSize * FrameSizeFromDevFmt(device->FmtChans, device->FmtType);
++
++	self->mix_data[0] = AllocVec(self->data_size, MEMF_ANY);
++	self->mix_data[1] = AllocVec(self->data_size, MEMF_ANY);
++
++	if(self->mix_data[0] != NULL && self->mix_data[1] != NULL) {
++		self->killNow = 0;
++		if(althrd_create(&self->thread, ALCplaybackAHI_mixerProc, self) == althrd_success)
++			return ALC_TRUE;
++	}
++
++	FreeVec(self->mix_data[1]);
++	FreeVec(self->mix_data[0]);
++	self->mix_data[0] = self->mix_data[1] = NULL;
++
++	return ALC_FALSE;
++}
++
++static void ALCplaybackAHI_stop(ALCplaybackAHI *self) {
++	int res;
++
++	if(self->killNow)
++		return;
++
++	self->killNow = 1;
++	althrd_join(self->thread, &res);
++
++	FreeVec(self->mix_data[1]);
++	FreeVec(self->mix_data[0]);
++	self->mix_data[0] = self->mix_data[1] = NULL;
++}
++
++typedef struct ALCahiBackendFactory {
++	DERIVE_FROM_TYPE(ALCbackendFactory);
++} ALCahiBackendFactory;
++#define ALCAHIBACKENDFACTORY_INITIALIZER { { GET_VTABLE2(ALCahiBackendFactory, ALCbackendFactory) } }
++
++ALCbackendFactory *ALCahiBackendFactory_getFactory(void);
++
++static ALCboolean ALCahiBackendFactory_init(ALCahiBackendFactory *self);
++static DECLARE_FORWARD(ALCahiBackendFactory, ALCbackendFactory, void, deinit)
++static ALCboolean ALCahiBackendFactory_querySupport(ALCahiBackendFactory *self, ALCbackend_Type type);
++static void ALCahiBackendFactory_probe(ALCahiBackendFactory *self, enum DevProbe type);
++static ALCbackend* ALCahiBackendFactory_createBackend(ALCahiBackendFactory *self, ALCdevice *device, ALCbackend_Type type);
++DEFINE_ALCBACKENDFACTORY_VTABLE(ALCahiBackendFactory);
++
++ALCbackendFactory *ALCahiBackendFactory_getFactory(void) {
++	static ALCahiBackendFactory factory = ALCAHIBACKENDFACTORY_INITIALIZER;
++	return STATIC_CAST(ALCbackendFactory, &factory);
++}
++
++ALCboolean ALCahiBackendFactory_init(ALCahiBackendFactory* UNUSED(self)) {
++	ConfigValueStr("ahi", "device", &ahi_driver);
++
++	return ALC_TRUE;
++}
++
++ALCboolean ALCahiBackendFactory_querySupport(ALCahiBackendFactory* UNUSED(self), ALCbackend_Type type) {
++	if(type == ALCbackend_Playback)
++		return ALC_TRUE;
++	return ALC_FALSE;
++}
++
++void ALCahiBackendFactory_probe(ALCahiBackendFactory* UNUSED(self), enum DevProbe type) {
++	switch(type) {
++		case ALL_DEVICE_PROBE:
++			AppendAllDevicesList(ahi_device);
++			break;
++		case CAPTURE_DEVICE_PROBE:
++			break;
++	}
++}
++
++ALCbackend* ALCahiBackendFactory_createBackend(ALCahiBackendFactory* UNUSED(self), ALCdevice *device, ALCbackend_Type type) {
++	if(type == ALCbackend_Playback) {
++		ALCplaybackAHI *backend;
++
++		backend = ALCplaybackAHI_New(sizeof(*backend));
++		if(!backend) return NULL;
++		memset(backend, 0, sizeof(*backend));
++
++		ALCplaybackAHI_Construct(backend, device);
++
++		return STATIC_CAST(ALCbackend, backend);
++    }
++
++    return NULL;
++}
++
+diff -ruN openal-soft-1.16.0/Alc/backends/base.h openal-soft-1.16.0.aros/Alc/backends/base.h
+--- openal-soft-1.16.0/Alc/backends/base.h	2014-08-15 07:06:59.000000000 +0000
++++ openal-soft-1.16.0.aros/Alc/backends/base.h	2020-01-15 04:16:20.082121100 +0000
+@@ -120,6 +120,7 @@
+ }
+ 
+ 
++ALCbackendFactory *ALCahiBackendFactory_getFactory(void);
+ ALCbackendFactory *ALCpulseBackendFactory_getFactory(void);
+ ALCbackendFactory *ALCalsaBackendFactory_getFactory(void);
+ ALCbackendFactory *ALCossBackendFactory_getFactory(void);
+diff -ruN openal-soft-1.16.0/Alc/effects/ef_null.c openal-soft-1.16.0.aros/Alc/effects/ef_null.c
+--- openal-soft-1.16.0/Alc/effects/ef_null.c	1970-01-01 00:00:00.000000000 +0000
++++ openal-soft-1.16.0.aros/Alc/effects/ef_null.c	2020-01-15 04:16:20.100906100 +0000
+@@ -0,0 +1,165 @@
++#include "config.h"
++
++#include <stdlib.h>
++
++#include "AL/al.h"
++#include "AL/alc.h"
++#include "alMain.h"
++#include "alAuxEffectSlot.h"
++#include "alError.h"
++
++
++typedef struct ALnullState {
++    DERIVE_FROM_TYPE(ALeffectState);
++} ALnullState;
++
++
++/* This destructs (not free!) the effect state. It's called only when the
++ * effect slot is no longer used.
++ */
++static ALvoid ALnullState_Destruct(ALnullState* UNUSED(state))
++{
++}
++
++/* This updates the device-dependant effect state. This is called on
++ * initialization and any time the device parameters (eg. playback frequency,
++ * format) have been changed.
++ */
++static ALboolean ALnullState_deviceUpdate(ALnullState* UNUSED(state), ALCdevice* UNUSED(device))
++{
++    return AL_TRUE;
++}
++
++/* This updates the effect state. This is called any time the effect is
++ * (re)loaded into a slot.
++ */
++static ALvoid ALnullState_update(ALnullState* UNUSED(state), ALCdevice* UNUSED(device), const ALeffectslot* UNUSED(slot))
++{
++}
++
++/* This processes the effect state, for the given number of samples from the
++ * input to the output buffer. The result should be added to the output buffer,
++ * not replace it.
++ */
++static ALvoid ALnullState_process(ALnullState* UNUSED(state), ALuint UNUSED(samplesToDo), const ALfloat *restrict UNUSED(samplesIn), ALfloat (*restrict samplesOut)[BUFFERSIZE])
++{
++    /* NOTE: Couldn't use the UNUSED macro on samplesOut due to the way GCC's
++     * __attribute__ declaration interacts with the parenthesis. */
++    (void)samplesOut;
++}
++
++/* This allocates memory to store the object, before it gets constructed.
++ * DECLARE_DEFAULT_ALLOCATORS can be used to declate a default method.
++ */
++static void *ALnullState_New(size_t size)
++{
++    return malloc(size);
++}
++
++/* This frees the memory used by the object, after it has been destructed.
++ * DECLARE_DEFAULT_ALLOCATORS can be used to declate a default method.
++ */
++static void ALnullState_Delete(void *ptr)
++{
++    free(ptr);
++}
++
++/* Define the forwards and the ALeffectState vtable for this type. */
++DEFINE_ALEFFECTSTATE_VTABLE(ALnullState);
++
++
++typedef struct ALnullStateFactory {
++    DERIVE_FROM_TYPE(ALeffectStateFactory);
++} ALnullStateFactory;
++
++/* Creates ALeffectState objects of the appropriate type. */
++ALeffectState *ALnullStateFactory_create(ALnullStateFactory *UNUSED(factory))
++{
++    ALnullState *state;
++
++    state = ALnullState_New(sizeof(*state));
++    if(!state) return NULL;
++    /* Set vtables for inherited types. */
++    SET_VTABLE2(ALnullState, ALeffectState, state);
++
++    return STATIC_CAST(ALeffectState, state);
++}
++
++/* Define the ALeffectStateFactory vtable for this type. */
++DEFINE_ALEFFECTSTATEFACTORY_VTABLE(ALnullStateFactory);
++
++ALeffectStateFactory *ALnullStateFactory_getFactory(void)
++{
++    static ALnullStateFactory NullFactory = { { GET_VTABLE2(ALnullStateFactory, ALeffectStateFactory) } };
++
++    return STATIC_CAST(ALeffectStateFactory, &NullFactory);
++}
++
++
++void ALnull_setParami(ALeffect* UNUSED(effect), ALCcontext *context, ALenum param, ALint UNUSED(val))
++{
++    switch(param)
++    {
++        default:
++            SET_ERROR_AND_RETURN(context, AL_INVALID_ENUM);
++    }
++}
++void ALnull_setParamiv(ALeffect* UNUSED(effect), ALCcontext *context, ALenum param, const ALint* UNUSED(vals))
++{
++    switch(param)
++    {
++        default:
++            SET_ERROR_AND_RETURN(context, AL_INVALID_ENUM);
++    }
++}
++void ALnull_setParamf(ALeffect* UNUSED(effect), ALCcontext *context, ALenum param, ALfloat UNUSED(val))
++{
++    switch(param)
++    {
++        default:
++            SET_ERROR_AND_RETURN(context, AL_INVALID_ENUM);
++    }
++}
++void ALnull_setParamfv(ALeffect* UNUSED(effect), ALCcontext *context, ALenum param, const ALfloat* UNUSED(vals))
++{
++    switch(param)
++    {
++        default:
++            SET_ERROR_AND_RETURN(context, AL_INVALID_ENUM);
++    }
++}
++
++void ALnull_getParami(const ALeffect* UNUSED(effect), ALCcontext *context, ALenum param, ALint* UNUSED(val))
++{
++    switch(param)
++    {
++        default:
++            SET_ERROR_AND_RETURN(context, AL_INVALID_ENUM);
++    }
++}
++void ALnull_getParamiv(const ALeffect* UNUSED(effect), ALCcontext *context, ALenum param, ALint* UNUSED(vals))
++{
++    switch(param)
++    {
++        default:
++            SET_ERROR_AND_RETURN(context, AL_INVALID_ENUM);
++    }
++}
++void ALnull_getParamf(const ALeffect* UNUSED(effect), ALCcontext *context, ALenum param, ALfloat* UNUSED(val))
++{
++    switch(param)
++    {
++        default:
++            SET_ERROR_AND_RETURN(context, AL_INVALID_ENUM);
++    }
++}
++void ALnull_getParamfv(const ALeffect* UNUSED(effect), ALCcontext *context, ALenum param, ALfloat* UNUSED(vals))
++{
++    switch(param)
++    {
++        default:
++            SET_ERROR_AND_RETURN(context, AL_INVALID_ENUM);
++    }
++}
++
++DEFINE_ALEFFECT_VTABLE(ALnull);
+diff -ruN openal-soft-1.16.0/Alc/helpers.c openal-soft-1.16.0.aros/Alc/helpers.c
+--- openal-soft-1.16.0/Alc/helpers.c	2014-08-15 07:06:59.000000000 +0000
++++ openal-soft-1.16.0.aros/Alc/helpers.c	2020-01-15 04:16:20.105255700 +0000
+@@ -86,6 +86,10 @@
+ #include <shlobj.h>
+ #endif
+ 
++#ifdef __amigaos4__
++#include <proto/exec.h>
++#endif
++
+ #include "alMain.h"
+ #include "alu.h"
+ #include "atomic.h"
+@@ -538,6 +542,18 @@
+ 
+     return NULL;
+ }
++#elif defined(__amigaos4__)
++FILE *OpenDataFile(const char *fname, const char *subdir)
++{
++	FILE *f;
++	if((f=al_fopen(fname, "rb")) != NULL)
++	{
++		TRACE("Opened %s\n", fname);
++		return f;
++	}
++	WARN("Could not open %s\n", fname);
++	return NULL;
++}
+ #else
+ FILE *OpenDataFile(const char *fname, const char *subdir)
+ {
+@@ -596,7 +612,7 @@
+ 
+         if(len > sizeof(buffer)-1)
+             len = sizeof(buffer)-1;
+-        strncpy(buffer, str, len);
++        memcpy(buffer, str, len);
+         buffer[len] = '\0';
+         snprintf(buffer+len, sizeof(buffer)-len, "/%s/%s", subdir, fname);
+ 
+@@ -620,6 +636,9 @@
+ #ifdef _WIN32
+     if(RTPrioLevel > 0)
+         failed = !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
++#elif defined(__amigaos4__)
++	if(RTPrioLevel > 0)
++		IExec->SetTaskPri(IExec->FindTask(NULL), 10);
+ #elif defined(HAVE_PTHREAD_SETSCHEDPARAM) && !defined(__OpenBSD__)
+     if(RTPrioLevel > 0)
+     {
+diff -ruN openal-soft-1.16.0/Alc/midi/m_base.c openal-soft-1.16.0.aros/Alc/midi/m_base.c
+--- openal-soft-1.16.0/Alc/midi/m_base.c	1970-01-01 00:00:00.000000000 +0000
++++ openal-soft-1.16.0.aros/Alc/midi/m_base.c	2020-01-15 04:16:20.109910100 +0000
+@@ -0,0 +1,244 @@
++
++#include "config.h"
++
++#include <stdlib.h>
++#include <string.h>
++#include <limits.h>
++
++#include "midi/base.h"
++
++#include "alMidi.h"
++#include "alMain.h"
++#include "alError.h"
++#include "alThunk.h"
++#include "evtqueue.h"
++#include "rwlock.h"
++#include "alu.h"
++
++
++extern inline ALboolean IsValidCtrlInput(int cc);
++
++extern inline size_t Reader_read(Reader *self, void *buf, size_t len);
++
++
++/* MIDI events */
++#define SYSEX_EVENT  (0xF0)
++
++
++void InitEvtQueue(EvtQueue *queue)
++{
++    queue->events = NULL;
++    queue->maxsize = 0;
++    queue->size = 0;
++    queue->pos = 0;
++}
++
++void ResetEvtQueue(EvtQueue *queue)
++{
++    ALsizei i;
++    for(i = 0;i < queue->size;i++)
++    {
++        if(queue->events[i].event == SYSEX_EVENT)
++        {
++            free(queue->events[i].param.sysex.data);
++            queue->events[i].param.sysex.data = NULL;
++        }
++    }
++
++    free(queue->events);
++    queue->events = NULL;
++    queue->maxsize = 0;
++    queue->size = 0;
++    queue->pos = 0;
++}
++
++ALenum InsertEvtQueue(EvtQueue *queue, const MidiEvent *evt)
++{
++    ALsizei pos;
++
++    if(queue->maxsize == queue->size)
++    {
++        if(queue->pos > 0)
++        {
++            /* Queue has some stale entries, remove them to make space for more
++             * events. */
++            for(pos = 0;pos < queue->pos;pos++)
++            {
++                if(queue->events[pos].event == SYSEX_EVENT)
++                {
++                    free(queue->events[pos].param.sysex.data);
++                    queue->events[pos].param.sysex.data = NULL;
++                }
++            }
++            memmove(&queue->events[0], &queue->events[queue->pos],
++                    (queue->size-queue->pos)*sizeof(queue->events[0]));
++            queue->size -= queue->pos;
++            queue->pos = 0;
++        }
++        else
++        {
++            /* Queue is full, double the allocated space. */
++            void *temp = NULL;
++            ALsizei newsize;
++
++            newsize = (queue->maxsize ? (queue->maxsize<<1) : 16);
++            if(newsize > queue->maxsize)
++                temp = realloc(queue->events, newsize * sizeof(queue->events[0]));
++            if(!temp)
++                return AL_OUT_OF_MEMORY;
++
++            queue->events = temp;
++            queue->maxsize = newsize;
++        }
++    }
++
++    pos = queue->pos;
++    if(queue->size > 0)
++    {
++        ALsizei high = queue->size - 1;
++        while(pos < high)
++        {
++            ALsizei mid = pos + (high-pos)/2;
++            if(queue->events[mid].time < evt->time)
++                pos = mid + 1;
++            else
++                high = mid;
++        }
++        while(pos < queue->size && queue->events[pos].time <= evt->time)
++            pos++;
++
++        if(pos < queue->size)
++            memmove(&queue->events[pos+1], &queue->events[pos],
++                    (queue->size-pos)*sizeof(queue->events[0]));
++    }
++
++    queue->events[pos] = *evt;
++    queue->size++;
++
++    return AL_NO_ERROR;
++}
++
++
++void MidiSynth_Construct(MidiSynth *self, ALCdevice *device)
++{
++    InitEvtQueue(&self->EventQueue);
++
++    RWLockInit(&self->Lock);
++
++    self->Soundfonts = NULL;
++    self->NumSoundfonts = 0;
++
++    self->Gain = 1.0f;
++    self->State = AL_INITIAL;
++
++    self->ClockBase = 0;
++    self->SamplesDone = 0;
++    self->SampleRate = device->Frequency;
++}
++
++void MidiSynth_Destruct(MidiSynth *self)
++{
++    ALsizei i;
++
++    for(i = 0;i < self->NumSoundfonts;i++)
++        DecrementRef(&self->Soundfonts[i]->ref);
++    free(self->Soundfonts);
++    self->Soundfonts = NULL;
++    self->NumSoundfonts = 0;
++
++    ResetEvtQueue(&self->EventQueue);
++}
++
++
++ALenum MidiSynth_selectSoundfonts(MidiSynth *self, ALCcontext *context, ALsizei count, const ALuint *ids)
++{
++    ALCdevice *device = context->Device;
++    ALsoundfont **sfonts;
++    ALsizei i;
++
++    if(self->State != AL_INITIAL && self->State != AL_STOPPED)
++        return AL_INVALID_OPERATION;
++
++    sfonts = calloc(1, count * sizeof(sfonts[0]));
++    if(!sfonts) return AL_OUT_OF_MEMORY;
++
++    for(i = 0;i < count;i++)
++    {
++        if(ids[i] == 0)
++            sfonts[i] = ALsoundfont_getDefSoundfont(context);
++        else if(!(sfonts[i]=LookupSfont(device, ids[i])))
++        {
++            free(sfonts);
++            return AL_INVALID_VALUE;
++        }
++    }
++
++    for(i = 0;i < count;i++)
++        IncrementRef(&sfonts[i]->ref);
++    sfonts = ExchangePtr((XchgPtr*)&self->Soundfonts, sfonts);
++    count = ExchangeInt(&self->NumSoundfonts, count);
++
++    for(i = 0;i < count;i++)
++        DecrementRef(&sfonts[i]->ref);
++    free(sfonts);
++
++    return AL_NO_ERROR;
++}
++
++extern inline void MidiSynth_setGain(MidiSynth *self, ALfloat gain);
++extern inline ALfloat MidiSynth_getGain(const MidiSynth *self);
++extern inline void MidiSynth_setState(MidiSynth *self, ALenum state);
++extern inline ALenum MidiSynth_getState(const MidiSynth *self);
++
++void MidiSynth_stop(MidiSynth *self)
++{
++    ResetEvtQueue(&self->EventQueue);
++
++    self->ClockBase = 0;
++    self->SamplesDone = 0;
++}
++
++extern inline void MidiSynth_reset(MidiSynth *self);
++extern inline ALuint64 MidiSynth_getTime(const MidiSynth *self);
++extern inline ALuint64 MidiSynth_getNextEvtTime(const MidiSynth *self);
++
++void MidiSynth_setSampleRate(MidiSynth *self, ALuint srate)
++{
++    if(self->SampleRate != srate)
++    {
++        self->ClockBase += self->SamplesDone * MIDI_CLOCK_RES / self->SampleRate;
++        self->SamplesDone = 0;
++        self->SampleRate = srate;
++    }
++}
++
++extern inline void MidiSynth_update(MidiSynth *self, ALCdevice *device);
++
++ALenum MidiSynth_insertEvent(MidiSynth *self, ALuint64 time, ALuint event, ALsizei param1, ALsizei param2)
++{
++    MidiEvent entry;
++    entry.time = time;
++    entry.event = event;
++    entry.param.val[0] = param1;
++    entry.param.val[1] = param2;
++    return InsertEvtQueue(&self->EventQueue, &entry);
++}
++
++ALenum MidiSynth_insertSysExEvent(MidiSynth *self, ALuint64 time, const ALbyte *data, ALsizei size)
++{
++    MidiEvent entry;
++    ALenum err;
++
++    entry.time = time;
++    entry.event = SYSEX_EVENT;
++    entry.param.sysex.size = size;
++    entry.param.sysex.data = malloc(size);
++    if(!entry.param.sysex.data)
++        return AL_OUT_OF_MEMORY;
++    memcpy(entry.param.sysex.data, data, size);
++
++    err = InsertEvtQueue(&self->EventQueue, &entry);
++    if(err != AL_NO_ERROR)
++        free(entry.param.sysex.data);
++    return err;
++}
+diff -ruN openal-soft-1.16.0/include/atomic.h openal-soft-1.16.0.aros/include/atomic.h
+--- openal-soft-1.16.0/include/atomic.h	2014-08-15 07:06:59.000000000 +0000
++++ openal-soft-1.16.0.aros/include/atomic.h	2021-01-10 23:46:43.891476900 +0000
+@@ -41,11 +41,28 @@
+ /* Atomics using GCC intrinsics */
+ #elif defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 1)) && !defined(__QNXNTO__)
+ 
++#if !defined(HAVE_INLINE_FUNCTIONS)
++
++#define ExchangeInt(ptr, newval) \
++({ \
++    int _retval; \
++    _retval = __sync_lock_test_and_set(ptr, newval); \
++    _retval; \
++})
++
++#define ExchangePtr(ptr, newval) \
++({ \
++    void * _retval; \
++    _retval = __sync_lock_test_and_set(ptr, newval); \
++    _retval; \
++})
++
++#else
+ inline int ExchangeInt(volatile int *ptr, int newval)
+ { return __sync_lock_test_and_set(ptr, newval); }
+ inline void *ExchangePtr(XchgPtr *ptr, void *newval)
+ { return __sync_lock_test_and_set(ptr, newval); }
+-
++#endif
+ 
+ #define ATOMIC(T)  struct { T volatile value; }
+ 
+@@ -297,6 +314,30 @@
+ typedef unsigned int uint;
+ typedef ATOMIC(uint) RefCount;
+ 
++#if !defined(HAVE_INLINE_FUNCTIONS)
++#define InitRef(ptr, value) \
++({ \
++    ATOMIC_INIT(ptr, value); \
++})
++#define ReadRef(ptr) \
++({ \
++    uint _retval; \
++    _retval = ATOMIC_LOAD(ptr); \
++    _retval; \
++})
++#define IncrementRef(ptr) \
++({ \
++    uint _retval; \
++    _retval = ATOMIC_ADD(uint, ptr, 1)+1; \
++    _retval; \
++})
++#define DecrementRef(ptr) \
++({ \
++    uint _retval; \
++    _retval = ATOMIC_SUB(uint, ptr, 1)-1; \
++    _retval; \
++})
++#else
+ inline void InitRef(RefCount *ptr, uint value)
+ { ATOMIC_INIT(ptr, value); }
+ inline uint ReadRef(RefCount *ptr)
+@@ -305,6 +346,7 @@
+ { return ATOMIC_ADD(uint, ptr, 1)+1; }
+ inline uint DecrementRef(RefCount *ptr)
+ { return ATOMIC_SUB(uint, ptr, 1)-1; }
++#endif
+ 
+ #ifdef __cplusplus
+ }
+diff -ruN openal-soft-1.16.0/include/threads.h openal-soft-1.16.0.aros/include/threads.h
+--- openal-soft-1.16.0/include/threads.h	2014-08-15 07:06:59.000000000 +0000
++++ openal-soft-1.16.0.aros/include/threads.h	2020-01-15 04:16:20.170463500 +0000
+@@ -124,6 +124,11 @@
+ #include <errno.h>
+ #include <pthread.h>
+ 
++#ifdef __amigaos4__
++#include <proto/exec.h>
++#include <unistd.h>
++#endif
++
+ 
+ typedef pthread_t althrd_t;
+ typedef pthread_mutex_t almtx_t;
+@@ -151,11 +156,20 @@
+ 
+ inline void althrd_yield(void)
+ {
++#ifdef __amigaos4__
++	struct Task *me = IExec->FindTask(NULL);
++	IExec->SetTaskPri(me,  me->tc_Node.ln_Pri);
++#else
+     sched_yield();
++#endif
+ }
+ 
+ inline int althrd_sleep(const struct timespec *ts, struct timespec *rem)
+ {
++#ifdef __amigaos4__
++	usleep((ts->tv_sec * 1000000UL) + (ts->tv_nsec / 1000UL));
++	return 0;
++#else
+     int ret = nanosleep(ts, rem);
+     if(ret != 0)
+     {
+@@ -163,6 +177,7 @@
+         errno = 0;
+     }
+     return ret;
++#endif
+ }
+ 
+ 
+diff -ruN openal-soft-1.16.0/OpenAL32/sample_cvt.c openal-soft-1.16.0.aros/OpenAL32/sample_cvt.c
+--- openal-soft-1.16.0/OpenAL32/sample_cvt.c	2014-08-15 07:06:59.000000000 +0000
++++ openal-soft-1.16.0.aros/OpenAL32/sample_cvt.c	2020-01-15 04:16:20.144907300 +0000
+@@ -240,7 +240,7 @@
+ static void DecodeIMA4Block(ALshort *dst, const ALima4 *src, ALint numchans, ALsizei align)
+ {
+     ALint sample[MAX_INPUT_CHANNELS], index[MAX_INPUT_CHANNELS];
+-    ALuint code[MAX_INPUT_CHANNELS];
++    ALuint code[MAX_INPUT_CHANNELS] = { 0 };
+     ALsizei j,k,c;
+ 
+     for(c = 0;c < numchans;c++)
