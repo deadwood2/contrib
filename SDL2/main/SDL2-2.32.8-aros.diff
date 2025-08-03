@@ -539,7 +539,7 @@ diff -ruN SDL2-2.32.8/include/SDL_endian.h SDL2-2.32.8.aros/include/SDL_endian.h
  #undef HAS_BUILTIN_BSWAP16
 diff -ruN SDL2-2.32.8/include/SDL_opengl_glext.h SDL2-2.32.8.aros/include/SDL_opengl_glext.h
 --- SDL2-2.32.8/include/SDL_opengl_glext.h	2023-02-04 07:02:10.000000000 +0000
-+++ SDL2-2.32.8.aros/include/SDL_opengl_glext.h	2025-07-27 14:24:11.772841314 +0000
++++ SDL2-2.32.8.aros/include/SDL_opengl_glext.h	2025-08-02 12:12:54.456103703 +0000
 @@ -762,8 +762,10 @@
  
  #ifndef GL_VERSION_1_5
@@ -3982,7 +3982,7 @@ diff -ruN SDL2-2.32.8/src/thread/aros/SDL_syssem.c SDL2-2.32.8.aros/src/thread/a
 +/* vi: set ts=4 sw=4 expandtab: */
 diff -ruN SDL2-2.32.8/src/thread/aros/SDL_systhread.c SDL2-2.32.8.aros/src/thread/aros/SDL_systhread.c
 --- SDL2-2.32.8/src/thread/aros/SDL_systhread.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/thread/aros/SDL_systhread.c	2025-08-01 14:43:33.479972491 +0000
++++ SDL2-2.32.8.aros/src/thread/aros/SDL_systhread.c	2025-08-03 20:59:50.391376885 +0000
 @@ -0,0 +1,176 @@
 +/*
 +  Simple DirectMedia Layer
@@ -5076,8 +5076,8 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosclipboard.h SDL2-2.32.8.aros/src/vi
 +#endif /* _SDL_arosclipboard_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.c
 --- SDL2-2.32.8/src/video/aros/SDL_arosevents.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.c	2025-07-29 12:07:12.161399829 +0000
-@@ -0,0 +1,790 @@
++++ SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.c	2025-08-03 19:37:26.286602715 +0000
+@@ -0,0 +1,792 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -5317,10 +5317,12 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video
 +		data->curr_w = w->Width;
 +		data->curr_h = w->Height;
 +		SDL_SendWindowEvent(data->window, SDL_WINDOWEVENT_RESIZED, (data->curr_w - w->BorderLeft - w->BorderRight), (data->curr_h - w->BorderTop - w->BorderBottom));
++#if (0)
 +		if (_this->gl_data->gldd_GLACtx)
 +        {
 +            AROS_GL_ResizeContext(_this, data->window);
 +        }
++#endif
 +	}
 +}
 +
@@ -5903,7 +5905,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.h SDL2-2.32.8.aros/src/video
 +#endif /* _SDL_arosevents_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosframebuffer.c SDL2-2.32.8.aros/src/video/aros/SDL_arosframebuffer.c
 --- SDL2-2.32.8/src/video/aros/SDL_arosframebuffer.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosframebuffer.c	2025-07-31 07:59:36.000000000 +0000
++++ SDL2-2.32.8.aros/src/video/aros/SDL_arosframebuffer.c	2025-08-03 22:58:54.747484633 +0000
 @@ -0,0 +1,156 @@
 +/*
 +  Simple DirectMedia Layer
@@ -6038,27 +6040,27 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosframebuffer.c SDL2-2.32.8.aros/src/
 +	D(bug("[SDL2:arosfb] %s()\n", __func__));
 +
 +	SDL_WindowData *data = (SDL_WindowData *) window->driverdata;
-+
-+	if ((data->bitmap || data->memfb) && data->win) {
-+		
-+		const struct IBox windowBox = {
-+                data->win->BorderLeft,
-+                data->win->BorderTop,
-+                data->win->Width - data->win->BorderLeft - data->win->BorderRight,
-+                data->win->Height - data->win->BorderTop - data->win->BorderBottom };
-+		
-+		for (int i = 0; i < numrects; ++i) {
-+            const SDL_Rect * r = &rects[i];
-+			int dx = r->x + windowBox.Left;
-+			int dy = r->y + windowBox.Top;
-+		    int w =  MIN(r->w, windowBox.Width);
-+			int h = MIN(r->h, windowBox.Height);
-+			if (data->bitmap)
-+				BltBitMapRastPort(data->bitmap,  r->x, r->y, data->win->RPort, dx, dy, w, h, 0xc0);
-+			if (data->memfb)
-+				WritePixelArray(data->memfb, r->x, r->y, window->w * 4, data->win->RPort, dx, dy, w, h, RECTFMT_BGRA32);
++	if (!data->__AGLCtx)
++		if ((data->bitmap || data->memfb) && data->win) {
++			
++			const struct IBox windowBox = {
++					data->win->BorderLeft,
++					data->win->BorderTop,
++					data->win->Width - data->win->BorderLeft - data->win->BorderRight,
++					data->win->Height - data->win->BorderTop - data->win->BorderBottom };
++			
++			for (int i = 0; i < numrects; ++i) {
++				const SDL_Rect * r = &rects[i];
++				int dx = r->x + windowBox.Left;
++				int dy = r->y + windowBox.Top;
++				int w =  MIN(r->w, windowBox.Width);
++				int h = MIN(r->h, windowBox.Height);
++				if (data->bitmap)
++					BltBitMapRastPort(data->bitmap,  r->x, r->y, data->win->RPort, dx, dy, w, h, 0xc0);
++				else if (data->memfb)
++					WritePixelArray(data->memfb, r->x, r->y, window->w * 4, data->win->RPort, dx, dy, w, h, RECTFMT_BGRA32);
++			}
 +		}
-+	}
 +	return 0;
 +}
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosframebuffer.h SDL2-2.32.8.aros/src/video/aros/SDL_arosframebuffer.h
@@ -7328,8 +7330,8 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmouse.h SDL2-2.32.8.aros/src/video/
 +#endif /* _SDL_arosmouse_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosopengl.c SDL2-2.32.8.aros/src/video/aros/SDL_arosopengl.c
 --- SDL2-2.32.8/src/video/aros/SDL_arosopengl.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosopengl.c	2025-07-29 12:38:23.589399786 +0000
-@@ -0,0 +1,413 @@
++++ SDL2-2.32.8.aros/src/video/aros/SDL_arosopengl.c	2025-08-03 23:09:43.700189237 +0000
+@@ -0,0 +1,282 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
@@ -7372,25 +7374,47 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosopengl.c SDL2-2.32.8.aros/src/video
 +#include <proto/intuition.h>
 +#include <proto/graphics.h>
 +
++#if (0)
++			AROS_GL_LoadLibrary;
++			AROS_GL_GetProcAddress;
++			AROS_GL_UnloadLibrary;
++			AROS_GL_CreateContext;
++			AROS_GL_MakeCurrent;
++			AROS_GL_GetDrawableSize;
++			AROS_GL_SetSwapInterval;
++			AROS_GL_GetSwapInterval;
++			AROS_GL_SwapWindow;
++			AROS_GL_DeleteContext;
++#endif
++
 +extern struct ExecBase *SysBase;
++extern struct Library *GfxBase;
 +#define GLBase (_this->gl_data->gldd_GLBase)
 +
 +int
 +AROS_GL_LoadLibrary(_THIS, const char *path)
 +{
++	D(
++		bug("[SDL2:arosgl] %s()\n", __func__);
++		if (path)
++			bug("[SDL2:arosgl] %s: path = '%s'\n", __func__, path);
++	)
++
 +	if (!GLBase)
 +		GLBase = OpenLibrary("gl.library", 20); 
 +
 +	if (GLBase) {
++		D(bug("[SDL2:arosgl] %s: glABase @ 0x%p\n", __func__, GLBase));
 +#if (0)
-+			if (SDL2Base->MyGLABase)				
-+				*SDL2Base->MyGLABase = GLBase;	
++			if (SDL2Base->appGLABase)				
++				*SDL2Base->appGLABase = GLBase;	
 +#endif
 +            _this->gl_config.driver_loaded = 1;
 +
 +			return 0;
 +	} else 
 +		SDL_SetError("Failed to open gl.library");
++
 +	return -1;
 +}
 +
@@ -7398,11 +7422,17 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosopengl.c SDL2-2.32.8.aros/src/video
 +AROS_GL_GetProcAddress(_THIS, const char *proc)
 +{
 +	void *func = NULL;
-+	func = glAGetProcAddress(proc);
-+	if (!func) {
-+    	SDL_SetError("Couldn't find OpenGL symbol");
-+		return NULL;
-+    }
++
++	D(bug("[SDL2:arosgl] %s('%s')\n", __func__, proc));
++
++	if (GLBase) 
++	{
++		func = glAGetProcAddress(proc);
++		if (!func) {
++			SDL_SetError("Couldn't find OpenGL symbol");
++		}
++	}
++	D(bug("[SDL2:arosgl] %s: returning 0x%p\n", __func__, func));
 +	return func;
 +}
 +
@@ -7410,97 +7440,46 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosopengl.c SDL2-2.32.8.aros/src/video
 +AROS_GL_UnloadLibrary(_THIS)
 +{
 +	D(bug("[SDL2:arosgl] %s()\n", __func__));
++
 +#if (0)
-+	if (SDL2Base->MyGLABase && *SDL2Base->MyGLABase)
++	if (SDL2Base->appGLABase && *SDL2Base->appGLABase)
 +#endif
 +	if (GLBase) {
++		D(bug("[SDL2:arosgl] %s: closing glABase @ 0x%p\n", __func__, GLBase));
 +		CloseLibrary(GLBase);
 +		GLBase = NULL;
 +#if (0)
-+		*SDL2Base->MyGLABase = GLBase;
++		*SDL2Base->appGLABase = GLBase;
 +#endif
 +		_this->gl_config.driver_loaded = 0;
 +	}
 +}
 +
-+static void
-+AROS_GL_FreeBitMap(_THIS, SDL_Window *window)
++int
++AROS_GL_MakeCurrent(_THIS, SDL_Window * window, SDL_GLContext context)
 +{
-+    D(bug("[SDL2:arosgl] %s()\n", __func__));
-+#if (0)
-+    SDL_WindowData *data = (SDL_WindowData *)window->driverdata;
-+    if (data->bitmap != NULL) {
-+        FreeBitMap(data->bitmap);
-+        data->bitmap = NULL;
-+    }
-+#endif
-+}
++    D(bug("[SDL2:arosgl] %s(0x%p)\n", __func__, context));
 +
-+static SDL_bool
-+AROS_GL_AllocBitmap(_THIS, SDL_Window * window)
-+{
-+    D(bug("[SDL2:arosgl] %s()\n", __func__));
-+#if (0)
-+	SDL_WindowData *data = (SDL_WindowData *) window->driverdata;
-+
-+	if (data->bitmap != NULL)
-+		AROS_GL_FreeBitMap(_this, window);
-+	
-+	struct BitMap * friend_bitmap = data->win->RPort->BitMap;
-+	ULONG depth = GetBitMapAttr(friend_bitmap, BMA_DEPTH);
-+
-+	int w = getv(data->win, WA_InnerWidth);
-+	int h = getv(data->win, WA_InnerHeight);
-+	
-+	D("[SDL2:arosgl] %s: AllocBitMap w=%d h=%d depth=%d\n", __func__, w, h, (int)depth);
-+	
-+	return (data->bitmap = AllocBitMap(w, h, depth, BMF_MINPLANES|BMF_DISPLAYABLE|BMF_3DTARGET, friend_bitmap)) != NULL;
-+#endif
-+	return SDL_FALSE;
-+}
-+
-+static SDL_bool
-+AROS_GL_InitContext(_THIS, SDL_Window * window)
-+{
-+    D(bug("[SDL2:arosgl] %s()\n", __func__));
-+#if (0)
-+	SDL_WindowData *data = (SDL_WindowData *) window->driverdata;
-+	
-+	if (_this->gl_data->gldd_GLACtx != NULL) {
-+		GLADestroyContext(_this->gl_data->gldd_GLACtx);
-+		_this->gl_data->gldd_GLACtx = NULL;
-+        AROS_GL_FreeBitMap(_this, window);
-+	}
-+
-+	struct TagItem tgltags[] =
++    if (window)
 +	{
-+		{TAG_IGNORE, 0},
-+		{TGL_CONTEXT_STENCIL, TRUE},
-+		{TAG_DONE}
-+	};	
-+
-+	if (AROS_GL_AllocBitmap(_this, window)) {	
-+		tgltags[0].ti_Tag = TGL_CONTEXT_BITMAP;
-+		tgltags[0].ti_Data = (IPTR)data->bitmap;
-+	} else {
-+		D("[SDL2:arosgl] %s: Failed to AllocBitmap !", __func__);	
-+		return SDL_FALSE;
-+	}
-+		
-+	// Initialize new context
-+ 	int success = GLAInitializeContext(_this->gl_data->gldd_GLACtx, tgltags);
-+	if (success) {
-+		_this->gl_data->gldd_GLACtx = _this->gl_data->gldd_GLACtx;
-+		
-+		// Clean Screen
-+		if (!window->flags & SDL_WINDOW_FULLSCREEN) {
-+			GLClearColor(_this->gl_data->gldd_GLACtx, 0.0f, 0.0f, 0.0f, 1.0f);
-+			GLClear(_this->gl_data->gldd_GLACtx, GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
++		if (_this->gl_data->gldd_GLACtx != context)
++		{
++			struct TagItem tags[2];
++			SDL_WindowData *data = (SDL_WindowData *) window->driverdata;
++			D(bug("[SDL2:arosgl] %s: attaching ctx to window @ 0x%p\n", __func__, data->win));
++			if ((_this->gl_data->gldd_GLACtx = context) != NULL)
++			{
++				tags[0].ti_Tag = GLA_Window;
++				tags[0].ti_Data = (IPTR)data->win;
++				tags[1].ti_Tag = TAG_DONE;
++				glASetRast(context, tags);
++			}
 +		}
-+		return SDL_TRUE;	
-+	}
-+#endif
-+	return SDL_FALSE;		
++		SDL_WindowData *data = (SDL_WindowData *) window->driverdata;
++		data->__AGLCtx = context;
++		glAMakeCurrent(context);
++    }
++	return 0;
 +}
 +
 +SDL_GLContext
@@ -7548,13 +7527,12 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosopengl.c SDL2-2.32.8.aros/src/video
 +			/* done */
 +			ctxAttribs[i].ti_Tag = TAG_DONE;
 +
-+			_this->gl_data->gldd_GLACtx = glACreateContext(ctxAttribs);
-+#if (0)
-+			GLClearColor(_this->gl_data->gldd_GLACtx, 0.0f, 0.0f, 0.0f, 1.0f);
-+			GLClear(_this->gl_data->gldd_GLACtx, GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-+			
-+#endif
-+			return _this->gl_data->gldd_GLACtx;
++			GLAContext newCtx = glACreateContext(ctxAttribs);
++			if ((newCtx) && (_this->gl_data->gldd_GLACtx == NULL))
++				AROS_GL_MakeCurrent(_this, window, newCtx);
++
++			D(bug("[SDL2:arosgl] %s: new glAContext @ 0x%p\n", __func__, newCtx));
++			return newCtx;
 +		}
 +		else {
 +			SDL_SetError("gl.library does not support stereo buffer");
@@ -7563,64 +7541,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosopengl.c SDL2-2.32.8.aros/src/video
 +	else {
 +		SDL_SetError("gl.library does not work with indexed color");
 +	}
-+
-+#if (0)
-+	SDL_WindowData *data = window->driverdata;
-+	
-+	GLContext *glcont = GLInit();
-+	if (glcont) {
-+		_this->gl_data->gldd_GLACtx = glcont;
-+#ifdef TGL_CONTEXT_VERSION_53_9
-+		if (SDL2Base->MyGetMaximumContextVersion)
-+		{
-+			unsigned int contextversion;
-+			contextversion = SDL2Base->MyGetMaximumContextVersion(GLBase);
-+
-+			if (contextversion == TGL_CONTEXT_VERSION_53_1)
-+			{
-+				TGLEnableNewExtensions(_this->gl_data->gldd_GLACtx, 0);
-+			}
-+			else if (contextversion >= TGL_CONTEXT_VERSION_53_9)
-+			{
-+				TGLSetContextVersion(_this->gl_data->gldd_GLACtx, contextversion);
-+			}
-+		}
-+#endif
-+		if (AROS_GL_InitContext(_this, window)) {
-+			D("[SDL2:arosgl] %s: AROS_GL_InitContext SUCCES 0x%08lx, _this->gl_data->gldd_GLACtx=0x%08lx\n", __func__, glcont, _this->gl_data->gldd_GLACtx);
-+
-+			*SDL2Base->MyGLContext = glcont;
-+			
-+			GLClearColor(glcont, 0.0f, 0.0f, 0.0f, 1.0f);
-+			GLClear(glcont, GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-+			
-+			return glcont;
-+		} else {
-+			D("[SDL2:arosgl] %s: AROS_GL_InitContext FAILED 0x%08lx, _this->gl_data->gldd_GLACtx=0x%08lx\n", __func__, glcont, _this->gl_data->gldd_GLACtx);
-+
-+            AROS_GL_FreeBitMap(_this, window);
-+			GLClose(glcont);
-+			*SDL2Base->MyGLContext = _this->gl_data->gldd_GLACtx = _this->gl_data->gldd_GLACtx = NULL;
-+			
-+			SDL_SetError("Couldn't initialize TinyGL context");
-+		}
-+	} else {
-+		SDL_SetError("Couldn't create TinyGL context");
-+	}
-+#endif
 +	return NULL;
-+}
-+
-+int
-+AROS_GL_MakeCurrent(_THIS, SDL_Window * window, SDL_GLContext context)
-+{
-+    D(bug("[SDL2:arosgl] %s: context 0x%08lx\n", __func__, context));
-+#if (0)
-+    if (window && context) {
-+        *SDL2Base->MyGLContext = _this->gl_data->gldd_GLACtx = context;
-+    }
-+#endif
-+	return 0;
 +}
 +
 +void
@@ -7645,30 +7566,24 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosopengl.c SDL2-2.32.8.aros/src/video
 +int
 +AROS_GL_SetSwapInterval(_THIS, int interval)
 +{
-+#if (0)
-+	SDL_VideoData *data = _this->driverdata;
-+	
++    D(bug("[SDL2:arosgl] %s(%d)\n", __func__, interval));
++
 +	switch (interval) {
 +		case 0:
 +		case 1:
-+			// always VSYNC in fullscreen
-+			data->vsyncEnabled = /*data->CustomScreen != NULL ? TRUE : */(interval ? TRUE : FALSE);
++			_this->gl_data->gldd_Interval = (interval ? TRUE : FALSE);
 +			return 0;
 +		default:
 +			return -1;
 +	}	
-+#endif
-+	return -1;
 +}
 +
 +int
 +AROS_GL_GetSwapInterval(_THIS)
 +{
-+#if (0)
-+	SDL_VideoData *data = _this->driverdata;
-+	return data->vsyncEnabled ? 1 : 0;
-+#endif
-+	return 0;
++    D(bug("[SDL2:arosgl] %s()\n", __func__));
++
++	return _this->gl_data->gldd_Interval ? 1 : 0;
 +}
 +
 +int
@@ -7676,77 +7591,33 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosopengl.c SDL2-2.32.8.aros/src/video
 +{
 +	SDL_WindowData *data = (SDL_WindowData *) window->driverdata;
 +
-+#if (0)
-+	if (!data->win || !_this->gl_data->gldd_GLACtx || !_this->gl_data->gldd_GLACtx)
++    D(bug("[SDL2:arosgl] %s(0x%p)\n", __func__, window));
++
++	if (!data->win || !_this->gl_data->gldd_GLACtx)
 +		return 0;
 +
-+	SDL_VideoData *video = _this->driverdata;
-+	if (video->vsyncEnabled && data->win->WScreen) {
-+		BOOL displayed = getv(data->win->WScreen, SA_Displayed);
-+		if (displayed) {
-+			WaitBOVP(&data->win->WScreen->ViewPort);
-+		}
-+	}
-+	
-+	GLASwapBuffers(_this->gl_data->gldd_GLACtx);
-+	
-+	if (data->bitmap != NULL) {
-+		
-+		BltBitMapRastPort(data->bitmap, 0, 0, data->win->RPort, data->win->BorderLeft, data->win->BorderTop, 
-+				window->w, window->h, 0xc0);
-+	}
-+#endif
-+	
++	glASwapBuffers(_this->gl_data->gldd_GLACtx);
++
 +	return 0;
 +}
 +
 +void
 +AROS_GL_DeleteContext(_THIS, SDL_GLContext context)
 +{
-+	D(bug("[SDL2:arosgl] %s: context 0x%08lx\n", __func__, context));
++    D(bug("[SDL2:arosgl] %s(0x%p)\n", __func__, context));
 +
-+#if (0)
-+	if (GLBase != NULL && context) {
-+		SDL_Window *sdlwin;
-+
-+		for (sdlwin = _this->windows; sdlwin; sdlwin = sdlwin->next) {
-+
-+			SDL_WindowData *data = sdlwin->driverdata;
-+
-+			if (_this->gl_data->gldd_GLACtx == context) {
-+                D("[SDL2:arosgl] %s: Found TinyGL context 0x%08lx, clearing window binding\n", __func__, context);
-+                GLADestroyContext(context);
-+				_this->gl_data->gldd_GLACtx = NULL;
-+                AROS_GL_FreeBitMap(_this, sdlwin);
-+			}
-+		}
-+		GLClose(context);
-+		*SDL2Base->MyGLContext = _this->gl_data->gldd_GLACtx = NULL;
++	if ((GLBase) && (context)) {
++		if (_this->gl_data->gldd_GLACtx == context)
++			_this->gl_data->gldd_GLACtx = NULL;
++		glADestroyContext(context);
 +	}
-+#endif
-+}
-+
-+int
-+AROS_GL_ResizeContext(_THIS, SDL_Window *window)
-+{
-+	SDL_WindowData *data = (SDL_WindowData *) window->driverdata;
-+	D(bug("[SDL2:arosgl] %s: Context=0x%08lx _this->gl_data->gldd_GLACtx=0x%08lx\n", __func__, _this->gl_data->gldd_GLACtx, _this->gl_data->gldd_GLACtx));
-+
-+#if (0)
-+	if (_this->gl_data->gldd_GLACtx == NULL || _this->gl_data->gldd_GLACtx == NULL || data->win == NULL) {
-+		return -1;
-+	}
-+	
-+	return (AROS_GL_InitContext(_this, window) ? 0 : -1);
-+#endif
-+	return -1;
 +}
 +
 +#endif /* SDL_VIDEO_OPENGL_AGL */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosopengl.h SDL2-2.32.8.aros/src/video/aros/SDL_arosopengl.h
 --- SDL2-2.32.8/src/video/aros/SDL_arosopengl.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosopengl.h	2025-07-29 11:48:45.401399230 +0000
-@@ -0,0 +1,60 @@
++++ SDL2-2.32.8.aros/src/video/aros/SDL_arosopengl.h	2025-08-03 20:44:17.961309549 +0000
+@@ -0,0 +1,61 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -7781,6 +7652,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosopengl.h SDL2-2.32.8.aros/src/video
 +{
 +  struct Library    *gldd_GLBase;
 +  GLAContext        *gldd_GLACtx;
++  int               gldd_Interval;
 +#if (0)
 +    struct Library          **GLABasePtr;
 +	void                    **GLAContext;
@@ -8573,8 +8445,8 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosvideo.h SDL2-2.32.8.aros/src/video/
 +#endif /* _SDL_arosvideo_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video/aros/SDL_aroswindow.c
 --- SDL2-2.32.8/src/video/aros/SDL_aroswindow.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_aroswindow.c	2025-07-31 08:38:37.000000000 +0000
-@@ -0,0 +1,1097 @@
++++ SDL2-2.32.8.aros/src/video/aros/SDL_aroswindow.c	2025-08-03 22:53:49.815055116 +0000
+@@ -0,0 +1,1091 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -8718,10 +8590,10 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +                ReplyMsg(&msg->ExecMessage);
 +            }
 +        }
-+#if defined(__AROS__)
++
 +		win->UserPort = NULL;
 +		ModifyIDCMP(win, 0);
-+#endif
++
 +		SDL_WindowData *data = (SDL_WindowData *) sdlwin->driverdata;
 +		if (data->menuactive == TRUE) {
 +            ClearMenuStrip(win);
@@ -8799,7 +8671,6 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +		wd->fb = NULL;
 +		wd->window = window;
 +		wd->win = win;
-+		wd->__AGLCtx = NULL;
 +		wd->grabbed = -1;
 +		wd->sdlflags = 0;
 +		wd->window_title = NULL;
@@ -9157,10 +9028,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +#endif
 +				}
 +			}
-+#if defined(__AROS__)
++
 +			data->win->UserPort = &vd->WinPort;
 +			ModifyIDCMP(data->win, IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEMOVE | IDCMP_DELTAMOVE | IDCMP_MOUSEBUTTONS | IDCMP_REFRESHWINDOW | IDCMP_ACTIVEWINDOW | IDCMP_INACTIVEWINDOW | IDCMP_CHANGEWINDOW | IDCMP_GADGETUP | IDCMP_MENUPICK);
-+#endif
 +
 +			data->curr_x = data->win->LeftEdge;
 +			data->curr_y = data->win->TopEdge;
@@ -9393,8 +9263,6 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +	vd->FullScreen = fullscreen;
 +
 +	AROS_OpenWindows(_this);
-+	
-+	if (data->__AGLCtx) AROS_GL_ResizeContext(_this, window);
 +}
 +
 +int
@@ -9451,8 +9319,6 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +	if (data) {
 +		SDL_VideoData *videodata = (SDL_VideoData *) data->videodata;
 +
-+		if (data->__AGLCtx)
-+			AROS_GL_DeleteContext(_this, data->__AGLCtx);
 +		REMOVE(&data->node);
 +
 +		if (data->win) {
@@ -9828,7 +9694,7 @@ diff -ruN SDL2-2.32.8/src/video/SDL_sysvideo.h SDL2-2.32.8.aros/src/video/SDL_sy
  extern SDL_bool SDL_OnVideoThread(void);
 diff -ruN SDL2-2.32.8/src/video/SDL_video.c SDL2-2.32.8.aros/src/video/SDL_video.c
 --- SDL2-2.32.8/src/video/SDL_video.c	2025-05-19 21:24:41.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/SDL_video.c	2025-07-28 17:45:23.655266063 +0000
++++ SDL2-2.32.8.aros/src/video/SDL_video.c	2025-08-03 22:32:07.312795313 +0000
 @@ -132,6 +132,12 @@
  #ifdef SDL_VIDEO_DRIVER_EMSCRIPTEN
      &Emscripten_bootstrap,
@@ -9894,7 +9760,7 @@ diff -ruN SDL2-2.32.8/src/video/SDL_video.c SDL2-2.32.8.aros/src/video/SDL_video
      /* Make no context current if this is the current context window */
      if (window->flags & SDL_WINDOW_OPENGL) {
          if (_this->current_glwin == window) {
-+#if defined(__MORPHOS__) || defined(__AROS__)
++#if defined(__MORPHOS__)
 +            // Hack to kill context before destroy window (in case when user doesnt call SDL_GL_DeleteContext !)
 +            SDL_GL_DeleteContext(_this->current_glctx);
 +#else

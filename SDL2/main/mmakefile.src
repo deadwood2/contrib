@@ -227,16 +227,16 @@ $(AROS_DEVELOPMENT)/bin:
 	%mkdir_q dir=$@
 
 $(AROS_DEVELOPMENT)/bin/sdl2-config: $(SRCDIR)/$(CURDIR)/sdl2-config | $(AROS_DEVELOPMENT)/bin
-	@$(ECHO) Generating sdl2-config ...
-	@$(CP) $< $@
-	@$(CHMOD) a+x $@
+	$(Q)$(ECHO) Generating sdl2-config ...
+	$(Q)$(CP) $< $@
+	$(Q)$(CHMOD) a+x $@
 
 $(AROS_LIB)/pkgconfig:
 	%mkdir_q dir=$@
 
 $(AROS_LIB)/pkgconfig/sdl2.pc: $(ARCHSRCDIR)/sdl2.pc.in | $(AROS_LIB)/pkgconfig
-	@$(ECHO) Generating pkgconfig/sdl2.pc ...
-	@$(SED) \
+	$(Q)$(ECHO) Generating pkgconfig/sdl2.pc ...
+	$(Q)$(SED) \
 		-e 's#@prefix@#/PROGDIR#g' \
 		-e 's#@exec_prefix@#$${prefix}#g' \
 		-e 's#@libdir@#$${exec_prefix}/lib#g' \
@@ -249,7 +249,7 @@ $(AROS_LIB)/pkgconfig/sdl2.pc: $(ARCHSRCDIR)/sdl2.pc.in | $(AROS_LIB)/pkgconfig
 		-e 's#@SDL_STATIC_LIBS@#-lSDL2 -lGL#g' \
 		-e 's#@SDL_CFLAGS@#-D_GNU_SOURCE=1#g' \
 		$< > $@
-	@$(CHMOD) a+x $@
+	$(Q)$(CHMOD) a+x $@
 
 #MM
 SDL2-aros-genfiles : $(AROS_DEVELOPMENT)/bin/sdl2-config $(AROS_LIB)/pkgconfig/sdl2.pc
