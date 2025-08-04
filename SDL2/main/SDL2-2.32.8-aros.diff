@@ -2692,7 +2692,7 @@ diff -ruN SDL2-2.32.8/src/locale/aros/SDL_syslocale.c SDL2-2.32.8.aros/src/local
 +  3. This notice may not be removed or altered from any source distribution.
 +*/
 +
-+#define DEBUG 1
++//#define DEBUG 1
 +#include <aros/debug.h>
 +
 +#include "../../SDL_internal.h"
@@ -8467,7 +8467,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +  3. This notice may not be removed or altered from any source distribution.
 +*/
 +
-+#define DEBUG 1
++//#define DEBUG 1
 +#include <aros/debug.h>
 +
 +#define __NOLIBBASE__
