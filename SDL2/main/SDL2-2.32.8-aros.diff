@@ -3104,7 +3104,7 @@ diff -ruN SDL2-2.32.8/src/power/SDL_syspower.h SDL2-2.32.8.aros/src/power/SDL_sy
  /* SDL_bool SDL_GetPowerInfo_Hardwired(SDL_PowerState *, int *, int *);*/
 diff -ruN SDL2-2.32.8/src/render/opengl/SDL_render_gl.c SDL2-2.32.8.aros/src/render/opengl/SDL_render_gl.c
 --- SDL2-2.32.8/src/render/opengl/SDL_render_gl.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/render/opengl/SDL_render_gl.c	2025-07-31 14:55:22.328805967 +0000
++++ SDL2-2.32.8.aros/src/render/opengl/SDL_render_gl.c	2025-08-04 17:53:49.524794688 +0000
 @@ -22,6 +22,9 @@
  
  #if SDL_VIDEO_RENDER_OGL
@@ -3126,7 +3126,22 @@ diff -ruN SDL2-2.32.8/src/render/opengl/SDL_render_gl.c SDL2-2.32.8.aros/src/ren
  #if defined(__WINDOWS__) || defined(__WINGDK__)
      if (SDL_strcmp(renderer, "GDI Generic") == 0) {
          return SDL_FALSE; /* Microsoft's fallback software renderer. Fix your system! */
-@@ -1860,6 +1867,10 @@
+@@ -1709,6 +1716,14 @@
+     const char *hint;
+     SDL_bool non_power_of_two_supported = SDL_FALSE;
+ 
++#ifdef SDL_VIDEO_DRIVER_AROS
++    window_flags = SDL_GetWindowFlags(window);
++    if (!(window_flags & SDL_WINDOW_OPENGL)) {
++        // TODO: Check if we want to allow the GL renderer..
++        goto error;
++    }
++#endif
++
+     SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &profile_mask);
+     SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &major);
+     SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &minor);
+@@ -1860,6 +1875,10 @@
          renderer->info.max_texture_height = value;
      }
  
@@ -3137,7 +3152,7 @@ diff -ruN SDL2-2.32.8/src/render/opengl/SDL_render_gl.c SDL2-2.32.8.aros/src/ren
      /* Check for multitexture support */
      if (SDL_GL_ExtensionSupported("GL_ARB_multitexture")) {
          data->glActiveTextureARB = (PFNGLACTIVETEXTUREARBPROC)SDL_GL_GetProcAddress("glActiveTextureARB");
-@@ -1868,11 +1879,15 @@
+@@ -1868,11 +1887,15 @@
              data->glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &data->num_texture_units);
          }
      }
@@ -3153,7 +3168,7 @@ diff -ruN SDL2-2.32.8/src/render/opengl/SDL_render_gl.c SDL2-2.32.8.aros/src/ren
      SDL_LogInfo(SDL_LOG_CATEGORY_RENDER, "OpenGL shaders: %s",
                  data->shaders ? "ENABLED" : "DISABLED");
  #if SDL_HAVE_YUV
-@@ -1913,6 +1928,8 @@
+@@ -1913,6 +1936,8 @@
              SDL_GL_GetProcAddress("glCheckFramebufferStatusEXT");
          renderer->info.flags |= SDL_RENDERER_TARGETTEXTURE;
      }
@@ -3177,18 +3192,6 @@ diff -ruN SDL2-2.32.8/src/render/opengl/SDL_shaders_gl.c SDL2-2.32.8.aros/src/re
  #include "SDL_opengl.h"
  #include "SDL_video.h"
  #include "SDL_shaders_gl.h"
-diff -ruN SDL2-2.32.8/src/render/SDL_render.c SDL2-2.32.8.aros/src/render/SDL_render.c
---- SDL2-2.32.8/src/render/SDL_render.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/render/SDL_render.c	2025-07-31 07:38:53.000000000 +0000
-@@ -111,7 +111,7 @@
-     &METAL_RenderDriver,
- #endif
- #if SDL_VIDEO_RENDER_OGL
--    &GL_RenderDriver,
-+//    &GL_RenderDriver,
- #endif
- #if SDL_VIDEO_RENDER_OGL_ES2
-     &GLES2_RenderDriver,
 diff -ruN SDL2-2.32.8/src/SDL.c SDL2-2.32.8.aros/src/SDL.c
 --- SDL2-2.32.8/src/SDL.c	2025-01-01 15:47:53.000000000 +0000
 +++ SDL2-2.32.8.aros/src/SDL.c	2025-07-28 20:45:10.753574555 +0000
