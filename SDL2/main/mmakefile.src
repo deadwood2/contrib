@@ -137,9 +137,9 @@ FILES := \
 # Platform Files
 SDL2AROSCOREFILES = \
     $(ARCHSRCDIR)/src/core/aros/SDL_cpu \
-    $(ARCHSRCDIR)/src/core/morphos/SDL_misc \
-    $(ARCHSRCDIR)/src/filesystem/morphos/SDL_sysfilesystem \
-    $(ARCHSRCDIR)/src/locale/morphos/SDL_syslocale \
+    $(ARCHSRCDIR)/src/misc/aros/SDL_misc \
+    $(ARCHSRCDIR)/src/filesystem/aros/SDL_sysfilesystem \
+    $(ARCHSRCDIR)/src/locale/aros/SDL_syslocale \
     $(ARCHSRCDIR)/src/misc/amigaos/SDL_sysurl \
     $(ARCHSRCDIR)/src/thread/aros/SDL_sysmutex \
     $(ARCHSRCDIR)/src/thread/aros/SDL_syssem \

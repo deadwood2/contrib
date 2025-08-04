@@ -1287,157 +1287,6 @@ diff -ruN SDL2-2.32.8/src/core/aros/SDL_cpu.h SDL2-2.32.8.aros/src/core/aros/SDL
 +extern void SDL_CopyAndSwap32(APTR srcx, APTR destx, LONG units);
 +
 +#endif /* SDL_CORE_AROS_CPU_H */
-diff -ruN SDL2-2.32.8/src/core/morphos/SDL_misc.c SDL2-2.32.8.aros/src/core/morphos/SDL_misc.c
---- SDL2-2.32.8/src/core/morphos/SDL_misc.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/core/morphos/SDL_misc.c	2025-07-27 14:24:13.244841322 +0000
-@@ -0,0 +1,109 @@
-+/*
-+  Simple DirectMedia Layer
-+  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
-+
-+  This software is provided 'as-is', without any express or implied
-+  warranty.  In no event will the authors be held liable for any damages
-+  arising from the use of this software.
-+
-+  Permission is granted to anyone to use this software for any purpose,
-+  including commercial applications, and to alter it and redistribute it
-+  freely, subject to the following restrictions:
-+
-+  1. The origin of this software must not be misrepresented; you must not
-+     claim that you wrote the original software. If you use this software
-+     in a product, an acknowledgment in the product documentation would be
-+     appreciated but is not required.
-+  2. Altered source versions must be plainly marked as such, and must not be
-+     misrepresented as being the original software.
-+  3. This notice may not be removed or altered from any source distribution.
-+*/
-+#include "../../SDL_internal.h"
-+
-+#include "SDL_stdinc.h"
-+
-+#include <string.h>
-+#include <sys/types.h>
-+
-+#if !defined(__AROS__)
-+#include <proto/charsets.h>
-+#else
-+#include <exec/types.h>
-+#endif
-+
-+char *
-+MOS_ConvertText(const char *src, LONG srcmib, LONG dstmib)
-+{
-+	char *dst = NULL;
-+#if !defined(__AROS__)
-+	size_t dstlen, tags[] = { CST_GetDestBytes, (size_t)&dstlen, TAG_DONE };
-+
-+	ConvertTagList((APTR)src, -1, NULL, -1, srcmib, dstmib, (struct TagItem *)&tags);
-+
-+	dstlen += 1;
-+	dst = SDL_malloc(dstlen);
-+
-+	if (dst)
-+		ConvertTagList((APTR)src, -1, dst, dstlen, srcmib, dstmib, NULL);
-+#endif
-+	return dst;
-+}
-+
-+char *
-+MOS_ConvertPath(const char *fn)
-+{
-+	CONST_STRPTR src = fn;
-+	ULONG flen = strlen(fn);
-+	BOOL colon = FALSE;
-+	char *dst, *path = SDL_malloc(flen + 2 + 128);
-+
-+	dst = path;
-+
-+	if (*src == '/')
-+	{
-+		/* really depends on filesystem layout, hope for the best */
-+		colon	= 1;
-+		src++;
-+	}
-+
-+	while ((size_t)src < (size_t)(fn + flen))
-+	{
-+		const char *end = strchr(src, '/');
-+		int len;
-+
-+		if(!end)
-+			end = fn + flen; /* last component */
-+
-+		len = (size_t)end - (size_t)src;
-+
-+		if(len == 0 || (len == 1 && src[0] == '.'))
-+		{
-+			/* remove repeated slashes and . */
-+		}
-+		else
-+		{
-+			if (len == 1 && colon)
-+			{
-+				*dst++ = ':';
-+				colon  = FALSE;
-+			}
-+			else if (len == 2 && src[0] == '.' && src[1] == '.')
-+			{
-+				/* replace .. with the empty string */
-+			}
-+			else
-+			{
-+				bcopy((void *)src, (void *)dst, len);
-+				dst += len;
-+			}
-+
-+			if(end < fn + flen)
-+				*dst++ = '/';
-+		}
-+
-+		src = end + 1;
-+	}
-+
-+	*dst++ = '\0';
-+	return path;
-+}
-diff -ruN SDL2-2.32.8/src/core/morphos/SDL_misc.h SDL2-2.32.8.aros/src/core/morphos/SDL_misc.h
---- SDL2-2.32.8/src/core/morphos/SDL_misc.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/core/morphos/SDL_misc.h	2025-07-27 14:24:13.248841322 +0000
-@@ -0,0 +1,34 @@
-+/*
-+  Simple DirectMedia Layer
-+  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
-+
-+  This software is provided 'as-is', without any express or implied
-+  warranty.  In no event will the authors be held liable for any damages
-+  arising from the use of this software.
-+
-+  Permission is granted to anyone to use this software for any purpose,
-+  including commercial applications, and to alter it and redistribute it
-+  freely, subject to the following restrictions:
-+
-+  1. The origin of this software must not be misrepresented; you must not
-+     claim that you wrote the original software. If you use this software
-+     in a product, an acknowledgment in the product documentation would be
-+     appreciated but is not required.
-+  2. Altered source versions must be plainly marked as such, and must not be
-+     misrepresented as being the original software.
-+  3. This notice may not be removed or altered from any source distribution.
-+*/
-+
-+#ifndef SDL_CORE_MORPHOS_MISC_H
-+#define SDL_CORE_MORPHOS_MISC_H
-+
-+#include "../../SDL_internal.h"
-+
-+#ifndef EXEC_TYPES_H
-+#include <exec/types.h>
-+#endif
-+
-+extern char *MOS_ConvertText(const char *src, LONG srcmib, LONG dstmib);
-+extern char *MOS_ConvertPath(const char *fn);
-+
-+#endif /* SDL_CORE_MORPHOS_MISC_H */
 diff -ruN SDL2-2.32.8/src/core/morphos/SDL_mosversion.h SDL2-2.32.8.aros/src/core/morphos/SDL_mosversion.h
 --- SDL2-2.32.8/src/core/morphos/SDL_mosversion.h	1970-01-01 00:00:00.000000000 +0000
 +++ SDL2-2.32.8.aros/src/core/morphos/SDL_mosversion.h	2025-07-27 14:24:13.256841322 +0000
@@ -1687,13 +1536,13 @@ diff -ruN SDL2-2.32.8/src/events/scancodes_amigaos.h SDL2-2.32.8.aros/src/events
 +/* *INDENT-ON* */
 diff -ruN SDL2-2.32.8/src/file/SDL_rwops.c SDL2-2.32.8.aros/src/file/SDL_rwops.c
 --- SDL2-2.32.8/src/file/SDL_rwops.c	2025-01-28 07:47:10.000000000 +0000
-+++ SDL2-2.32.8.aros/src/file/SDL_rwops.c	2025-07-28 14:28:59.234760705 +0000
++++ SDL2-2.32.8.aros/src/file/SDL_rwops.c	2025-08-04 17:09:29.012791584 +0000
 @@ -67,6 +67,33 @@
  #include "nacl_io/nacl_io.h"
  #endif
  
 +#ifdef __AROS__
-+#include "../core/morphos/SDL_misc.h"
++#include "../misc/aros/SDL_misc.h"
 +#include <proto/dos.h>
 +#endif
 +
@@ -1960,7 +1809,7 @@ diff -ruN SDL2-2.32.8/src/file/SDL_rwops.c SDL2-2.32.8.aros/src/file/SDL_rwops.c
  static SDL_bool IsRegularFileOrPipe(FILE *f)
  {
      #ifdef __WINRT__
-@@ -624,6 +871,32 @@
+@@ -624,6 +871,38 @@
      rwops->write = windows_file_write;
      rwops->close = windows_file_close;
      rwops->type = SDL_RWOPS_WINFILE;
@@ -1976,8 +1825,14 @@ diff -ruN SDL2-2.32.8/src/file/SDL_rwops.c SDL2-2.32.8.aros/src/file/SDL_rwops.c
 +    rwops->close = amigaos_file_close;
 +    rwops->type = SDL_RWOPS_MORPHOSFILE;
 +
-+    char *mpath = MOS_ConvertPath(file);
++    char *mpath;
 +    int rc = -1;
++
++#if defined(__AROS__)
++    mpath = AROS_ConvertPath(file);
++#else
++    mpath = MOS_ConvertPath(file);
++#endif
 +
 +    if (mpath)
 +    {
@@ -1993,7 +1848,7 @@ diff -ruN SDL2-2.32.8/src/file/SDL_rwops.c SDL2-2.32.8.aros/src/file/SDL_rwops.c
  #elif defined(HAVE_STDIO_H)
      {
  #if defined(__APPLE__) && !defined(SDL_FILE_DISABLED) // TODO: add dummy?
-@@ -653,7 +926,7 @@
+@@ -653,7 +932,7 @@
      return rwops;
  }
  
@@ -2002,7 +1857,7 @@ diff -ruN SDL2-2.32.8/src/file/SDL_rwops.c SDL2-2.32.8.aros/src/file/SDL_rwops.c
  SDL_RWops *SDL_RWFromFP(FILE * fp, SDL_bool autoclose)
  {
      SDL_RWops *rwops = NULL;
-@@ -741,6 +1014,10 @@
+@@ -741,6 +1020,10 @@
      if (!area) {
          SDL_OutOfMemory();
      } else {
@@ -2013,10 +1868,10 @@ diff -ruN SDL2-2.32.8/src/file/SDL_rwops.c SDL2-2.32.8.aros/src/file/SDL_rwops.c
          area->type = SDL_RWOPS_UNKNOWN;
      }
      return area;
-diff -ruN SDL2-2.32.8/src/filesystem/morphos/SDL_sysfilesystem.c SDL2-2.32.8.aros/src/filesystem/morphos/SDL_sysfilesystem.c
---- SDL2-2.32.8/src/filesystem/morphos/SDL_sysfilesystem.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/filesystem/morphos/SDL_sysfilesystem.c	2025-07-27 14:24:14.020841326 +0000
-@@ -0,0 +1,153 @@
+diff -ruN SDL2-2.32.8/src/filesystem/aros/SDL_sysfilesystem.c SDL2-2.32.8.aros/src/filesystem/aros/SDL_sysfilesystem.c
+--- SDL2-2.32.8/src/filesystem/aros/SDL_sysfilesystem.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.8.aros/src/filesystem/aros/SDL_sysfilesystem.c	2025-08-04 16:36:15.600791857 +0000
+@@ -0,0 +1,147 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
@@ -2039,7 +1894,7 @@ diff -ruN SDL2-2.32.8/src/filesystem/morphos/SDL_sysfilesystem.c SDL2-2.32.8.aro
 +*/
 +#include "../../SDL_internal.h"
 +
-+#ifdef SDL_FILESYSTEM_MORPHOS
++#ifdef SDL_FILESYSTEM_AROS
 +
 +/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 +/* System dependent filesystem routines                                */
@@ -2047,11 +1902,8 @@ diff -ruN SDL2-2.32.8/src/filesystem/morphos/SDL_sysfilesystem.c SDL2-2.32.8.aro
 +#include "SDL_error.h"
 +#include "SDL_filesystem.h"
 +
-+#include "../../core/morphos/SDL_misc.h"
++#include "../../misc/aros/SDL_misc.h"
 +
-+#if !defined(__AROS__)
-+#include <libraries/charsets.h>
-+#endif
 +#include <proto/dos.h>
 +
 +char *
@@ -2060,7 +1912,7 @@ diff -ruN SDL2-2.32.8/src/filesystem/morphos/SDL_sysfilesystem.c SDL2-2.32.8.aro
 +	BPTR lock = Lock("PROGDIR:", ACCESS_READ);
 +	char *path = NULL;
 +
-+	D("[%s]\n", __FUNCTION__);
++	D(bug("[SDL2:sysfs] %s()\n", __func__));
 +
 +	if (lock)
 +	{
@@ -2072,9 +1924,8 @@ diff -ruN SDL2-2.32.8/src/filesystem/morphos/SDL_sysfilesystem.c SDL2-2.32.8.aro
 +
 +			if (NameFromLock(lock, tmp, len))
 +			{
-+#if !defined(__AROS__)
-+				path = MOS_ConvertText(tmp, MIBENUM_SYSTEM, MIBENUM_UTF_8);
-+#endif
++				path = AROS_ConvertUTF8Text(tmp);
++
 +				SDL_free(tmp);
 +				break;
 +			}
@@ -2149,9 +2000,7 @@ diff -ruN SDL2-2.32.8/src/filesystem/morphos/SDL_sysfilesystem.c SDL2-2.32.8.aro
 +				UnLock(lock);
 +		}
 +		
-+#if !defined(__AROS__)
-+		path = MOS_ConvertText(tmp, MIBENUM_SYSTEM, MIBENUM_UTF_8);
-+#endif
++		path = AROS_ConvertUTF8Text(tmp);
 +
 +		SDL_free(tmp);
 +		
@@ -2167,7 +2016,7 @@ diff -ruN SDL2-2.32.8/src/filesystem/morphos/SDL_sysfilesystem.c SDL2-2.32.8.aro
 +	return path;
 +}
 +
-+#endif /* SDL_FILESYSTEM_MORPHOS */
++#endif /* SDL_FILESYSTEM_AROS */
 +
 +/* vi: set ts=4 sw=4 expandtab: */
 diff -ruN SDL2-2.32.8/src/joystick/morphos/SDL_sysjoystick.c SDL2-2.32.8.aros/src/joystick/morphos/SDL_sysjoystick.c
@@ -2818,10 +2667,10 @@ diff -ruN SDL2-2.32.8/src/joystick/SDL_sysjoystick.h SDL2-2.32.8.aros/src/joysti
  /* Ends C function definitions when using C++ */
  #ifdef __cplusplus
  }
-diff -ruN SDL2-2.32.8/src/locale/morphos/SDL_syslocale.c SDL2-2.32.8.aros/src/locale/morphos/SDL_syslocale.c
---- SDL2-2.32.8/src/locale/morphos/SDL_syslocale.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/locale/morphos/SDL_syslocale.c	2025-07-27 14:24:15.756841335 +0000
-@@ -0,0 +1,101 @@
+diff -ruN SDL2-2.32.8/src/locale/aros/SDL_syslocale.c SDL2-2.32.8.aros/src/locale/aros/SDL_syslocale.c
+--- SDL2-2.32.8/src/locale/aros/SDL_syslocale.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.8.aros/src/locale/aros/SDL_syslocale.c	2025-08-04 16:32:11.280791557 +0000
+@@ -0,0 +1,98 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -2843,9 +2692,8 @@ diff -ruN SDL2-2.32.8/src/locale/morphos/SDL_syslocale.c SDL2-2.32.8.aros/src/lo
 +  3. This notice may not be removed or altered from any source distribution.
 +*/
 +
-+#if defined(__AROS__)
++#define DEBUG 1
 +#include <aros/debug.h>
-+#endif
 +
 +#include "../../SDL_internal.h"
 +#include "../SDL_syslocale.h"
@@ -2854,9 +2702,7 @@ diff -ruN SDL2-2.32.8/src/locale/morphos/SDL_syslocale.c SDL2-2.32.8.aros/src/lo
 +#include <proto/utility.h>
 +#include <libraries/iffparse.h>
 +
-+#if defined(__AROS__)
 +#include <stdio.h>
-+#endif
 +
 +struct loc
 +{
@@ -2975,6 +2821,214 @@ diff -ruN SDL2-2.32.8/src/misc/amigaos/SDL_sysurl.c SDL2-2.32.8.aros/src/misc/am
 +    return 0;
 +}
 +
+diff -ruN SDL2-2.32.8/src/misc/aros/SDL_misc.c SDL2-2.32.8.aros/src/misc/aros/SDL_misc.c
+--- SDL2-2.32.8/src/misc/aros/SDL_misc.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.8.aros/src/misc/aros/SDL_misc.c	2025-08-04 17:23:37.316789445 +0000
+@@ -0,0 +1,164 @@
++/*
++  Simple DirectMedia Layer
++  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
++
++  This software is provided 'as-is', without any express or implied
++  warranty.  In no event will the authors be held liable for any damages
++  arising from the use of this software.
++
++  Permission is granted to anyone to use this software for any purpose,
++  including commercial applications, and to alter it and redistribute it
++  freely, subject to the following restrictions:
++
++  1. The origin of this software must not be misrepresented; you must not
++     claim that you wrote the original software. If you use this software
++     in a product, an acknowledgment in the product documentation would be
++     appreciated but is not required.
++  2. Altered source versions must be plainly marked as such, and must not be
++     misrepresented as being the original software.
++  3. This notice may not be removed or altered from any source distribution.
++*/
++#include "../../SDL_internal.h"
++
++#include "SDL_stdinc.h"
++
++#include <proto/dos.h>
++
++#ifndef EXEC_TYPES_H
++#include <exec/types.h>
++#endif
++#include <sys/types.h>
++
++// Convert UTF-8 to ISO-8859-1
++char *
++AROS_ConvertUTF8Text(const char *src)
++{
++    if (!src) return NULL;
++
++    // Worst-case: every byte becomes one ASCII char + null terminator
++    size_t len = 0;
++    const char *p = src;
++    while (*p) len++, p++;
++
++    char *dst = SDL_malloc(len + 1);
++    if (!dst) return NULL;
++
++    size_t out = 0;
++    while (*src) {
++        unsigned char c = (unsigned char)*src;
++        if (c < 0x80) {
++            // ASCII
++            dst[out++] = *src++;
++        } else {
++            // Multibyte UTF-8 sequence
++            if ((c & 0xE0) == 0xC0) src += 2;		// 2-byte
++            else if ((c & 0xF0) == 0xE0) src += 3;	// 3-byte
++            else if ((c & 0xF8) == 0xF0) src += 4;	// 4-byte
++            else src++;								// Invalid
++            dst[out++] = '?';
++        }
++    }
++
++    dst[out] = '\0';
++	return dst;
++}
++
++// Convert ISO-8859-1 to UTF-8
++char *
++AROS_ConvertTextUTF8(const char *src)
++{
++    if (!src) return NULL;
++
++    size_t len = SDL_strlen(src);
++    char *dst = SDL_malloc(len + 1);
++    if (!dst) return NULL;
++
++    /* Copy directly (including null terminator) 
++	 * - ASCII bytes are valid UTF-8 bytes
++	 */
++    SDL_memcpy(dst, src, len + 1);
++    return dst;
++}
++
++char *
++AROS_ConvertPath(const char *fn)
++{
++	CONST_STRPTR src = fn;
++	ULONG flen = SDL_strlen(fn);
++	BOOL colon = FALSE;
++	char *dst, *path = SDL_malloc(flen + 2 + 128);
++
++	dst = path;
++
++	if (*src == '/')
++	{
++		/* really depends on filesystem layout, hope for the best */
++		colon	= 1;
++		src++;
++	}
++
++	while ((size_t)src < (size_t)(fn + flen))
++	{
++		const char *end = SDL_strchr(src, '/');
++		int len;
++
++		if(!end)
++			end = fn + flen; /* last component */
++
++		len = (size_t)end - (size_t)src;
++
++		if(len == 0 || (len == 1 && src[0] == '.'))
++		{
++			/* remove repeated slashes and . */
++		}
++		else
++		{
++			if (len == 1 && colon)
++			{
++				*dst++ = ':';
++				colon  = FALSE;
++			}
++			else if (len == 2 && src[0] == '.' && src[1] == '.')
++			{
++				/* replace .. with the empty string */
++			}
++			else
++			{
++				SDL_memmove((void *)dst, (void *)src, len);
++				dst += len;
++			}
++
++			if(end < fn + flen)
++				*dst++ = '/';
++		}
++
++		src = end + 1;
++	}
++
++	*dst++ = '\0';
++	return path;
++}
++
++char *AROS_GetEnv(const char *name)
++{
++	char *value = NULL;
++	char dummy[32];
++	size_t len;
++
++	if (GetVar((char *)name, dummy, sizeof(dummy), GVF_BINARY_VAR) == -1)
++	{
++		return NULL;
++	}
++	
++	len = IoErr() + 1;
++	
++	if ((value = SDL_malloc(len)))
++	{
++		if (GetVar((char *)name, value, len, GVF_GLOBAL_ONLY) == -1)
++		{
++			SDL_free(value);
++			value = NULL;
++		}
++	}
++	return value;
++}
+diff -ruN SDL2-2.32.8/src/misc/aros/SDL_misc.h SDL2-2.32.8.aros/src/misc/aros/SDL_misc.h
+--- SDL2-2.32.8/src/misc/aros/SDL_misc.h	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.8.aros/src/misc/aros/SDL_misc.h	2025-08-04 17:20:05.568790396 +0000
+@@ -0,0 +1,36 @@
++/*
++  Simple DirectMedia Layer
++  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
++
++  This software is provided 'as-is', without any express or implied
++  warranty.  In no event will the authors be held liable for any damages
++  arising from the use of this software.
++
++  Permission is granted to anyone to use this software for any purpose,
++  including commercial applications, and to alter it and redistribute it
++  freely, subject to the following restrictions:
++
++  1. The origin of this software must not be misrepresented; you must not
++     claim that you wrote the original software. If you use this software
++     in a product, an acknowledgment in the product documentation would be
++     appreciated but is not required.
++  2. Altered source versions must be plainly marked as such, and must not be
++     misrepresented as being the original software.
++  3. This notice may not be removed or altered from any source distribution.
++*/
++
++#ifndef SDL_MISC_AROS_MISC_H
++#define SDL_MISC_AROS_MISC_H
++
++#include "../../SDL_internal.h"
++
++#ifndef EXEC_TYPES_H
++#include <exec/types.h>
++#endif
++
++extern char *AROS_ConvertUTF8Text(const char *src);
++extern char *AROS_ConvertTextUTF8(const char *src);
++extern char *AROS_ConvertPath(const char *fn);
++extern char *AROS_GetEnv(const char *name);
++
++#endif /* SDL_MISC_AROS_MISC_H */
 diff -ruN SDL2-2.32.8/src/power/aros/SDL_syspower.c SDL2-2.32.8.aros/src/power/aros/SDL_syspower.c
 --- SDL2-2.32.8/src/power/aros/SDL_syspower.c	1970-01-01 00:00:00.000000000 +0000
 +++ SDL2-2.32.8.aros/src/power/aros/SDL_syspower.c	2025-07-29 12:46:22.777400298 +0000
@@ -4750,8 +4804,8 @@ diff -ruN SDL2-2.32.8/src/timer/aros/SDL_systimer.c SDL2-2.32.8.aros/src/timer/a
 +#endif /* SDL_TIMER_AROS || SDL_TIMERS_DISABLED */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosclipboard.c SDL2-2.32.8.aros/src/video/aros/SDL_arosclipboard.c
 --- SDL2-2.32.8/src/video/aros/SDL_arosclipboard.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosclipboard.c	2025-07-29 12:13:08.617399916 +0000
-@@ -0,0 +1,288 @@
++++ SDL2-2.32.8.aros/src/video/aros/SDL_arosclipboard.c	2025-08-04 17:04:05.304791353 +0000
+@@ -0,0 +1,277 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -4781,18 +4835,11 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosclipboard.c SDL2-2.32.8.aros/src/vi
 +#include "../../SDL_internal.h"
 +
 +#include "../SDL_sysvideo.h"
-+#include "../../core/morphos/SDL_misc.h"
++#include "../../misc/aros/SDL_misc.h"
 +
 +#include <devices/clipboard.h>
-+#if !defined(__AROS__)
-+#include <libraries/charsets.h>
-+#endif
 +#include <proto/exec.h>
 +#include <proto/iffparse.h>
-+
-+#if defined(__AROS__)
-+#include <string.h>
-+#endif
 +
 +extern struct Library *IFFParseBase;
 +
@@ -4935,9 +4982,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosclipboard.c SDL2-2.32.8.aros/src/vi
 +	if ((ctx = clipboard_open())) {
 +		char *stext = NULL;
 +		
-+#if !defined(__AROS__)
-+		stext = AROS_ConvertText(text, MIBENUM_UTF_8, MIBENUM_SYSTEM);
-+#endif
++		stext = AROS_ConvertUTF8Text(text);
 +
 +		if (stext) {
 +			int ulen = strlen(text);
@@ -4986,11 +5031,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosclipboard.c SDL2-2.32.8.aros/src/vi
 +									if (tmp) {
 +										ReadChunkBytes(clip, tmp, size);
 +										tmp[size] = '\0';
-+#if !defined(__AROS__)
-+										text = AROS_ConvertText(tmp, MIBENUM_SYSTEM, MIBENUM_UTF_8);
-+#else
-+										strcpy(text,tmp);
-+#endif
++
++										text = AROS_ConvertTextUTF8(tmp);
++
 +										SDL_free(tmp);
 +									}
 +								}
@@ -5076,8 +5119,8 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosclipboard.h SDL2-2.32.8.aros/src/vi
 +#endif /* _SDL_arosclipboard_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.c
 --- SDL2-2.32.8/src/video/aros/SDL_arosevents.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.c	2025-08-03 19:37:26.286602715 +0000
-@@ -0,0 +1,792 @@
++++ SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.c	2025-08-04 17:16:08.260794397 +0000
+@@ -0,0 +1,784 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -5123,17 +5166,10 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video
 +
 +#include <devices/rawkeycodes.h>
 +#include <intuition/extensions.h>
-+#if !defined(__AROS__)
-+#include <intuition/intuimessageclass.h>
-+#include <libraries/screennotify.h>
-+#endif
 +#include <rexx/errors.h>
 +#include <rexx/storage.h>
 +#include <workbench/workbench.h>
 +#include <workbench/startup.h>
-+#if !defined(__AROS__)
-+#include <exec/system.h>
-+#endif
 +
 +#include <libraries/gadtools.h>
 +
@@ -5145,7 +5181,6 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video
 +#include <proto/keymap.h>
 +#include <proto/locale.h>
 +
-+#include <string.h>
 +#include <stdio.h>
 +
 +extern struct Library *DOSBase;
@@ -5905,7 +5940,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.h SDL2-2.32.8.aros/src/video
 +#endif /* _SDL_arosevents_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosframebuffer.c SDL2-2.32.8.aros/src/video/aros/SDL_arosframebuffer.c
 --- SDL2-2.32.8/src/video/aros/SDL_arosframebuffer.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosframebuffer.c	2025-08-03 22:58:54.747484633 +0000
++++ SDL2-2.32.8.aros/src/video/aros/SDL_arosframebuffer.c	2025-08-04 17:26:42.572790303 +0000
 @@ -0,0 +1,156 @@
 +/*
 +  Simple DirectMedia Layer
@@ -6004,7 +6039,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosframebuffer.c SDL2-2.32.8.aros/src/
 +		return SDL_SetError("Failed to allocate bitmap for framebuffer");
 +	} 
 +		
-+	D("[SDL2:arosfb] %s: Allocate bitmap %d x %d x %d for framebuffer\n", __FUNCTION__, window->w, window->h, depth);
++	D("[SDL2:arosfb] %s: Allocate bitmap %d x %d x %d for framebuffer\n", __func__, window->w, window->h, depth);
 +	lock = LockBitMapTags(
 +        data->bitmap,
 +        LBMI_BASEADDRESS, &base_address,
@@ -6227,8 +6262,8 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroskeyboard.h SDL2-2.32.8.aros/src/vid
 +#endif /* _SDL_aroskeyboard_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmessagebox.c SDL2-2.32.8.aros/src/video/aros/SDL_arosmessagebox.c
 --- SDL2-2.32.8/src/video/aros/SDL_arosmessagebox.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosmessagebox.c	2025-07-29 12:02:13.029399332 +0000
-@@ -0,0 +1,112 @@
++++ SDL2-2.32.8.aros/src/video/aros/SDL_arosmessagebox.c	2025-08-04 17:11:26.948791539 +0000
+@@ -0,0 +1,97 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -6259,11 +6294,8 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmessagebox.c SDL2-2.32.8.aros/src/v
 +
 +#include "SDL_messagebox.h"
 +#include "../SDL_sysvideo.h"
-+#include "../../core/morphos/SDL_misc.h"
++#include "../../misc/aros/SDL_misc.h"
 +
-+#if !defined(__AROS__)
-+#include <proto/charsets.h>
-+#endif
 +#include <proto/exec.h>
 +#include <proto/muimaster.h>
 +
@@ -6277,18 +6309,10 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmessagebox.c SDL2-2.32.8.aros/src/v
 +
 +	if (MUIMasterBase) {
 +		const char *title = NULL;
-+#if !defined(__AROS__)
-+        title = AROS_ConvertText(mbd->title, MIBENUM_UTF_8, MIBENUM_SYSTEM);
-+#else
-+        title = mbd->title;
-+#endif
++        title = AROS_ConvertUTF8Text(mbd->title);
 +        if (title) {
 +            const char *message = NULL;
-+#if !defined(__AROS__)
-+            message = AROS_ConvertText(mbd->message, MIBENUM_UTF_8, MIBENUM_SYSTEM);
-+#else
-+            message = mbd->message;
-+#endif
++            message = AROS_ConvertUTF8Text(mbd->message);
 +            if (message) {
 +                size_t i, tlen = 1024;
 +                char *btxt;
@@ -6327,13 +6351,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmessagebox.c SDL2-2.32.8.aros/src/v
 +                    SDL_free(btxt);
 +                    rc = 0;
 +                }
-+#if !defined(__AROS__)
 +                SDL_free(message);
-+#endif
 +            }
-+#if !defined(__AROS__)
 +            SDL_free(title);
-+#endif
 +        }
 +
 +		CloseLibrary(MUIMasterBase);
@@ -6375,8 +6395,8 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmessagebox.h SDL2-2.32.8.aros/src/v
 +#endif /* _SDL_arosmessagebox_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmodes.c SDL2-2.32.8.aros/src/video/aros/SDL_arosmodes.c
 --- SDL2-2.32.8/src/video/aros/SDL_arosmodes.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosmodes.c	2025-07-29 12:11:47.217399850 +0000
-@@ -0,0 +1,493 @@
++++ SDL2-2.32.8.aros/src/video/aros/SDL_arosmodes.c	2025-08-04 17:15:50.112794155 +0000
+@@ -0,0 +1,490 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -6417,9 +6437,6 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmodes.c SDL2-2.32.8.aros/src/video/
 +#include <proto/cybergraphics.h>
 +#include <proto/graphics.h>
 +#include <proto/intuition.h>
-+#if !defined(__AROS__)
-+#include <proto/screennotify.h>
-+#endif
 +#include <proto/exec.h>
 +
 +extern struct Library *GfxBase;
@@ -7330,8 +7347,8 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmouse.h SDL2-2.32.8.aros/src/video/
 +#endif /* _SDL_arosmouse_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosopengl.c SDL2-2.32.8.aros/src/video/aros/SDL_arosopengl.c
 --- SDL2-2.32.8/src/video/aros/SDL_arosopengl.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosopengl.c	2025-08-03 23:09:43.700189237 +0000
-@@ -0,0 +1,282 @@
++++ SDL2-2.32.8.aros/src/video/aros/SDL_arosopengl.c	2025-08-04 17:15:22.924792839 +0000
+@@ -0,0 +1,269 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
@@ -7373,19 +7390,6 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosopengl.c SDL2-2.32.8.aros/src/video
 +
 +#include <proto/intuition.h>
 +#include <proto/graphics.h>
-+
-+#if (0)
-+			AROS_GL_LoadLibrary;
-+			AROS_GL_GetProcAddress;
-+			AROS_GL_UnloadLibrary;
-+			AROS_GL_CreateContext;
-+			AROS_GL_MakeCurrent;
-+			AROS_GL_GetDrawableSize;
-+			AROS_GL_SetSwapInterval;
-+			AROS_GL_GetSwapInterval;
-+			AROS_GL_SwapWindow;
-+			AROS_GL_DeleteContext;
-+#endif
 +
 +extern struct ExecBase *SysBase;
 +extern struct Library *GfxBase;
@@ -7919,8 +7923,8 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosshape.h SDL2-2.32.8.aros/src/video/
 +#endif /* _SDL_arosshape_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosvideo.c SDL2-2.32.8.aros/src/video/aros/SDL_arosvideo.c
 --- SDL2-2.32.8/src/video/aros/SDL_arosvideo.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosvideo.c	2025-07-31 14:25:00.569817510 +0000
-@@ -0,0 +1,421 @@
++++ SDL2-2.32.8.aros/src/video/aros/SDL_arosvideo.c	2025-08-04 17:15:38.792793849 +0000
+@@ -0,0 +1,416 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -7974,11 +7978,6 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosvideo.c SDL2-2.32.8.aros/src/video/
 +#include <proto/exec.h>
 +#include <proto/icon.h>
 +#include <proto/intuition.h>
-+#if !defined(__AROS__)
-+#include <proto/screennotify.h>
-+#else
-+#include <string.h>
-+#endif
 +#include <proto/wb.h>
 +
 +#include <dos/bptr.h>
@@ -8445,8 +8444,8 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosvideo.h SDL2-2.32.8.aros/src/video/
 +#endif /* _SDL_arosvideo_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video/aros/SDL_aroswindow.c
 --- SDL2-2.32.8/src/video/aros/SDL_aroswindow.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_aroswindow.c	2025-08-03 22:53:49.815055116 +0000
-@@ -0,0 +1,1091 @@
++++ SDL2-2.32.8.aros/src/video/aros/SDL_aroswindow.c	2025-08-04 17:29:24.040793801 +0000
+@@ -0,0 +1,1042 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -8468,7 +8467,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +  3. This notice may not be removed or altered from any source distribution.
 +*/
 +
-+//#define DEBUG 1
++#define DEBUG 1
 +#include <aros/debug.h>
 +
 +#define __NOLIBBASE__
@@ -8481,7 +8480,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +#include "SDL_version.h"
 +#include "../SDL_sysvideo.h"
 +#include "../SDL_pixels_c.h"
-+#include "../../core/morphos/SDL_misc.h"
++#include "../../misc/aros/SDL_misc.h"
 +#include "../../events/SDL_keyboard_c.h"
 +#include "../../events/SDL_events_c.h"
 +#include "../../events/SDL_mouse_c.h"
@@ -8495,9 +8494,6 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +#include <sys/param.h>
 +
 +#include <intuition/extensions.h>
-+#if !defined(__AROS__)
-+#include <libraries/charsets.h>
-+#endif
 +#include <proto/alib.h>
 +#include <proto/exec.h>
 +#include <proto/gadtools.h>
@@ -8505,14 +8501,6 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +#include <proto/intuition.h>
 +#include <proto/wb.h>
 +#include <proto/dos.h>
-+
-+#if defined(__AROS__)
-+#include <string.h>
-+#include <math.h>
-+#define MOSWIN_TAGTYPE	IPTR
-+#else
-+#define MOSWIN_TAGTYPE	size_t
-+#endif
 +
 +extern struct Library *IntuitionBase;
 +extern struct Library *GadToolsBase;
@@ -8535,6 +8523,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +	{ NM_ITEM , (char *)"Mute Sound", (const STRPTR)"M", (CHECKIT | MENUTOGGLE), 0, (APTR)MID_MUTE},
 +	{ NM_ITEM , (char *)"Low CPU Priority", (const STRPTR)"P", (CHECKIT | MENUTOGGLE), 0, (APTR)MID_PRIORITY},
 +	{ NM_ITEM, NM_BARLABEL, NULL, 0, 0, NULL },
++#if (0)
 +	{ NM_ITEM, (char *)"HINT RENDER DRIVER", 0, 0, 0, (APTR)MID_RRENDER },
 +	{ NM_SUB, (char *)"Default", 0, (CHECKED | CHECKIT | MENUTOGGLE), 0, (APTR)MID_RRAUTO },
 +	{ NM_SUB, (char *)"OpenGL", 0, (CHECKIT | MENUTOGGLE), 0, (APTR)MID_RRGL },
@@ -8564,6 +8553,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +	{ NM_SUB, (char *)"Default", 0, (CHECKED | CHECKIT | MENUTOGGLE), 0, (APTR)MID_SHADERS_AUTO },
 +	{ NM_SUB, (char *)"Enabled", 0, (CHECKIT | MENUTOGGLE), 0, (APTR)MID_SHADERS_ENABLE },
 +	{ NM_SUB, (char *)"Disabled", 0, (CHECKIT | MENUTOGGLE), 0, (APTR)MID_SHADERS_DISABLE },
++#endif
 +	{ NM_END , NULL, NULL, 0, 0, NULL }
 +};
 +
@@ -8710,11 +8700,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +
 +	if (win->Title && win->Title != (APTR)-1)
 +	{
-+#if !defined(__AROS__)
-+		window->title = AROS_ConvertText(win->Title, MIBENUM_SYSTEM, MIBENUM_UTF_8);
-+#else
-+		window->title = win->Title;
-+#endif
++		window->title = AROS_ConvertTextUTF8(win->Title);
 +	}
 +
 +	flags = (window->flags | SDL_WINDOW_SHOWN | SDL_WINDOW_FOREIGN) & ~SDL_WINDOW_MINIMIZED;
@@ -8746,18 +8732,12 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +
 +	if (data->win) {
 +		APTR title = NULL;
-+#if !defined(__AROS__)
 +		APTR old = data->window_title;
-+		title = AROS_ConvertText(window->title, MIBENUM_UTF_8, MIBENUM_SYSTEM);
-+#else
-+		title = window->title;
-+#endif
-+		D(bug("[SDL2:aroswindow] %s to %s (0x%08lx)\n", __FUNCTION__, window->title, title, data->win));
++		title = AROS_ConvertUTF8Text(window->title);
++		D(bug("[SDL2:aroswindow] %s to %s (0x%08lx)\n", __func__, window->title, title, data->win));
 +		SetWindowTitles(data->win, title, title);
-+#if !defined(__AROS__)
 +		data->window_title = title;
 +		SDL_free(old);
-+#endif
 +	}
 +}
 +
@@ -8765,7 +8745,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +AROS_SetWindowIcon(_THIS, SDL_Window * window, SDL_Surface * icon)
 +{
 +	SDL_WindowData *data = (SDL_WindowData *) window->driverdata;
-+	D(bug("[SDL2:aroswindow] %s: wnd 0x%08lx - TODO convert this icon to appicon \n", __FUNCTION__, data->win));
++	D(bug("[SDL2:aroswindow] %s: wnd 0x%08lx - TODO convert this icon to appicon \n", __func__, data->win));
 +}
 +
 +void
@@ -8773,7 +8753,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +{
 +	SDL_WindowData *data = (SDL_WindowData *) window->driverdata;
 +
-+	D(bug("[SDL2:aroswindow] %s: 0x%08lx\n", __FUNCTION__, data->win));
++	D(bug("[SDL2:aroswindow] %s: 0x%08lx\n", __func__, data->win));
 +
 +	if (data->win) {
 +		SDL_VideoData *vd = data->videodata;
@@ -8790,7 +8770,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +{
 +	SDL_WindowData *data = (SDL_WindowData *) window->driverdata;
 +
-+	D(bug("[SDL2:aroswindow] %s:  0x%08lx\n", __FUNCTION__, data->win));
++	D(bug("[SDL2:aroswindow] %s:  0x%08lx\n", __func__, data->win));
 +
 +	if (data->win) {
 +		SDL_VideoData *vd = data->videodata;
@@ -8812,7 +8792,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +{
 +	SDL_WindowData *data = (SDL_WindowData *) window->driverdata;
 +
-+	D(bug("[SDL2:aroswindow] %s: 0x%08lx\n", __FUNCTION__, data->win));
++	D(bug("[SDL2:aroswindow] %s: 0x%08lx\n", __func__, data->win));
 +
 +	if (data->win) {
 +		SDL_VideoData *vd = data->videodata;
@@ -8854,34 +8834,10 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +void
 +AROS_WindowToFront(struct Window *win)
 +{
-+	D(bug("[SDL2:aroswindow] %s: wnd 0x%08lx\n", __FUNCTION__, win));
++	D(bug("[SDL2:aroswindow] %s: wnd 0x%08lx\n", __func__, win));
 +
 +	ActivateWindow(win);
 +	WindowToFront(win);
-+}
-+
-+char *AROS_getenv(const char *name)
-+{
-+	char *value = NULL;
-+	char dummy[32];
-+	size_t len;
-+
-+	if (GetVar((char *)name, dummy, sizeof(dummy), GVF_BINARY_VAR) == -1)
-+	{
-+		return NULL;
-+	}
-+	
-+	len = IoErr() + 1;
-+	
-+	if ((value = SDL_malloc(len)))
-+	{
-+		if (GetVar((char *)name, value, len, GVF_GLOBAL_ONLY) == -1)
-+		{
-+			SDL_free(value);
-+			value = NULL;
-+		}
-+	}
-+	return value;
 +}
 +
 +void
@@ -8890,7 +8846,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +	SDL_WindowData *data = (SDL_WindowData *) window->driverdata;
 +	SDL_VideoData *vd = data->videodata;
 +
-+	D(bug("[SDL2:aroswindow] %s: wnd 0x%08lx, scr 0x%08lx\n", __FUNCTION__, data->win, vd->WScreen));
++	D(bug("[SDL2:aroswindow] %s: wnd 0x%08lx, scr 0x%08lx\n", __func__, data->win, vd->WScreen));
 +
 +	if (data->win == NULL && (data->sdlflags & SDL_WINDOW_MINIMIZED) == 0) {
 +		struct Screen *scr;
@@ -8915,17 +8871,16 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +		size_t max_w = window->max_w ? window->max_w : (win_resizable ? scr->Width : w);
 +		size_t max_h = window->max_h ? window->max_h : (win_resizable ? scr->Height : h);
 +	
-+		D(bug("[SDL2:aroswindow] %s: initial sizes %ld/%ld and max: %ld/%ld\n", __FUNCTION__, w, h, max_w, max_h));
-+		D(bug("[SDL2:aroswindow] %s: screen 0x%08lx is %ld/%ld\n", __FUNCTION__, scr, scr->Width, scr->Height));
-+
-+		// Add border sizes
-+		APTR di = GetScreenDrawInfo(scr);
++		D(bug("[SDL2:aroswindow] %s: initial sizes %ld/%ld and max: %ld/%ld\n", __func__, w, h, max_w, max_h));
++		D(bug("[SDL2:aroswindow] %s: screen 0x%08lx is %ld/%ld\n", __func__, scr, scr->Width, scr->Height));
 +
 +#if !defined(__AROS__)
++		// Add border sizes
++		APTR di = GetScreenDrawInfo(scr);
 +		if (vd->CustomScreen == NULL)
 +			barheight = GetSkinInfoAttrA(di, SI_ScreenTitlebarHeight, NULL);
-+#endif
 +		FreeScreenDrawInfo(scr, di);
++#endif
 +
 +		if (!fs_desktop)
 +			maxheight = scr->Height - barheight;
@@ -8942,7 +8897,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +			border_w = GetSkinInfoAttrA(di, SI_BorderLeft    , NULL) + GetSkinInfoAttrA(di, SI_BorderRight, NULL);
 +			border_h = GetSkinInfoAttrA(di, SI_BorderTopTitle, NULL) + GetSkinInfoAttrA(di, win_resizable ? SI_BorderBottomSize : SI_BorderBottom, NULL);
 +#endif
-+			D(bug("[SDL2:aroswindow] %s: Border width %ld, border height %ld, bar height %ld\n", __FUNCTION__, border_w, border_h, barheight));
++			D(bug("[SDL2:aroswindow] %s: Border width %ld, border height %ld, bar height %ld\n", __func__, border_w, border_h, barheight));
 +
 +			max_w = MAX(w, max_w) - border_w;
 +			max_h = MAX(h, max_h) - border_h;
@@ -8954,7 +8909,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +			w = max_w;
 +			h = max_h;
 +
-+			D(bug("[SDL2:aroswindow] %s: maximize to %ld/%ld\n", __FUNCTION__, w, h));
++			D(bug("[SDL2:aroswindow] %s: maximize to %ld/%ld\n", __func__, w, h));
 +		}
 +
 +		min_w = MIN(min_w, scr->Width);
@@ -8978,13 +8933,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +		
 +		if (data->window_title == NULL)
 +		{
-+#if !defined(__AROS__)
-+			data->window_title = AROS_ConvertText(window->title, MIBENUM_UTF_8, MIBENUM_SYSTEM);
-+#else
-+			data->window_title = window->title;
-+#endif
++			data->window_title = AROS_ConvertUTF8Text(window->title);
 +		}
-+		D(bug("[SDL2:aroswindow] %s: min %ld/%ld, normal %ld/%ld, max %ld/%ld\n", __FUNCTION__, min_w, min_h, w, h, max_w, max_h));
++		D(bug("[SDL2:aroswindow] %s: min %ld/%ld, normal %ld/%ld, max %ld/%ld\n", __func__, min_w, min_h, w, h, max_w, max_h));
 +
 +		ULONG opacity_value = ((window->opacity) * (ULONG_MAX));
 +		
@@ -9017,14 +8968,14 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +		if (data->win) {
 +			if (IS_SYSTEM_CURSOR(vd->CurrentPointer)) {
 +#if !defined(__AROS__)
-+				MOSWIN_TAGTYPE pointertags[] = { WA_PointerType, vd->CurrentPointer == NULL ? POINTERTYPE_INVISIBLE : (MOSWIN_TAGTYPE)vd->CurrentPointer->driverdata, TAG_DONE };
++				IPTR pointertags[] = { WA_PointerType, vd->CurrentPointer == NULL ? POINTERTYPE_INVISIBLE : (IPTR)vd->CurrentPointer->driverdata, TAG_DONE };
 +				SetAttrsA(data->win, (struct TagItem *)&pointertags);
 +#endif
 +			} else{
 +				SDL_AROSCursor *ac = (SDL_AROSCursor *)vd->CurrentPointer;
 +				if (ac->Pointer.mouseptr) {
 +#if !defined(__AROS__)
-+					SetWindowPointer(data->win, WA_Pointer, (MOSWIN_TAGTYPE)ac->Pointer.mouseptr,TAG_DONE);
++					SetWindowPointer(data->win, WA_Pointer, (IPTR)ac->Pointer.mouseptr,TAG_DONE);
 +#endif
 +				}
 +			}
@@ -9060,53 +9011,53 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +                    }
 +                }
 +            } else {
-+			//	D("[SDL2:aroswindow] Screen to Front\n", __FUNCTION__);
 +				ScreenToFront(vd->CustomScreen);
 +			}
 +
 +            if (data->menuactive == TRUE) {
 +				if (SetMenuStrip(data->win, data->menu)) {
-+					char *val = AROS_getenv("SDL_THREAD_PRIORITY_POLICY");
++#if (0)
++					char *val = AROS_GetEnv("SDL_THREAD_PRIORITY_POLICY");
 +					if (val && strlen(val)>0 && strcmp(val, "-1")==0) {
 +						SDL_SetThreadPriority(SDL_THREAD_PRIORITY_LOW);
 +						AROS_GlobalMenu(data->menu, 1, 1, 0, 1);
 +					}
-+					val = AROS_getenv("SDL_RENDER_DRIVER");
++					val = AROS_GetEnv("SDL_RENDER_DRIVER");
 +					if (val && strlen(val)>0) {					
 +						AROS_GlobalMenu(data->menu, 1, 3, 0, 0);
 +						AROS_GlobalMenu(data->menu, 1, 3, 1, (strcmp(val, "opengl")==0 ? 1 : 0));
 +						AROS_GlobalMenu(data->menu, 1, 3, 2, (strcmp(val, "opengl")==0 ? 0 : 1));
 +						SDL_SetHint(SDL_HINT_RENDER_DRIVER, (strcmp(val, "opengl")==0 ? "opengl" : "software"));
 +					}
-+					val = AROS_getenv("SDL_RENDER_VSYNC");
++					val = AROS_GetEnv("SDL_RENDER_VSYNC");
 +					if (val && strlen(val)>0) {
 +						AROS_GlobalMenu(data->menu, 1, 4, 0, 0);
 +						AROS_GlobalMenu(data->menu, 1, 4, 1, (strcmp(val, "1")==0 ? 1 : 0));
 +						AROS_GlobalMenu(data->menu, 1, 4, 2, (strcmp(val, "1")==0 ? 0 : 1));
 +						SDL_SetHint(SDL_HINT_RENDER_VSYNC, (strcmp(val, "1")==0 ? "1" :"0"));
 +					}
-+					val = AROS_getenv("SDL_RENDER_SCALE_QUALITY");
++					val = AROS_GetEnv("SDL_RENDER_SCALE_QUALITY");
 +					if (val && strlen(val)>0) {
 +						AROS_GlobalMenu(data->menu, 1, 5, 0, 0);
 +						AROS_GlobalMenu(data->menu, 1, 5, 1, (strcmp(val, "nearest")==0 ? 1 : 0));
 +						AROS_GlobalMenu(data->menu, 1, 5, 2, (strcmp(val, "nearest")==0 ? 0 : 1));
 +						SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, (strcmp(val, "nearest")==0 ? "nearest" : "linear"));
 +					}
-+					val = AROS_getenv("SDL_RENDER_LOGICAL_SIZE_MODE");
++					val = AROS_GetEnv("SDL_RENDER_LOGICAL_SIZE_MODE");
 +					if (val && strlen(val)>0) {
 +						AROS_GlobalMenu(data->menu, 1, 6, 0, 0);
 +						AROS_GlobalMenu(data->menu, 1, 6, 1, (strcmp(val, "0")==0 ? 1 : 0));
 +						AROS_GlobalMenu(data->menu, 1, 6, 2, (strcmp(val, "0")==0 ? 0 : 1));
 +						SDL_SetHint(SDL_HINT_RENDER_LOGICAL_SIZE_MODE, (strcmp(val, "0")==0 ? "0" : "1"));
 +					}
-+					val = AROS_getenv("SDL_RENDER_BATCHING");
++					val = AROS_GetEnv("SDL_RENDER_BATCHING");
 +					if (val && strlen(val)>0) {
 +						AROS_GlobalMenu(data->menu, 1, 7, 0, 0);
 +						AROS_GlobalMenu(data->menu, 1, 7, 1, (strcmp(val, "0")==0 ? 1 : 0));
 +						AROS_GlobalMenu(data->menu, 1, 7, 2, (strcmp(val, "0")==0 ? 0 : 1));
 +						SDL_SetHint(SDL_HINT_RENDER_BATCHING, (strcmp(val, "0")==0 ? "0" : "1"));
 +					}
-+					val = AROS_getenv("SDL_RENDER_LINE_METHOD");
++					val = AROS_GetEnv("SDL_RENDER_LINE_METHOD");
 +					if (val && strlen(val)>0) {
 +						AROS_GlobalMenu(data->menu, 1, 8, 0, 0);
 +						AROS_GlobalMenu(data->menu, 1, 8, 1, (strcmp(val, "1")==0 ? 1 : 0));
@@ -9114,21 +9065,22 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +						AROS_GlobalMenu(data->menu, 1, 8, 3, (strcmp(val, "3")==0 ? 1 : 0));
 +						SDL_SetHint(SDL_HINT_RENDER_LINE_METHOD, (strcmp(val, "1")==0 ? "1" : (strcmp(val, "2")==0 ? "2" : "3")));
 +					}
-+					val = AROS_getenv("SDL_RENDER_OPENGL_SHADERS");
++					val = AROS_GetEnv("SDL_RENDER_OPENGL_SHADERS");
 +					if (val && strlen(val)>0) {
 +						AROS_GlobalMenu(data->menu, 1, 9, 0, 0);
 +						AROS_GlobalMenu(data->menu, 1, 9, 1, (strcmp(val, "1")==0 ? 1 : 0));
 +						AROS_GlobalMenu(data->menu, 1, 9, 2, (strcmp(val, "0")==0 ? 1 : 0));
 +						SDL_SetHint(SDL_HINT_RENDER_OPENGL_SHADERS, (strcmp(val, "0")==0 ? "0" : "1"));
 +					}
++#endif
 +				}
 +			}
-+			
++
 +			if (!data->appmsg) {
 +				data->appmsg = AddAppWindow(0, (IPTR)window, data->win, &vd->WBPort, TAG_DONE);
 +				if (!data->appmsg)
 +				{
-+					D(bug("[SDL2:aroswindow] %s: ERROR AddAppWindow \n", __FUNCTION__));
++					D(bug("[SDL2:aroswindow] %s: ERROR AddAppWindow \n", __func__));
 +				}
 +			}
 +			
@@ -9171,7 +9123,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +{
 +	SDL_WindowData *data = (SDL_WindowData *) window->driverdata;
 +
-+	D(bug("[SDL2:aroswindow] %s: wnd 0x%08lx\n", __FUNCTION__, data->win));
++	D(bug("[SDL2:aroswindow] %s: wnd 0x%08lx\n", __func__, data->win));
 +
 +	if (data->win)
 +		AROS_WindowToFront(data->win);
@@ -9183,7 +9135,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +	SDL_WindowData *data = (SDL_WindowData *) window->driverdata;
 +	SDL_VideoData *vd = (SDL_VideoData *) data->videodata;
 +
-+	D(bug("[SDL2:aroswindow] %s: wnd 0x%08lx - w=%d, h=%d\n", __FUNCTION__, data->win, data->win->MaxWidth, data->win->MaxHeight));
++	D(bug("[SDL2:aroswindow] %s: wnd 0x%08lx - w=%d, h=%d\n", __func__, data->win, data->win->MaxWidth, data->win->MaxHeight));
 +	
 +	if (data->win && window->flags & SDL_WINDOW_RESIZABLE) {
 +		
@@ -9199,7 +9151,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +{
 +	SDL_WindowData *data = (SDL_WindowData *) window->driverdata;
 +
-+	D(bug("[SDL2:aroswindow] %s: wnd 0x%08lx\n", __FUNCTION__, data->win));
++	D(bug("[SDL2:aroswindow] %s: wnd 0x%08lx\n", __func__, data->win));
 +
 +	data->sdlflags |=  SDL_WINDOW_MINIMIZED;
 +	data->sdlflags &= ~SDL_WINDOW_MAXIMIZED;
@@ -9212,7 +9164,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +{
 +	SDL_WindowData *data = (SDL_WindowData *) window->driverdata;
 +
-+	D(bug("[SDL2:aroswindow] %s: wnd 0x%08lx\n", __FUNCTION__, data->win));
++	D(bug("[SDL2:aroswindow] %s: wnd 0x%08lx\n", __func__, data->win));
 +
 +	if (data->win) {
 +		data->sdlflags &= ~(SDL_WINDOW_MINIMIZED | SDL_WINDOW_MAXIMIZED);
@@ -9241,14 +9193,14 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +		data->old_w = ww;
 +		data->old_h = hh;
 +
-+		D(bug("[SDL2:aroswindow] %s: Save actual position %d,%d and size %d,%d\n", __FUNCTION__, data->old_x, data->old_y, data->old_w, data->old_h));
++		D(bug("[SDL2:aroswindow] %s: Save actual position %d,%d and size %d,%d\n", __func__, data->old_x, data->old_y, data->old_w, data->old_h));
 +		
 +	} else {
 +		
 +		data->winflags &= ~SDL_AROS_WINDOW_FULLSCREEN;
 +
 +		if ((data->old_w && data->old_h) && (data->old_w != data->curr_w && data->old_h != data->curr_h)) {
-+			D(bug("[SDL2:aroswindow] %s: Change position %d,%d and size %d,%d\n", __FUNCTION__, data->old_x, data->old_y, data->old_w, data->old_h));
++			D(bug("[SDL2:aroswindow] %s: Change position %d,%d and size %d,%d\n", __func__, data->old_x, data->old_y, data->old_w, data->old_h));
 +			window->x = data->old_x;
 +			window->y = data->old_y;
 +			window->w = data->old_w;
@@ -9295,7 +9247,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +	SDL_WindowData *data = (SDL_WindowData *) window->driverdata;
 +
 +	if (data->win && data->grabbed != (grabbed ? 1 : 0)) {
-+		D(bug("[SDL2:aroswindow] %s: %s\n", __FUNCTION__, grabbed ? "grabbed" : "not grabbed"));
++		D(bug("[SDL2:aroswindow] %s: %s\n", __func__, grabbed ? "grabbed" : "not grabbed"));
 +
 +		data->grabbed = grabbed ? 1 : 0;
 +
@@ -9329,13 +9281,11 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +			DisposeRegion(data->region);
 +
 +		if (IsListEmpty((struct List *)&videodata->windowlist)) {
-+			D(bug("[SDL2:aroswindow] %s: Was last window... get rid of screen.\n", __FUNCTION__));
++			D(bug("[SDL2:aroswindow] %s: Was last window... get rid of screen.\n", __func__));
 +			AROS_CloseDisplay(_this);
 +		}
 +
-+#if (0)
 +		SDL_free(data->window_title);
-+#endif
 +		SDL_free(data);
 +	}
 +}
@@ -9359,7 +9309,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +AROS_CloseWindow(SDL_Window *window)
 +{
 +    SDL_WindowData *data = (SDL_WindowData *)window->driverdata;
-+	D(bug("[SDL2:aroswindow] %s: 0x%08lx\n", __FUNCTION__, data->win));
++	D(bug("[SDL2:aroswindow] %s: 0x%08lx\n", __func__, data->win));
 +
 +    if (data->win) {
 +        if (data->appmsg) {
@@ -9386,15 +9336,15 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +AROS_RecreateWindow(_THIS, SDL_Window * window)
 +{
 +	SDL_WindowData *data = (SDL_WindowData *) window->driverdata;
-+	D(bug("[SDL2:aroswindow] %s: 0x%08lx\n", __FUNCTION__, data->win));
++	D(bug("[SDL2:aroswindow] %s: 0x%08lx\n", __func__, data->win));
 +	
 +    if (window->flags & SDL_WINDOW_FOREIGN) {
-+		D(bug("[SDL2:aroswindow] %s: Cannot modify native window '%s'\n", __FUNCTION__, window->title));
++		D(bug("[SDL2:aroswindow] %s: Cannot modify native window '%s'\n", __func__, window->title));
 +        return;
 +    }
 +
 +    if (data->win) {
-+		D(bug("[SDL2:aroswindow] %s: Closing system window '%s' before re-creation\n", __FUNCTION__, window->title));
++		D(bug("[SDL2:aroswindow] %s: Closing system window '%s' before re-creation\n", __func__, window->title));
 +        AROS_CloseWindow(window);
 +    }
 +
@@ -9445,7 +9395,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +	ret = SetAttrs(data->win, WA_Opacity, value, TAG_DONE);
 +#endif
 +	if (ret) {
-+		D(bug("[SDL2:aroswindow] %s: Failed to set window opaqueness to %lu\n", __FUNCTION__, value));
++		D(bug("[SDL2:aroswindow] %s: Failed to set window opaqueness to %lu\n", __func__, value));
 +		return SDL_FALSE;
 +	}
 +
@@ -9461,7 +9411,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +	
 +    ULONG value = ((opacity) * (ULONG_MAX));
 +
-+	D(bug("[SDL2:aroswindow] %s: set window opaqueness to %lu\n", __FUNCTION__, value));
++	D(bug("[SDL2:aroswindow] %s: set window opaqueness to %lu\n", __func__, value));
 +	int ret = 0;
 +#if !defined(__AROS__)
 +	ret = AROS_SetWindowOpacityPrivate(_this, window, value) ? 0 : -1;
