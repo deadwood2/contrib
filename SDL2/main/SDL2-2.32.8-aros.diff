@@ -5180,8 +5180,8 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosclipboard.h SDL2-2.32.8.aros/src/vi
 +#endif /* _SDL_arosclipboard_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.c
 --- SDL2-2.32.8/src/video/aros/SDL_arosevents.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.c	2025-08-04 17:16:08.260794397 +0000
-@@ -0,0 +1,784 @@
++++ SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.c	2025-08-04 19:29:44.242562624 +0000
+@@ -0,0 +1,810 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -5234,6 +5234,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video
 +
 +#include <libraries/gadtools.h>
 +
++#include <hidd/hidd.h>
++
++#include <proto/oop.h>
 +#include <proto/dos.h>
 +#include <proto/alib.h>
 +#include <proto/commodities.h>
@@ -5247,9 +5250,21 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video
 +extern struct Library *DOSBase;
 +extern struct Library *IntuitionBase;
 +extern struct Library *CxBase;
++extern struct Library *OOPBase;
++OOP_AttrBase HiddAttrBase;
++OOP_AttrBase HWAttrBase;
++
++const struct OOP_ABDescr abd[] =
++{
++    {IID_Hidd        ,  &HiddAttrBase },
++    {IID_HW          ,  &HWAttrBase   },
++    {NULL            ,  NULL          }
++};
 +
 +void AHI_Mute(ULONG mute);
 +extern AROS_GlobalMouseState globalMouseState;
++
++const char *aros_str_Unknown = "Unknown";
 +
 +static int
 +AROS_GetButton(int code)
@@ -5468,13 +5483,24 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video
 +	char System[256];
 +	char Vendor[256];
 +
-+#if !defined(__AROS__)
-+	NewGetSystemAttrs(&System,sizeof(System),SYSTEMINFOTYPE_SYSTEM,TAG_DONE);
-+	NewGetSystemAttrs(&Vendor,sizeof(Vendor),SYSTEMINFOTYPE_VENDOR,TAG_DONE);
-+	EasyRequest(window, &es, NULL, System, Vendor, ((HasAltiVec)?"Yes":"No"));
-+#else
++    const char *hwname = NULL;
++    if (OOP_ObtainAttrBases(abd))
++    {
++        OOP_Object *hwRoot = OOP_NewObject(NULL, CLID_HW_Root, NULL);
++        if (hwRoot)
++        {
++            OOP_GetAttr(hwRoot, aHW_ClassName, (IPTR *)&hwname);
++            if (!hwname)
++                OOP_GetAttr(hwRoot, aHidd_HardwareName, (IPTR *)&hwname);
++        }
++        OOP_ReleaseAttrBases(abd);
++    }
++    if (hwname)
++        hwname = aros_str_Unknown;
++    SDL_snprintf(System, sizeof(System), "%s", hwname);
++    SDL_snprintf(Vendor, sizeof(Vendor), "%s", aros_str_Unknown);
++
 +    EasyRequest(window, &es, NULL, System, Vendor);
-+#endif
 +}
 +
 +static void
@@ -7408,7 +7434,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmouse.h SDL2-2.32.8.aros/src/video/
 +#endif /* _SDL_arosmouse_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosopengl.c SDL2-2.32.8.aros/src/video/aros/SDL_arosopengl.c
 --- SDL2-2.32.8/src/video/aros/SDL_arosopengl.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosopengl.c	2025-08-04 17:15:22.924792839 +0000
++++ SDL2-2.32.8.aros/src/video/aros/SDL_arosopengl.c	2025-08-04 19:10:18.512575026 +0000
 @@ -0,0 +1,269 @@
 +/*
 +  Simple DirectMedia Layer

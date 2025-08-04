@@ -41,27 +41,28 @@
 
 #include "SDL2_intern.h"
 
-extern void 	SDL_Quit(void);
+extern void SDL_Quit(void);
 
-struct SDL2Base   *GlobalBase = NULL;
+struct SDL2Base   		*GlobalBase = NULL;
 
-struct DosLibrary    *DOSBase = NULL;
-struct IntuitionBase *IntuitionBase = NULL;
-struct GfxBase       *GfxBase = NULL;
-struct Library       *UtilityBase = NULL;
-struct Library       *CyberGfxBase = NULL;
-struct Library       *KeymapBase = NULL;
-struct Library       *WorkbenchBase = NULL;
-struct Library       *IconBase = NULL;
-struct Library       *MUIMasterBase = NULL;
-struct Library       *CxBase = NULL;
-struct Library       *TimerBase = NULL;
-struct Library       *LocaleBase = NULL;
-struct Library       *IFFParseBase = NULL;
-struct Library       *OpenURLBase = NULL;
-struct Library       *GadToolsBase = NULL;
+struct DosLibrary    	*DOSBase = NULL;
+struct IntuitionBase	*IntuitionBase = NULL;
+struct GfxBase       	*GfxBase = NULL;
+struct Library       	*UtilityBase = NULL;
+struct Library       	*CyberGfxBase = NULL;
+struct Library       	*KeymapBase = NULL;
+struct Library       	*WorkbenchBase = NULL;
+struct Library       	*IconBase = NULL;
+struct Library       	*MUIMasterBase = NULL;
+struct Library       	*CxBase = NULL;
+struct Library       	*TimerBase = NULL;
+struct Library       	*LocaleBase = NULL;
+struct Library       	*IFFParseBase = NULL;
+struct Library       	*OpenURLBase = NULL;
+struct Library       	*GadToolsBase = NULL;
+struct Library 			*OOPBase = NULL;
 
-struct timerequest   GlobalTimeReq;
+struct timerequest   	GlobalTimeReq;
 
 /**********************************************************************
 	init_system
@@ -85,6 +86,7 @@ static int init_libs(LIBBASETYPEPTR LIBBASE)
 	if ((DOSBase = LIBBASE->MyDOSBase = (APTR)OpenLibrary("dos.library", 36)) != NULL)
 	if ((IntuitionBase = LIBBASE->MyIntuiBase = (APTR)OpenLibrary("intuition.library", 39)) != NULL)
 	if ((UtilityBase = OpenLibrary("utility.library", 36)) != NULL)
+	if ((OOPBase = OpenLibrary("oop.library", 0)) != NULL)
 	if (OpenDevice("timer.device", UNIT_MICROHZ, &GlobalTimeReq.tr_node, 0) == 0)
 	{
 		TimerBase = (struct Library *)GlobalTimeReq.tr_node.io_Device;
@@ -129,11 +131,13 @@ static BOOL DeleteLib(LIBBASETYPEPTR LIBBASE)
 
 	if (LIBBASE->_lib.lib_OpenCnt == 0)
 	{
-		CloseLibrary((struct Library *)LIBBASE->MyGfxBase);
-		CloseLibrary((struct Library *)LIBBASE->MyDOSBase);
-		CloseLibrary((struct Library *)LIBBASE->MyIntuiBase);
-		CloseLibrary(UtilityBase);
 		CloseDevice(&GlobalTimeReq.tr_node);
+		CloseLibrary(OOPBase);
+		CloseLibrary(UtilityBase);
+		CloseLibrary((struct Library *)LIBBASE->MyIntuiBase);
+		CloseLibrary((struct Library *)LIBBASE->MyDOSBase);
+		CloseLibrary((struct Library *)LIBBASE->MyGfxBase);
+
 		return TRUE;
 	}
 
@@ -148,28 +152,29 @@ static void UserLibClose(LIBBASETYPEPTR LIBBASE, struct ExecBase *SysBase)
 {
     D(bug("[SDL2] %s(0x%p)\n", __func__, LIBBASE));
 
-	CloseLibrary(LIBBASE->MyCyberGfxBase);
-	CloseLibrary(LIBBASE->MyKeymapBase);
-	CloseLibrary(LIBBASE->MyWorkbenchBase);
-	CloseLibrary(LIBBASE->MyIconBase);
-	CloseLibrary(LIBBASE->MyMUIMasterBase);
-	CloseLibrary(LIBBASE->MyCxBase);
-	CloseLibrary(LocaleBase);
-	CloseLibrary(IFFParseBase);
 	CloseLibrary(OpenURLBase);
 	CloseLibrary(GadToolsBase);
+	CloseLibrary(IFFParseBase);
+	CloseLibrary(LocaleBase);
 
-	CyberGfxBase     = LIBBASE->MyCyberGfxBase     = NULL;
-	KeymapBase       = LIBBASE->MyKeymapBase       = NULL;
-	WorkbenchBase    = LIBBASE->MyWorkbenchBase    = NULL;
-	IconBase         = LIBBASE->MyIconBase         = NULL;
-    MUIMasterBase    = LIBBASE->MyMUIMasterBase    = NULL;
-	CxBase           = LIBBASE->MyCxBase           = NULL;
-
-	LocaleBase = NULL;
-	IFFParseBase = NULL;
 	OpenURLBase = NULL;
 	GadToolsBase = NULL;
+	IFFParseBase = NULL;
+	LocaleBase = NULL;
+
+	CloseLibrary(LIBBASE->MyCxBase);
+	CloseLibrary(LIBBASE->MyMUIMasterBase);
+	CloseLibrary(LIBBASE->MyIconBase);
+	CloseLibrary(LIBBASE->MyWorkbenchBase);
+	CloseLibrary(LIBBASE->MyKeymapBase);
+	CloseLibrary(LIBBASE->MyCyberGfxBase);
+
+	CxBase           = LIBBASE->MyCxBase           = NULL;
+    MUIMasterBase    = LIBBASE->MyMUIMasterBase    = NULL;
+	IconBase         = LIBBASE->MyIconBase         = NULL;
+	WorkbenchBase    = LIBBASE->MyWorkbenchBase    = NULL;
+	KeymapBase       = LIBBASE->MyKeymapBase       = NULL;
+	CyberGfxBase     = LIBBASE->MyCyberGfxBase     = NULL;
 }
 
 /**********************************************************************
@@ -207,7 +212,6 @@ static void SDL2LIB_Close(LIBBASETYPEPTR LIBBASE)
 		LIBBASE->_lib.lib_Flags |= LIBF_DELEXP;
 
 	ReleaseSemaphore(&LIBBASE->Semaphore);
-
 
 	return;
 }
