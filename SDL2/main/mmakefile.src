@@ -94,7 +94,6 @@ FILES := \
     $(ARCHSRCDIR)/src/stdlib/SDL_malloc \
     $(ARCHSRCDIR)/src/stdlib/SDL_crc16 \
     $(ARCHSRCDIR)/src/stdlib/SDL_crc32 \
-    $(ARCHSRCDIR)/src/stdlib/SDL_getenv \
     $(ARCHSRCDIR)/src/stdlib/SDL_iconv \
     $(ARCHSRCDIR)/src/stdlib/SDL_mslibc \
     $(ARCHSRCDIR)/src/stdlib/SDL_qsort \
@@ -137,10 +136,11 @@ FILES := \
 # Platform Files
 SDL2AROSCOREFILES = \
     $(ARCHSRCDIR)/src/core/aros/SDL_cpu \
-    $(ARCHSRCDIR)/src/misc/aros/SDL_misc \
     $(ARCHSRCDIR)/src/filesystem/aros/SDL_sysfilesystem \
     $(ARCHSRCDIR)/src/locale/aros/SDL_syslocale \
     $(ARCHSRCDIR)/src/misc/amigaos/SDL_sysurl \
+    $(ARCHSRCDIR)/src/misc/aros/SDL_getenv \
+    $(ARCHSRCDIR)/src/misc/aros/SDL_misc \
     $(ARCHSRCDIR)/src/thread/aros/SDL_sysmutex \
     $(ARCHSRCDIR)/src/thread/aros/SDL_syssem \
     $(ARCHSRCDIR)/src/thread/aros/SDL_systhread \

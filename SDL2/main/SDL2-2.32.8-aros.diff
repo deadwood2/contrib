@@ -2821,10 +2821,91 @@ diff -ruN SDL2-2.32.8/src/misc/amigaos/SDL_sysurl.c SDL2-2.32.8.aros/src/misc/am
 +    return 0;
 +}
 +
+diff -ruN SDL2-2.32.8/src/misc/aros/SDL_getenv.c SDL2-2.32.8.aros/src/misc/aros/SDL_getenv.c
+--- SDL2-2.32.8/src/misc/aros/SDL_getenv.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.8.aros/src/misc/aros/SDL_getenv.c	2025-08-04 18:43:16.964792808 +0000
+@@ -0,0 +1,77 @@
++/*
++  Simple DirectMedia Layer
++  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
++
++  This software is provided 'as-is', without any express or implied
++  warranty.  In no event will the authors be held liable for any damages
++  arising from the use of this software.
++
++  Permission is granted to anyone to use this software for any purpose,
++  including commercial applications, and to alter it and redistribute it
++  freely, subject to the following restrictions:
++
++  1. The origin of this software must not be misrepresented; you must not
++     claim that you wrote the original software. If you use this software
++     in a product, an acknowledgment in the product documentation would be
++     appreciated but is not required.
++  2. Altered source versions must be plainly marked as such, and must not be
++     misrepresented as being the original software.
++  3. This notice may not be removed or altered from any source distribution.
++*/
++#include "../../SDL_internal.h"
++
++#include "SDL_stdinc.h"
++
++#include <proto/dos.h>
++
++#ifndef EXEC_TYPES_H
++#include <exec/types.h>
++#endif
++#include <sys/types.h>
++
++char *SDL_getenv(const char *name)
++{
++	if (!name)
++		return NULL;
++
++	char *value = NULL;
++	char varname[128];
++	char dummy[32];
++	size_t len;
++
++	SDL_snprintf(varname, sizeof(varname), "SDL2/%s", name);
++
++	if (GetVar(varname, dummy, sizeof(dummy), GVF_BINARY_VAR) == -1)
++		return NULL;
++	
++	len = IoErr() + 1;
++	
++	if ((value = SDL_malloc(len)))
++	{
++		if (GetVar(varname, value, len, GVF_GLOBAL_ONLY) == -1)
++		{
++			SDL_free(value);
++			value = NULL;
++		}
++	}
++	return value;
++}
++
++int SDL_setenv(const char *name, const char *value, int overwrite)
++{
++	if (!name)
++		return -1;
++
++	char varname[128];
++	char dummy[32];
++	BOOL exist = FALSE;
++
++	SDL_snprintf(varname, sizeof(varname), "SDL2/%s", name);
++
++	if (GetVar(varname, dummy, sizeof(dummy), GVF_BINARY_VAR) != -1)
++			exist = TRUE;
++	if (!exist || overwrite)
++		if (SetVar(varname, value, -1, GVF_GLOBAL_ONLY))
++			return 0;
++	return -1;
++}
 diff -ruN SDL2-2.32.8/src/misc/aros/SDL_misc.c SDL2-2.32.8.aros/src/misc/aros/SDL_misc.c
 --- SDL2-2.32.8/src/misc/aros/SDL_misc.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/misc/aros/SDL_misc.c	2025-08-04 17:23:37.316789445 +0000
-@@ -0,0 +1,164 @@
++++ SDL2-2.32.8.aros/src/misc/aros/SDL_misc.c	2025-08-04 18:19:55.948791136 +0000
+@@ -0,0 +1,140 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
@@ -2965,34 +3046,10 @@ diff -ruN SDL2-2.32.8/src/misc/aros/SDL_misc.c SDL2-2.32.8.aros/src/misc/aros/SD
 +	*dst++ = '\0';
 +	return path;
 +}
-+
-+char *AROS_GetEnv(const char *name)
-+{
-+	char *value = NULL;
-+	char dummy[32];
-+	size_t len;
-+
-+	if (GetVar((char *)name, dummy, sizeof(dummy), GVF_BINARY_VAR) == -1)
-+	{
-+		return NULL;
-+	}
-+	
-+	len = IoErr() + 1;
-+	
-+	if ((value = SDL_malloc(len)))
-+	{
-+		if (GetVar((char *)name, value, len, GVF_GLOBAL_ONLY) == -1)
-+		{
-+			SDL_free(value);
-+			value = NULL;
-+		}
-+	}
-+	return value;
-+}
 diff -ruN SDL2-2.32.8/src/misc/aros/SDL_misc.h SDL2-2.32.8.aros/src/misc/aros/SDL_misc.h
 --- SDL2-2.32.8/src/misc/aros/SDL_misc.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/misc/aros/SDL_misc.h	2025-08-04 17:20:05.568790396 +0000
-@@ -0,0 +1,36 @@
++++ SDL2-2.32.8.aros/src/misc/aros/SDL_misc.h	2025-08-04 18:35:49.536792718 +0000
+@@ -0,0 +1,35 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
@@ -3026,7 +3083,6 @@ diff -ruN SDL2-2.32.8/src/misc/aros/SDL_misc.h SDL2-2.32.8.aros/src/misc/aros/SD
 +extern char *AROS_ConvertUTF8Text(const char *src);
 +extern char *AROS_ConvertTextUTF8(const char *src);
 +extern char *AROS_ConvertPath(const char *fn);
-+extern char *AROS_GetEnv(const char *name);
 +
 +#endif /* SDL_MISC_AROS_MISC_H */
 diff -ruN SDL2-2.32.8/src/power/aros/SDL_syspower.c SDL2-2.32.8.aros/src/power/aros/SDL_syspower.c
@@ -3104,7 +3160,7 @@ diff -ruN SDL2-2.32.8/src/power/SDL_syspower.h SDL2-2.32.8.aros/src/power/SDL_sy
  /* SDL_bool SDL_GetPowerInfo_Hardwired(SDL_PowerState *, int *, int *);*/
 diff -ruN SDL2-2.32.8/src/render/opengl/SDL_render_gl.c SDL2-2.32.8.aros/src/render/opengl/SDL_render_gl.c
 --- SDL2-2.32.8/src/render/opengl/SDL_render_gl.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/render/opengl/SDL_render_gl.c	2025-08-04 17:53:49.524794688 +0000
++++ SDL2-2.32.8.aros/src/render/opengl/SDL_render_gl.c	2025-08-04 19:02:22.468791848 +0000
 @@ -22,6 +22,9 @@
  
  #if SDL_VIDEO_RENDER_OGL
@@ -3126,22 +3182,24 @@ diff -ruN SDL2-2.32.8/src/render/opengl/SDL_render_gl.c SDL2-2.32.8.aros/src/ren
  #if defined(__WINDOWS__) || defined(__WINGDK__)
      if (SDL_strcmp(renderer, "GDI Generic") == 0) {
          return SDL_FALSE; /* Microsoft's fallback software renderer. Fix your system! */
-@@ -1709,6 +1716,14 @@
+@@ -1709,6 +1716,16 @@
      const char *hint;
      SDL_bool non_power_of_two_supported = SDL_FALSE;
  
 +#ifdef SDL_VIDEO_DRIVER_AROS
 +    window_flags = SDL_GetWindowFlags(window);
 +    if (!(window_flags & SDL_WINDOW_OPENGL)) {
-+        // TODO: Check if we want to allow the GL renderer..
-+        goto error;
++        char *enable_gl_aros;
++        enable_gl_aros = SDL_getenv("GL_renderer");
++        if (!enable_gl_aros || *enable_gl_aros != '1')
++            goto error;
 +    }
 +#endif
 +
      SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &profile_mask);
      SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &major);
      SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &minor);
-@@ -1860,6 +1875,10 @@
+@@ -1860,6 +1877,10 @@
          renderer->info.max_texture_height = value;
      }
  
@@ -3152,7 +3210,7 @@ diff -ruN SDL2-2.32.8/src/render/opengl/SDL_render_gl.c SDL2-2.32.8.aros/src/ren
      /* Check for multitexture support */
      if (SDL_GL_ExtensionSupported("GL_ARB_multitexture")) {
          data->glActiveTextureARB = (PFNGLACTIVETEXTUREARBPROC)SDL_GL_GetProcAddress("glActiveTextureARB");
-@@ -1868,11 +1887,15 @@
+@@ -1868,11 +1889,15 @@
              data->glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &data->num_texture_units);
          }
      }
@@ -3168,7 +3226,7 @@ diff -ruN SDL2-2.32.8/src/render/opengl/SDL_render_gl.c SDL2-2.32.8.aros/src/ren
      SDL_LogInfo(SDL_LOG_CATEGORY_RENDER, "OpenGL shaders: %s",
                  data->shaders ? "ENABLED" : "DISABLED");
  #if SDL_HAVE_YUV
-@@ -1913,6 +1936,8 @@
+@@ -1913,6 +1938,8 @@
              SDL_GL_GetProcAddress("glCheckFramebufferStatusEXT");
          renderer->info.flags |= SDL_RENDERER_TARGETTEXTURE;
      }
