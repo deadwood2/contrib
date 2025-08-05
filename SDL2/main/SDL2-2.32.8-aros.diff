@@ -12,8 +12,8 @@ diff -ruN SDL2-2.32.8/include/begin_code.h SDL2-2.32.8.aros/include/begin_code.h
  #   define DECLSPEC
 diff -ruN SDL2-2.32.8/include/SDL_config_aros.h SDL2-2.32.8.aros/include/SDL_config_aros.h
 --- SDL2-2.32.8/include/SDL_config_aros.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/include/SDL_config_aros.h	2025-08-01 13:06:24.988067772 +0000
-@@ -0,0 +1,489 @@
++++ SDL2-2.32.8.aros/include/SDL_config_aros.h	2025-08-05 16:13:06.160628275 +0000
+@@ -0,0 +1,479 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
@@ -491,16 +491,6 @@ diff -ruN SDL2-2.32.8/include/SDL_config_aros.h SDL2-2.32.8.aros/include/SDL_con
 +
 +/* Enable dynamic libsamplerate support */
 +/* #undef SDL_LIBSAMPLERATE_DYNAMIC */
-+
-+#ifndef D
-+#if defined(__SDL_DEBUG)
-+    #include <exec/types.h>
-+    extern struct ExecBase *SysBase;
-+    #define D(fmt, ...) ({((STRPTR (*)(void *, CONST_STRPTR , APTR (*)(APTR, UBYTE), STRPTR , ...))*(void**)((long)(SysBase) - 922))((void*)(SysBase), fmt, (APTR)1, NULL, ##__VA_ARGS__);})
-+#else
-+    #define D(fmt, ...)
-+#endif
-+#endif
 +
 +#endif /* _SDL_config_aros_h */
 diff -ruN SDL2-2.32.8/include/SDL_config.h SDL2-2.32.8.aros/include/SDL_config.h
@@ -1536,12 +1526,14 @@ diff -ruN SDL2-2.32.8/src/events/scancodes_amigaos.h SDL2-2.32.8.aros/src/events
 +/* *INDENT-ON* */
 diff -ruN SDL2-2.32.8/src/file/SDL_rwops.c SDL2-2.32.8.aros/src/file/SDL_rwops.c
 --- SDL2-2.32.8/src/file/SDL_rwops.c	2025-01-28 07:47:10.000000000 +0000
-+++ SDL2-2.32.8.aros/src/file/SDL_rwops.c	2025-08-04 17:09:29.012791584 +0000
-@@ -67,6 +67,33 @@
++++ SDL2-2.32.8.aros/src/file/SDL_rwops.c	2025-08-05 16:37:40.256632360 +0000
+@@ -67,6 +67,35 @@
  #include "nacl_io/nacl_io.h"
  #endif
  
 +#ifdef __AROS__
++//#define DEBUG 1
++#include <aros/debug.h>
 +#include "../misc/aros/SDL_misc.h"
 +#include <proto/dos.h>
 +#endif
@@ -1571,7 +1563,7 @@ diff -ruN SDL2-2.32.8/src/file/SDL_rwops.c SDL2-2.32.8.aros/src/file/SDL_rwops.c
  #if defined(__WIN32__) || defined(__GDK__)
  
  /* Functions to read/write Win32 API file pointers */
-@@ -311,7 +338,226 @@
+@@ -311,7 +340,226 @@
  }
  #endif /* defined(__WIN32__) || defined(__GDK__) */
  
@@ -1726,7 +1718,7 @@ diff -ruN SDL2-2.32.8/src/file/SDL_rwops.c SDL2-2.32.8.aros/src/file/SDL_rwops.c
 +amigaos_file_write(SDL_RWops *context, const void *ptr, size_t size, size_t num)
 +{
 +    size_t wnum = 0;
-+    //D("[%s]\n", __FUNCTION__);
++    //D(bug("[SDL2:rwops] %s()\n", __func__));
 +
 +    if (context->hidden.amigaosio.Writable)
 +    {
@@ -1780,7 +1772,7 @@ diff -ruN SDL2-2.32.8/src/file/SDL_rwops.c SDL2-2.32.8.aros/src/file/SDL_rwops.c
 +                             int (*close)(struct SDL_RWops *))
 +{
 +    SDL_RWops *rwops;
-+    D("[%s]\n", __FUNCTION__);
++    D(bug("[SDL2:rwops] %s()\n", __func__));
 +
 +    rwops = SDL_AllocRW();
 +    if ( rwops != NULL ) {
@@ -1799,7 +1791,7 @@ diff -ruN SDL2-2.32.8/src/file/SDL_rwops.c SDL2-2.32.8.aros/src/file/SDL_rwops.c
  
  #ifdef HAVE_FOPEN64
  #define fopen fopen64
-@@ -528,7 +774,8 @@
+@@ -528,7 +776,8 @@
  
  /* Functions to create SDL_RWops structures from various data sources */
  
@@ -1809,7 +1801,7 @@ diff -ruN SDL2-2.32.8/src/file/SDL_rwops.c SDL2-2.32.8.aros/src/file/SDL_rwops.c
  static SDL_bool IsRegularFileOrPipe(FILE *f)
  {
      #ifdef __WINRT__
-@@ -624,6 +871,38 @@
+@@ -624,6 +873,38 @@
      rwops->write = windows_file_write;
      rwops->close = windows_file_close;
      rwops->type = SDL_RWOPS_WINFILE;
@@ -1848,7 +1840,7 @@ diff -ruN SDL2-2.32.8/src/file/SDL_rwops.c SDL2-2.32.8.aros/src/file/SDL_rwops.c
  #elif defined(HAVE_STDIO_H)
      {
  #if defined(__APPLE__) && !defined(SDL_FILE_DISABLED) // TODO: add dummy?
-@@ -653,7 +932,7 @@
+@@ -653,7 +934,7 @@
      return rwops;
  }
  
@@ -1857,7 +1849,7 @@ diff -ruN SDL2-2.32.8/src/file/SDL_rwops.c SDL2-2.32.8.aros/src/file/SDL_rwops.c
  SDL_RWops *SDL_RWFromFP(FILE * fp, SDL_bool autoclose)
  {
      SDL_RWops *rwops = NULL;
-@@ -741,6 +1020,10 @@
+@@ -741,6 +1022,10 @@
      if (!area) {
          SDL_OutOfMemory();
      } else {
@@ -1870,8 +1862,8 @@ diff -ruN SDL2-2.32.8/src/file/SDL_rwops.c SDL2-2.32.8.aros/src/file/SDL_rwops.c
      return area;
 diff -ruN SDL2-2.32.8/src/filesystem/aros/SDL_sysfilesystem.c SDL2-2.32.8.aros/src/filesystem/aros/SDL_sysfilesystem.c
 --- SDL2-2.32.8/src/filesystem/aros/SDL_sysfilesystem.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/filesystem/aros/SDL_sysfilesystem.c	2025-08-04 16:36:15.600791857 +0000
-@@ -0,0 +1,147 @@
++++ SDL2-2.32.8.aros/src/filesystem/aros/SDL_sysfilesystem.c	2025-08-05 16:29:56.128628931 +0000
+@@ -0,0 +1,148 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
@@ -1904,6 +1896,7 @@ diff -ruN SDL2-2.32.8/src/filesystem/aros/SDL_sysfilesystem.c SDL2-2.32.8.aros/s
 +
 +#include "../../misc/aros/SDL_misc.h"
 +
++#include <aros/debug.h>
 +#include <proto/dos.h>
 +
 +char *
@@ -2606,7 +2599,7 @@ diff -ruN SDL2-2.32.8/src/joystick/SDL_gamecontrollerdb.h SDL2-2.32.8.aros/src/j
  #endif
 diff -ruN SDL2-2.32.8/src/joystick/SDL_joystick.c SDL2-2.32.8.aros/src/joystick/SDL_joystick.c
 --- SDL2-2.32.8/src/joystick/SDL_joystick.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/joystick/SDL_joystick.c	2025-07-27 14:24:15.444841333 +0000
++++ SDL2-2.32.8.aros/src/joystick/SDL_joystick.c	2025-08-05 16:23:58.872629140 +0000
 @@ -100,6 +100,9 @@
  #ifdef SDL_JOYSTICK_VIRTUAL
      &SDL_VIRTUAL_JoystickDriver,
@@ -2629,6 +2622,15 @@ diff -ruN SDL2-2.32.8/src/joystick/SDL_joystick.c SDL2-2.32.8.aros/src/joystick/
              if (retval == 0) {
                  joystick->rumble_resend = SDL_GetTicks() + SDL_RUMBLE_RESEND_MS;
                  if (joystick->rumble_resend == 0) {
+@@ -1637,7 +1644,7 @@
+ 
+ void SDL_JoystickQuit(void)
+ {
+-    int i;
++    long unsigned int i;
+ 
+     SDL_LockJoysticks();
+ 
 @@ -2202,7 +2209,11 @@
  
          if (joystick->rumble_resend &&
@@ -3160,10 +3162,16 @@ diff -ruN SDL2-2.32.8/src/power/SDL_syspower.h SDL2-2.32.8.aros/src/power/SDL_sy
  /* SDL_bool SDL_GetPowerInfo_Hardwired(SDL_PowerState *, int *, int *);*/
 diff -ruN SDL2-2.32.8/src/render/opengl/SDL_render_gl.c SDL2-2.32.8.aros/src/render/opengl/SDL_render_gl.c
 --- SDL2-2.32.8/src/render/opengl/SDL_render_gl.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/render/opengl/SDL_render_gl.c	2025-08-04 19:02:22.468791848 +0000
-@@ -22,6 +22,9 @@
++++ SDL2-2.32.8.aros/src/render/opengl/SDL_render_gl.c	2025-08-05 16:37:28.748631871 +0000
+@@ -21,7 +21,15 @@
+ #include "../../SDL_internal.h"
  
  #if SDL_VIDEO_RENDER_OGL
++#if defined(__AROS__)
++//#define DEBUG 1
++#include <aros/debug.h>
++#define DV(...)
++#endif
  #include "SDL_hints.h"
 +#ifdef __MORPHOS__
 +#define _NO_PPCINLINE
@@ -3171,7 +3179,7 @@ diff -ruN SDL2-2.32.8/src/render/opengl/SDL_render_gl.c SDL2-2.32.8.aros/src/ren
  #include "../../video/SDL_sysvideo.h" /* For SDL_GL_SwapWindowWithResult */
  #include "SDL_opengl.h"
  #include "../SDL_sysrender.h"
-@@ -1678,6 +1681,10 @@
+@@ -1678,6 +1686,10 @@
      /*const char *vendor = (const char *) data->glGetString(GL_VENDOR);*/
      const char *renderer = (const char *)data->glGetString(GL_RENDERER);
  
@@ -3182,7 +3190,7 @@ diff -ruN SDL2-2.32.8/src/render/opengl/SDL_render_gl.c SDL2-2.32.8.aros/src/ren
  #if defined(__WINDOWS__) || defined(__WINGDK__)
      if (SDL_strcmp(renderer, "GDI Generic") == 0) {
          return SDL_FALSE; /* Microsoft's fallback software renderer. Fix your system! */
-@@ -1709,6 +1716,16 @@
+@@ -1709,6 +1721,16 @@
      const char *hint;
      SDL_bool non_power_of_two_supported = SDL_FALSE;
  
@@ -3199,38 +3207,46 @@ diff -ruN SDL2-2.32.8/src/render/opengl/SDL_render_gl.c SDL2-2.32.8.aros/src/ren
      SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &profile_mask);
      SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &major);
      SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &minor);
-@@ -1860,6 +1877,10 @@
+@@ -1860,6 +1882,12 @@
          renderer->info.max_texture_height = value;
      }
  
-+	//D("GL_ARB_texture_non_power_of_two: %s\n", data->GL_ARB_texture_non_power_of_two_supported ? "ENABLED" : "DISABLED");
-+	//D("GL_ARB_texture_rectangle: %s\n", SDL_GL_ExtensionSupported("GL_ARB_texture_rectangle") ? "ENABLED" : "DISABLED");
-+	//D("GL_EXT_texture_rectangle: %s\n", SDL_GL_ExtensionSupported("GL_EXT_texture_rectangle") ? "ENABLED" : "DISABLED");
++#if defined(__AROS__)
++	DV(bug("GL_ARB_texture_non_power_of_two: %s\n", data->GL_ARB_texture_non_power_of_two_supported ? "ENABLED" : "DISABLED"));
++	DV(bug("GL_ARB_texture_rectangle: %s\n", SDL_GL_ExtensionSupported("GL_ARB_texture_rectangle") ? "ENABLED" : "DISABLED"));
++	DV(bug("GL_EXT_texture_rectangle: %s\n", SDL_GL_ExtensionSupported("GL_EXT_texture_rectangle") ? "ENABLED" : "DISABLED"));
++#endif
 +
      /* Check for multitexture support */
      if (SDL_GL_ExtensionSupported("GL_ARB_multitexture")) {
          data->glActiveTextureARB = (PFNGLACTIVETEXTUREARBPROC)SDL_GL_GetProcAddress("glActiveTextureARB");
-@@ -1868,11 +1889,15 @@
+@@ -1868,11 +1896,19 @@
              data->glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &data->num_texture_units);
          }
      }
-+	//D("GL_ARB_multitexture_supported: %s\n", data->GL_ARB_multitexture_supported ? "ENABLED" : "DISABLED");
++#if defined(__AROS__)
++	DV(bug("GL_ARB_multitexture_supported: %s\n", data->GL_ARB_multitexture_supported ? "ENABLED" : "DISABLED"));
++#endif
  
      /* Check for shader support */
      if (SDL_GetHintBoolean(SDL_HINT_RENDER_OPENGL_SHADERS, SDL_TRUE)) {
          data->shaders = GL_CreateShaderContext();
      }
 +
-+	D("OpenGL shaders: %s\n", data->shaders ? "ENABLED" : "DISABLED");
++#if defined(__AROS__)
++	DV(bug("OpenGL shaders: %s\n", data->shaders ? "ENABLED" : "DISABLED"));
++#endif
 +
      SDL_LogInfo(SDL_LOG_CATEGORY_RENDER, "OpenGL shaders: %s",
                  data->shaders ? "ENABLED" : "DISABLED");
  #if SDL_HAVE_YUV
-@@ -1913,6 +1938,8 @@
+@@ -1913,6 +1949,10 @@
              SDL_GL_GetProcAddress("glCheckFramebufferStatusEXT");
          renderer->info.flags |= SDL_RENDERER_TARGETTEXTURE;
      }
-+	D("GL_EXT_framebuffer_object: %s\n", data->GL_EXT_framebuffer_object_supported ? "ENABLED" : "DISABLED");
++#if defined(__AROS__)
++	DV(bug("GL_EXT_framebuffer_object: %s\n", data->GL_EXT_framebuffer_object_supported ? "ENABLED" : "DISABLED"));
++#endif
 +
      data->framebuffers = NULL;
  
