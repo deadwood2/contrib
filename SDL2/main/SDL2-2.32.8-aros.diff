@@ -2599,7 +2599,7 @@ diff -ruN SDL2-2.32.8/src/joystick/SDL_gamecontrollerdb.h SDL2-2.32.8.aros/src/j
  #endif
 diff -ruN SDL2-2.32.8/src/joystick/SDL_joystick.c SDL2-2.32.8.aros/src/joystick/SDL_joystick.c
 --- SDL2-2.32.8/src/joystick/SDL_joystick.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/joystick/SDL_joystick.c	2025-08-05 16:23:58.872629140 +0000
++++ SDL2-2.32.8.aros/src/joystick/SDL_joystick.c	2025-08-05 23:02:40.106981062 +0000
 @@ -100,6 +100,9 @@
  #ifdef SDL_JOYSTICK_VIRTUAL
      &SDL_VIRTUAL_JoystickDriver,
@@ -2627,7 +2627,7 @@ diff -ruN SDL2-2.32.8/src/joystick/SDL_joystick.c SDL2-2.32.8.aros/src/joystick/
  void SDL_JoystickQuit(void)
  {
 -    int i;
-+    long unsigned int i;
++    long int i;
  
      SDL_LockJoysticks();
  
