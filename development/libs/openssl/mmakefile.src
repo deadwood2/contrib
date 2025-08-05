@@ -90,7 +90,7 @@ $(OPENSSL_BUILD_DIR)/.install-flag : $(OPENSSL_BUILD_DIR)/.build-flag
 		$(SED) -i -e "s|=/Development|=$(AROS_DEVELOPER)|" $$file; \
 	done;
 	@cd $(OPENSSL_BUILD_DIR); \
-	env -i PATH="$(PATH)" make install
+	env -i PATH="$(PATH)" make install_sw install_ssldirs
 	for file in $(AROS_DEVELOPER)/etc/ssl/openssl.cnf; \
 	do \
 		$(SED) -i -e 's|$$dir/certs	|/ENV/SYS/Certificates|' $$file; \
@@ -103,7 +103,7 @@ contrib-openssl-install : $(OPENSSL_BUILD_DIR)/.install-flag
 #$(OPENSSL_BUILD_DIR)/.installtest-flag : $(OPENSSL_BUILD_DIR)/.build-flag $(AROS_TESTS)/openssl
 #	@$(RM) $@
 #	@$(ECHO) "Installing    OpenSSL Tests..."
-#	@$(CP) -R $(OPENSSL_BUILD_DIR)/test/* $(AROS_TESTS)/openssl/
+#	@$(CP) -L -R $(OPENSSL_BUILD_DIR)/test/* $(AROS_TESTS)/openssl/
 #	@$(RM) $(AROS_TESTS)/openssl/*.c
 #	@$(RM) $(AROS_TESTS)/openssl/*.h
 #	@$(RM) $(AROS_TESTS)/openssl/*.d
