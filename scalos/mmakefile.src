@@ -2,7 +2,7 @@
 
 include $(SRCDIR)/config/aros-contrib.cfg
 
-#MM- contrib : contrib-scalos
+##MM- contrib : contrib-scalos
 
 #MM- contrib-scalos : \
 #MM     contrib-scalos-cpy \
