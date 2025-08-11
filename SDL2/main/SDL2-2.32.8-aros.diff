@@ -5196,8 +5196,8 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosclipboard.h SDL2-2.32.8.aros/src/vi
 +#endif /* _SDL_arosclipboard_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.c
 --- SDL2-2.32.8/src/video/aros/SDL_arosevents.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.c	2025-08-04 19:29:44.242562624 +0000
-@@ -0,0 +1,810 @@
++++ SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.c	2025-08-11 17:38:16.825907887 +0000
+@@ -0,0 +1,826 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -5973,21 +5973,37 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video
 +                LONG wx2 = w->LeftEdge + w->Width - w->BorderRight;
 +                LONG wy2 = w->TopEdge + w->Height - w->BorderBottom;
 +                if (mx >= ws && my >= wy && mx <= wx2 && my <= wy2) {
++                    struct TagItem winPtrTags[] = {
++                        { WA_Pointer,   0       },
++                        { TAG_DONE,   0       },
++                        { TAG_DONE,     0       }
++                    };
++
 +                    w->Flags |= WFLG_RMBTRAP;
 +
 +                    if (data->CurrentPointer) {
 +                        if (!IS_SYSTEM_CURSOR(data->CurrentPointer)) {
 +                            SDL_AROSCursor *ac = (SDL_AROSCursor *)data->CurrentPointer;
-+                            if (ac->Pointer.mouseptr)
-+                                SetWindowPointer(w, WA_Pointer, (size_t)ac->Pointer.mouseptr, TAG_DONE);
++                            if (ac->Pointer.ptrclassobj)
++                                winPtrTags[0].ti_Data = (IPTR)ac->Pointer.ptrclassobj;
++                        } else {
++                            if ((((IPTR)data->CurrentPointer->driverdata) == SDL_SYSTEM_CURSOR_WAIT) ||
++                                (((IPTR)data->CurrentPointer->driverdata) == SDL_SYSTEM_CURSOR_WAITARROW)) {
++                                winPtrTags[1].ti_Tag = WA_BusyPointer;
++                                winPtrTags[1].ti_Data = TRUE;
++                            } else {
++                                if (((IPTR)data->CurrentPointer->driverdata) != SDL_SYSTEM_CURSOR_ARROW) {
++                                    D(bug("[SDL2:arosevt] %s: (currently) unhandled cursor type %u\n", __func__, ((IPTR)data->CurrentPointer->driverdata)));
++                                }
++                            }
 +                        }
 +                    } else {
-+#if !defined(__AROS__)
-+                        size_t pointertags[] = { WA_PointerType, POINTERTYPE_INVISIBLE, TAG_DONE };
-+                        SetAttrsA(w, (struct TagItem *)&pointertags);
-+#endif
++                        if (data->BlankPtrObj) {
++                            D(bug("[SDL2:arosevt] %s: setting blank cursor\n", __func__));
++                            winPtrTags[0].ti_Data = (IPTR)data->BlankPtrObj;
++                        }
 +                    }
-+
++                    SetWindowPointerA(w, winPtrTags);
 +                } else {
 +                    w->Flags &= ~WFLG_RMBTRAP;
 +                    ClearPointer(w);
@@ -7039,8 +7055,8 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmodes.h SDL2-2.32.8.aros/src/video/
 +#endif /* _SDL_arosmodes_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmouse.c SDL2-2.32.8.aros/src/video/aros/SDL_arosmouse.c
 --- SDL2-2.32.8/src/video/aros/SDL_arosmouse.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosmouse.c	2025-08-11 01:23:39.586637294 +0000
-@@ -0,0 +1,366 @@
++++ SDL2-2.32.8.aros/src/video/aros/SDL_arosmouse.c	2025-08-11 17:38:43.709907834 +0000
+@@ -0,0 +1,375 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -7094,10 +7110,11 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmouse.c SDL2-2.32.8.aros/src/video/
 +static SDL_Cursor *
 +AROS_CreateCursor(SDL_Surface * surface, int hot_x, int hot_y)
 +{
++	SDL_AROSCursor *cursor;
++
 +	D(bug("[SDL2:arosmouse] %s(0x%p, %d, %d)\n", __func__, surface, hot_x, hot_y));
 +
-+	SDL_AROSCursor *cursor = SDL_malloc(sizeof(*cursor));
-+
++	cursor = SDL_malloc(sizeof(*cursor));
 +	if (cursor) {
 +		SDL_AROSCursor *ac = SDL_malloc(sizeof(*ac));
 +		struct BitMap *bmp;
@@ -7108,7 +7125,6 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmouse.c SDL2-2.32.8.aros/src/video/
 +		cursor->Pointer.offy = hot_y;
 +
 +		bmp = AllocBitMap(surface->w, surface->h, 32, BMF_MINPLANES | BMF_CLEAR | BMF_SPECIALFMT | SHIFT_PIXFMT(PIXFMT_ARGB32), NULL);
-+
 +		if (bmp != NULL) {
 +			struct RastPort rp;
 +
@@ -7117,35 +7133,40 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmouse.c SDL2-2.32.8.aros/src/video/
 +
 +			if (SDL_LockSurface(surface) == 0) {
 +				WritePixelArray(surface->pixels, 0, 0, surface->pitch, &rp, 0, 0, surface->w, surface->h, RECTFMT_ARGB);
-+				Object *mouseptr = NewObject(NULL, POINTERCLASS,
++				Object *ptrclassobj = NewObject(NULL, POINTERCLASS,
 +								POINTERA_BitMap, bmp,
 +								POINTERA_XOffset, -hot_x,
 +								POINTERA_YOffset, -hot_y,
 +								TAG_DONE);
 +
-+				cursor->Pointer.mouseptr = mouseptr;
-+				D(bug("[SDL2:arosmouse] %s: allocated pointerobject @ 0x%p\n", __func__, cursor->Pointer.mouseptr));
++				cursor->Pointer.ptrclassobj = ptrclassobj;
++				D(bug("[SDL2:arosmouse] %s: allocated pointerobject @ 0x%p\n", __func__, cursor->Pointer.ptrclassobj));
 +				SDL_UnlockSurface(surface);
++			} else {
++				bug("[SDL2:arosmouse] %s: failed to lock surface\n", __func__);
 +			}
-+
 +			FreeBitMap(bmp);
 +		} else {
++			bug("[SDL2:arosmouse] %s: failed to allocate bitmap\n", __func__);
 +			SDL_free(cursor);
 +			cursor = NULL;
 +			return NULL;
 +		}
++	} else {
++		bug("[SDL2:arosmouse] %s: failed to allocate storage\n", __func__);
 +	}
 +
-+	return &cursor->Cursor;
++	return (cursor) ? &cursor->Cursor : NULL;
 +}
 +
 +static SDL_Cursor *
 +AROS_CreateSystemCursor(SDL_SystemCursor id)
 +{
-+	SDL_Cursor *cursor = SDL_malloc(sizeof(*cursor));
++	SDL_Cursor *cursor;
 +
-+	D(bug("[SDL2:arosmouse] %s()\n", __func__));
++	D(bug("[SDL2:arosmouse] %s(%u)\n", __func__, id));
 +
++	cursor = SDL_malloc(sizeof(*cursor));
 +	if (cursor) {
 +#if !defined(__AROS__)
 +		size_t type = POINTERTYPE_NORMAL;
@@ -7168,7 +7189,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmouse.c SDL2-2.32.8.aros/src/video/
 +		cursor->driverdata = (APTR)type;
 +#else
 +		cursor->next = NULL;
-+		cursor->driverdata = NULL;
++		cursor->driverdata = (APTR)id;
 +#endif
 +	} else {
 +		SDL_OutOfMemory();
@@ -7183,8 +7204,15 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmouse.c SDL2-2.32.8.aros/src/video/
 +	D(bug("[SDL2:arosmouse] %s(0x%p)\n", __func__, cursor));
 +
 +	if (!IS_SYSTEM_CURSOR(cursor))
-+		if (((SDL_AROSCursor *)cursor)->Pointer.mouseptr)
-+			DisposeObject(((SDL_AROSCursor *)cursor)->Pointer.mouseptr);
++	{
++		SDL_AROSCursor *ac = (SDL_AROSCursor *)cursor;
++		bug("[SDL2:arosmouse] %s: custom cursor (ptr object @ 0x%p)\n", __func__, ac->Pointer.ptrclassobj);
++		if (ac->Pointer.ptrclassobj)
++		{
++			DisposeObject(ac->Pointer.ptrclassobj);
++			ac->Pointer.ptrclassobj = NULL;
++		}
++	}
 +
 +	SDL_free(cursor);
 +}
@@ -7195,52 +7223,49 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmouse.c SDL2-2.32.8.aros/src/video/
 +	SDL_VideoDevice *video = SDL_GetVideoDevice();
 +	SDL_VideoData *data = (SDL_VideoData *)video->driverdata;
 +
-+//	D(
-+		bug("[SDL2:arosmouse] %s(0x%p)\n", __func__, cursor);
-+//	)
++	D(bug("[SDL2:arosmouse] %s(0x%p)\n", __func__, cursor));
 +
 +	if (IS_SYSTEM_CURSOR(cursor)) {
-+		bug("[SDL2:arosmouse] %s: system cursor\n", __func__);
-+#if !defined(__AROS__)
-+		size_t type = cursor ? (size_t)cursor->driverdata : POINTERTYPE_INVISIBLE;
++		D(bug("[SDL2:arosmouse] %s: system cursor %u\n", __func__, (cursor) ? (IPTR)cursor->driverdata : 0));
 +		if (data->CurrentPointer != cursor) {
-+#endif
 +			SDL_WindowData *wd;
-+#if !defined(__AROS__)
-+			size_t pointertags[] = { WA_PointerType, type, TAG_DONE };
-+#endif
 +			ForeachNode(&data->windowlist, wd) {
 +				if (wd->win) {
-+					if (data->BlankCursor && cursor == NULL) {
-+						bug("[SDL2:aroswindow] %s: blanking cursor for win 0x%p\n", __func__, wd->win);
-+						SetPointer(wd->win, (UWORD *)data->BlankCursor, 1, 1, 0, 0);
++					if (cursor == NULL) {
++						D(bug("[SDL2:arosmouse] %s: blanking cursor for win 0x%p (blank ptrobj @ 0x%p)\n", __func__, wd->win, data->BlankPtrObj));
++						if (data->BlankPtrObj)
++							SetWindowPointer(wd->win, WA_Pointer, (IPTR)data->BlankPtrObj, TAG_DONE);
++					} else {
++						if (((IPTR)cursor->driverdata == SDL_SYSTEM_CURSOR_WAIT) ||
++							((IPTR)cursor->driverdata == SDL_SYSTEM_CURSOR_WAITARROW)) {
++							SetWindowPointer(wd->win, WA_Pointer, 0, WA_BusyPointer, TRUE, TAG_DONE);
++						} else {
++							if ((IPTR)cursor->driverdata != SDL_SYSTEM_CURSOR_ARROW) {
++								D(bug("[SDL2:arosmouse] %s: (currently) unhandled cursor type %u\n", __func__, ((IPTR)cursor->driverdata)));
++							}
++							SetWindowPointer(wd->win, WA_Pointer, 0, TAG_DONE);
++						}
 +					}
-+#if (0)
-+                    SetAttrsA(wd->win, (struct TagItem *)&pointertags);
-+#endif
 +                }
 +            }
-+#if !defined(__AROS__)
 +		}
-+#endif
 +	} else {
 +		SDL_AROSCursor *ac = (SDL_AROSCursor *)cursor;
 +		SDL_WindowData *wd;
 +
-+		bug("[SDL2:arosmouse] %s: custom cursor\n", __func__);
++		D(bug("[SDL2:arosmouse] %s: custom cursor @ 0x%p\n", __func__, ac));
 +
 +		ForeachNode(&data->windowlist, wd) {
 +            if (wd->win) {
-+                if (ac->Pointer.mouseptr) {
-+                    SetWindowPointer(wd->win, WA_Pointer, (size_t)ac->Pointer.mouseptr, TAG_DONE);
-+                } else {
-+					if (data->BlankCursor)
-+						SetPointer(wd->win, (UWORD *)data->BlankCursor, 1, 1, 0, 0);
++                if (ac->Pointer.ptrclassobj) {
++					D(bug("[SDL2:arosmouse] %s: calling SetWindowPointer 0x%p\n", __func__, ac->Pointer.ptrclassobj));
++                    SetWindowPointer(wd->win, WA_Pointer, (IPTR)ac->Pointer.ptrclassobj, TAG_DONE);
 +				}
 +            }
 +        }
 +	}
 +
++	D(bug("[SDL2:arosmouse] %s: setting current cursor to 0x%p\n", __func__, cursor));
 +	data->CurrentPointer = cursor;
 +
 +	return 0;
@@ -7409,7 +7434,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmouse.c SDL2-2.32.8.aros/src/video/
 +}
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmouse.h SDL2-2.32.8.aros/src/video/aros/SDL_arosmouse.h
 --- SDL2-2.32.8/src/video/aros/SDL_arosmouse.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosmouse.h	2025-07-28 18:23:41.408061933 +0000
++++ SDL2-2.32.8.aros/src/video/aros/SDL_arosmouse.h	2025-08-11 16:08:35.165908881 +0000
 @@ -0,0 +1,54 @@
 +/*
 +  Simple DirectMedia Layer
@@ -7440,25 +7465,25 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmouse.h SDL2-2.32.8.aros/src/video/
 +
 +#include <proto/intuition.h>
 +
-+#define IS_SYSTEM_CURSOR(cursor) (cursor == NULL || ((size_t)(cursor)->driverdata) < 5)
-+
-+struct SDL_AROSPointerData
-+{
-+	Object *mouseptr;
-+	int offx, offy;
-+};
++#define IS_SYSTEM_CURSOR(cursor) (cursor == NULL || ((IPTR)cursor->driverdata) < SDL_NUM_SYSTEM_CURSORS)
 +
 +typedef struct
 +{
-+	struct SDL_Cursor Cursor;
-+	struct SDL_AROSPointerData Pointer;
++	Object                      *ptrclassobj;
++	int                         offx, offy;
++} SDL_AROSPointerData;
++
++typedef struct
++{
++	struct SDL_Cursor           Cursor;
++	SDL_AROSPointerData         Pointer;
 +} SDL_AROSCursor;
 +
-+typedef struct AROS_GlobalMouseState
++typedef struct
 +{
-+    int x;
-+    int y;
-+    int buttonPressed[SDL_BUTTON_X1 + 1];
++    int                         x;
++    int                         y;
++    int                         buttonPressed[SDL_BUTTON_X1 + 1];
 +} AROS_GlobalMouseState;
 +
 +extern void AROS_InitMouse(_THIS);
@@ -8043,8 +8068,8 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosshape.h SDL2-2.32.8.aros/src/video/
 +#endif /* _SDL_arosshape_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosvideo.c SDL2-2.32.8.aros/src/video/aros/SDL_arosvideo.c
 --- SDL2-2.32.8/src/video/aros/SDL_arosvideo.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosvideo.c	2025-08-11 01:17:29.778637281 +0000
-@@ -0,0 +1,422 @@
++++ SDL2-2.32.8.aros/src/video/aros/SDL_arosvideo.c	2025-08-11 18:44:33.969907939 +0000
+@@ -0,0 +1,472 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -8093,14 +8118,20 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosvideo.c SDL2-2.32.8.aros/src/video/
 +
 +#include <exec/execbase.h>
 +#include <intuition/pointerclass.h>
++#include <cybergraphx/cybergraphics.h>
++#include <graphics/rastport.h>
++#include <graphics/rpattr.h>
++#include <dos/bptr.h>
++
++#include <proto/cybergraphics.h>
 +#include <proto/commodities.h>
 +#include <proto/dos.h>
 +#include <proto/exec.h>
++#include <proto/graphics.h>
 +#include <proto/icon.h>
 +#include <proto/intuition.h>
 +#include <proto/wb.h>
 +
-+#include <dos/bptr.h>
 +
 +#include "SDL_arosevents.h"
 +
@@ -8110,6 +8141,28 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosvideo.c SDL2-2.32.8.aros/src/video/
 +extern struct Library *CxBase;
 +extern struct Library *IconBase;
 +extern struct Library *IntuitionBase;
++
++#define	SDLAROSBLANKPOINTERSIZE ((1 + 16 + 1) * 2)
++const UWORD blankPointerData[SDLAROSBLANKPOINTERSIZE] = {
++	0,12,
++	0x8000, 0x0000,
++	0x0000, 0x0000,
++	0x0000, 0x0000,
++	0x0000, 0x0000,
++	0x0000, 0x0000,
++	0x0000, 0x0000,
++	0x0000, 0x0000,
++	0x0000, 0x0000,
++	0x0000, 0x0000,
++	0x0000, 0x0000,
++	0x0000, 0x0000,
++	0x0000, 0x0000,//
++	0x0000, 0x0000,
++	0x0000, 0x0000,
++	0x0000, 0x0000,
++	0x0000, 0x0000,
++	0,0
++};
 +
 +void
 +AROS_CloseDisplay(_THIS)
@@ -8235,8 +8288,8 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosvideo.c SDL2-2.32.8.aros/src/video/
 +	D(bug("[SDL2:arosvideo] %s()\n", __func__));
 +	SDL_VideoData *data = (SDL_VideoData *) device->driverdata;
 +
-+	if (data->BlankCursor) {
-+		FreeMem(data->BlankCursor, 16);
++	if (data->BlankPtrObj) {
++		DisposeObject(data->BlankPtrObj);
 +	}
 +
 +	FreeSignal(data->ScreenNotifyPort.mp_SigBit);
@@ -8347,6 +8400,24 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosvideo.c SDL2-2.32.8.aros/src/video/
 +		ActivateCxObj(data->BrokerRef, 1);
 +}
 +
++Object *AROS_SDLCreateBlankPtr(void)
++{
++	Object *ptrObj = NULL;
++    struct TagItem pointertags[] = {
++        {POINTERA_BitMap, 		(IPTR)blankPointerData	},
++        {POINTERA_XOffset, 		0      					},
++        {POINTERA_YOffset, 		0      					},
++        {SPRITEA_OldDataFormat,	TRUE					},
++        {SPRITEA_Width, 		16						},
++        {SPRITEA_OutputHeight,	16       				},
++        {TAG_DONE,              0              			}
++    };
++
++    ptrObj = NewObjectA(NULL, POINTERCLASS, pointertags);
++	D(bug("[SDL2:arosvideo] %s: returning 0x%p\n", __func__, ptrObj));
++	return ptrObj;
++}
++
 +static SDL_VideoDevice *
 +AROS_CreateDevice()
 +{
@@ -8366,14 +8437,18 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosvideo.c SDL2-2.32.8.aros/src/video/
 +			AROS_InitPort(&data->WBPort);
 +			AROS_InitPort(&data->WinPort);
 +
-+			data->BlankCursor = AllocMem(16, MEMF_CHIP|MEMF_CLEAR);
++			data->BlankPtrObj = AROS_SDLCreateBlankPtr();
 +
 +			data->ScrNotifySig = 1 << data->ScreenNotifyPort.mp_SigBit;
 +			data->BrokerSig = 1 << data->BrokerPort.mp_SigBit;
 +			data->WBSig = 1 << data->WBPort.mp_SigBit;
 +			data->WinSig = 1 << data->WinPort.mp_SigBit;
 +
++#if AROS_BIG_ENDIAN
 +			data->sdlpixfmt = SDL_PIXELFORMAT_ARGB8888;
++#else
++			data->sdlpixfmt = SDL_PIXELFORMAT_BGRA8888;
++#endif
 +
 +			NEWLIST(&data->windowlist);
 +
@@ -8469,7 +8544,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosvideo.c SDL2-2.32.8.aros/src/video/
 +};
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosvideo.h SDL2-2.32.8.aros/src/video/aros/SDL_arosvideo.h
 --- SDL2-2.32.8/src/video/aros/SDL_arosvideo.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosvideo.h	2025-08-11 00:37:21.352441160 +0000
++++ SDL2-2.32.8.aros/src/video/aros/SDL_arosvideo.h	2025-08-11 13:14:51.279276526 +0000
 @@ -0,0 +1,98 @@
 +/*
 +  Simple DirectMedia Layer
@@ -8530,7 +8605,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosvideo.h SDL2-2.32.8.aros/src/video/
 +
 +	struct MinList windowlist;
 +
-+	unsigned char *BlankCursor;
++    Object *BlankPtrObj;
 +	SDL_Cursor *CurrentPointer;
 +	ULONG sdlpixfmt;
 +
@@ -8571,8 +8646,8 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosvideo.h SDL2-2.32.8.aros/src/video/
 +#endif /* _SDL_arosvideo_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video/aros/SDL_aroswindow.c
 --- SDL2-2.32.8/src/video/aros/SDL_aroswindow.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_aroswindow.c	2025-08-11 01:22:08.346637451 +0000
-@@ -0,0 +1,1044 @@
++++ SDL2-2.32.8.aros/src/video/aros/SDL_aroswindow.c	2025-08-11 16:17:46.169908885 +0000
+@@ -0,0 +1,1049 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -9085,27 +9160,32 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +			WA_FrontWindow, win_top ? TRUE : FALSE,
 +#endif
 +			WA_AutoAdjust, TRUE,
-+#if !defined(__AROS__)
-+			WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEMOVE | IDCMP_DELTAMOVE | IDCMP_MOUSEBUTTONS | IDCMP_REFRESHWINDOW | IDCMP_ACTIVEWINDOW | IDCMP_INACTIVEWINDOW | IDCMP_CHANGEWINDOW | IDCMP_GADGETUP | IDCMP_MENUPICK,
-+#endif
 +			vd->CustomScreen ? TAG_IGNORE : WA_ExtraTitlebarGadgets, ETG_ICONIFY,
 +			TAG_DONE);
 +
 +		if (data->win) {
++			D(bug("[SDL2:aroswindow] %s: current cursor = 0x%p\n", __func__, vd->CurrentPointer));
 +			if (IS_SYSTEM_CURSOR(vd->CurrentPointer)) {
-+				if (vd->BlankCursor && vd->CurrentPointer == NULL) {
-+					bug("[SDL2:aroswindow] %s: setting blank cursor\n", __func__);
-+					SetPointer(data->win, (UWORD *)vd->BlankCursor, 1, 1, 0, 0);
++				if (vd->CurrentPointer == NULL) {
++					D(bug("[SDL2:aroswindow] %s: using blank pointer (blank ptrobj @ 0x%p)\n", __func__, vd->BlankPtrObj));
++					if (vd->BlankPtrObj)
++						SetWindowPointer(data->win, WA_Pointer, (IPTR)vd->BlankPtrObj, TAG_DONE);
++				} else {
++					if (((IPTR)vd->CurrentPointer->driverdata == SDL_SYSTEM_CURSOR_WAIT) ||
++						((IPTR)vd->CurrentPointer->driverdata == SDL_SYSTEM_CURSOR_WAITARROW)) {
++						SetWindowPointer(data->win, WA_Pointer, 0, WA_BusyPointer, TRUE, TAG_DONE);
++					} else {
++						if ((IPTR)vd->CurrentPointer->driverdata != SDL_SYSTEM_CURSOR_ARROW) {
++							bug("[SDL2:aroswindow] %s: unhandled cursor type %u\n", __func__, ((IPTR)vd->CurrentPointer->driverdata));
++						}
++						SetWindowPointer(data->win, WA_Pointer, 0, TAG_DONE);
++					}
 +				}
-+#if !defined(__AROS__)
-+				IPTR pointertags[] = { WA_PointerType, vd->CurrentPointer == NULL ? POINTERTYPE_INVISIBLE : (IPTR)vd->CurrentPointer->driverdata, TAG_DONE };
-+				SetAttrsA(data->win, (struct TagItem *)&pointertags);
-+#endif
 +			} else{
 +				SDL_AROSCursor *ac = (SDL_AROSCursor *)vd->CurrentPointer;
-+				bug("[SDL2:aroswindow] %s: setting custom cursor\n", __func__);
-+				if (ac && ac->Pointer.mouseptr) {
-+					SetWindowPointer(data->win, WA_Pointer, (IPTR)ac->Pointer.mouseptr, TAG_DONE);
++				D(bug("[SDL2:aroswindow] %s: using custom cursor 0x%p\n", __func__, ac));
++				if (ac && ac->Pointer.ptrclassobj) {
++					SetWindowPointer(data->win, WA_Pointer, (IPTR)ac->Pointer.ptrclassobj, TAG_DONE);
 +				}
 +			}
 +
