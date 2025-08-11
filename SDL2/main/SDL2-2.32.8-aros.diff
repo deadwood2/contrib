@@ -8068,7 +8068,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosshape.h SDL2-2.32.8.aros/src/video/
 +#endif /* _SDL_arosshape_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosvideo.c SDL2-2.32.8.aros/src/video/aros/SDL_arosvideo.c
 --- SDL2-2.32.8/src/video/aros/SDL_arosvideo.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosvideo.c	2025-08-11 18:44:33.969907939 +0000
++++ SDL2-2.32.8.aros/src/video/aros/SDL_arosvideo.c	2025-08-11 19:06:50.477908700 +0000
 @@ -0,0 +1,472 @@
 +/*
 +  Simple DirectMedia Layer
@@ -8145,7 +8145,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosvideo.c SDL2-2.32.8.aros/src/video/
 +#define	SDLAROSBLANKPOINTERSIZE ((1 + 16 + 1) * 2)
 +const UWORD blankPointerData[SDLAROSBLANKPOINTERSIZE] = {
 +	0,12,
-+	0x8000, 0x0000,
++	0x0000, 0x0000,
 +	0x0000, 0x0000,
 +	0x0000, 0x0000,
 +	0x0000, 0x0000,
