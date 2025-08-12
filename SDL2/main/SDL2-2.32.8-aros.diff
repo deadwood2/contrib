@@ -755,8 +755,8 @@ diff -ruN SDL2-2.32.8/sdl2-config SDL2-2.32.8.aros/sdl2-config
 +done
 diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/ahi/SDL_ahi_audio.c
 --- SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/audio/ahi/SDL_ahi_audio.c	2025-08-12 16:50:34.765550046 +0000
-@@ -0,0 +1,399 @@
++++ SDL2-2.32.8.aros/src/audio/ahi/SDL_ahi_audio.c	2025-08-12 22:36:11.430104223 +0000
+@@ -0,0 +1,535 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
@@ -803,6 +803,7 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +
 +#include <dos/dos.h>
 +#include <exec/execbase.h>
++#include <proto/ahi.h>
 +#include <proto/exec.h>
 +
 +#if defined(__AROS__)
@@ -810,6 +811,15 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +#endif
 +
 +#define RESTART_CAPTURE_THRESHOLD 	 500
++
++struct AHI_SDLIntDevice {
++	char	*id_Name;
++	IPTR	id_ModeID;
++	IPTR	id_ConnectionID;
++	IPTR	id_FreqIdx;
++};
++
++static const char AHI_SDL_DEVICE_FMT[] = "%s AHI %s device (%s)";
 +
 +static Fixed AHI_Volume = 0x10000;
 +
@@ -819,32 +829,140 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +	AHI_Volume = mute ? 0 : 0x10000;
 +}
 +
++SDL_AudioFormat AHI_GenerateSDLFormat(ULONG bits)
++{
++	SDL_AudioFormat usefmt;
++	switch(bits) {
++	case 32:
++#if (!defined __AROS__) || AROS_BIG_ENDIAN
++		usefmt = AUDIO_S32MSB;
++#else
++		usefmt = AUDIO_S32LSB;
++#endif
++		break;
++	case 8:
++		usefmt = AUDIO_S8;
++		break;
++	default:
++#if (!defined __AROS__) || AROS_BIG_ENDIAN
++		usefmt = AUDIO_S16MSB;
++#else
++		usefmt = AUDIO_S16LSB;
++#endif
++		break;
++	}
++	return usefmt;
++}
++
++static void AHI_GenerateSDLDeviceSpecs(APTR _Base, char *devbase, BOOL isinput, int modeid, int conmax, int freqmax) {
++	struct AHIBase *AHIBase = (struct AHIBase *)_Base;
++	char *modetype = (isinput) ? "Input" : "Output";
++	int current;
++	for(current = 0; current < conmax; current++) {
++		UBYTE desc[80];
++		IPTR stereo = 0, bits = 0, multi = 0;
++		struct TagItem conTags[] = {
++			{ AHIDB_BufferLen,		80				},
++			{ AHIDB_OutputArg,		current			},
++			{ AHIDB_Output,			(IPTR)&desc		},
++			{ AHIDB_Stereo, 		(IPTR)&stereo	},
++			{ AHIDB_MultiChannel,	(IPTR)&multi	},
++		    { AHIDB_Bits,       	(IPTR)&bits		},
++			{ TAG_DONE,				0				}
++		};
++		SDL_AudioSpec devspec;
++		char *sdlDevName;
++		int freq, modetype_len;
++		desc[0]='\0';
++		if (isinput) {
++			conTags[1].ti_Tag = AHIDB_InputArg;
++			conTags[2].ti_Tag = AHIDB_Input;
++			modetype_len = 5;
++		} else {
++			conTags[1].ti_Tag = AHIDB_OutputArg;
++			conTags[2].ti_Tag = AHIDB_Output;
++			modetype_len = 6;
++		}
++		AHI_GetAudioAttrsA(modeid, NULL, conTags);
++		devspec.channels = 1;
++		if (stereo)
++			devspec.channels += 1;
++		sdlDevName = AllocVec(strlen(devbase) + modetype_len + 12 + strlen(desc) + 3 + 1, MEMF_PUBLIC);
++		sprintf(sdlDevName, AHI_SDL_DEVICE_FMT, devbase, modetype, desc);
++		devspec.format = AHI_GenerateSDLFormat(bits);
++		for (freq = 0; freq < freqmax; freq ++) {
++			struct AHI_SDLIntDevice *sdlDevPrivate = (struct AHI_SDLIntDevice *)AllocVec(sizeof(struct AHI_SDLIntDevice) + strlen(sdlDevName) + 1, MEMF_ANY);
++			sdlDevPrivate->id_Name = (char *)((IPTR)sdlDevPrivate + sizeof(struct AHI_SDLIntDevice));
++			IPTR curfreq = 0;
++			AHI_GetAudioAttrs(modeid, NULL,
++			  AHIDB_FrequencyArg, freq,
++			  AHIDB_Frequency,    (IPTR) &curfreq,
++			  TAG_DONE);
++			devspec.freq = curfreq;
++			D(bug("[SDL2:AHI] %s: %s '%s'\n", __func__, modetype, desc));
++			sprintf(sdlDevPrivate->id_Name, "%s", sdlDevName);
++			sdlDevPrivate->id_ModeID = modeid;
++			sdlDevPrivate->id_ConnectionID = current;
++			sdlDevPrivate->id_FreqIdx = freq;
++			D(bug("[SDL2:AHI] %s: private data @ 0x%p\n", __func__, sdlDevPrivate));
++			SDL_AddAudioDevice((isinput) ? SDL_TRUE : SDL_FALSE,
++				sdlDevPrivate->id_Name, &devspec, sdlDevPrivate);
++		}
++		FreeVec(sdlDevName);
++	}
++}
++
++static void AHI_FreeHandle(void *handle)
++{
++	struct AHI_SDLIntDevice *sdlDevPrivate = (struct AHI_SDLIntDevice *)handle;
++	D(bug("[SDL2:AHI] %s(0x%p)\n", __func__, handle));
++	FreeVec(handle);
++}
++
 +static void AHI_DetectDevices(void)
 +{
 +	D(bug("[SDL2:AHI] %s()\n", __func__));
 +
 +	SDL_AudioSpec output, capture;
-+
-+	// This should be queried from AHI, registering all suitable formats.
-+	output.freq = 44100;
-+#if (!defined __AROS__) || AROS_BIG_ENDIAN
-+	output.format = AUDIO_S16MSB;
-+#else
-+	output.format = AUDIO_S16LSB;
-+#endif
-+	output.channels = 2;
-+
-+	capture.freq = 44100;
-+#if (!defined __AROS__) || AROS_BIG_ENDIAN
-+	capture.format = AUDIO_S16MSB;
-+#else
-+	capture.format = AUDIO_S16LSB;
-+#endif
-+	capture.channels = 1;
-+
-+	SDL_AddAudioDevice(SDL_FALSE, "AHI output device", &output, SDL_strdup("default"));;
-+	SDL_AddAudioDevice(SDL_TRUE, "AHI capture device", &capture, SDL_strdup("default"));
-+	
++	struct MsgPort *ahiPort = CreateMsgPort();
++	if (ahiPort) {
++		struct AHIRequest *ahiReq = (struct AHIRequest *) CreateIORequest(ahiPort, sizeof(struct AHIRequest));
++		if (ahiReq) {
++			ahiReq->ahir_Version = 1;
++			if (OpenDevice(AHINAME, AHI_NO_UNIT, (struct IORequest *)ahiReq, 0) == 0) {
++				ULONG id = AHI_INVALID_ID;
++				struct AHIBase *AHIBase = (struct AHIBase *) ahiReq->ahir_Std.io_Device;
++				while ((id = AHI_NextAudioID(id)) != AHI_INVALID_ID) {
++					UBYTE name[80];
++					IPTR freqs = 0, minmix = 0, maxmix = 0, channels = 0, flags = 0, record = 0, inputs = 0, outputs = 0;
++					name[0]='\0';
++					AHI_GetAudioAttrs(id, NULL,
++						AHIDB_BufferLen,	80,
++						AHIDB_Name,       	(IPTR)&name,
++						AHIDB_Frequencies,	(IPTR)&freqs,
++						AHIDB_MinMixFreq,   (IPTR)&minmix,
++						AHIDB_MaxMixFreq,   (IPTR)&maxmix,
++						AHIDB_MaxChannels,	(IPTR)&channels,
++						AHIDB_Record,		(IPTR)&record,
++						AHIDB_Inputs,		(IPTR)&inputs,
++						AHIDB_Outputs,		(IPTR)&outputs,
++						AHIDB_Flags,      	(IPTR)&flags,
++					TAG_DONE);
++					D(bug("[SDL2:AHI] %s: Mode '%s', %u frequencies\n", __func__, name, freqs));
++					char *colon = strchr(name, ':');
++					if (colon)
++						*colon = 0;
++					if (outputs > 0)
++						AHI_GenerateSDLDeviceSpecs(AHIBase, name, FALSE, id, outputs, freqs);
++					if ((record) && (inputs > 0))
++						AHI_GenerateSDLDeviceSpecs(AHIBase, name, TRUE, id, inputs, freqs);
++				}
++				CloseDevice((struct IORequest *)ahiReq);
++			}
++			DeleteIORequest(ahiReq);
++		}
++		DeleteMsgPort(ahiPort);
++	}
 +}
 +
 +static void AHI_WaitDevice(_THIS)
@@ -905,15 +1023,15 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +
 +	D(bug("[SDL2:AHI] %s()\n", __func__));
 +
-+    if (hidden->buffers[0]) {
-+        SDL_free(hidden->buffers[0]);
-+        hidden->buffers[0] = NULL;
-+    }
++	if (hidden->buffers[0]) {
++		SDL_free(hidden->buffers[0]);
++		hidden->buffers[0] = NULL;
++	}
 +
-+    if (hidden->buffers[1]) {
-+        SDL_free(hidden->buffers[1]);
-+        hidden->buffers[1] = NULL;
-+    }
++	if (hidden->buffers[1]) {
++		SDL_free(hidden->buffers[1]);
++		hidden->buffers[1] = NULL;
++	}
 +	
 +	this->hidden = NULL;
 +
@@ -949,6 +1067,16 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +	int sample_format = -1;
 +
 +	D(bug("[SDL2:AHI] %s()\n", __func__));
++	struct AHI_SDLIntDevice *ahiintdev = (struct AHI_SDLIntDevice *) this->handle;
++	D(
++		if (ahiintdev) {
++			bug("[SDL2:AHI] %s: modeid    %08x\n", __func__, ahiintdev->id_ModeID);
++			bug("[SDL2:AHI] %s: connector #%u\n", __func__, ahiintdev->id_ConnectionID);
++			bug("[SDL2:AHI] %s: frequency #%u\n", __func__, ahiintdev->id_FreqIdx);
++		} else {
++			bug("[SDL2:AHI] %s: null handle..\n", __func__);
++		}
++	)
 +
 +	switch (this->spec.format) {
 +#if (!defined __AROS__) || AROS_BIG_ENDIAN
@@ -964,10 +1092,10 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +#else
 +		case AUDIO_F32LSB:
 +		case AUDIO_F32MSB:
-+		case AUDIO_S32LSB:
++		case AUDIO_S32MSB:
 +		 	this->spec.format = AUDIO_S32LSB;
 +			break;
-+		case AUDIO_S16LSB:
++		case AUDIO_S16MSB:
 +		default:
 +			this->spec.format = AUDIO_S16LSB;
 +			break;
@@ -1032,13 +1160,13 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +	hidden->buffers[0] = (Uint8 *) SDL_malloc(hidden->audioBufferSize);
 +	hidden->buffers[1] = (Uint8 *) SDL_malloc(hidden->audioBufferSize);
 +	if (hidden->buffers[0] == NULL || hidden->buffers[1] == NULL) {
-+        SDL_SetError("No memory for audio buffer");
-+        return -1;
-+    }
-+	
-+    SDL_memset(hidden->buffers[0], this->spec.silence, hidden->audioBufferSize);
-+    SDL_memset(hidden->buffers[1], this->spec.silence, hidden->audioBufferSize);
-+	
++		SDL_SetError("No memory for audio buffer");
++		return -1;
++	}
++
++	SDL_memset(hidden->buffers[0], this->spec.silence, hidden->audioBufferSize);
++	SDL_memset(hidden->buffers[1], this->spec.silence, hidden->audioBufferSize);
++
 +	//hidden->convert = convert;
 +	hidden->current_buffer = 0;
 +	hidden->sample_format = sample_format;
@@ -1056,15 +1184,15 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +
 +static void AHI_FillCaptureRequest(struct AHIRequest *request, void *buffer, int length, int frequency, int type)
 +{
-+    request->ahir_Std.io_Message.mn_Node.ln_Pri = 60;
-+    request->ahir_Std.io_Data    = buffer,
-+    request->ahir_Std.io_Length  = length;
-+    request->ahir_Std.io_Command = CMD_READ;
-+    request->ahir_Volume = AHI_Volume;
-+    request->ahir_Position = 0x8000;
-+    request->ahir_Link = NULL;
-+    request->ahir_Frequency = frequency;
-+    request->ahir_Type = type;
++	request->ahir_Std.io_Message.mn_Node.ln_Pri = 60;
++	request->ahir_Std.io_Data    = buffer,
++	request->ahir_Std.io_Length  = length;
++	request->ahir_Std.io_Command = CMD_READ;
++	request->ahir_Volume = AHI_Volume;
++	request->ahir_Position = 0x8000;
++	request->ahir_Link = NULL;
++	request->ahir_Frequency = frequency;
++	request->ahir_Type = type;
 +}
 +
 +static int AHI_CaptureFromDevice(_THIS, void *buffer, int buflen)
@@ -1074,60 +1202,66 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +	Uint32 now;
 +	UBYTE current;
 +	size_t copyLen;
-+    void *completedBuffer;
++	void *completedBuffer;
 +	
 +	now = SDL_GetTicks();
 +	current = hidden->current_buffer;
 +	request = &hidden->req[0];
 +	
-+    if (hidden->lastCaptureTicks == 0 || (now - hidden->lastCaptureTicks) > RESTART_CAPTURE_THRESHOLD) {
++	if (hidden->lastCaptureTicks == 0 || (now - hidden->lastCaptureTicks) > RESTART_CAPTURE_THRESHOLD) {
 +
-+	    if (hidden->requestSent)
-+            WaitIO((struct IORequest *)request);
++		if (hidden->requestSent)
++			WaitIO((struct IORequest *)request);
 +		
-+        AHI_FillCaptureRequest(
-+            request,
-+            hidden->buffers[current],
-+            this->spec.size,
-+            this->spec.freq,
-+            hidden->sample_format);
++		AHI_FillCaptureRequest(
++			request,
++			hidden->buffers[current],
++			this->spec.size,
+++			this->spec.freq,
++			hidden->sample_format);
 +
-+        request->ahir_Std.io_Offset = 0;
++		request->ahir_Std.io_Offset = 0;
 +
-+        D(bug("[SDL2:AHI] %s: Start recording\n", __func__));
++		D(bug("[SDL2:AHI] %s: Start recording\n", __func__));
 +
-+        DoIO((struct IORequest *)request);
-+        hidden->requestSent = SDL_FALSE;
++		DoIO((struct IORequest *)request);
++		hidden->requestSent = SDL_FALSE;
 +		
 +		current = 1 - current;
 +
-+    } else {
++	} else {
 +		if (hidden->requestSent)
-+        	WaitIO((struct IORequest *)request);
-+    }
++			WaitIO((struct IORequest *)request);
++	}
 +
-+    AHI_FillCaptureRequest(
-+        request,
-+        hidden->buffers[current],
-+        this->spec.size,
-+        this->spec.freq,
-+        hidden->sample_format);
++	AHI_FillCaptureRequest(
++		request,
++		hidden->buffers[current],
++		this->spec.size,
++		this->spec.freq,
++		hidden->sample_format);
 +
-+    SendIO((struct IORequest *)request);
-+    hidden->requestSent = SDL_TRUE;
++	SendIO((struct IORequest *)request);
++	hidden->requestSent = SDL_TRUE;
 +
 +	current = 1 - current;
 +	
-+    completedBuffer = hidden->buffers[current];
++	completedBuffer = hidden->buffers[current];
 +
-+    copyLen = MIN(buflen, this->spec.size);
++	copyLen = MIN(buflen, this->spec.size);
 +
-+    SDL_memcpy(buffer, completedBuffer, copyLen);
++	SDL_memcpy(buffer, completedBuffer, copyLen);
 +
-+    hidden->lastCaptureTicks = now;
-+    hidden->current_buffer = current;
++	hidden->lastCaptureTicks = now;
++	hidden->current_buffer = current;
 +
-+    return copyLen;
++	return copyLen;
++}
++
++static int AHI_GetDefaultInfo(char **name, SDL_AudioSpec *spec, int iscapture)
++{
++	D(bug("[SDL2:AHI] %s()\n", __func__));
++	return SDL_Unsupported();
 +}
 +
 +static SDL_bool AHI_Init(SDL_AudioDriverImpl * impl)
@@ -1144,6 +1278,8 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +	impl->CaptureFromDevice = AHI_CaptureFromDevice;	
 +	impl->GetDeviceBuf = AHI_GetDeviceBuf;
 +	impl->CloseDevice = AHI_CloseDevice;
++	impl->FreeDeviceHandle = AHI_FreeHandle;
++	impl->GetDefaultAudioInfo = AHI_GetDefaultInfo;
 +
 +	impl->ProvidesOwnCallbackThread = SDL_FALSE;
 +	impl->HasCaptureSupport = SDL_TRUE;
@@ -1154,7 +1290,7 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +}
 +
 +AudioBootStrap AHIAUD_bootstrap = {
-+    "ahi", "AHI audio driver", AHI_Init, SDL_FALSE 
++	"AHI", "AHI audio driver", AHI_Init, SDL_FALSE 
 +};
 diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.h SDL2-2.32.8.aros/src/audio/ahi/SDL_ahi_audio.h
 --- SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.h	1970-01-01 00:00:00.000000000 +0000
