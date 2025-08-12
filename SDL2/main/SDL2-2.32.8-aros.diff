@@ -5196,8 +5196,8 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosclipboard.h SDL2-2.32.8.aros/src/vi
 +#endif /* _SDL_arosclipboard_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.c
 --- SDL2-2.32.8/src/video/aros/SDL_arosevents.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.c	2025-08-12 09:41:04.231633162 +0000
-@@ -0,0 +1,826 @@
++++ SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.c	2025-08-12 09:44:24.433116289 +0000
+@@ -0,0 +1,832 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -5250,9 +5250,11 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video
 +
 +#include <libraries/gadtools.h>
 +
++#if !defined(SDL2_AROS_STATIC)
 +#include <hidd/hidd.h>
 +
 +#include <proto/oop.h>
++#endif
 +#include <proto/dos.h>
 +#include <proto/alib.h>
 +#include <proto/commodities.h>
@@ -5266,6 +5268,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video
 +extern struct Library *DOSBase;
 +extern struct Library *IntuitionBase;
 +extern struct Library *CxBase;
++#if !defined(SDL2_AROS_STATIC)
 +extern struct Library *OOPBase;
 +OOP_AttrBase HiddAttrBase;
 +OOP_AttrBase HWAttrBase;
@@ -5276,6 +5279,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video
 +    {IID_HW          ,  &HWAttrBase   },
 +    {NULL            ,  NULL          }
 +};
++#endif
 +
 +void AHI_Mute(ULONG mute);
 +extern AROS_GlobalMouseState globalMouseState;
@@ -5500,6 +5504,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video
 +	char Vendor[256];
 +
 +    const char *hwname = NULL;
++#if !defined(SDL2_AROS_STATIC)
 +    if (OOP_ObtainAttrBases(abd))
 +    {
 +        OOP_Object *hwRoot = OOP_NewObject(NULL, CLID_HW_Root, NULL);
@@ -5511,6 +5516,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video
 +        }
 +        OOP_ReleaseAttrBases(abd);
 +    }
++#endif
 +    if (!hwname)
 +        hwname = aros_str_Unknown;
 +    SDL_snprintf(System, sizeof(System), "%s", hwname);
