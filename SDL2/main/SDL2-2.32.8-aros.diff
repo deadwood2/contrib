@@ -755,8 +755,8 @@ diff -ruN SDL2-2.32.8/sdl2-config SDL2-2.32.8.aros/sdl2-config
 +done
 diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/ahi/SDL_ahi_audio.c
 --- SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/audio/ahi/SDL_ahi_audio.c	2025-07-30 18:16:51.000000000 +0000
-@@ -0,0 +1,358 @@
++++ SDL2-2.32.8.aros/src/audio/ahi/SDL_ahi_audio.c	2025-08-12 12:04:34.365551373 +0000
+@@ -0,0 +1,393 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
@@ -779,6 +779,7 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +*/
 +
 +#if defined(__AROS__)
++//#define DEBUG 1
 +#include <aros/debug.h>
 +#endif
 +
@@ -814,22 +815,33 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +
 +void AHI_Mute(ULONG mute)
 +{
++	D(bug("[SDL2:AHI] %s()\n", __func__));
 +	AHI_Volume = mute ? 0 : 0x10000;
 +}
 +
 +static void AHI_DetectDevices(void)
 +{
 +	D(bug("[SDL2:AHI] %s()\n", __func__));
-+	
++
 +	SDL_AudioSpec output, capture;
++
++	// This should be queried from AHI, registering all suitable formats.
 +	output.freq = 44100;
++#if (!defined __AROS__) || AROS_BIG_ENDIAN
 +	output.format = AUDIO_S16MSB;
++#else
++	output.format = AUDIO_S16LSB;
++#endif
 +	output.channels = 2;
-+	
++
 +	capture.freq = 44100;
++#if (!defined __AROS__) || AROS_BIG_ENDIAN
 +	capture.format = AUDIO_S16MSB;
++#else
++	capture.format = AUDIO_S16LSB;
++#endif
 +	capture.channels = 1;
-+	
++
 +	SDL_AddAudioDevice(SDL_FALSE, "AHI output device", &output, SDL_strdup("default"));;
 +	SDL_AddAudioDevice(SDL_TRUE, "AHI capture device", &capture, SDL_strdup("default"));
 +	
@@ -837,7 +849,9 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +
 +static void AHI_WaitDevice(_THIS)
 +{
-+	MOSAudioData *hidden = this->hidden;
++	D(bug("[SDL2:AHI] %s()\n", __func__));
++
++	AHIAudioData *hidden = this->hidden;
 +	struct AHIRequest *req = &hidden->req[hidden->current_buffer];
 +
 +	if (req->ahir_Std.io_Data) {
@@ -851,7 +865,9 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +
 +static void AHI_PlayDevice(_THIS)
 +{
-+	MOSAudioData *hidden = this->hidden;
++	D(bug("[SDL2:AHI] %s()\n", __func__));
++
++	AHIAudioData *hidden = this->hidden;
 +	struct AHIRequest *req;
 +	ULONG current, current2;
 +	
@@ -876,13 +892,18 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +
 +static Uint8 * AHI_GetDeviceBuf(_THIS)
 +{
-+	MOSAudioData *hidden = this->hidden;
++	AHIAudioData *hidden = this->hidden;
++
++	D(bug("[SDL2:AHI] %s()\n", __func__));
++
 +	return (Uint8 *) hidden->buffers[hidden->current_buffer];
 +}
 +
 +static void AHI_CloseDevice(_THIS)
 +{
-+	MOSAudioData *hidden = this->hidden;
++	AHIAudioData *hidden = this->hidden;
++
++	D(bug("[SDL2:AHI] %s()\n", __func__));
 +
 +    if (hidden->buffers[0]) {
 +        SDL_free(hidden->buffers[0]);
@@ -902,29 +923,30 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +
 +static void AHI_ThreadInit(_THIS)
 +{
-+	MOSAudioData *hidden = this->hidden;
++	AHIAudioData *hidden = this->hidden;
++
++	D(bug("[SDL2:AHI] %s()\n", __func__));
 +
 +	hidden->ahiport.mp_Node.ln_Pri = 60;
 +	hidden->ahiport.mp_Flags = PA_SIGNAL;
-+	hidden->ahiport.mp_SigBit = SIGBREAKB_CTRL_E;
++	hidden->ahiport.mp_SigBit = AllocSignal(-1);
 +	hidden->ahiport.mp_SigTask = FindTask(NULL);
 +
 +	NEWLIST(&hidden->ahiport.mp_MsgList);
 +
-+#if defined(__AROS__)
 +	memmove(&hidden->req[1], &hidden->req[0], sizeof(hidden->req[1]));
-+#else
-+	bcopy(&hidden->req[0], &hidden->req[1], sizeof(hidden->req[1]));
-+#endif
 +}
 +
 +static int AHI_OpenDevice(_THIS, const char *devname)
 +{
-+	MOSAudioData *hidden;
++	AHIAudioData *hidden;
 +	SDL_AudioFormat test_format;
 +	int sample_format = -1;
 +
++	D(bug("[SDL2:AHI] %s()\n", __func__));
++
 +	switch (this->spec.format) {
++#if (!defined __AROS__) || AROS_BIG_ENDIAN
 +		case AUDIO_F32LSB:
 +		case AUDIO_F32MSB:
 +		case AUDIO_S32LSB:
@@ -934,6 +956,17 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +		default:
 +			this->spec.format = AUDIO_S16MSB;
 +			break;
++#else
++		case AUDIO_F32LSB:
++		case AUDIO_F32MSB:
++		case AUDIO_S32LSB:
++		 	this->spec.format = AUDIO_S32LSB;
++			break;
++		case AUDIO_S16LSB:
++		default:
++			this->spec.format = AUDIO_S16LSB;
++			break;
++#endif
 +	}
 +	/*if ((this->spec.format & 0xff) != 8)
 +		 this->spec.format = AUDIO_S16MSB;*/
@@ -957,7 +990,7 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +				sample_format = this->spec.channels == 1 ? AHIST_M32S : AHIST_S32S;
 +				break;
 +			default:
-+				D("[%s] unsupported SDL format 0x%ld\n", __FUNCTION__, test_format);
++				D(bug("[SDL2:AHI] %s: unsupported SDL format 0x%ld\n", __func__, test_format));
 +				test_format = SDL_NextAudioFormat();
 +				break;
 +		}
@@ -966,7 +999,7 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +	if (sample_format < 0)
 +		return SDL_SetError("Unsupported audio format");
 +
-+	D("[%s] AHI sample format is %ld\n", __FUNCTION__, sample_format);
++	D(bug("[SDL2:AHI] %s: AHI sample format is %ld\n", __func__, sample_format));
 +
 +	if (this->spec.channels > 2)
 +		this->spec.channels = 2;
@@ -979,7 +1012,7 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +	/* Update the fragment size as size in bytes */
 +	SDL_CalculateAudioSpec(&this->spec);
 +
-+	hidden = SDL_malloc(sizeof(MOSAudioData));
++	hidden = SDL_malloc(sizeof(AHIAudioData));
 +
 +	if (hidden == NULL)
 +		return SDL_OutOfMemory();
@@ -1032,7 +1065,7 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +static int AHI_CaptureFromDevice(_THIS, void *buffer, int buflen)
 +{
 +	struct AHIRequest  *request;
-+	MOSAudioData *hidden = this->hidden;
++	AHIAudioData *hidden = this->hidden;
 +	Uint32 now;
 +	UBYTE current;
 +	size_t copyLen;
@@ -1056,7 +1089,7 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +
 +        request->ahir_Std.io_Offset = 0;
 +
-+        D("[%s] Start recording\n", __FUNCTION__);
++        D(bug("[SDL2:AHI] %s: Start recording\n", __func__));
 +
 +        DoIO((struct IORequest *)request);
 +        hidden->requestSent = SDL_FALSE;
@@ -1094,6 +1127,8 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +
 +static SDL_bool AHI_Init(SDL_AudioDriverImpl * impl)
 +{
++	D(bug("[SDL2:AHI] %s()\n", __func__));
++
 +	/* Set the function pointers */
 +	impl->DetectDevices = AHI_DetectDevices;
 +	impl->OpenDevice = AHI_OpenDevice;
@@ -1113,11 +1148,11 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +}
 +
 +AudioBootStrap AHIAUD_bootstrap = {
-+    "ahi", "MorphOS AHI audio driver", AHI_Init, SDL_FALSE 
++    "ahi", "AHI audio driver", AHI_Init, SDL_FALSE 
 +};
 diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.h SDL2-2.32.8.aros/src/audio/ahi/SDL_ahi_audio.h
 --- SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/audio/ahi/SDL_ahi_audio.h	2025-07-27 14:24:12.204841317 +0000
++++ SDL2-2.32.8.aros/src/audio/ahi/SDL_ahi_audio.h	2025-08-12 12:01:03.537549247 +0000
 @@ -0,0 +1,49 @@
 +/*
 +  Simple DirectMedia Layer
@@ -1165,7 +1200,7 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.h SDL2-2.32.8.aros/src/audio/a
 +	SDL_bool requestSent;
 +};
 +
-+typedef struct SDL_PrivateAudioData MOSAudioData;
++typedef struct SDL_PrivateAudioData AHIAudioData;
 +
 +#endif /* _SDL_ahi_audio_h */
 diff -ruN SDL2-2.32.8/src/audio/SDL_audio.c SDL2-2.32.8.aros/src/audio/SDL_audio.c
