@@ -458,7 +458,7 @@ diff -ruN SDL2-2.32.8/include/SDL_config_aros.h SDL2-2.32.8.aros/include/SDL_con
 +/* #undef SDL_FILESYSTEM_PSP */
 +/* #undef SDL_FILESYSTEM_PS2 */
 +#define SDL_FILESYSTEM_AROS  1
-+#define SDL_FILESYSTEM_MORPHOS  1
++/* #undef SDL_FILESYSTEM_MORPHOS  */
 +
 +/* Enable misc subsystem */
 +/* #undef SDL_MISC_DUMMY */
@@ -755,8 +755,8 @@ diff -ruN SDL2-2.32.8/sdl2-config SDL2-2.32.8.aros/sdl2-config
 +done
 diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/ahi/SDL_ahi_audio.c
 --- SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/audio/ahi/SDL_ahi_audio.c	2025-08-12 12:04:34.365551373 +0000
-@@ -0,0 +1,393 @@
++++ SDL2-2.32.8.aros/src/audio/ahi/SDL_ahi_audio.c	2025-08-12 16:50:34.765550046 +0000
+@@ -0,0 +1,399 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
@@ -935,6 +935,11 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +	NEWLIST(&hidden->ahiport.mp_MsgList);
 +
 +	memmove(&hidden->req[1], &hidden->req[0], sizeof(hidden->req[1]));
++}
++
++static void AHI_ThreadDeinit(_THIS)
++{
++	D(bug("[SDL2:AHI] %s()\n", __func__));
 +}
 +
 +static int AHI_OpenDevice(_THIS, const char *devname)
@@ -1133,6 +1138,7 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +	impl->DetectDevices = AHI_DetectDevices;
 +	impl->OpenDevice = AHI_OpenDevice;
 +	impl->ThreadInit = AHI_ThreadInit;
++	impl->ThreadDeinit = AHI_ThreadDeinit;
 +	impl->PlayDevice = AHI_PlayDevice;
 +	impl->WaitDevice = AHI_WaitDevice;
 +	impl->CaptureFromDevice = AHI_CaptureFromDevice;	
@@ -1559,6 +1565,22 @@ diff -ruN SDL2-2.32.8/src/events/scancodes_amigaos.h SDL2-2.32.8.aros/src/events
 +    /*  113 */    SDL_SCANCODE_END,
 +};
 +/* *INDENT-ON* */
+diff -ruN SDL2-2.32.8/src/events/SDL_events.c SDL2-2.32.8.aros/src/events/SDL_events.c
+--- SDL2-2.32.8/src/events/SDL_events.c	2025-05-19 21:24:41.000000000 +0000
++++ SDL2-2.32.8.aros/src/events/SDL_events.c	2025-08-12 16:47:42.873549765 +0000
+@@ -916,6 +916,12 @@
+     if (_this) {
+         _this->PumpEvents(_this);
+     }
++#if defined(SDL_THREAD_AROS)
++    else {
++extern void AROS_PumpEvents(void *);
++        AROS_PumpEvents(_this);
++    }
++#endif
+ 
+ #ifndef SDL_JOYSTICK_DISABLED
+     /* Check for joystick state change */
 diff -ruN SDL2-2.32.8/src/file/SDL_rwops.c SDL2-2.32.8.aros/src/file/SDL_rwops.c
 --- SDL2-2.32.8/src/file/SDL_rwops.c	2025-01-28 07:47:10.000000000 +0000
 +++ SDL2-2.32.8.aros/src/file/SDL_rwops.c	2025-08-05 16:37:40.256632360 +0000
@@ -4148,8 +4170,8 @@ diff -ruN SDL2-2.32.8/src/thread/aros/SDL_syssem.c SDL2-2.32.8.aros/src/thread/a
 +/* vi: set ts=4 sw=4 expandtab: */
 diff -ruN SDL2-2.32.8/src/thread/aros/SDL_systhread.c SDL2-2.32.8.aros/src/thread/aros/SDL_systhread.c
 --- SDL2-2.32.8/src/thread/aros/SDL_systhread.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/thread/aros/SDL_systhread.c	2025-08-03 20:59:50.391376885 +0000
-@@ -0,0 +1,176 @@
++++ SDL2-2.32.8.aros/src/thread/aros/SDL_systhread.c	2025-08-12 14:18:26.729549553 +0000
+@@ -0,0 +1,180 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2021 Sam Lantinga <slouken@libsdl.org>
@@ -4271,6 +4293,7 @@ diff -ruN SDL2-2.32.8/src/thread/aros/SDL_systhread.c SDL2-2.32.8.aros/src/threa
 +    struct Task *t = FindTask(NULL);
 +    D(bug("[SDL2:Thread] %s('%s')\n", __func__, name));
 +    t->tc_Node.ln_Name = (STRPTR)name;
++    D(bug("[SDL2:Thread] %s: name set for thread @ 0x%p\n", __func__, t));
 +}
 +
 +SDL_threadID
@@ -4302,6 +4325,8 @@ diff -ruN SDL2-2.32.8/src/thread/aros/SDL_systhread.c SDL2-2.32.8.aros/src/threa
 +        break;
 +    }
 +
++    D(bug("[SDL2:Thread] %s: setting priority to %d\n", __func__, pri));
++
 +    SetTaskPri(FindTask(NULL), pri);
 +    return 0;
 +}
@@ -4312,8 +4337,9 @@ diff -ruN SDL2-2.32.8/src/thread/aros/SDL_systhread.c SDL2-2.32.8.aros/src/threa
 +    D(bug("[SDL2:Thread] %s()\n", __func__));
 +
 +    if (thread->handle.tp_PSig != -1) {
-+        SetSignal(0L,SIGBREAKF_CTRL_F | SIGBREAKF_CTRL_C);
-+        Wait(SIGBREAKF_CTRL_F | SIGBREAKF_CTRL_C | (1 << thread->handle.tp_PSig));
++        int sigs = SetSignal(0L, SIGBREAKF_CTRL_F | SIGBREAKF_CTRL_C);
++        int newsigs = Wait(SIGBREAKF_CTRL_F | SIGBREAKF_CTRL_C | (1 << thread->handle.tp_PSig));
++        SetSignal((sigs | newsigs) & ~(1 << thread->handle.tp_PSig), 0);
 +        FreeSignal(thread->handle.tp_PSig);
 +    }
 +    D(bug("[SDL2:Thread] %s: wait done\n", __func__));
@@ -5231,8 +5257,8 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosclipboard.h SDL2-2.32.8.aros/src/vi
 +#endif /* _SDL_arosclipboard_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.c
 --- SDL2-2.32.8/src/video/aros/SDL_arosevents.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.c	2025-08-12 09:44:24.433116289 +0000
-@@ -0,0 +1,832 @@
++++ SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.c	2025-08-12 16:40:41.421551044 +0000
+@@ -0,0 +1,846 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -5986,85 +6012,100 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video
 +void
 +AROS_PumpEvents(_THIS)
 +{
-+    SDL_VideoData *data = (SDL_VideoData *)_this->driverdata;
++    SDL_VideoData *data;
 +    struct IntuiMessage *m;
 +
++    ULONG signals = SIGBREAKF_CTRL_C;
 +    BOOL check_mousecoord = FALSE;
-+    size_t sigs = SetSignal(0, data->ScrNotifySig | data->BrokerSig | data->WBSig | data->WinSig | SIGBREAKF_CTRL_C);
++    size_t sigs;
 +
-+    if (sigs & data->WinSig) {
-+        SDL_WindowData *wdata = NULL;
-+        while ((m = (struct IntuiMessage *)GetMsg(&data->WinPort))) {
-+            wdata = (SDL_WindowData *)m->IDCMPWindow->UserData;
-+            if (m->Class == IDCMP_MOUSEMOVE && !SDL_GetRelativeMouseMode())
-+                check_mousecoord = TRUE;
++    if (_this)
++    {
++        data = (SDL_VideoData *)_this->driverdata;
++        signals |= data->BrokerSig | data->WBSig | data->WinSig;
++//    signals |= data->ScrNotifySig;
++    }
++    
++    sigs = SetSignal(0, signals);
++    D(bug("[SDL2:arosevt] %s: signals = %08x\n", __func__, sigs));
++    if (sigs & SIGBREAKF_CTRL_C)
++    {
++        D(bug("[SDL2:arosevt] %s: got SIGBREAKF_CTRL_C\n", __func__));
++        SDL_SendAppEvent(SDL_QUIT);
++    }
++    else if (_this) {
++        if (sigs & data->WinSig) {
++            SDL_WindowData *wdata = NULL;
++            while ((m = (struct IntuiMessage *)GetMsg(&data->WinPort))) {
++                wdata = (SDL_WindowData *)m->IDCMPWindow->UserData;
++                if (m->Class == IDCMP_MOUSEMOVE && !SDL_GetRelativeMouseMode())
++                    check_mousecoord = TRUE;
 +
-+            AROS_DispatchEvent(_this, m);
-+            ReplyMsg((struct Message *)m);
-+        }
++                AROS_DispatchEvent(_this, m);
++                ReplyMsg((struct Message *)m);
++            }
 +
-+        if (wdata && check_mousecoord && wdata->win) {
-+            struct Window *w = wdata->win;
-+            struct Screen *s = w->WScreen;
-+            if (s) {
-+                LONG mx = s->MouseX;
-+                LONG my = s->MouseY;
-+                LONG ws = w->LeftEdge + w->BorderLeft;
-+                LONG wy = w->TopEdge + w->BorderTop;
-+                LONG wx2 = w->LeftEdge + w->Width - w->BorderRight;
-+                LONG wy2 = w->TopEdge + w->Height - w->BorderBottom;
-+                if (mx >= ws && my >= wy && mx <= wx2 && my <= wy2) {
-+                    struct TagItem winPtrTags[] = {
-+                        { WA_Pointer,   0       },
-+                        { TAG_DONE,   0       },
-+                        { TAG_DONE,     0       }
-+                    };
++            if (wdata && check_mousecoord && wdata->win) {
++                struct Window *w = wdata->win;
++                struct Screen *s = w->WScreen;
++                if (s) {
++                    LONG mx = s->MouseX;
++                    LONG my = s->MouseY;
++                    LONG ws = w->LeftEdge + w->BorderLeft;
++                    LONG wy = w->TopEdge + w->BorderTop;
++                    LONG wx2 = w->LeftEdge + w->Width - w->BorderRight;
++                    LONG wy2 = w->TopEdge + w->Height - w->BorderBottom;
++                    if (mx >= ws && my >= wy && mx <= wx2 && my <= wy2) {
++                        struct TagItem winPtrTags[] = {
++                            { WA_Pointer,   0       },
++                            { TAG_DONE,   0       },
++                            { TAG_DONE,     0       }
++                        };
 +
-+                    w->Flags |= WFLG_RMBTRAP;
++                        w->Flags |= WFLG_RMBTRAP;
 +
-+                    if (data->CurrentPointer) {
-+                        if (!IS_SYSTEM_CURSOR(data->CurrentPointer)) {
-+                            SDL_AROSCursor *ac = (SDL_AROSCursor *)data->CurrentPointer;
-+                            if (ac->Pointer.ptrclassobj)
-+                                winPtrTags[0].ti_Data = (IPTR)ac->Pointer.ptrclassobj;
-+                        } else {
-+                            if ((((IPTR)data->CurrentPointer->driverdata) == SDL_SYSTEM_CURSOR_WAIT) ||
-+                                (((IPTR)data->CurrentPointer->driverdata) == SDL_SYSTEM_CURSOR_WAITARROW)) {
-+                                winPtrTags[1].ti_Tag = WA_BusyPointer;
-+                                winPtrTags[1].ti_Data = TRUE;
++                        if (data->CurrentPointer) {
++                            if (!IS_SYSTEM_CURSOR(data->CurrentPointer)) {
++                                SDL_AROSCursor *ac = (SDL_AROSCursor *)data->CurrentPointer;
++                                if (ac->Pointer.ptrclassobj)
++                                    winPtrTags[0].ti_Data = (IPTR)ac->Pointer.ptrclassobj;
 +                            } else {
-+                                if (((IPTR)data->CurrentPointer->driverdata) != SDL_SYSTEM_CURSOR_ARROW) {
-+                                    D(bug("[SDL2:arosevt] %s: (currently) unhandled cursor type %u\n", __func__, ((IPTR)data->CurrentPointer->driverdata)));
++                                if ((((IPTR)data->CurrentPointer->driverdata) == SDL_SYSTEM_CURSOR_WAIT) ||
++                                    (((IPTR)data->CurrentPointer->driverdata) == SDL_SYSTEM_CURSOR_WAITARROW)) {
++                                    winPtrTags[1].ti_Tag = WA_BusyPointer;
++                                    winPtrTags[1].ti_Data = TRUE;
++                                } else {
++                                    if (((IPTR)data->CurrentPointer->driverdata) != SDL_SYSTEM_CURSOR_ARROW) {
++                                        D(bug("[SDL2:arosevt] %s: (currently) unhandled cursor type %u\n", __func__, ((IPTR)data->CurrentPointer->driverdata)));
++                                    }
 +                                }
 +                            }
++                        } else {
++                            if (data->BlankPtrObj) {
++                                D(bug("[SDL2:arosevt] %s: setting blank cursor\n", __func__));
++                                winPtrTags[0].ti_Data = (IPTR)data->BlankPtrObj;
++                            }
 +                        }
++                        SetWindowPointerA(w, winPtrTags);
 +                    } else {
-+                        if (data->BlankPtrObj) {
-+                            D(bug("[SDL2:arosevt] %s: setting blank cursor\n", __func__));
-+                            winPtrTags[0].ti_Data = (IPTR)data->BlankPtrObj;
-+                        }
++                        w->Flags &= ~WFLG_RMBTRAP;
++                        ClearPointer(w);
 +                    }
-+                    SetWindowPointerA(w, winPtrTags);
-+                } else {
-+                    w->Flags &= ~WFLG_RMBTRAP;
-+                    ClearPointer(w);
 +                }
 +            }
 +        }
++
++        if (sigs & data->ScrNotifySig && data->ScreenNotifyHandle)
++            AROS_CheckScreenEvent(_this);
++
++        if (sigs & data->BrokerSig)
++            AROS_CheckBrokerMsg(_this);
++
++        if (sigs & data->WBSig)
++            AROS_CheckWBEvents(_this);
 +    }
-+
-+    if (sigs & data->ScrNotifySig && data->ScreenNotifyHandle)
-+        AROS_CheckScreenEvent(_this);
-+
-+    if (sigs & data->BrokerSig)
-+        AROS_CheckBrokerMsg(_this);
-+
-+    if (sigs & data->WBSig)
-+        AROS_CheckWBEvents(_this);
-+
-+    if (sigs & SIGBREAKF_CTRL_C)
-+        SDL_SendAppEvent(SDL_QUIT);
 +}
+\ No newline at end of file
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.h SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.h
 --- SDL2-2.32.8/src/video/aros/SDL_arosevents.h	1970-01-01 00:00:00.000000000 +0000
 +++ SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.h	2025-07-28 18:19:36.534462256 +0000
