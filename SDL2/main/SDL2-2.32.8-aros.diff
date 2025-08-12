@@ -7498,8 +7498,8 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmouse.h SDL2-2.32.8.aros/src/video/
 +#endif /* _SDL_arosmouse_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosopengl.c SDL2-2.32.8.aros/src/video/aros/SDL_arosopengl.c
 --- SDL2-2.32.8/src/video/aros/SDL_arosopengl.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosopengl.c	2025-08-04 19:10:18.512575026 +0000
-@@ -0,0 +1,269 @@
++++ SDL2-2.32.8.aros/src/video/aros/SDL_arosopengl.c	2025-08-12 07:44:11.764791809 +0000
+@@ -0,0 +1,267 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
@@ -7702,7 +7702,6 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosopengl.c SDL2-2.32.8.aros/src/video
 +void
 +AROS_GL_GetDrawableSize(_THIS, SDL_Window *window, int *width, int *height)
 +{
-+#if (0)
 +	SDL_WindowData *data = window->driverdata;
 +    int w = 0;
 +    int h = 0;
@@ -7715,7 +7714,6 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosopengl.c SDL2-2.32.8.aros/src/video
 +        *width = w;
 +    if (height)
 +        *height = h;
-+#endif
 +}
 +
 +int
