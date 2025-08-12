@@ -5196,7 +5196,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosclipboard.h SDL2-2.32.8.aros/src/vi
 +#endif /* _SDL_arosclipboard_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.c
 --- SDL2-2.32.8/src/video/aros/SDL_arosevents.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.c	2025-08-11 17:38:16.825907887 +0000
++++ SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.c	2025-08-12 09:41:04.231633162 +0000
 @@ -0,0 +1,826 @@
 +/*
 +  Simple DirectMedia Layer
@@ -5511,7 +5511,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video
 +        }
 +        OOP_ReleaseAttrBases(abd);
 +    }
-+    if (hwname)
++    if (!hwname)
 +        hwname = aros_str_Unknown;
 +    SDL_snprintf(System, sizeof(System), "%s", hwname);
 +    SDL_snprintf(Vendor, sizeof(Vendor), "%s", aros_str_Unknown);
