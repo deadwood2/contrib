@@ -755,8 +755,8 @@ diff -ruN SDL2-2.32.8/sdl2-config SDL2-2.32.8.aros/sdl2-config
 +done
 diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/ahi/SDL_ahi_audio.c
 --- SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/audio/ahi/SDL_ahi_audio.c	2025-08-12 22:36:11.430104223 +0000
-@@ -0,0 +1,535 @@
++++ SDL2-2.32.8.aros/src/audio/ahi/SDL_ahi_audio.c	2025-08-13 04:18:25.693441335 +0000
+@@ -0,0 +1,591 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
@@ -812,16 +812,18 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +
 +#define RESTART_CAPTURE_THRESHOLD 	 500
 +
-+struct AHI_SDLIntDevice {
++typedef struct {
 +	char	*id_Name;
 +	IPTR	id_ModeID;
 +	IPTR	id_ConnectionID;
 +	IPTR	id_FreqIdx;
-+};
++	IPTR	id_Freq;
++} AHI_SDLIntDevice;
 +
-+static const char AHI_SDL_DEVICE_FMT[] = "%s AHI %s device (%s)";
-+
-+static Fixed AHI_Volume = 0x10000;
++static Fixed 			AHI_Volume = 0x10000;
++static const char 		AHI_SDL_DEVICE_FMT[] = "%s AHI %s device <%s>";
++static AHI_SDLIntDevice	*AHI_SDLInputDefault = NULL;
++static AHI_SDLIntDevice *AHI_SDLOutputDefault = NULL;
 +
 +void AHI_Mute(ULONG mute)
 +{
@@ -854,7 +856,7 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +	return usefmt;
 +}
 +
-+static void AHI_GenerateSDLDeviceSpecs(APTR _Base, char *devbase, BOOL isinput, int modeid, int conmax, int freqmax) {
++static void AHI_GenerateSDLDeviceSpecs(APTR _Base, char *devbase, BOOL isinput, int modedef, int modeid, int conmax, int freqmax, IPTR freqdef) {
 +	struct AHIBase *AHIBase = (struct AHIBase *)_Base;
 +	char *modetype = (isinput) ? "Input" : "Output";
 +	int current;
@@ -863,8 +865,8 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +		IPTR stereo = 0, bits = 0, multi = 0;
 +		struct TagItem conTags[] = {
 +			{ AHIDB_BufferLen,		80				},
-+			{ AHIDB_OutputArg,		current			},
-+			{ AHIDB_Output,			(IPTR)&desc		},
++			{ TAG_IGNORE,			current			},
++			{ TAG_IGNORE,			(IPTR)&desc		},
 +			{ AHIDB_Stereo, 		(IPTR)&stereo	},
 +			{ AHIDB_MultiChannel,	(IPTR)&multi	},
 +		    { AHIDB_Bits,       	(IPTR)&bits		},
@@ -885,25 +887,35 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +		}
 +		AHI_GetAudioAttrsA(modeid, NULL, conTags);
 +		devspec.channels = 1;
-+		if (stereo)
++		if (stereo) {
 +			devspec.channels += 1;
++			if (multi)
++				devspec.channels += 6; // 7.1 = 8 channels.
++		}
 +		sdlDevName = AllocVec(strlen(devbase) + modetype_len + 12 + strlen(desc) + 3 + 1, MEMF_PUBLIC);
 +		sprintf(sdlDevName, AHI_SDL_DEVICE_FMT, devbase, modetype, desc);
 +		devspec.format = AHI_GenerateSDLFormat(bits);
 +		for (freq = 0; freq < freqmax; freq ++) {
-+			struct AHI_SDLIntDevice *sdlDevPrivate = (struct AHI_SDLIntDevice *)AllocVec(sizeof(struct AHI_SDLIntDevice) + strlen(sdlDevName) + 1, MEMF_ANY);
-+			sdlDevPrivate->id_Name = (char *)((IPTR)sdlDevPrivate + sizeof(struct AHI_SDLIntDevice));
++			AHI_SDLIntDevice *sdlDevPrivate = (AHI_SDLIntDevice *)AllocVec(sizeof(AHI_SDLIntDevice) + strlen(sdlDevName) + 1, MEMF_ANY);
++			sdlDevPrivate->id_Name = (char *)((IPTR)sdlDevPrivate + sizeof(AHI_SDLIntDevice));
 +			IPTR curfreq = 0;
 +			AHI_GetAudioAttrs(modeid, NULL,
 +			  AHIDB_FrequencyArg, freq,
 +			  AHIDB_Frequency,    (IPTR) &curfreq,
 +			  TAG_DONE);
 +			devspec.freq = curfreq;
++			if ((modedef == modeid) && (curfreq == freqdef)) {
++				if (isinput)
++					AHI_SDLInputDefault = sdlDevPrivate;
++				else
++					AHI_SDLOutputDefault = sdlDevPrivate;
++			}
 +			D(bug("[SDL2:AHI] %s: %s '%s'\n", __func__, modetype, desc));
 +			sprintf(sdlDevPrivate->id_Name, "%s", sdlDevName);
 +			sdlDevPrivate->id_ModeID = modeid;
 +			sdlDevPrivate->id_ConnectionID = current;
 +			sdlDevPrivate->id_FreqIdx = freq;
++			sdlDevPrivate->id_Freq = curfreq;
 +			D(bug("[SDL2:AHI] %s: private data @ 0x%p\n", __func__, sdlDevPrivate));
 +			SDL_AddAudioDevice((isinput) ? SDL_TRUE : SDL_FALSE,
 +				sdlDevPrivate->id_Name, &devspec, sdlDevPrivate);
@@ -914,7 +926,7 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +
 +static void AHI_FreeHandle(void *handle)
 +{
-+	struct AHI_SDLIntDevice *sdlDevPrivate = (struct AHI_SDLIntDevice *)handle;
++	AHI_SDLIntDevice *sdlDevPrivate = (AHI_SDLIntDevice *)handle;
 +	D(bug("[SDL2:AHI] %s(0x%p)\n", __func__, handle));
 +	FreeVec(handle);
 +}
@@ -931,10 +943,16 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +			ahiReq->ahir_Version = 1;
 +			if (OpenDevice(AHINAME, AHI_NO_UNIT, (struct IORequest *)ahiReq, 0) == 0) {
 +				ULONG id = AHI_INVALID_ID;
++				IPTR deffreq = 0, defid = 0;
 +				struct AHIBase *AHIBase = (struct AHIBase *) ahiReq->ahir_Std.io_Device;
++				AHI_GetAudioAttrs(AHI_DEFAULT_ID, NULL,
++					AHIDB_Frequency,	(IPTR)&deffreq,
++					AHIDB_AudioID,		(IPTR)&defid,
++				TAG_DONE);
++				D(bug("[SDL2:AHI] %s: Default %u freq %u\n", __func__, defid, deffreq));
 +				while ((id = AHI_NextAudioID(id)) != AHI_INVALID_ID) {
 +					UBYTE name[80];
-+					IPTR freqs = 0, minmix = 0, maxmix = 0, channels = 0, flags = 0, record = 0, inputs = 0, outputs = 0;
++					IPTR freqs = 0, minmix = 0, maxmix = 0, flags = 0, record = 0, inputs = 0, outputs = 0;
 +					name[0]='\0';
 +					AHI_GetAudioAttrs(id, NULL,
 +						AHIDB_BufferLen,	80,
@@ -942,20 +960,19 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +						AHIDB_Frequencies,	(IPTR)&freqs,
 +						AHIDB_MinMixFreq,   (IPTR)&minmix,
 +						AHIDB_MaxMixFreq,   (IPTR)&maxmix,
-+						AHIDB_MaxChannels,	(IPTR)&channels,
 +						AHIDB_Record,		(IPTR)&record,
 +						AHIDB_Inputs,		(IPTR)&inputs,
 +						AHIDB_Outputs,		(IPTR)&outputs,
 +						AHIDB_Flags,      	(IPTR)&flags,
 +					TAG_DONE);
-+					D(bug("[SDL2:AHI] %s: Mode '%s', %u frequencies\n", __func__, name, freqs));
++					D(bug("[SDL2:AHI] %s: Mode ID %u '%s', %u frequencies\n", __func__, id, name, freqs));
 +					char *colon = strchr(name, ':');
 +					if (colon)
 +						*colon = 0;
 +					if (outputs > 0)
-+						AHI_GenerateSDLDeviceSpecs(AHIBase, name, FALSE, id, outputs, freqs);
++						AHI_GenerateSDLDeviceSpecs(AHIBase, name, FALSE, defid, id, outputs, freqs, deffreq);
 +					if ((record) && (inputs > 0))
-+						AHI_GenerateSDLDeviceSpecs(AHIBase, name, TRUE, id, inputs, freqs);
++						AHI_GenerateSDLDeviceSpecs(AHIBase, name, TRUE, defid, id, inputs, freqs, deffreq);
 +				}
 +				CloseDevice((struct IORequest *)ahiReq);
 +			}
@@ -1057,7 +1074,11 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +
 +static void AHI_ThreadDeinit(_THIS)
 +{
++	AHIAudioData *hidden = this->hidden;
++
 +	D(bug("[SDL2:AHI] %s()\n", __func__));
++
++	FreeSignal(hidden->ahiport.mp_SigBit);
 +}
 +
 +static int AHI_OpenDevice(_THIS, const char *devname)
@@ -1067,7 +1088,7 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +	int sample_format = -1;
 +
 +	D(bug("[SDL2:AHI] %s()\n", __func__));
-+	struct AHI_SDLIntDevice *ahiintdev = (struct AHI_SDLIntDevice *) this->handle;
++	AHI_SDLIntDevice *ahiintdev = (AHI_SDLIntDevice *) this->handle;
 +	D(
 +		if (ahiintdev) {
 +			bug("[SDL2:AHI] %s: modeid    %08x\n", __func__, ahiintdev->id_ModeID);
@@ -1260,8 +1281,43 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +
 +static int AHI_GetDefaultInfo(char **name, SDL_AudioSpec *spec, int iscapture)
 +{
++	IPTR tgtfreq;
++	char *target = NULL;
++    int numdevices;
++
 +	D(bug("[SDL2:AHI] %s()\n", __func__));
-+	return SDL_Unsupported();
++
++	if (iscapture) {
++		if (AHI_SDLInputDefault) {
++			target = AHI_SDLInputDefault->id_Name;
++			tgtfreq = AHI_SDLOutputDefault->id_Freq;
++		}
++	} else {
++		if (AHI_SDLOutputDefault) {
++			target = AHI_SDLOutputDefault->id_Name;
++			tgtfreq = AHI_SDLOutputDefault->id_Freq;
++		}
++	}
++	if (target) {
++		SDL_AudioSpec curspec;
++		int i;
++		D(bug("[SDL2:AHI] %s: looking for '%s' @ %uhz\n", __func__, target, tgtfreq));
++		numdevices = SDL_GetNumAudioDevices(iscapture);
++		for (i = 0; i < numdevices; i += 1) {
++			const char *devName = SDL_GetAudioDeviceName(i, iscapture);
++			if (SDL_strncmp(devName, target, strlen(target)) == 0) {
++				SDL_GetAudioDeviceSpec(i, iscapture, &curspec);
++				if (curspec.freq == tgtfreq) {
++					if (name) {
++						*name = SDL_strdup(devName);
++					}
++					SDL_GetAudioDeviceSpec(i, iscapture, spec);
++					return 0;
++				}
++			}
++		}
++	}
++    return SDL_SetError("Could not find default AHI device");
 +}
 +
 +static SDL_bool AHI_Init(SDL_AudioDriverImpl * impl)
