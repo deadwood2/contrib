@@ -1217,7 +1217,7 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +			request,
 +			hidden->buffers[current],
 +			this->spec.size,
-++			this->spec.freq,
++			this->spec.freq,
 +			hidden->sample_format);
 +
 +		request->ahir_Std.io_Offset = 0;
