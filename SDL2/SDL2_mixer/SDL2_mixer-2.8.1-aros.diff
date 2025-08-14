@@ -1,0 +1,74 @@
+diff -ruN SDL2_mixer-2.8.1/Makefile.in SDL2_mixer-2.8.1.aros/Makefile.in
+--- SDL2_mixer-2.8.1/Makefile.in	2025-02-07 20:11:45.000000000 +0000
++++ SDL2_mixer-2.8.1.aros/Makefile.in	2025-08-14 16:10:58.992519855 +0000
+@@ -34,7 +34,7 @@
+ SDL_CFLAGS = @SDL_CFLAGS@
+ SDL_LIBS = @SDL_LIBS@
+ 
+-TARGET  = libSDL2_mixer.la
++SDL_TARGET= libSDL2_mixer.la
+ OBJECTS = @OBJECTS@
+ VERSION_OBJECTS = @VERSION_OBJECTS@
+ PLAYWAVE_OBJECTS = @PLAYWAVE_OBJECTS@
+@@ -81,7 +81,7 @@
+ LT_EXTRA    = @LT_EXTRA@
+ LT_LDFLAGS  = -no-undefined -rpath $(libdir) -release $(LT_RELEASE) -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) $(LT_EXTRA)
+ 
+-all: $(srcdir)/configure Makefile $(objects)/$(TARGET) $(objects)/playwave$(EXE) $(objects)/playmus$(EXE)
++all: $(srcdir)/configure Makefile $(objects)/$(SDL_TARGET) $(objects)/playwave$(EXE) $(objects)/playmus$(EXE)
+ 
+ $(srcdir)/configure: $(srcdir)/configure.ac
+ 	@echo "Warning, configure is out of date, please re-run autogen.sh"
+@@ -95,14 +95,14 @@
+ 
+ .PHONY: all install install-hdrs install-lib install-bin uninstall uninstall-hdrs uninstall-lib uninstall-bin clean distclean dist
+ 
+-$(objects)/$(TARGET): $(OBJECTS) $(VERSION_OBJECTS)
++$(objects)/$(SDL_TARGET): $(OBJECTS) $(VERSION_OBJECTS)
+ 	$(LIBTOOL) --mode=link $(CC) -o $@ $(OBJECTS) $(VERSION_OBJECTS) $(LDFLAGS) $(EXTRA_LDFLAGS) $(LT_LDFLAGS) $(SDL_LIBS) $(MIXER_LIBS)
+ 
+-$(objects)/playwave$(EXE): $(objects)/playwave.lo $(objects)/$(TARGET)
+-	$(LIBTOOL) --mode=link $(CC) -o $@ $(objects)/playwave.lo $(SDL_CFLAGS) $(objects)/$(TARGET) $(SDL_LIBS) $(LDFLAGS)
++$(objects)/playwave$(EXE): $(objects)/playwave.lo $(objects)/$(SDL_TARGET)
++	$(LIBTOOL) --mode=link $(CC) -o $@ $(objects)/playwave.lo $(SDL_CFLAGS) $(objects)/$(SDL_TARGET) $(SDL_LIBS) -liconv $(LDFLAGS)
+ 
+-$(objects)/playmus$(EXE): $(objects)/playmus.lo $(objects)/$(TARGET)
+-	$(LIBTOOL) --mode=link $(CC) -o $@ $(objects)/playmus.lo $(SDL_CFLAGS) $(objects)/$(TARGET) $(SDL_LIBS) $(LDFLAGS)
++$(objects)/playmus$(EXE): $(objects)/playmus.lo $(objects)/$(SDL_TARGET)
++	$(LIBTOOL) --mode=link $(CC) -o $@ $(objects)/playmus.lo $(SDL_CFLAGS) $(objects)/$(SDL_TARGET) $(SDL_LIBS) -liconv $(LDFLAGS)
+ 
+ install: all install-hdrs install-lib #install-bin
+ install-hdrs:
+@@ -128,9 +128,9 @@
+ 	$(INSTALL) -m 644 $(srcdir)/cmake/Findtremor.cmake $(libdir)/cmake/SDL2_mixer
+ 	$(INSTALL) -m 644 $(srcdir)/cmake/FindVorbis.cmake $(libdir)/cmake/SDL2_mixer
+ 	$(INSTALL) -m 644 $(srcdir)/cmake/Findwavpack.cmake $(libdir)/cmake/SDL2_mixer
+-install-lib: $(objects)/$(TARGET)
++install-lib: $(objects)/$(SDL_TARGET)
+ 	$(SHELL) $(auxdir)/mkinstalldirs $(libdir)
+-	$(LIBTOOL) --mode=install $(INSTALL) $(objects)/$(TARGET) $(libdir)/$(TARGET)
++	$(LIBTOOL) --mode=install $(INSTALL) $(objects)/$(SDL_TARGET) $(libdir)/$(SDL_TARGET)
+ install-bin:
+ 	$(SHELL) $(auxdir)/mkinstalldirs $(bindir)
+ 	$(LIBTOOL) --mode=install $(INSTALL) -m 755 $(objects)/playwave$(EXE) $(bindir)/playwave$(EXE)
+@@ -162,7 +162,7 @@
+ 	-rmdir $(libdir)/cmake/SDL2_mixer
+ 	-rmdir $(libdir)/cmake
+ uninstall-lib:
+-	$(LIBTOOL) --mode=uninstall rm -f $(libdir)/$(TARGET)
++	$(LIBTOOL) --mode=uninstall rm -f $(libdir)/$(SDL_TARGET)
+ uninstall-bin:
+ 	rm -f $(bindir)/playwave$(EXE)
+ 	rm -f $(bindir)/playmus$(EXE)
+diff -ruN SDL2_mixer-2.8.1/src/codecs/music_timidity.c SDL2_mixer-2.8.1.aros/src/codecs/music_timidity.c
+--- SDL2_mixer-2.8.1/src/codecs/music_timidity.c	2025-02-07 20:09:52.000000000 +0000
++++ SDL2_mixer-2.8.1.aros/src/codecs/music_timidity.c	2025-08-14 16:07:07.966503293 +0000
+@@ -47,6 +47,8 @@
+  * of the config file to its search path, too. */
+ #if defined(__WIN32__)
+ # define TIMIDITY_CFG           "C:\\TIMIDITY\\TIMIDITY.CFG"
++#elif defined(__AROS__)
++# define TIMIDITY_CFG           "PROGDIR:timidity.cfg"
+ #elif defined(__OS2__)
+ # define TIMIDITY_CFG           "C:\\TIMIDITY\\TIMIDITY.CFG"
+ # define TIMIDITY_CFG_ETC       "/@unixroot/etc/timidity/timidity.cfg"

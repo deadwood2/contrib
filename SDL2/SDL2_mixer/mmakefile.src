@@ -1,0 +1,34 @@
+# Copyright © 2025, The AROS Development Team. All rights reserved.
+# $Id$
+
+include $(SRCDIR)/config/aros-contrib.cfg
+
+#MM- contrib-sdl2-sdl-mixer : development-SDL2_mixer
+
+#MM- development-SDL2_mixer : SDL2-aros-lib development-libvorbis development-libmikmod
+
+SDL_MIXER_EXTRA_OPTS := \
+        LIBMIKMOD_CONFIG='$(AROS_DEVELOPMENT)/bin/libmikmod-config' \
+        --disable-music-mp3 \
+        --disable-music-mod-shared \
+        --disable-music-ogg-shared \
+        --disable-music-cmd \
+        --disable-music-flac \
+        libdir=$(AROS_LIB)
+
+ifeq ($(AROS_TARGET_CPU),m68k)
+SDL_MIXER_EXTRA_OPTS += \
+        --disable-music-mod \
+        --disable-music-timidity-midi
+endif
+
+USER_INCLUDES := -I$(AROS_INCLUDES)/SDL2 -I$(AROS_CONTRIB_INCLUDES)
+USER_LDFLAGS := -L$(AROS_CONTRIB_LIB)
+
+REPOSITORIES := https://www.libsdl.org/projects/SDL_mixer/release \
+ https://gsdview.appspot.com/webports/mirror \
+ https://floss.freebox.fr/packages
+
+%fetch_and_build_gnu_development package=SDL2_mixer version=2.8.1 patch=yes \
+    package_repo="$(REPOSITORIES)" \
+    suffixes="tar.gz" extraoptions=$(SDL_MIXER_EXTRA_OPTS) nlsflag=no xflag=no
