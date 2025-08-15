@@ -59,7 +59,7 @@ endif
 
 contrib-ffmpeg--touchfileflag := $(GENDIR)/$(CURDIR)/.files-touched
 
-%fetch_and_build mmake=contrib-ffmpeg prefix=$(AROS_DEVELOPMENT) \
+%fetch_and_build mmake=contrib-ffmpeg prefix=$(AROS_DEVELOPER) \
 	package=ffmpeg version=$(VERSION) suffixes="tar.bz2" \
 	patch=yes nix=no package_repo=$(REPOSITORIES) \
 	extraoptions="$(FFMPEG_OPTIONS)" buildflags=no gnuflags=no

@@ -76,5 +76,5 @@ OWB_OPTIONS := \
 ##OWB_OPTIONS := -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON $(OWB_OPTIONS)
 
 %build_with_cmake mmake=aros-tcpip-apps-owb-webview		\
-	srcdir=$(OWB_SOURCE) prefix="$(AROS_DEVELOPMENT)"	\
+	srcdir=$(OWB_SOURCE) prefix="$(AROS_DEVELOPER)"	\
 	extraoptions="$(OWB_OPTIONS)"

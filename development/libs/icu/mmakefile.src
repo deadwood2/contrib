@@ -49,5 +49,5 @@ endif
 
 %fetch_and_build mmake=contrib-icu4c-complete package=$(ICU_PKGNAME) version=$(ICU_PKGVERSION)-src \
 	package_repo="$(REPOSITORIES)" suffixes="tgz" \
-	patch=yes srcdir=icu builddir=source prefix=$(AROS_DEVELOPMENT) aros_prefix=/$(AROS_DIR_DEVELOPMENT) nix=yes \
+	patch=yes srcdir=icu builddir=source prefix=$(AROS_DEVELOPER) aros_prefix=/$(AROS_DIR_DEVELOPER) nix=yes \
 	extraoptions="$(ICU_EXTRA_OPTS)"

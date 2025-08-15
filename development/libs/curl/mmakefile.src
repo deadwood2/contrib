@@ -16,7 +16,7 @@ CURL_VERSION=7.76.0
 USER_CPPFLAGS= \
         -D_XOPEN_SOURCE=500 \
         -D__BSD_VISIBLE=1
-CURL_OPTIONS=--disable-shared --without-random --without-libpsl --disable-threaded-resolver --disable-ipv6 --disable-ntlm-wb --with-ssl=$(AROS_DEVELOPMENT) --libdir=$(AROS_LIB)
+CURL_OPTIONS=--disable-shared --without-random --without-libpsl --disable-threaded-resolver --disable-ipv6 --disable-ntlm-wb --with-ssl=$(AROS_DEVELOPER) --libdir=$(AROS_LIB)
 
 development-curl--touchfileflag := $(GENDIR)/$(CURDIR)/.files-touched
 
@@ -62,7 +62,7 @@ development-curl-fixenv :
 
 #MM
 development-curl-fixconfig :
-	@for file in $(AROS_DEVELOPMENT)/bin/curl-config; \
+	@for file in $(AROS_DEVELOPER)/bin/curl-config; \
 	do \
 	$(SED) -i -e 's@-lssl -lssl -lcrypto -lz@-lssl -lcrypto -lz@' $$file; \
 	done; \

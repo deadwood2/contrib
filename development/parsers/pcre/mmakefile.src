@@ -8,7 +8,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 
 PACKAGE      := pcre
 VERSION      := 8.41
-TARGETDIR    := $(AROS_DEVELOPMENT)
+TARGETDIR    := $(AROS_DEVELOPER)
 REPOSITORIES := https://ftp.pcre.org/pub/pcre \
  http://www.mirrorservice.org/sites/ftp.exim.org/pub/pcre \
  http://ftp.cs.stanford.edu/pub/exim/pcre \
