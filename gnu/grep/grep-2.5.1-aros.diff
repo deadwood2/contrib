@@ -53,19 +53,16 @@ diff -ruN grep-2.5.1/doc/version.texi grep-2.5.1.aros/doc/version.texi
 +@set VERSION 2.5.1
 diff -ruN grep-2.5.1/src/dfa.c grep-2.5.1.aros/src/dfa.c
 --- grep-2.5.1/src/dfa.c	2001-09-26 16:57:55.000000000 +0000
-+++ grep-2.5.1.aros/src/dfa.c	2011-07-10 21:41:03.000000000 +0000
-@@ -44,11 +44,6 @@
++++ grep-2.5.1.aros/src/dfa.c	2025-08-15 12:15:38.659765311 +0000
+@@ -44,7 +44,7 @@
  # include <locale.h>
  #endif
  
 -#if defined HAVE_WCTYPE_H && defined HAVE_WCHAR_H && defined HAVE_MBRTOWC
--/* We can handle multibyte string.  */
--# define MBS_SUPPORT
--#endif
--
- #ifdef MBS_SUPPORT
- # include <wchar.h>
- # include <wctype.h>
++#if defined HAVE_WCTYPE_H && defined HAVE_WCHAR_H && defined HAVE_MBRTOWC && defined HAVE_WCTYPE
+ /* We can handle multibyte string.  */
+ # define MBS_SUPPORT
+ #endif
 diff -ruN grep-2.5.1/src/getpagesize.h grep-2.5.1.aros/src/getpagesize.h
 --- grep-2.5.1/src/getpagesize.h	2001-02-08 15:56:55.000000000 +0000
 +++ grep-2.5.1.aros/src/getpagesize.h	2011-07-10 21:41:03.000000000 +0000
@@ -80,3 +77,15 @@ diff -ruN grep-2.5.1/src/getpagesize.h grep-2.5.1.aros/src/getpagesize.h
  #ifndef getpagesize
  # include <sys/param.h>
  # ifdef EXEC_PAGESIZE
+diff -ruN grep-2.5.1/src/search.c grep-2.5.1.aros/src/search.c
+--- grep-2.5.1/src/search.c	2001-04-19 03:42:14.000000000 +0000
++++ grep-2.5.1.aros/src/search.c	2025-08-15 12:14:51.651761896 +0000
+@@ -22,7 +22,7 @@
+ # include <config.h>
+ #endif
+ #include <sys/types.h>
+-#if defined HAVE_WCTYPE_H && defined HAVE_WCHAR_H && defined HAVE_MBRTOWC
++#if defined HAVE_WCTYPE_H && defined HAVE_WCHAR_H && defined HAVE_MBRTOWC && defined HAVE_WCTYPE
+ /* We can handle multibyte string.  */
+ # define MBS_SUPPORT
+ # include <wchar.h>
