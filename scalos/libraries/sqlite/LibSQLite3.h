@@ -9,7 +9,7 @@
 #include <exec/types.h>
 #include <exec/lists.h>
 #include <exec/libraries.h>
-#include <sqlite3.h>
+#include "sqlite3.h"
 
 #include <defs.h>
 
