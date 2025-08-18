@@ -5,7 +5,8 @@ include $(SRCDIR)/config/aros-contrib.cfg
 #MM contrib-fryingpan-fp-engine : \
 #MM     contrib-fryingpan-framework-generic \
 #MM     contrib-fryingpan-framework-genericlib \
-#MM     contrib-fryingpan-framework-libc
+#MM     contrib-fryingpan-framework-libc \
+#MM     linklibs-libatomic
 
 DESTDIR := $(AROS_CONTRIB)/FryingPan/Libs
 
