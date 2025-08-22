@@ -21,7 +21,7 @@ FONTCONFIG_OPTIONS = \
     FREETYPE_CFLAGS='-I$(AROS_INCLUDES)/freetype' \
     FREETYPE_LIBS='-L$(AROS_LIB) -lfreetype2' \
     LIBXML2_CFLAGS='-I$(AROS_INCLUDES)/libxml2' \
-    LIBXML2_LIBS='-L$(AROS_LIB) -lxml2 -lz' \
+    LIBXML2_LIBS='-L$(AROS_LIB) -lxml2 -llzma -lz' \
     lt_sys_lib_search_path_spec='$(AROS_DEVELOPER)/lib/'
 
 REPOSITORIES := https://www.freedesktop.org/software/fontconfig/release \
