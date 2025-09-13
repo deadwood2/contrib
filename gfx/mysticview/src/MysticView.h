@@ -96,7 +96,7 @@ struct MVButtons
 	
 	APTR psm;
 	APTR drawhandle;
-	ULONG width, height;
+	IPTR width, height;
 
 	struct BitMap *bitmap;
 	struct BitMap *animbitmap;

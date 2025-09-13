@@ -74,10 +74,10 @@ struct picview
 	APTR	psm;
 	APTR	drawhandle;
 	
-	ULONG	picwidth;
-	ULONG	picheight;
-	ULONG	picaspectx;
-	ULONG	picaspecty;
+	IPTR	picwidth;
+	IPTR	picheight;
+	IPTR	picaspectx;
+	IPTR	picaspecty;
 	
 	float	viewaspect;		//	view aspect
 	float	picaspect;		//	picture aspect

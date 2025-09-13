@@ -1184,8 +1184,8 @@ char *SetPicInfoText(struct viewdata *viewdata, PICTURE *pic, struct mainsetting
 			if (pic)
 			{
 				APTR args[6];
-				ULONG w = 0, h = 0, d = 0;
-				ULONG p;
+				IPTR w = 0, h = 0, d = 0;
+				IPTR p;
 				GetPictureAttrs(pic,
 					PICATTR_Width, (IPTR)&w, PICATTR_Height, (IPTR)&h, PICATTR_PixelFormat, (IPTR)&p,
 					TAG_DONE);

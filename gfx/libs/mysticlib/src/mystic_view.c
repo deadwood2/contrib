@@ -1543,7 +1543,7 @@ APTR __inline GetQuickPic(struct picview *view)
 		{
 			if (view->truecolor)
 			{
-				ULONG pixelformat;
+				IPTR pixelformat;
 				GetPictureAttrs(view->showpic, PICATTR_PixelFormat, (IPTR)&pixelformat, TAG_DONE);
 			
 				if (pixelformat == PIXFMT_0RGB_32)
@@ -1559,7 +1559,7 @@ APTR __inline GetQuickPic(struct picview *view)
 	
 				if ((view->quickpic = ClonePicture(view->showpic, NULL)))
 				{
-					ULONG pixfmt;
+					IPTR pixfmt;
 
 					DoPictureMethod(view->quickpic, PICMTHD_MAPDRAWHANDLE, (IPTR)view->drawhandle, NULL);
 					GetPictureAttrs(view->showpic, PICATTR_PixelFormat, (IPTR)&pixfmt, TAG_DONE);

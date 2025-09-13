@@ -94,7 +94,7 @@ struct IconThumbnail *CreateIconThumbnail(PICTURE *picture,
 		if (icon = Malloclear(sizeof(struct IconThumbnail)))
 		{
 			PICTURE *thumbpic;
-			ULONG w, h, ax, ay;
+			IPTR w, h, ax, ay;
 			float f1, f2;
 
 			GetPictureAttrs(picture, PICATTR_Width, &w, PICATTR_Height, &h,

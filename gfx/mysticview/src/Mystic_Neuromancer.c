@@ -136,7 +136,7 @@ void setinputlayer(struct mvscreen *scr, struct mvwindow *win, struct mainsettin
 #ifndef NO_NEURALNET
 	if (net && settings && viewdata && pic)
 	{
-		ULONG w,h,f, ax, ay;
+		IPTR w, h, f, ax, ay;
 		float viewaspect, picaspect;
 		float virtualpicwidth;
 		float virtualwinwidth;
