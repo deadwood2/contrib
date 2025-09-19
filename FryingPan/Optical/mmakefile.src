@@ -7,6 +7,14 @@ include $(SRCDIR)/config/aros-contrib.cfg
 #MM     contrib-fryingpan-framework-genericlib \
 #MM     contrib-fryingpan-framework-libc
 
+ifeq ($(AROS_TOOLCHAIN),gnu)
+GCC_VERSION_MAJOR = $(shell echo "$(TARGET_GCC_VER)" | cut -d"." -f1)
+ifeq ($(shell [ $(GCC_VERSION_MAJOR) -lt 13 ] && echo true),true)
+USER_CXXFLAGS := $(CXXFLAGS_GNU11)
+endif
+endif
+USER_CXXFLAGS ?= $(CXXFLAGS_CXX11)
+
 DESTDIR := $(AROS_CONTRIB)/FryingPan/Libs
 
 CXXFILES := \
@@ -47,7 +55,7 @@ NOWARN_FLAGS := \
     $(NOWARN_INT_IN_BOOL_CONTEXT)
 
 USER_INCLUDES := $(CFLAGS_ISYSTEM) $(SRCDIR)/$(CURDIR)/../framework $(CFLAGS_ISYSTEM_END) -I $(GENDIR)/$(CURDIR)/../framework/include
-USER_CXXFLAGS := $(CXXFLAGS_CXX11) $(CFLAGS_NO_RTTI) $(CFLAGS_NO_EXCEPTIONS) $(NOWARN_FLAGS)
+USER_CXXFLAGS += $(CFLAGS_NO_RTTI) $(CFLAGS_NO_EXCEPTIONS) $(NOWARN_FLAGS)
 USER_LDFLAGS := $(TARGET_CXX_LDFLAGS) -nostdlib $(CXXFLAGS_NOSTDLIBXX) -L$(GENDIR)/$(CURDIR)/../framework -Wl,--start-group -lGeneric -lLibrary -lC -Wl,--end-group
 
 %build_prog mmake=contrib-fryingpan-optical progname="Optical" \

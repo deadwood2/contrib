@@ -4,8 +4,16 @@ include $(SRCDIR)/config/aros-contrib.cfg
 
 FILES := LibWrapper_aros Library
 
+ifeq ($(AROS_TOOLCHAIN),gnu)
+GCC_VERSION_MAJOR = $(shell echo "$(TARGET_GCC_VER)" | cut -d"." -f1)
+ifeq ($(shell [ $(GCC_VERSION_MAJOR) -lt 13 ] && echo true),true)
+USER_CXXFLAGS := $(CXXFLAGS_GNU11)
+endif
+endif
+USER_CXXFLAGS ?= $(CXXFLAGS_CXX11)
+
 USER_INCLUDES := $(CFLAGS_ISYSTEM) $(SRCDIR)/$(CURDIR)/.. $(CFLAGS_ISYSTEM_END) -I$(GENDIR)/$(CURDIR)/../include
-USER_CXXFLAGS := $(CXXFLAGS_CXX11) $(CFLAGS_NO_RTTI) $(CFLAGS_NO_EXCEPTIONS)
+USER_CXXFLAGS += $(CFLAGS_NO_RTTI) $(CFLAGS_NO_EXCEPTIONS)
 USER_LDFLAGS := -nostdlib $(CXXFLAGS_NOSTDLIBXX)
 
 GENINCDIRS := $(GENDIR)/$(CURDIR)/../include $(GENDIR)/$(CURDIR)/../include/proto $(GENDIR)/$(CURDIR)/../include/clib $(GENDIR)/$(CURDIR)/../include/defines $(GENDIR)/$(CURDIR)/../include/inline
