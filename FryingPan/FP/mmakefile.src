@@ -15,7 +15,7 @@ FILES := ../framework/Startup/Startup_aros Main Application Globals
 
 USER_INCLUDES := $(CFLAGS_ISYSTEM) $(SRCDIR)/$(CURDIR)/../framework $(CFLAGS_ISYSTEM_END)
 USER_CXXFLAGS := $(CXXFLAGS_CXX11) $(CFLAGS_NO_RTTI) $(CFLAGS_NO_EXCEPTIONS) $(CFLAGS_NO_BUILTIN)
-USER_LDFLAGS := $(TARGET_CXX_LDFLAGS) -nostdlib -nostdlib++ -L$(GENDIR)/$(CURDIR)/../framework -Wl,--start-group -lGeneric -lC -Wl,--end-group
+USER_LDFLAGS := $(TARGET_CXX_LDFLAGS) -nostdlib $(CXXFLAGS_NOSTDLIBXX) -L$(GENDIR)/$(CURDIR)/../framework -Wl,--start-group -lGeneric -lC -Wl,--end-group
 
 #USER_CPPFLAGS := -DDEBUG
 

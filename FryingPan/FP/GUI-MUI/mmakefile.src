@@ -49,7 +49,7 @@ CXXFILES := \
 USER_INCLUDES := $(CFLAGS_ISYSTEM) $(SRCDIR)/$(CURDIR)/../../framework \
         $(CFLAGS_ISYSTEM) $(SRCDIR)/$(CURDIR)/../..  $(CFLAGS_ISYSTEM_END) -I $(GENDIR)/$(CURDIR)/../../framework/include
 USER_CXXFLAGS := $(CXXFLAGS_CXX11) $(CFLAGS_NO_RTTI) $(CFLAGS_NO_EXCEPTIONS)
-USER_LDFLAGS := $(TARGET_CXX_LDFLAGS) -nostdlib -nostdlib++ -Wl,--start-group -L$(GENDIR)/$(CURDIR)/../../framework -lGeneric -lLibrary -lC -Wl,--end-group
+USER_LDFLAGS := $(TARGET_CXX_LDFLAGS) -nostdlib $(CXXFLAGS_NOSTDLIBXX) -Wl,--start-group -L$(GENDIR)/$(CURDIR)/../../framework -lGeneric -lLibrary -lC -Wl,--end-group
 
 %build_prog mmake=contrib-fryingpan-fp-guimui \
  progname="mui.interface" targetdir=$(DESTDIR) files= cxxfiles="$(CXXFILES)" \
