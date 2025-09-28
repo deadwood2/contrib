@@ -4,7 +4,11 @@ include $(SRCDIR)/$(CURDIR)/../make.cfg
 
 #MM- DOpus_Print : dopus-library
 
-USER_INCLUDES := -I$(DOPUSDIR)/Development/include \
+NOWARN_FLAGS := \
+    $(NOWARN_IMPLICIT_FUNCTION_DECL) \
+    $(NOWARN_PARENTHESES) \
+    $(NOWARN_OLD_STYLE_DEFINITION)
+USER_INCLUDES := -I$(DOPUSDIR)/$(AROS_DIR_DEVELOPER)/include \
     -I$(SRCDIR)/$(CURDIR)/../include
 
 USER_CPPFLAGS := -D__REXXSYSLIB_STDLIBBASE__ \
@@ -12,7 +16,6 @@ USER_CPPFLAGS := -D__REXXSYSLIB_STDLIBBASE__ \
     -D__LOCALE_STDLIBBASE__
 
 # TODO: Remove and clean the compiler warnings!
-NOWARN_FLAGS := $(NOWARN_IMPLICIT_FUNCTION_DECL) $(NOWARN_PARENTHESES)
 USER_CFLAGS += -Wno-error $(NOWARN_FLAGS)
 
 %build_prog mmake=DOpus_Print \

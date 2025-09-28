@@ -48,6 +48,12 @@
 #endif
 
 #ifndef S_ISCRIPT          /* not having one implies you have none */
+#  ifdef S_IREAD
+#    undef S_IREAD
+#  endif
+#  ifdef S_IWRITE
+#    undef S_IWRITE
+#  endif
 #  define S_IARCHIVE 0020  /* not modified since this bit was last set */
 #  define S_IREAD    0010  /* can be opened for reading */
 #  define S_IWRITE   0004  /* can be opened for writing */
@@ -995,20 +1001,24 @@ void version(__G)
 #   ifdef AZTEC_C
      strcpy(buf1,"Manx Aztec C ");
 #   else
-#    ifdef __GNUC__
-      strcpy(buf1, "GNU/C ");
+#    ifdef __clang__
+      strcpy(buf1, "Clang/LLVM ");
 #    else
-      strcpy(buf1,"UNKNOWN ");
+#     ifdef __GNUC__
+       strcpy(buf1, "GNU C ");
+#     else
+       strcpy(buf1,"UNKNOWN ");
+#     endif
 #    endif
 #   endif
 #  endif
 # endif
 /* "under" */
-#ifdef UNDER
+# ifdef UNDER
   strcpy(buf3, UNDER);
-#else
+# else
   sprintf(buf3,"AmigaDOS v%d",WBversion);
-#endif
+# endif
 #else
   strcpy(buf1,"Unknown compiler ");
   strcpy(buf3,"Unknown OS");
