@@ -15,7 +15,10 @@ EXEDIR := $(AROS_CONTRIB)/MultiMedia/Gfx/DBWRender
 
 FILES := cal ext fil hit int mth ray rnd tex val
 
-NOWARN_FLAGS := $(NOWARN_UNUSED_VARIABLE) $(NOWARN_IMPLICIT_FUNCTION_DECL)
+NOWARN_FLAGS := \
+    $(NOWARN_UNUSED_VARIABLE) \
+    $(NOWARN_IMPLICIT_FUNCTION_DECL) \
+    $(NOWARN_OLD_STYLE_DEFINITION)
 USER_CFLAGS := $(NOWARN_FLAGS)
 
 %build_prog mmake=contrib-gfx-dbwrender-render \
