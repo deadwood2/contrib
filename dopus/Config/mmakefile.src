@@ -10,10 +10,12 @@ FILES := main main1 main2 main3 main4 main5 \
 
 #MM- ConfigOpus : dopus-library
 
-USER_INCLUDES := -I$(DOPUSDIR)/Development/include
+NOWARN_FLAGS := \
+    $(NOWARN_OLD_STYLE_DEFINITION)
+USER_INCLUDES := -I$(DOPUSDIR)/$(AROS_DIR_DEVELOPER)/include
 
 # TODO: Remove and clean the compiler warnings!
-USER_CFLAGS += -Wno-error
+USER_CFLAGS += -Wno-error $(NOWARN_FLAGS)
 
 %build_prog mmake=ConfigOpus \
     progname=ConfigOpus targetdir=$(DOPUSDIR)/Modules \
