@@ -2261,10 +2261,10 @@ diff -ruN SDL2-2.32.8/src/filesystem/aros/SDL_sysfilesystem.c SDL2-2.32.8.aros/s
 +#endif /* SDL_FILESYSTEM_AROS */
 +
 +/* vi: set ts=4 sw=4 expandtab: */
-diff -ruN SDL2-2.32.8/src/joystick/morphos/SDL_sysjoystick.c SDL2-2.32.8.aros/src/joystick/morphos/SDL_sysjoystick.c
---- SDL2-2.32.8/src/joystick/morphos/SDL_sysjoystick.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/joystick/morphos/SDL_sysjoystick.c	2025-07-27 14:24:15.220841332 +0000
-@@ -0,0 +1,508 @@
+diff -ruN SDL2-2.32.8/src/joystick/aros/SDL_sysjoystick.c SDL2-2.32.8.aros/src/joystick/aros/SDL_sysjoystick.c
+--- SDL2-2.32.8/src/joystick/aros/SDL_sysjoystick.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.8.aros/src/joystick/aros/SDL_sysjoystick.c	2025-09-30 02:30:03.224413073 +0000
+@@ -0,0 +1,515 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -2286,21 +2286,27 @@ diff -ruN SDL2-2.32.8/src/joystick/morphos/SDL_sysjoystick.c SDL2-2.32.8.aros/sr
 +  3. This notice may not be removed or altered from any source distribution.
 +*/
 +
-+#include "SDL_sysjoystick_c.h"
-+
-+#ifdef SDL_JOYSTICK_MORPHOS
-+
 +#include "../SDL_sysjoystick.h"
++
++#ifdef SDL_JOYSTICK_AROS
++#include <aros/debug.h>
++
++#include "SDL_sysjoystick_c.h"
 +#include "../SDL_joystick_c.h"
 +#include "SDL_endian.h"
 +#include "SDL_joystick.h"
++#include "SDL_events.h"
 +
 +#include <exec/execbase.h>
-+#include <libraries/sensors.h>
-+#include <libraries/sensors_hid.h>
-+#define USE_INLINE_STDARG
-+#include <proto/sensors.h>
-+#undef USE_INLINE_STDARG
++#include <libraries/lowlevel.h>
++#ifndef NO_LOWLEVEL_EXT
++#include <libraries/lowlevel_ext.h>
++#endif
++#include <proto/exec.h>
++#include <proto/lowlevel.h>
++
++/* The maximum number of joysticks we'll detect */
++#define MAX_JOYSTICKS 4 /* lowlevel.library is limited to 4 ports */
 +
 +// SDL2 deadzone is around 409, we need 1638
 +#define DEADZONE_MIN (-0.05)
@@ -2313,70 +2319,138 @@ diff -ruN SDL2-2.32.8/src/joystick/morphos/SDL_sysjoystick.c SDL2-2.32.8.aros/sr
 +			(((val) <= (DEADZONE_MAX) && (val) >= (DEADZONE_MIN)) ? (0) : \
 +			((val) > (JOYSTICK_MAX)) ? (JOYSTICK_MAX) : (((val) < (JOYSTICK_MIN)) ? (JOYSTICK_MIN) : (val)))
 +
-+APTR sensorlist;
-+APTR JoySensor[MAX_JOYSTICKS];
-+int joystick_count;
++int joystick_count = 0;
++char **joystick_names = NULL;
++struct Library *LowLevelBase = NULL;
 +
-+static int MORPHOS_JoystickInit(void)
++unsigned long joybut[] =
++{
++	JPF_BUTTON_RED,
++	JPF_BUTTON_BLUE,
++	JPF_BUTTON_YELLOW,
++	JPF_BUTTON_GREEN,
++	JPF_BUTTON_PLAY,
++	JPF_BUTTON_FORWARD,
++	JPF_BUTTON_REVERSE
++/*
++	JPF_JOY_UP,
++	JPF_JOY_DOWN,
++	JPF_JOY_LEFT,
++	JPF_JOY_RIGHT
++*/
++};
++
++/* lowlevel portNumber 0 <-> 1 */
++static int LowLevel_PortFromIndex(int index)
++{
++	switch(index)
++	{
++		case 0:
++			return 1;
++			break;
++
++		case 1:
++			return 0;
++			break;
++
++		default:
++			break;
++	}
++
++	return index;
++}
++
++static int AROS_JoystickInit(void)
 +{
 +	int rc = 0;
 +
-+	APTR sensor = NULL;
-+	ULONG device_index = 0;
++	D(bug("[SDL2:Joystick] %s()\n", __func__));
 +
-+	D("[%s] Obtain sensor list...\n", __FUNCTION__);
-+	sensorlist = ObtainSensorsListTags(SENSORS_Class, SensorClass_HID, TAG_DONE);
-+	while ((sensor = NextSensor(sensor, sensorlist, NULL)) && device_index < MAX_JOYSTICKS)
++	if((LowLevelBase = OpenLibrary("lowlevel.library",37))) {
++		ULONG joyflag = 0L;
++		joystick_count = 0;
++		joystick_names = AllocVec(MAX_JOYSTICKS * sizeof(IPTR), MEMF_CLEAR);
++		while(joystick_count < MAX_JOYSTICKS) {
++			char *dev_name = NULL;
++			joyflag = ReadJoyPort(LowLevel_PortFromIndex(joystick_count));
++			if ((joyflag & JP_TYPE_MASK) == JP_TYPE_NOTAVAIL) {
++				break;
++			}
++			if ((joyflag&JP_TYPE_MASK) == JP_TYPE_GAMECTLR) {
++				dev_name = AllocVec(26, MEMF_ANY);
++				sprintf(dev_name, "Game Controller @ Port %d", index);
++			}
++			if ((joyflag&JP_TYPE_MASK) == JP_TYPE_MOUSE) {
++				dev_name = AllocVec(16, MEMF_ANY);
++				sprintf(dev_name, "Mouse @ Port %d", index);
++			}
++			if ((joyflag&JP_TYPE_MASK) == JP_TYPE_JOYSTK) {
++				dev_name = AllocVec(19, MEMF_ANY);
++				sprintf(dev_name, "Joystick @ Port %d", index);
++			}
++			if ((joyflag&JP_TYPE_MASK) == JP_TYPE_UNKNOWN) {
++				dev_name = AllocVec(25, MEMF_ANY);
++				sprintf(dev_name, "unknown device @ Port %d", index);
++			}
++			joystick_names[LowLevel_PortFromIndex(joystick_count)] = dev_name;
++			joystick_count++;
++		}
++	}
++	else
 +	{
-+		JoySensor[device_index++] = sensor;
++		/* failed to open lowlevel.library! */
++		SDL_SetError("Unable to open lowlevel.library");
 +	}
 +
-+	D("[%s] Found %ld joysticks...\n", __FUNCTION__, device_index);
-+	joystick_count = device_index;
-+	
 +	return rc;
 +}
 +
-+static int MORPHOS_JoystickGetCount(void)
++static int AROS_JoystickGetCount(void)
 +{
++	D(bug("[SDL2:Joystick] %s()\n", __func__));
 +	return joystick_count;
 +}
 +
-+static void MORPHOS_JoystickDetect(void)
++static void AROS_JoystickDetect(void)
 +{
++	D(bug("[SDL2:Joystick] %s()\n", __func__));
 +}
 +
-+static const char *MORPHOS_JoystickGetDeviceName(int device_index)
++static const char *AROS_JoystickGetDeviceName(int device_index)
 +{
-+	APTR sensor = JoySensor[device_index];
-+	const char *name = NULL;
-+	GetSensorAttrTags(sensor, SENSORS_HID_Name, (IPTR)&name, TAG_DONE);
-+	return name;
++	D(bug("[SDL2:Joystick] %s()\n", __func__));
++	return joystick_names[LowLevel_PortFromIndex(device_index)];
 +}
 +
-+static const char *MORPHOS_JoystickGetDevicePath(int device_index)
++static const char *AROS_JoystickGetDevicePath(int device_index)
 +{
++	D(bug("[SDL2:Joystick] %s()\n", __func__));
 +    return NULL;
 +}
 +
-+static int MORPHOS_JoystickGetDeviceSteamVirtualGamepadSlot(int device_index)
++static int AROS_JoystickGetDeviceSteamVirtualGamepadSlot(int device_index)
 +{
++	D(bug("[SDL2:Joystick] %s()\n", __func__));
 +    return -1;
 +}
 +
-+static int MORPHOS_JoystickGetDevicePlayerIndex(int device_index)
++static int AROS_JoystickGetDevicePlayerIndex(int device_index)
 +{
++	D(bug("[SDL2:Joystick] %s()\n", __func__));
 +    return device_index;
 +}
 +
-+static void MORPHOS_JoystickSetDevicePlayerIndex(int device_index, int player_index)
++static void AROS_JoystickSetDevicePlayerIndex(int device_index, int player_index)
 +{
++	D(bug("[SDL2:Joystick] %s()\n", __func__));
 +}
 +
 +
-+static SDL_JoystickGUID MORPHOS_JoystickGetDeviceGUID(int device_index)
++static SDL_JoystickGUID AROS_JoystickGetDeviceGUID(int device_index)
 +{
 +	SDL_JoystickGUID guid;
++	D(bug("[SDL2:Joystick] %s()\n", __func__));
++#if (0)
 +	APTR sensor = JoySensor[device_index];
 +	Uint16 *guid16 = (Uint16 *)guid.data;
 +	const char *name = NULL;
@@ -2408,118 +2482,63 @@ diff -ruN SDL2-2.32.8/src/joystick/morphos/SDL_sysjoystick.c SDL2-2.32.8.aros/sr
 +	{
 +        SDL_strlcpy((char*)guid16, name, sizeof(guid.data) - 4);
 +    }
-+	
++#endif
 +	return guid;
 +}
 +
-+static SDL_JoystickID MORPHOS_JoystickGetDeviceInstanceID(int device_index)
++static SDL_JoystickID AROS_JoystickGetDeviceInstanceID(int device_index)
 +{
++	D(bug("[SDL2:Joystick] %s()\n", __func__));
 +	return device_index;
 +}
 +
-+static int MORPHOS_JoystickOpen(SDL_Joystick *joystick, int device_index)
++static int AROS_JoystickOpen(SDL_Joystick *joystick, int device_index)
 +{
-+	D("[%s]\n", __FUNCTION__);
-+	APTR sensor = JoySensor[device_index];
++	D(bug("[SDL2:Joystick] %s()\n", __func__));
 +	int rc = -1;
 +
-+	if (sensor) {
-+		size_t buttons = 0, naxes = 0, nhats = 0, nsticks = 0, nrumbles=0;
-+		CONST_STRPTR name = "<unknown>";
++	if (LowLevelBase) {
 +		struct joystick_hwdata *hwdata = SDL_calloc(device_index + 1, sizeof(*hwdata));
 +		if (!hwdata) {
 +			return SDL_OutOfMemory();
 +		}
-+		hwdata->main_sensor = sensor;
-+
-+		hwdata->child_sensors = ObtainSensorsListTags(
-+			SENSORS_Parent, (IPTR)hwdata->main_sensor,
-+			SENSORS_Class, SensorClass_HID,
-+			TAG_DONE);
-+
-+		sensor = NULL;
-+		while ((sensor = NextSensor(sensor, hwdata->child_sensors, NULL))) 
++		hwdata->port = LowLevel_PortFromIndex(device_index);
++		memset(joystick->hwdata, 0, sizeof(*joystick->hwdata));
++		SetJoyPortAttrs(hwdata->port, SJA_Type, SJA_TYPE_GAMECTLR, TAG_END);
++		ULONG temp = ReadJoyPort(hwdata->port);
++		if ((temp & JP_TYPE_MASK)==JP_TYPE_GAMECTLR)
 +		{
-+			ULONG type = SensorType_HIDInput_Unknown/*, Limb, color, id*/;
-+			/*GetSensorAttrTags(sensor, 
-+								SENSORS_HIDInput_ID, (IPTR)&id, 
-+								SENSORS_HIDInput_Name, (IPTR)&name, 
-+								SENSORS_HIDInput_Limb, (IPTR)&Limb, 
-+								SENSORS_HIDInput_Color, (IPTR)&color, 
-+								TAG_DONE);
-+			D("[%s] sensor id: %d name: %s Limb:%d LimbName:%s color:%d\n", __FUNCTION__, id, name, Limb, color);	*/
-+			
-+			if (GetSensorAttrTags(sensor, SENSORS_Type, (IPTR)&type, TAG_DONE))
-+			{
-+				switch (type) 
-+				{
-+					case SensorType_HIDInput_Trigger:
-+						if (buttons < MAX_BUTTONS) 
-+						{
-+							hwdata->button[buttons++] = sensor;
-+						}
-+						break;
-+					case SensorType_HIDInput_Stick:
-+						if (nhats < MAX_HATS)
-+						{
-+							hwdata->hat[nhats++] = sensor;
-+						}
-+						break;
-+					case SensorType_HIDInput_Analog:
-+					case SensorType_HIDInput_AnalogStick:
-+					case SensorType_HIDInput_3DStick:
-+						if (nsticks < MAX_STICKS) 
-+						{
-+							hwdata->stick[nsticks] = sensor;
-+							hwdata->stickType[nsticks] = type;
-+							nsticks++;
-+							if (type == SensorType_HIDInput_AnalogStick)
-+								naxes += 2;
-+							else if (type == SensorType_HIDInput_3DStick)
-+								naxes += 4;
-+							else
-+								naxes++;
-+						}
-+						break;
-+					case SensorType_HIDInput_Rumble:
-+						if (nrumbles < MAX_RUMBLE)
-+						{
-+							GetSensorAttrTags(sensor, SENSORS_HID_Name, (IPTR)&name, TAG_DONE);
-+							hwdata->rumble[nrumbles] = sensor;
-+							nrumbles++;
-+						}
-+						break;
-+					case SensorType_HIDInput_Battery:
-+						GetSensorAttrTags(sensor, SENSORS_HID_Name, (IPTR)&name, TAG_DONE);
-+					    // Force "Xbox360 Controller" (WIRED) to use SDL_JOYSTICK_POWER_WIRED
-+						if (strcmp((const char *)MORPHOS_JoystickGetDeviceName(device_index),(const char *)"Xbox360 Controller") == 0)
-+						{
-+							SDL_PrivateJoystickBatteryLevel(joystick, SDL_JOYSTICK_POWER_WIRED);  
-+							hwdata->battery = NULL;
-+						} else {							
-+							hwdata->battery = sensor;
-+						}
-+						break;
-+					case SensorType_HIDInput_Knob:
-+						GetSensorAttrTags(sensor, SENSORS_HID_Name, (IPTR)&name, TAG_DONE);
-+						break;
-+					case SensorType_HIDInput_Wheel:
-+						GetSensorAttrTags(sensor, SENSORS_HID_Name, (IPTR)&name, TAG_DONE);
-+						break;
-+					default:
-+						//D("[%s] unknown SensorType: %d\n", __FUNCTION__, type);
-+						continue;
-+				}
-+			}
++			joystick->nbuttons = 7;
++			joystick->nhats = 1;
 +		}
-+
-+		joystick->naxes = naxes;
-+		joystick->nhats = nhats;
-+		joystick->nbuttons = buttons;
-+		hwdata->numSticks = nsticks;
-+		hwdata->numRumbles = nrumbles;
++		else if ((temp & JP_TYPE_MASK) == JP_TYPE_JOYSTK)
++		{
++			joystick->nbuttons = 3;
++			joystick->nhats = 1;
++		}
++		else if ((temp & JP_TYPE_MASK) == JP_TYPE_MOUSE)
++		{
++			joystick->nbuttons = 3;
++			joystick->nhats = 0;
++		}
++		else if ((temp & JP_TYPE_MASK) == JP_TYPE_UNKNOWN)
++		{
++			joystick->nbuttons = 3;
++			joystick->nhats = 1;
++		}
++		else if ((temp & JP_TYPE_MASK) == JP_TYPE_NOTAVAIL)
++		{
++			joystick->nbuttons = 0;
++			joystick->nhats = 0;
++		}
++		joystick->name = joystick_names[hwdata->port];
++		joystick->naxes = 2;
 +		joystick->hwdata = hwdata;
-+		joystick->name = (char *)MORPHOS_JoystickGetDeviceName(device_index);
++#ifndef NO_LOWLEVEL_EXT
++		joystick->hwdata->joystate_ext = 0L;
++		if (LowLevelBase->lib_Version > 50 || (LowLevelBase->lib_Version >= 50 && LowLevelBase->lib_Revision >= 17))
++			joystick->hwdata->supports_analog = 1;
++#endif
 +		rc = 0;
 +	} else {
 +		SDL_SetError("Failed to open device");
@@ -2527,256 +2546,244 @@ diff -ruN SDL2-2.32.8/src/joystick/morphos/SDL_sysjoystick.c SDL2-2.32.8.aros/sr
 +	return rc;
 +}
 +
-+static int MORPHOS_JoystickRumble(SDL_Joystick * joystick, Uint16 low_frequency_rumble, Uint16 high_frequency_rumble, Uint32 msDuration)
++static int AROS_JoystickRumble(SDL_Joystick * joystick, Uint16 low_frequency_rumble, Uint16 high_frequency_rumble)
 +{
-+	struct joystick_hwdata *hwdata = joystick->hwdata;
-+	if (hwdata) 
-+	{
-+		if (hwdata->numRumbles)
-+		{
-+			//ULONG msDuration = SDL_MAX_RUMBLE_DURATION_MS;
-+			
-+			DOUBLE lpower=(DOUBLE)(low_frequency_rumble/65535), hpower=(DOUBLE)(high_frequency_rumble/65535);
-+
-+			D("[%s] SetSensorAttr lpower=%f - hpower=%f - duration=%d\n", __FUNCTION__,lpower, hpower, msDuration);
-+
-+			struct TagItem lfreq[] = {
-+				{SENSORS_HIDInput_Rumble_Power, (IPTR)&lpower}, 
-+				{SENSORS_HIDInput_Rumble_Duration, msDuration}, 
-+				{TAG_DONE}
-+			};
-+			struct TagItem hfreq[] = {
-+				{SENSORS_HIDInput_Rumble_Power, (IPTR)&hpower}, 
-+				{SENSORS_HIDInput_Rumble_Duration, msDuration}, 
-+				{TAG_DONE}	
-+			};
-+			
-+			if (hwdata->rumble[0])
-+				SetSensorAttr(hwdata->rumble[0], lfreq);
-+			
-+			if (hwdata->rumble[1])
-+				SetSensorAttr(hwdata->rumble[1], hfreq);
-+		} else {
-+			return SDL_Unsupported();
-+		}
-+	}		
-+    return 0;
-+}
-+
-+static int MORPHOS_JoystickRumbleTriggers(SDL_Joystick *joystick, Uint16 left_rumble, Uint16 right_rumble)
-+{
++	D(bug("[SDL2:Joystick] %s()\n", __func__));
 +    return SDL_Unsupported();
 +}
 +
-+static Uint32 MORPHOS_JoystickGetCapabilities(SDL_Joystick *joystick)
++static int AROS_JoystickRumbleTriggers(SDL_Joystick *joystick, Uint16 left_rumble, Uint16 right_rumble)
++{
++	D(bug("[SDL2:Joystick] %s()\n", __func__));
++    return SDL_Unsupported();
++}
++
++static Uint32 AROS_JoystickGetCapabilities(SDL_Joystick *joystick)
 +{
 +    Uint32 result = 0;
-+	struct joystick_hwdata *hwdata = joystick->hwdata;
-+	if (hwdata) 
-+	{
-+		if (hwdata->numRumbles)
-+		{
-+        	result |= SDL_JOYCAP_RUMBLE;
-+		}
-+    }
-+
++	D(bug("[SDL2:Joystick] %s()\n", __func__));
 +    return result;
 +}
 +
-+static int MORPHOS_JoystickSetLED(SDL_Joystick *joystick, Uint8 red, Uint8 green, Uint8 blue)
++static int AROS_JoystickSetLED(SDL_Joystick *joystick, Uint8 red, Uint8 green, Uint8 blue)
 +{
++	D(bug("[SDL2:Joystick] %s()\n", __func__));
 +    return SDL_Unsupported();
 +}
 +
-+static int MORPHOS_JoystickSendEffect(SDL_Joystick *joystick, const void *data, int size)
++static int AROS_JoystickSendEffect(SDL_Joystick *joystick, const void *data, int size)
 +{
++	D(bug("[SDL2:Joystick] %s()\n", __func__));
 +    return SDL_Unsupported();
 +}
 +
-+static int MORPHOS_JoystickSetSensorsEnabled(SDL_Joystick *joystick, SDL_bool enabled)
++static int AROS_JoystickSetSensorsEnabled(SDL_Joystick *joystick, SDL_bool enabled)
 +{
++	D(bug("[SDL2:Joystick] %s()\n", __func__));
 +    return SDL_Unsupported();
 +}
 +
-+static void MORPHOS_JoystickUpdate(SDL_Joystick *joystick)
++static void AROS_JoystickUpdate(SDL_Joystick *joystick)
 +{
++	D(bug("[SDL2:Joystick] %s()\n", __func__));
 +	struct joystick_hwdata *hwdata = joystick->hwdata;
-+	if (hwdata) 
-+	{
-+		int i, j;
-+		Sint16 sval;
-+		double btn_value, bt_value, x_value, y_value, z_value, ns_value, ew_value, z_rotation;
++	if (hwdata) {
++		ULONG data;
++#ifndef NO_LOWLEVEL_EXT
++		ULONG data_ext = 0;
++#endif
++		int	i;
 +
-+		for (i = 0; i < joystick->nbuttons; i++) 
++		data = ReadJoyPort(hwdata->port);
++#ifndef NO_LOWLEVEL_EXT
++		if (joystick->hwdata->supports_analog)
++			data_ext = ReadJoyPort(hwdata->port + JP_ANALOGUE_PORT_MAGIC);
++#endif
++
++		/* only send an event when something changed */
++
++		/* hats */
++		if((joystick->hwdata->joystate & JP_DIRECTION_MASK) != (data & JP_DIRECTION_MASK))
 +		{
-+			GetSensorAttrTags(hwdata->button[i], SENSORS_HIDInput_Value, (IPTR)&btn_value, TAG_DONE);
-+			if ((joystick->buttons[i] && btn_value == 0.0) || (joystick->buttons[i] == 0 && btn_value > 0.0)) 
++			if(joystick->nhats)
 +			{
-+				SDL_PrivateJoystickButton(joystick, i, btn_value == 0.0 ? 0 : 1);
++				Uint8 value_hat = SDL_HAT_CENTERED;
++
++				if(data & JPF_JOY_DOWN)
++				{
++					value_hat |= SDL_HAT_DOWN;
++				}
++				else if(data & JPF_JOY_UP)
++				{
++					value_hat |= SDL_HAT_UP;
++				}
++
++				if(data & JPF_JOY_LEFT)
++				{
++					value_hat |= SDL_HAT_LEFT;
++				}
++				else if(data & JPF_JOY_RIGHT)
++				{
++					value_hat |= SDL_HAT_RIGHT;
++				}
++
++				SDL_PrivateJoystickHat(joystick, 0, value_hat);
 +			}
 +		}
 +
-+		for (i = 0; i < joystick->nhats; i++) 
++		/* axes */
++#ifndef NO_LOWLEVEL_EXT
++		if (joystick->hwdata->supports_analog && data_ext & JP_TYPE_ANALOGUE)
 +		{
-+			GetSensorAttrTags(hwdata->hat[i],
-+				SENSORS_HIDInput_EW_Value, (IPTR)&ew_value,
-+				SENSORS_HIDInput_NS_Value, (IPTR)&ns_value,
-+				TAG_DONE);
-+			Uint8 value_hat = SDL_HAT_CENTERED;
-+			if (ns_value >= 1.0) {
-+				value_hat |= SDL_HAT_DOWN;
-+			} else if (ns_value <= -1.0) {
-+				value_hat |= SDL_HAT_UP;
-+			}
-+			if (ew_value >= 1.0) {
-+				value_hat |= SDL_HAT_RIGHT;
-+			} else if (ew_value <= -1.0) {
-+				value_hat |= SDL_HAT_LEFT;
-+			}
-+			SDL_PrivateJoystickHat(joystick, i, value_hat);
-+		}
-+		
-+		j = 0;
-+		for (i = 0; i < hwdata->numSticks; i++) 
-+		{
-+			switch (hwdata->stickType[i]) 
++			if((joystick->hwdata->joystate_ext & JP_XAXIS_MASK) != (data_ext & JP_XAXIS_MASK))
 +			{
-+				case SensorType_HIDInput_3DStick:
-+					GetSensorAttrTags(hwdata->stick[i],
-+						SENSORS_HIDInput_X_Index, (IPTR)&x_value,
-+						SENSORS_HIDInput_Y_Index, (IPTR)&y_value,
-+						SENSORS_HIDInput_Z_Index, (IPTR)&z_value,
-+						SENSORS_HIDInput_Z_Rotation, (IPTR)&z_rotation,
-+						TAG_DONE);
++				Sint16 value;
 +
-+					sval = (Sint16)(CLAMP(x_value) * SDL_JOYSTICK_AXIS_MAX);
-+					SDL_PrivateJoystickAxis(joystick, j, sval);
-+
-+					sval = (Sint16)(CLAMP(y_value) * SDL_JOYSTICK_AXIS_MAX);
-+					SDL_PrivateJoystickAxis(joystick, j+1, sval);
-+
-+					sval = (Sint16)(CLAMP(z_value) * SDL_JOYSTICK_AXIS_MAX);
-+					SDL_PrivateJoystickAxis(joystick, j+2, sval);
-+
-+					sval = (Sint16)(CLAMP(z_rotation) * SDL_JOYSTICK_AXIS_MAX);
-+					SDL_PrivateJoystickAxis(joystick, j+3, sval);
-+					
-+					j += 4;
-+					break;
-+
-+				case SensorType_HIDInput_Analog:
-+					GetSensorAttrTags(hwdata->stick[i], SENSORS_HIDInput_Value, (IPTR)&btn_value, TAG_DONE);
-+
-+					sval = (Sint16)(btn_value * SDL_JOYSTICK_AXIS_MAX);
-+					SDL_PrivateJoystickAxis(joystick, j, sval);
-+
-+					j++;
-+					break;
-+
-+				case SensorType_HIDInput_AnalogStick:
-+					GetSensorAttrTags(hwdata->stick[i],
-+						SENSORS_HIDInput_EW_Value, (IPTR)&ew_value,
-+						SENSORS_HIDInput_NS_Value, (IPTR)&ns_value,
-+						TAG_DONE);
-+
-+					sval = (Sint16)(CLAMP(ew_value) * SDL_JOYSTICK_AXIS_MAX);
-+					SDL_PrivateJoystickAxis(joystick, j, sval);
-+
-+					sval = (Sint16)(CLAMP(ns_value) * SDL_JOYSTICK_AXIS_MAX);
-+					SDL_PrivateJoystickAxis(joystick, j+1, sval);
-+
-+					j += 2;
-+					break;
++				value = (data_ext & JP_XAXIS_MASK) * 2*32767 / 255 - 32767;
++				SDL_PrivateJoystickAxis(joystick, 0, value);
 +			}
-+		}
-+		
-+		if (hwdata->battery) 
-+		{
-+			SDL_JoystickPowerLevel ePowerLevel = SDL_JOYSTICK_POWER_UNKNOWN;
-+			GetSensorAttrTags(hwdata->battery,
-+						SENSORS_HIDInput_Value, (IPTR)&bt_value,
-+						TAG_DONE);
-+			ULONG level = bt_value*100;
-+			switch (level)
++
++			if((joystick->hwdata->joystate_ext & JP_YAXIS_MASK) != (data_ext & JP_YAXIS_MASK))
 +			{
-+			   case 0 ... 5:
-+					ePowerLevel = SDL_JOYSTICK_POWER_EMPTY;
-+					break;
-+			   case 6 ... 20:
-+				   ePowerLevel = SDL_JOYSTICK_POWER_LOW;
-+					break;
-+			   case 21 ... 70:
-+					ePowerLevel = SDL_JOYSTICK_POWER_MEDIUM;
-+					break;
-+			   case 71 ... 100:
-+					ePowerLevel = SDL_JOYSTICK_POWER_FULL;
-+					break;
++				Sint16 value;
++
++				value = ((data_ext & JP_YAXIS_MASK)>>8) * 2*32767 / 255 - 32767;
++				SDL_PrivateJoystickAxis(joystick, 1, value);
 +			}
-+			SDL_PrivateJoystickBatteryLevel(joystick, ePowerLevel);  
 +		}
++		else
++#endif
++		{
++			if((joystick->hwdata->joystate & (JPF_JOY_DOWN|JPF_JOY_UP)) != (data & (JPF_JOY_DOWN|JPF_JOY_UP)))
++			{
++				Sint16 value;
++
++				/* UP and DOWN direction */
++				if(data & JPF_JOY_DOWN)
++				{
++					value = LOWLEVEL_JOY_PLUS;
++				}
++				else if(data & JPF_JOY_UP)
++				{
++					value = LOWLEVEL_JOY_MINUS;
++				}
++				else
++				{
++					value = 0;
++				}
++
++				SDL_PrivateJoystickAxis(joystick, 1, value);
++			}
++
++			if((joystick->hwdata->joystate & (JPF_JOY_LEFT|JPF_JOY_RIGHT)) != (data & (JPF_JOY_LEFT|JPF_JOY_RIGHT)))
++			{
++				Sint16 value;
++
++				/* LEFT and RIGHT direction */
++				if(data & JPF_JOY_LEFT)
++				{
++					value = LOWLEVEL_JOY_MINUS;
++				}
++				else if(data & JPF_JOY_RIGHT)
++				{
++					value = LOWLEVEL_JOY_PLUS;
++				}
++				else
++				{
++					value = 0;
++				}
++
++				SDL_PrivateJoystickAxis(joystick, 0, value);
++			}
++		}
++
++		/* Joy buttons */
++		for(i = 0; i < joystick->nbuttons; i++)
++		{
++			if( (data & joybut[i]) )
++			{
++				if(i == 1)
++				{
++					// FIXME: WTF?
++					data &= ~(joybut[2]);
++				}
++
++				if(!(joystick->hwdata->joystate & joybut[i]))
++				{
++					SDL_PrivateJoystickButton(joystick, i, SDL_PRESSED);
++				}
++			}
++			else if(joystick->hwdata->joystate & joybut[i])
++			{
++				SDL_PrivateJoystickButton(joystick, i, SDL_RELEASED);
++			}
++		}
++
++		joystick->hwdata->joystate = data;
++#ifndef NO_LOWLEVEL_EXT
++		joystick->hwdata->joystate_ext = data_ext;
++#endif
 +	}
 +}
 +
-+void MORPHOS_JoystickClose(SDL_Joystick *joystick)
++void AROS_JoystickClose(SDL_Joystick *joystick)
 +{
-+	D("[%s]\n", __FUNCTION__);
++	D(bug("[SDL2:Joystick] %s()\n", __func__));
 +	struct joystick_hwdata *hwdata = joystick->hwdata;
 +	if (hwdata) 
 +	{
-+		if (hwdata->child_sensors) 
-+		{
-+			ReleaseSensorsList(hwdata->child_sensors, NULL);
-+			hwdata->child_sensors = NULL;
-+		}
++		SetJoyPortAttrs(hwdata->port, SJA_Type, SJA_TYPE_AUTOSENSE, TAG_END);
 +		SDL_free(hwdata);
 +		joystick->hwdata = NULL;
 +	}
 +}
 +
-+void MORPHOS_JoystickQuit(void)
++void AROS_JoystickQuit(void)
 +{
-+	D("[%s]\n", __FUNCTION__);
-+	if (sensorlist) {
-+		ReleaseSensorsList(sensorlist, NULL);
-+		sensorlist = NULL;
++	D(bug("[SDL2:Joystick] %s()\n", __func__));
++	if (joystick_names) {
++		FreeVec(joystick_names);
 +	}
++	if (LowLevelBase)
++		CloseLibrary(LowLevelBase);
 +}
 +
-+static SDL_bool MORPHOS_JoystickGetGamepadMapping(int device_index, SDL_GamepadMapping *out)
++static SDL_bool AROS_JoystickGetGamepadMapping(int device_index, SDL_GamepadMapping *out)
 +{
++	D(bug("[SDL2:Joystick] %s()\n", __func__));
 +    return SDL_FALSE;
 +}
 +
-+SDL_JoystickDriver SDL_MORPHOS_JoystickDriver =
++SDL_JoystickDriver SDL_AROS_JoystickDriver =
 +{
-+    MORPHOS_JoystickInit,
-+    MORPHOS_JoystickGetCount,
-+    MORPHOS_JoystickDetect,
-+    MORPHOS_JoystickGetDeviceName,
-+	MORPHOS_JoystickGetDevicePath,
-+	MORPHOS_JoystickGetDeviceSteamVirtualGamepadSlot,
-+    MORPHOS_JoystickGetDevicePlayerIndex,
-+    MORPHOS_JoystickSetDevicePlayerIndex,
-+    MORPHOS_JoystickGetDeviceGUID,
-+    MORPHOS_JoystickGetDeviceInstanceID,
-+    MORPHOS_JoystickOpen,
-+    MORPHOS_JoystickRumble,
-+    MORPHOS_JoystickRumbleTriggers,
-+    MORPHOS_JoystickGetCapabilities,
-+    MORPHOS_JoystickSetLED,
-+	MORPHOS_JoystickSendEffect,
-+	MORPHOS_JoystickSetSensorsEnabled,
-+    MORPHOS_JoystickUpdate,
-+    MORPHOS_JoystickClose,
-+    MORPHOS_JoystickQuit,
-+	MORPHOS_JoystickGetGamepadMapping
++    AROS_JoystickInit,
++    AROS_JoystickGetCount,
++    AROS_JoystickDetect,
++    AROS_JoystickGetDeviceName,
++    AROS_JoystickGetDevicePath,
++    AROS_JoystickGetDeviceSteamVirtualGamepadSlot,
++    AROS_JoystickGetDevicePlayerIndex,
++    AROS_JoystickSetDevicePlayerIndex,
++    AROS_JoystickGetDeviceGUID,
++    AROS_JoystickGetDeviceInstanceID,
++    AROS_JoystickOpen,
++    AROS_JoystickRumble,
++    AROS_JoystickRumbleTriggers,
++    AROS_JoystickGetCapabilities,
++    AROS_JoystickSetLED,
++    AROS_JoystickSendEffect,
++    AROS_JoystickSetSensorsEnabled,
++    AROS_JoystickUpdate,
++    AROS_JoystickClose,
++    AROS_JoystickQuit,
++    AROS_JoystickGetGamepadMapping
 +};
 +
 +#endif
-diff -ruN SDL2-2.32.8/src/joystick/morphos/SDL_sysjoystick_c.h SDL2-2.32.8.aros/src/joystick/morphos/SDL_sysjoystick_c.h
---- SDL2-2.32.8/src/joystick/morphos/SDL_sysjoystick_c.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/joystick/morphos/SDL_sysjoystick_c.h	2025-07-27 14:24:15.224841332 +0000
-@@ -0,0 +1,54 @@
+diff -ruN SDL2-2.32.8/src/joystick/aros/SDL_sysjoystick_c.h SDL2-2.32.8.aros/src/joystick/aros/SDL_sysjoystick_c.h
+--- SDL2-2.32.8/src/joystick/aros/SDL_sysjoystick_c.h	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.8.aros/src/joystick/aros/SDL_sysjoystick_c.h	2025-09-30 02:28:46.896412440 +0000
+@@ -0,0 +1,41 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
@@ -2798,36 +2805,23 @@ diff -ruN SDL2-2.32.8/src/joystick/morphos/SDL_sysjoystick_c.h SDL2-2.32.8.aros/
 +  3. This notice may not be removed or altered from any source distribution.
 +*/
 +
-+#include "../../SDL_internal.h"
-+
-+#ifdef SDL_JOYSTICK_MORPHOS
++#ifdef SDL_JOYSTICK_AROS
 +
 +#include <exec/types.h>
 +#include "SDL_joystick.h"
 +
-+#define MAX_JOYSTICKS 	32
-+#define MAX_BUTTONS     16
-+#define MAX_HATS        8
-+#define MAX_STICKS      8
-+#define MAX_RUMBLE		2
++#define MAX_JOYSTICKS 	4 /* lowlevel.library is limited to 4 ports */
++#define LOWLEVEL_JOY_PLUS  32767 /* was 127, changed by Henes (20040801) */
++#define LOWLEVEL_JOY_MINUS -32768 /* was -127 */
 +
 +struct joystick_hwdata
 +{
-+	APTR main_sensor; // Main HID sensor
-+	APTR child_sensors; // List of specific sub-sensor entries
-+	APTR button[MAX_BUTTONS]; // SensorType_HIDInput_Trigger
-+	APTR hat[MAX_HATS]; // SensorType_HIDInput_Stick
-+	APTR stick[MAX_STICKS]; // SensorType_HIDInput_Analog, SensorType_HIDInput_AnalogStick, SensorType_HIDInput_3DStick
-+	APTR battery; 	// SensorType_HIDInput_Battery 
-+	APTR rumble[MAX_RUMBLE]; // SensorType_HIDInput_Rumble
-+
-+	ULONG stickType[MAX_STICKS];
-+	int numSticks;
-+	int numRumbles;
-+
-+	// hot plug support
-+	struct MsgPort *notifyPort;
-+	APTR sensorsNotify;
++	ULONG port;
++	ULONG joystate;
++#ifndef NO_LOWLEVEL_EXT
++	ULONG joystate_ext;
++	ULONG supports_analog;
++#endif
 +};
 +
 +#endif
@@ -2848,13 +2842,13 @@ diff -ruN SDL2-2.32.8/src/joystick/SDL_gamecontrollerdb.h SDL2-2.32.8.aros/src/j
  #endif
 diff -ruN SDL2-2.32.8/src/joystick/SDL_joystick.c SDL2-2.32.8.aros/src/joystick/SDL_joystick.c
 --- SDL2-2.32.8/src/joystick/SDL_joystick.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/joystick/SDL_joystick.c	2025-08-05 23:02:40.106981062 +0000
++++ SDL2-2.32.8.aros/src/joystick/SDL_joystick.c	2025-09-30 01:39:59.172551172 +0000
 @@ -100,6 +100,9 @@
  #ifdef SDL_JOYSTICK_VIRTUAL
      &SDL_VIRTUAL_JoystickDriver,
  #endif
-+#ifdef SDL_JOYSTICK_MORPHOS
-+    &SDL_MORPHOS_JoystickDriver,
++#ifdef SDL_JOYSTICK_AROS
++    &SDL_AROS_JoystickDriver,
 +#endif
  #ifdef SDL_JOYSTICK_VITA
      &SDL_VITA_JoystickDriver,
@@ -2894,7 +2888,7 @@ diff -ruN SDL2-2.32.8/src/joystick/SDL_joystick.c SDL2-2.32.8.aros/src/joystick/
                  joystick->rumble_resend = 1;
 diff -ruN SDL2-2.32.8/src/joystick/SDL_sysjoystick.h SDL2-2.32.8.aros/src/joystick/SDL_sysjoystick.h
 --- SDL2-2.32.8/src/joystick/SDL_sysjoystick.h	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/joystick/SDL_sysjoystick.h	2025-07-27 14:24:15.472841333 +0000
++++ SDL2-2.32.8.aros/src/joystick/SDL_sysjoystick.h	2025-09-30 01:48:03.676503409 +0000
 @@ -191,7 +191,11 @@
      int (*Open)(SDL_Joystick *joystick, int device_index);
  
@@ -2912,8 +2906,8 @@ diff -ruN SDL2-2.32.8/src/joystick/SDL_sysjoystick.h SDL2-2.32.8.aros/src/joysti
  extern SDL_JoystickDriver SDL_VITA_JoystickDriver;
  extern SDL_JoystickDriver SDL_N3DS_JoystickDriver;
 -
-+#ifdef __MORPHOS__
-+extern SDL_JoystickDriver SDL_MORPHOS_JoystickDriver;
++#ifdef SDL_JOYSTICK_AROS
++extern SDL_JoystickDriver SDL_AROS_JoystickDriver;
 +#endif
  /* Ends C function definitions when using C++ */
  #ifdef __cplusplus

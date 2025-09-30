@@ -164,7 +164,7 @@ SDL2AROSHWFILES = \
     $(ARCHSRCDIR)/src/audio/dummy/SDL_dummyaudio \
     $(ARCHSRCDIR)/src/audio/ahi/SDL_ahi_audio \
     $(ARCHSRCDIR)/src/haptic/dummy/SDL_syshaptic \
-    $(ARCHSRCDIR)/src/joystick/dummy/SDL_sysjoystick \
+    $(ARCHSRCDIR)/src/joystick/aros/SDL_sysjoystick \
     $(ARCHSRCDIR)/src/power/aros/SDL_syspower \
     $(ARCHSRCDIR)/src/sensor/dummy/SDL_dummysensor
 
