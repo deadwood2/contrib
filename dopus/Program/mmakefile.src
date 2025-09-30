@@ -18,7 +18,9 @@ EXEDIR := $(DOPUSDIR)
 #MM     workbench-libs-rexxsyslib-linklib \
 #MM     contrib-libs-asyncio-linklib
 
-USER_INCLUDES := -I$(DOPUSDIR)/Development/include \
+NOWARN_FLAGS := \
+    $(NOWARN_OLD_STYLE_DEFINITION)
+USER_INCLUDES := -I$(DOPUSDIR)/$(AROS_DIR_DEVELOPER)/include \
     -I$(SRCDIR)/$(CURDIR)/../include
 
 USER_CPPFLAGS := -D__REXXSYSLIB_STDLIBBASE__ \
@@ -27,7 +29,7 @@ USER_CPPFLAGS := -D__REXXSYSLIB_STDLIBBASE__ \
     -DDEBUG=1
 
 # TODO: Remove and clean the compiler warnings!
-USER_CFLAGS += -Wno-error
+USER_CFLAGS += -Wno-error $(NOWARN_FLAGS)
 
 %build_prog mmake=DirOpus \
     progname=DirectoryOpus targetdir=$(EXEDIR) \
