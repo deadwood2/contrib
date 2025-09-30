@@ -2263,8 +2263,8 @@ diff -ruN SDL2-2.32.8/src/filesystem/aros/SDL_sysfilesystem.c SDL2-2.32.8.aros/s
 +/* vi: set ts=4 sw=4 expandtab: */
 diff -ruN SDL2-2.32.8/src/joystick/aros/SDL_sysjoystick.c SDL2-2.32.8.aros/src/joystick/aros/SDL_sysjoystick.c
 --- SDL2-2.32.8/src/joystick/aros/SDL_sysjoystick.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/joystick/aros/SDL_sysjoystick.c	2025-09-30 02:30:03.224413073 +0000
-@@ -0,0 +1,515 @@
++++ SDL2-2.32.8.aros/src/joystick/aros/SDL_sysjoystick.c	2025-09-30 02:38:39.992409105 +0000
+@@ -0,0 +1,512 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -2304,9 +2304,6 @@ diff -ruN SDL2-2.32.8/src/joystick/aros/SDL_sysjoystick.c SDL2-2.32.8.aros/src/j
 +#endif
 +#include <proto/exec.h>
 +#include <proto/lowlevel.h>
-+
-+/* The maximum number of joysticks we'll detect */
-+#define MAX_JOYSTICKS 4 /* lowlevel.library is limited to 4 ports */
 +
 +// SDL2 deadzone is around 409, we need 1638
 +#define DEADZONE_MIN (-0.05)
