@@ -5,7 +5,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 
 #MM- contrib-gnu : contrib-gnu-gcc
 #MM- contrib-gnu-gcc : development-collect-aros development-gcc
-#MM- development-gcc : development-gmp development-mpfr development-mpc
+#MM- development-gcc : development-gmp development-mpfr development-mpc workbench-libs-zstd-library-linklib
 #MM- development-gcc : contrib-development-libs-gc
 
 #
