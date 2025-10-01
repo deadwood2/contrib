@@ -292,7 +292,7 @@ diff -ruN -X ./exclude.patterns git-2.17.1/Makefile git-2.17.1.aros/Makefile
  			CURL_LIBCURL += -lcrypto
  		endif
 +		ifdef NEEDS_Z_WITH_SSL
-+			CURL_LIBCURL += -lz
++			CURL_LIBCURL += -lz -lzstd
 +		endif
  	endif
  	ifdef NEEDS_IDN_WITH_CURL
@@ -302,7 +302,7 @@ diff -ruN -X ./exclude.patterns git-2.17.1/Makefile git-2.17.1.aros/Makefile
  		OPENSSL_LIBSSL += -lcrypto
  	endif
 +	ifdef NEEDS_Z_WITH_SSL
-+		OPENSSL_LIBSSL += -lz
++		OPENSSL_LIBSSL += -lz -lzstd
 +	endif
  else
  	BASIC_CFLAGS += -DNO_OPENSSL
@@ -312,7 +312,7 @@ diff -ruN -X ./exclude.patterns git-2.17.1/Makefile git-2.17.1.aros/Makefile
  ifdef NEEDS_SSL_WITH_CRYPTO
  	LIB_4_CRYPTO = $(OPENSSL_LINK) -lcrypto -lssl
 +	ifdef NEEDS_Z_WITH_SSL
-+		LIB_4_CRYPTO += -lz
++		LIB_4_CRYPTO += -lz -lzstd
 +	endif
  else
  	LIB_4_CRYPTO = $(OPENSSL_LINK) -lcrypto
