@@ -4,7 +4,7 @@
 include $(SRCDIR)/config/aros-contrib.cfg
 
 #MM- contrib-development : development-libxml2
-#MM- development-libxml2 : workbench-libs-z development-libiconv
+#MM- development-libxml2 : workbench-libs-z-linklib workbench-libs-lzma-library-linklib development-libiconv
 
 XML2_VERS := 2.9.9
 
