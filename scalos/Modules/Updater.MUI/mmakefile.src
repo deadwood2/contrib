@@ -28,7 +28,7 @@ USER_CPPFLAGS := -DMUI_OBSOLETE -DSTATIC_SSL \
 TARGETDIR := $(AROS_CONTRIB)/Scalos/Modules
 
 %build_prog mmake=contrib-scalos-modules-updater progname=Updater.module \
-    files=$(FILES) targetdir=$(TARGETDIR) uselibs="curl ssl crypto z"
+    files=$(FILES) targetdir=$(TARGETDIR) uselibs="curl ssl crypto z zstd"
 
 
 #MM
