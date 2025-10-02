@@ -6,6 +6,9 @@ FILES := hextris stdsys arosio shape
 
 EXEDIR := $(AROS_CONTRIB)/Games/Puzzle/CXHextris
 
+NOWARN_FLAGS := \
+    $(NOWARN_OLD_STYLE_DEFINITION)
+USER_CFLAGS := $(NOWARN_FLAGS)
 USER_CPPFLAGS = \
       -D_GNU_SOURCE \
       -DHIGHSCOREFILE=\""S:chextris-scores"\"
