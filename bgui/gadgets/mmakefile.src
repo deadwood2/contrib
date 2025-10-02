@@ -152,7 +152,7 @@ $(BGUIEXAMPLESDIR)/$(TREEVIEWDEMO) : $(OBJDIR)/TreeView/$(TREEVIEWDEMO).o
 	@$(AROS_CC) $(TARGET_SYSROOT) $(LDFLAGS) $< -o $@ $(EXELIBS)
 
 $(OBJDIR)/Bar/%.o : ./Bar/%.c
-	@$(AROS_CC) $(TARGET_SYSROOT) $(CFLAGS) -c $< -o $@
+	@$(AROS_CC) $(TARGET_SYSROOT) $(CFLAGS) $(NOWARN_FLAGS) -c $< -o $@
 
 $(OBJDIR)/LayoutGroup/%.o : ./LayoutGroup/%.c
 	@$(AROS_CC) $(TARGET_SYSROOT) $(CFLAGS) $(NOWARN_FLAGS) $(LAYOUTGROUPINCLUDES) -c $< -o $@
