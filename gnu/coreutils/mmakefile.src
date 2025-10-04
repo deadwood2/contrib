@@ -3,8 +3,10 @@
 
 include $(SRCDIR)/config/aros-contrib.cfg
 
-COREUTILS_VERSION = 6.9
 ##TODO: update to 9.7
+
+COREUTILS_VERSION = 6.9
+APPLYPATCH=yes
 
 #MM- contrib-gnu : contrib-gnu-coreutils
 #MM- contrib-gnu-coreutils : development-coreutils
@@ -12,4 +14,9 @@ COREUTILS_VERSION = 6.9
 NOWARN_FLAGS := $(NOWARN_IMPLICIT_FUNCTION_DECL)
 USER_CFLAGS := $(CFLAGS_GNU99) $(NOWARN_FLAGS)
 
-%fetch_and_build_gnu_development package=coreutils version=$(COREUTILS_VERSION) patch=yes suffixes="tar.xz tar.bz2"
+COREUTILS_SUFFIXES=tar.xz tar.bz2
+COREUTILS_OPTS=
+
+%fetch_and_build_gnu_development package=coreutils version=$(COREUTILS_VERSION) patch=$(APPLYPATCH) \
+    extraoptions="$(COREUTILS_OPTS)" suffixes="$(COREUTILS_SUFFIXES)" \
+    use_build_env=yes config_env_extra="GETHOSTNAME_LIB=-lnet" 

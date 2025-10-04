@@ -1057,7 +1057,7 @@ diff -ruN coreutils-6.9/src/Makefile.am coreutils-6.9.aros/src/Makefile.am
  # confusion with the `install' target.  The install rule transforms `ginstall'
 diff -ruN coreutils-6.9/src/Makefile.in coreutils-6.9.aros/src/Makefile.in
 --- coreutils-6.9/src/Makefile.in	2007-03-22 21:23:20.000000000 +0000
-+++ coreutils-6.9.aros/src/Makefile.in	2013-02-13 22:40:24.423338339 +0000
++++ coreutils-6.9.aros/src/Makefile.in	2025-10-04 14:38:21.483156826 +0000
 @@ -34,7 +34,7 @@
  build_triplet = @build@
  host_triplet = @host@
@@ -1112,6 +1112,15 @@ diff -ruN coreutils-6.9/src/Makefile.in coreutils-6.9.aros/src/Makefile.in
  SUFFIXES = .sh
  
  # Get the release year from ../lib/version-etc.c.
+@@ -1356,7 +1352,7 @@
+ 	$(LINK) $(pathchk_OBJECTS) $(pathchk_LDADD) $(LIBS)
+ pinky$(EXEEXT): $(pinky_OBJECTS) $(pinky_DEPENDENCIES) 
+ 	@rm -f pinky$(EXEEXT)
+-	$(LINK) $(pinky_OBJECTS) $(pinky_LDADD) $(LIBS)
++	$(LINK) $(pinky_OBJECTS) $(pinky_LDADD) $(LIBS) $(GETHOSTNAME_LIB)
+ pr$(EXEEXT): $(pr_OBJECTS) $(pr_DEPENDENCIES) 
+ 	@rm -f pr$(EXEEXT)
+ 	$(LINK) $(pr_OBJECTS) $(pr_LDADD) $(LIBS)
 @@ -1423,9 +1419,6 @@
  stty$(EXEEXT): $(stty_OBJECTS) $(stty_DEPENDENCIES) 
  	@rm -f stty$(EXEEXT)
@@ -1122,6 +1131,15 @@ diff -ruN coreutils-6.9/src/Makefile.in coreutils-6.9.aros/src/Makefile.in
  sum$(EXEEXT): $(sum_OBJECTS) $(sum_DEPENDENCIES) 
  	@rm -f sum$(EXEEXT)
  	$(LINK) $(sum_OBJECTS) $(sum_LDADD) $(LIBS)
+@@ -1485,7 +1478,7 @@
+ 	$(LINK) $(wc_OBJECTS) $(wc_LDADD) $(LIBS)
+ who$(EXEEXT): $(who_OBJECTS) $(who_DEPENDENCIES) 
+ 	@rm -f who$(EXEEXT)
+-	$(LINK) $(who_OBJECTS) $(who_LDADD) $(LIBS)
++	$(LINK) $(who_OBJECTS) $(who_LDADD) $(LIBS) $(GETHOSTNAME_LIB)
+ whoami$(EXEEXT): $(whoami_OBJECTS) $(whoami_DEPENDENCIES) 
+ 	@rm -f whoami$(EXEEXT)
+ 	$(LINK) $(whoami_OBJECTS) $(whoami_LDADD) $(LIBS)
 @@ -1597,7 +1590,6 @@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/split.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stat.Po@am__quote@
