@@ -5083,22 +5083,17 @@ diff -ruN SDL2-2.32.8/src/timer/aros/SDL_systimer.c SDL2-2.32.8.aros/src/timer/a
 +Uint64
 +SDL_GetPerformanceCounter(void)
 +{
-+	Uint64 val = 0;
-+#if !defined(__AROS__)
-+	ReadCPUClock(&val);
-+#endif
-+	return val;
++	struct EClockVal val;
++	ULONG ec;
++	ec = ReadEClock(&val);
++	return (Uint64)ec;
 +}
 +
 +Uint64
 +SDL_GetPerformanceFrequency(void)
 +{
-+	Uint64 ret = 0;
-+#if !defined(__AROS__)
-+	Uint64 val;
-+	ret = ReadCPUClock(&val);
-+#endif
-+	return ret;
++	struct EClockVal val;
++	return (Uint64)ReadEClock(&val);
 +}
 +
 +void
