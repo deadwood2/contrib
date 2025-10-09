@@ -31,8 +31,8 @@ ARCHSRCDIR := $(PORTSDIR)/SDL/$(ARCHBASE)
 TESTEXEDIR := $(AROS_TESTS)/SDL
 
 FILES := \
+    SDL_error \
     $(ARCHSRCDIR)/src/SDL \
-    $(ARCHSRCDIR)/src/SDL_error \
     $(ARCHSRCDIR)/src/SDL_fatal \
     $(ARCHSRCDIR)/src/audio/SDL_audio \
     $(ARCHSRCDIR)/src/audio/SDL_audiocvt \
