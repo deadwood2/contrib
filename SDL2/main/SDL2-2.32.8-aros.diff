@@ -10465,7 +10465,7 @@ diff -ruN SDL2-2.32.8/test/torturethread.c SDL2-2.32.8.aros/test/torturethread.c
          (void)SDL_snprintf(name, sizeof(name), "Parent%d", i);
 diff -ruN SDL2-2.32.8/WhatsNew.txt SDL2-2.32.8.aros/WhatsNew.txt
 --- SDL2-2.32.8/WhatsNew.txt	2024-01-28 03:46:25.000000000 +0000
-+++ SDL2-2.32.8.aros/WhatsNew.txt	2025-07-27 14:24:24.824841453 +0000
++++ SDL2-2.32.8.aros/WhatsNew.txt	2025-10-10 20:07:51.404972916 +0000
 @@ -77,6 +77,9 @@
  * Enabled IME soft keyboard input
  * Added version checking to make sure the SDL Java and C code are compatible
