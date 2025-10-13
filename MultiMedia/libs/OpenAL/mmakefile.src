@@ -13,8 +13,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 #MM contrib-openal-linklib : contrib-openal-common
 #MM contrib-openal-library : contrib-openal-common
 
-OPENAL_VERSION := 1.16.0
-#OPENAL_VERSION := 1.19.1
+OPENAL_VERSION := 1.19.1
 OPENALREPOSITORIES = https://github.com/kcat/openal-soft/archive/refs/tags
 OPENALARCHBASE     := openal-soft-$(OPENAL_VERSION)
 OPENALARCHSUFFIX := "tar.gz"
@@ -243,10 +242,6 @@ $(GENDIR)/$(CURDIR)/version.h: $(OPENAL_VERSION_DEPS) | $(GENDIR)/$(CURDIR)
 #MM- contrib-openal : contrib-openal-utils
 #MM- contrib-openal-utils : contrib-openal-library
 
-#MM
-contrib-openal-genfiles : $(OPENAL_GENFILES)
-	$(Q)$(NOP)
-
 %build_prog mmake=contrib-openal-bsincgen \
     progname=bsincgen compiler=host \
     targetdir=$(HOSTGENDIR)/$(CURDIR) \
@@ -256,7 +251,13 @@ $(GENDIR)/$(CURDIR)/bsinc_inc.h: $(HOSTGENDIR)/$(CURDIR)/bsincgen
 	$(Q)$(ECHO) "Generating bsinc_inc.h"
 	$(Q)$< $@
 
-#MM contrib-openal-bsincgen : contrib-openal-fetch
+#MM contrib-openal-genfiles : contrib-openal-bsincgen
+
+#MM
+contrib-openal-genfiles : $(OPENAL_GENFILES)
+	$(Q)$(NOP)
+
+#MM contrib-openal-bsincgen : contrib-openal-fetch 
 
 #
 #  Targets to build the test(s)
