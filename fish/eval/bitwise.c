@@ -86,7 +86,8 @@ double or(double val1,double val2)
         ba_negate(&ba2);
     for (i=0;i<=ba1.mi;i++)
         ba1.data[i]|=ba2.data[i];
-    ba1.data[ba1.mi]&=ba1.mask;
+    if (ba1.mi >= 0 && ba1.mi < DATASIZE)
+        ba1.data[ba1.mi] &= ba1.mask;
     if (!ba1.sign || !ba2.sign)
         {
         ba_negate(&ba1);
@@ -116,7 +117,8 @@ double and(double val1,double val2)
         ba_negate(&ba2);
     for (i=0;i<=ba1.mi;i++)
         ba1.data[i]&=ba2.data[i];
-    ba1.data[ba1.mi]&=ba1.mask;
+    if (ba1.mi >= 0 && ba1.mi < DATASIZE)
+        ba1.data[ba1.mi] &= ba1.mask;
     if (!ba1.sign && !ba2.sign)
         {
         ba_negate(&ba1);
@@ -146,7 +148,8 @@ double xor(double val1,double val2)
         ba_negate(&ba2);
     for (i=0;i<=ba1.mi;i++)
         ba1.data[i]^=ba2.data[i];
-    ba1.data[ba1.mi]&=ba1.mask;
+    if (ba1.mi >= 0 && ba1.mi < DATASIZE)
+        ba1.data[ba1.mi] &= ba1.mask;
     if ((!ba1.sign && ba2.sign)||(ba1.sign && !ba2.sign))
         {
         ba_negate(&ba1);
