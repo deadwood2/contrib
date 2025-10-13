@@ -1869,7 +1869,7 @@ return;
 ** The array given by arraybase is loaded with positive random
 ** numbers.  Elements in the array are capped at 5,000,000.
 */
-static void LoadAssign(farlong arraybase[][ASSIGNCOLS])
+static void LoadAssign(farlong arraybase[ASSIGNROWS][ASSIGNCOLS])
 {
 ushort i,j;
 
@@ -1910,7 +1910,7 @@ return;
 /***************
 ** Assignment **
 ***************/
-static void Assignment(farlong arraybase[][ASSIGNCOLS])
+static void Assignment(farlong arraybase[ASSIGNROWS][ASSIGNCOLS])
 {
 short assignedtableau[ASSIGNROWS][ASSIGNCOLS];
 
@@ -1951,7 +1951,7 @@ return;
 ** row and column basis.  These minima are subtracted from
 ** their rows and columns, creating a new tableau.
 */
-static void calc_minimum_costs(long tableau[][ASSIGNCOLS])
+static void calc_minimum_costs(long tableau[ASSIGNROWS][ASSIGNCOLS])
 {
 ushort i,j;              /* Index variables */
 long currentmin;        /* Current minimum */
@@ -2010,8 +2010,8 @@ return;
 ** Returns the number of selections made.  If this equals
 ** the number of rows, then an optimum has been determined.
 */
-static int first_assignments(long tableau[][ASSIGNCOLS],
-		short assignedtableau[][ASSIGNCOLS])
+static int first_assignments(long tableau[ASSIGNROWS][ASSIGNCOLS],
+		short assignedtableau[ASSIGNROWS][ASSIGNCOLS])
 {
 ushort i,j,k;                   /* Index variables */
 ushort numassigns;              /* # of assignments */
@@ -2125,8 +2125,8 @@ return(totnumassigns);
 ** refer to the algorithm's source, mentioned in comments
 ** toward the beginning of the program.
 */
-static void second_assignments(long tableau[][ASSIGNCOLS],
-		short assignedtableau[][ASSIGNCOLS])
+static void second_assignments(long tableau[ASSIGNROWS][ASSIGNCOLS],
+		short assignedtableau[ASSIGNROWS][ASSIGNCOLS])
 {
 int i,j;                                /* Indexes */
 short linesrow[ASSIGNROWS];
@@ -2480,7 +2480,7 @@ return(low16(1-t1));
 *****************
 ** Compute IDEA encryption subkeys Z
 */
-static void en_key_idea(u16 *userkey, u16 *Z)
+static void en_key_idea(u16 userkey[8], IDEAkey Z)
 {
 int i,j;
 
@@ -2488,7 +2488,7 @@ int i,j;
 ** shifts
 */
 for(j=0;j<8;j++)
-	Z[j]=*userkey++;
+	Z[j]=userkey[j];
 for(i=0;j<KEYLEN;j++)
 {       i++;
 	Z[i+7]=(Z[i&7]<<9)| (Z[(i+1) & 7] >> 7);
