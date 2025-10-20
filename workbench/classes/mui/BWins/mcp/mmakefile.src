@@ -5,6 +5,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 #MM contrib-zune-classes-bwin-mcp : includes linklibs
 
 FILES := libinit_aros \
+	 init \
 	 loc \
 	 shape \
 	 class

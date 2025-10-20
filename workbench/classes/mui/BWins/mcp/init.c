@@ -1,14 +1,27 @@
 
 #include "class.h"
+#if defined(__AROS__)
+#include "bwin_private.h"
+#endif
 #define USE_BWIN_BODY
 #define USE_BWIN_COLORS
 #include "BWin_iff.h"
 
 /***********************************************************************/
 
+#if defined(__AROS__)
+AROS_LH1(IPTR, MCP_Query,
+         AROS_LHA(LONG, which, D0),
+         struct BWinBase *, base, 5, BWin
+)
+{
+    AROS_LIBFUNC_INIT
+#define lib_class base->bw_mcp
+#else
 IPTR ASM SAVEDS
 query(REG(d0) LONG which)
 {
+#endif
     switch (which)
     {
         case MUIV_Query_MCP:
@@ -31,10 +44,13 @@ query(REG(d0) LONG which)
         default:
             return 0;
     }
+#ifdef __AROS__
+  AROS_LIBFUNC_EXIT
+#endif
 }
 
 /****************************************************************************/
-
+#if !defined(__AROS__)
 void ASM
 freeBase(void)
 {
@@ -108,3 +124,4 @@ initBase(void)
 }
 
 /***********************************************************************/
+#endif

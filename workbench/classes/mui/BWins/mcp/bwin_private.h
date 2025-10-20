@@ -1,6 +1,10 @@
 #ifndef BWIN_PRIVATE_H
 #define BWIN_PRIVATE_H
 
+#ifndef EXEC_LIBRARIES_H
+#include <exec/libraries.h>
+#endif
+
 #include <intuition/classusr.h>
 
 struct data
@@ -39,6 +43,13 @@ struct data
     Object *topSp;
     Object *rightSp;
     Object *bottomSp;
+};
+
+struct BWinBase
+{
+    struct Library          libNode;
+    ULONG                   segList;
+    struct MUI_CustomClass  *bw_mcp;
 };
 
 #endif
