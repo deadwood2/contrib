@@ -6,13 +6,23 @@
 
 /****************************************************************************/
 
+#if defined(__AROS__)
+AROS_LH1(IPTR, MCP_Query,
+         AROS_LHA(LONG, which, D0),
+         struct UrltextBase *, base, 5, Urltext
+)
+{
+    AROS_LIBFUNC_INIT
+#else
+#define base UrltextBase
 SAVEDS ASM IPTR
 query(REG(d0) LONG which)
 {
+#endif
     switch (which)
     {
         case 1:
-            return (IPTR)UrltextBase->mcp;
+            return (IPTR)base->mcp;
 
         case 2:
             return (IPTR)BodychunkObject,
@@ -31,6 +41,11 @@ query(REG(d0) LONG which)
         default:
             return 0;
     }
+#ifdef __AROS__
+  AROS_LIBFUNC_EXIT
+#else
+#undef base
+#endif
 }
 
 /****************************************************************************/
