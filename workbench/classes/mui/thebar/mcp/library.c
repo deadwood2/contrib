@@ -200,13 +200,9 @@ static Object *get_prefs_image(void)
     obj = NULL;
   }
   #else
-  /*
-  no truecolor image data for MorphOS yet
   obj = RawimageObject,
     MUIA_Rawimage_Data, icon32,
   End;
-  */
-  obj = NULL;
   #endif
 
   // if the 32bit image data couldn't be loaded
