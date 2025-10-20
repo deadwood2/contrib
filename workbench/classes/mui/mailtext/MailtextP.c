@@ -100,8 +100,7 @@ struct LocaleIFace  * ILocale     = NULL;
 //struct Library *UtilityBase;
 #endif
 
-#ifdef __AROS__
-#else
+#ifndef __AROS__
 #include "rev/Mailtext.mcp.h"
 #include "rev/Mailtext.dist.h"
 #endif
@@ -109,6 +108,7 @@ struct LocaleIFace  * ILocale     = NULL;
 #ifndef MUII_PopFont
 #define MUII_PopFont 42
 #endif
+
 #ifndef MUIM_Mccprefs_RegisterGadget
 #define MUIM_Mccprefs_RegisterGadget 0x80424828 /* V20 */
 #endif
@@ -117,9 +117,7 @@ struct LocaleIFace  * ILocale     = NULL;
 #define USE_PREFSIMAGE_BODY
 #include "mui/PrefsImage.c"
 
-#ifndef __AROS__
 #include <mui/mccbase.c>
-#endif
 
 /* --- Support-Functions */
 

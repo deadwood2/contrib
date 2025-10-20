@@ -32,7 +32,9 @@
 #include <proto/exec.h>
 #include <exec/resident.h>
 
+#if !defined(__AROS__)
 #include <SDI_compiler.h>
+#endif
 
 #ifndef __AMIGADATE__
   #ifdef __GNUC__
@@ -48,6 +50,7 @@
   #endif
 #endif
 
+#if !defined(__AROS__)
 #ifdef __amigaos4__
   #define GETINTERFACE(iface, base) (iface = (APTR)GetInterface((struct Library *)(base), "main", 1L, NULL))
   #define DROPINTERFACE(iface)      (DropInterface((struct Interface *)iface), iface = NULL)
@@ -55,8 +58,6 @@
 #else
   #define SYSCPU "OS3/68020"
 #endif
-
-
 
 static BOOL SAVEDS ASM  UserLibOpen   (REG(a6, const struct Library *const base) );
 static BOOL SAVEDS ASM  UserLibClose  (REG(a6, const struct Library *const base));
@@ -90,8 +91,6 @@ static ULONG SAVEDS ASM Dispatcher    (REG(a0, struct IClass *const cl), REG(a2,
   LONG SAVEDS ASM                   mtLibExtFunc(VOID);
 #endif // __amigaos4__
 
-
-
 LONG _start(void)
 {
    return(RETURN_FAIL);
@@ -101,8 +100,6 @@ LONG SAVEDS ASM mtLibExtFunc(VOID)
 {
   return(0);
 }
-
-
 
 const char mtLibName[] = CLASS;
 const char mtLibID[] = "$VER: " CLASS " " VERSIONSTR " " __AMIGADATE__ " ©" COPYRIGHT " " AUTHOR " [" SYSCPU "]\n";
@@ -495,25 +492,39 @@ struct LibraryHeader
    return(TRUE);
   }
 
+#endif
 
-
-#if defined(__amigaos4__)
+#if defined(__AROS__)
+AROS_LH1(IPTR, MCP_Query,
+         AROS_LHA(LONG, which, D0),
+         struct MailtextBase *, base, 5, MailtextP
+)
+{
+    AROS_LIBFUNC_INIT
+#define QUERYRETVAL IPTR
+#define ThisClass base->mt_mcp
+#elif defined(__amigaos4__)
  struct MUI_CustomClass * SAVEDS ASM MCC_Query( struct Interface *Self, const LONG which)
+  {s
 #else  // !__amigaos4__
  struct MUI_CustomClass * SAVEDS ASM MCC_Query(REG(d0, const LONG which))
-#endif // !__amigaos4__
   {
+#endif // !__amigaos4__
+#ifndef QUERYRETVAL
+#define QUERYRETVAL   struct MUI_CustomClass *
+#endif
+
    switch (which)
     {
      #ifndef PREFSCLASS
-     case 0 : return(ThisClass);	/* Pointer to Custom Class */
+     case 0 : return ((QUERYRETVAL)ThisClass);	/* Pointer to Custom Class */
      #else
-     case 1 : return(ThisClass);	/* Pointer to Preference Class */
+     case 1 : return ((QUERYRETVAL)ThisClass);	/* Pointer to Preference Class */
      case 2 : return(
 		     #ifndef PREFSIMAGE_DEPTH
-		     NULL
+		     (QUERYRETVAL)NULL
 		     #else
-		     (struct MUI_CustomClass *)
+		     (QUERYRETVAL)
 		     MUI_NewObject(MUIC_Bodychunk,
 				     MUIA_Bodychunk_Body,	     PrefsImage_body,
 				     MUIA_Bodychunk_Compression, PREFSIMAGE_COMPRESSION,
@@ -529,12 +540,18 @@ struct LibraryHeader
 				  )
 		     #endif
 		    );			/* Pref Image Pointer */
-     case 3 : return(ONLYGLOBAL);
+     case 3 : return((QUERYRETVAL)ONLYGLOBAL);
      #endif
     }
-   return(NULL);
+
+   return((QUERYRETVAL)NULL);
+#ifdef __AROS__
+#undef ThisClass
+  AROS_LIBFUNC_EXIT
+#endif
   }
 
+#if !defined(__AROS__)
 #if defined(__amigaos4__)
  #include <exec/emulation.h>
 
@@ -621,3 +638,4 @@ struct LibraryHeader
  void REGARGS _CXBRK(void)
   {}
 
+#endif

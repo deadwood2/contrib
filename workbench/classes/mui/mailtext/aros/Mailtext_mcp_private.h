@@ -51,35 +51,41 @@
                                                                                /***/
 struct Data
 {
-            char    *regTitles[7] ;
-            char    *text ;
+    char                        *regTitles[7];
+    char                        *text;
 
-            Object  *mailtextObj,
-                    *distObj,
-                    *qdistObj,
-                    *disPatObj,
-                    *enPatObj,
-                    *ssPatObj,
-                    *niCharsObj,
-                    *termCharsObj,
-                    *wsCharsObj,
-                    *qCharsObj,
-                    *showObj,
-                    *contextObj,
-                    *uQCharsObj,
-                    *colors[5],
-                    *textcolor,
-                    *fontObj,
-                    *urlcolor,
-                    *group,
-                    *sigSepObj,
-                    *uulObj,
-                    *ustackObj,
-                    *uactStrObj,
-                    *uabeepObj,
-                    *wrapObj ;
+    Object                      *mailtextObj,
+                                *distObj,
+                                *qdistObj,
+                                *disPatObj,
+                                *enPatObj,
+                                *ssPatObj,
+                                *niCharsObj,
+                                *termCharsObj,
+                                *wsCharsObj,
+                                *qCharsObj,
+                                *showObj,
+                                *contextObj,
+                                *uQCharsObj,
+                                *colors[5],
+                                *textcolor,
+                                *fontObj,
+                                *urlcolor,
+                                *group,
+                                *sigSepObj,
+                                *uulObj,
+                                *ustackObj,
+                                *uactStrObj,
+                                *uabeepObj,
+                                *wrapObj;
 
-    struct  Catalog *catalog;
+    struct  Catalog             *catalog;
+};
+
+struct MailtextBase
+{
+    struct Library              mt_lib;
+    struct MUI_CustomClass      *mt_mcp;
 };
 
 #endif

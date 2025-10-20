@@ -43,7 +43,7 @@ MCPFILES := MailtextP \
 	 Mailtext_mcp_locale
 
 INCLUDE_FILES := mui/Mailtext_mcc.h
-USER_INCLUDES := -I$(TOP)/$(CURDIR)
+USER_INCLUDES := -I$(SRCDIR)/$(CURDIR)
 USER_CFLAGS += $(PARANOIA_CFLAGS)
 
 %build_prog mmake=contrib-zune-classes-mailtext-demo progname=Show_Mailtext files=show_mailtext \

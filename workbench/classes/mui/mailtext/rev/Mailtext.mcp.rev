@@ -31,6 +31,6 @@
 PROTO=rev/MailtextVersion.hp
 TARGET=rev/Mailtext.mcp.h
 VERSION=19
-REVISION=9
+REVISION=10
 NAME=Mailtext.mcp
 LOWERNAME=mailtext.mcp
