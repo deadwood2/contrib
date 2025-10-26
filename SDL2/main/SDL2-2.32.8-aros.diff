@@ -2263,8 +2263,8 @@ diff -ruN SDL2-2.32.8/src/filesystem/aros/SDL_sysfilesystem.c SDL2-2.32.8.aros/s
 +/* vi: set ts=4 sw=4 expandtab: */
 diff -ruN SDL2-2.32.8/src/joystick/aros/SDL_sysjoystick.c SDL2-2.32.8.aros/src/joystick/aros/SDL_sysjoystick.c
 --- SDL2-2.32.8/src/joystick/aros/SDL_sysjoystick.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/joystick/aros/SDL_sysjoystick.c	2025-09-30 03:02:24.424410010 +0000
-@@ -0,0 +1,519 @@
++++ SDL2-2.32.8.aros/src/joystick/aros/SDL_sysjoystick.c	2025-10-26 17:42:47.984793131 +0000
+@@ -0,0 +1,524 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -2317,8 +2317,18 @@ diff -ruN SDL2-2.32.8/src/joystick/aros/SDL_sysjoystick.c SDL2-2.32.8.aros/src/j
 +			((val) > (JOYSTICK_MAX)) ? (JOYSTICK_MAX) : (((val) < (JOYSTICK_MIN)) ? (JOYSTICK_MIN) : (val)))
 +
 +int joystick_count = 0;
-+char **joystick_names = NULL;
 +struct Library *LowLevelBase = NULL;
++
++struct SDL_AROS_GAMEINPUT
++{
++	char 				*gi_name;
++	SDL_JoystickGUID 	gi_guid;
++};
++
++#define SDL_AROS_VENDORID	0xFFFF
++#define SDL_AROS_PRODUCTID	0x0001
++
++struct SDL_AROS_GAMEINPUT *aros_gameinput_devices = NULL;
 +
 +unsigned long joybut[] =
 +{
@@ -2364,35 +2374,65 @@ diff -ruN SDL2-2.32.8/src/joystick/aros/SDL_sysjoystick.c SDL2-2.32.8.aros/src/j
 +	D(bug("[SDL2:Joystick] %s()\n", __func__));
 +
 +	if((LowLevelBase = OpenLibrary("lowlevel.library", 37))) {
-+		ULONG joyflag = 0L;
-+		joystick_count = 0;
-+		joystick_names = AllocVec(MAX_JOYSTICKS * sizeof(IPTR), MEMF_CLEAR);
-+		while(joystick_count < MAX_JOYSTICKS) {
-+			int port = LowLevel_PortFromIndex(joystick_count);
-+			char *dev_name = NULL;
++		SDL_JoystickGUID	guid;
++		ULONG joyflag 		= 0L;
++		joystick_count 		= 0;
 +
-+			joyflag = ReadJoyPort(port);
-+			if ((joyflag & JP_TYPE_MASK) == JP_TYPE_NOTAVAIL) {
-+				break;
++		D(bug("[SDL2:Joystick] %s: lowlevel.library @ 0x%p\n", __func__, LowLevelBase));
++
++		aros_gameinput_devices = AllocVec(MAX_JOYSTICKS * sizeof(struct SDL_AROS_GAMEINPUT), MEMF_CLEAR);
++		if (aros_gameinput_devices) {
++			D(bug("[SDL2:Joystick] %s: allocated SDL_AROS_GAMEINPUT @ 0x%p (for %d units)\n", __func__, aros_gameinput_devices, MAX_JOYSTICKS));
++			while(joystick_count < MAX_JOYSTICKS) {
++				int port = LowLevel_PortFromIndex(joystick_count);
++				char *dev_name = NULL;
++
++				joyflag = ReadJoyPort(port);
++				if ((joyflag & JP_TYPE_MASK) == JP_TYPE_NOTAVAIL) {
++					break;
++				}
++
++				if ((joyflag & JP_TYPE_MASK) == JP_TYPE_GAMECTLR) {
++					dev_name = AllocVec(26, MEMF_ANY);
++					sprintf(dev_name, "Game Controller @ Port %d", port);
++#if (1)
++					guid = SDL_CreateJoystickGUID(SDL_HARDWARE_BUS_VIRTUAL,
++							SDL_AROS_VENDORID,
++							SDL_AROS_PRODUCTID,
++							0x0001,
++							"AROS",
++							"Game Controller",
++							0,
++							0
++						);
++#else
++					guid = SDL_CreateJoystickGUID(SDL_HARDWARE_BUS_USB, vendorNo, productNo, releaseNo, vendor, product, 0, 0);
++#endif
++				}
++
++				if ((joyflag & JP_TYPE_MASK) == JP_TYPE_MOUSE) {
++					dev_name = AllocVec(16, MEMF_ANY);
++					sprintf(dev_name, "Mouse @ Port %d", port);
++					guid = SDL_CreateJoystickGUIDForName(dev_name);
++				}
++
++				if ((joyflag & JP_TYPE_MASK) == JP_TYPE_JOYSTK) {
++					dev_name = AllocVec(19, MEMF_ANY);
++					sprintf(dev_name, "Joystick @ Port %d", port);
++					guid = SDL_CreateJoystickGUIDForName(dev_name);
++				}
++
++				if ((joyflag & JP_TYPE_MASK) == JP_TYPE_UNKNOWN) {
++					dev_name = AllocVec(25, MEMF_ANY);
++					sprintf(dev_name, "unknown device @ Port %d", port);
++					guid = SDL_CreateJoystickGUIDForName(dev_name);
++				}
++
++				D(bug("[SDL2:Joystick] %s: #%d '%s'\n", __func__, joystick_count, dev_name));
++				aros_gameinput_devices[LowLevel_PortFromIndex(joystick_count)].gi_name = dev_name;
++				aros_gameinput_devices[LowLevel_PortFromIndex(joystick_count)].gi_guid = guid;
++				joystick_count++;
 +			}
-+			if ((joyflag&JP_TYPE_MASK) == JP_TYPE_GAMECTLR) {
-+				dev_name = AllocVec(26, MEMF_ANY);
-+				sprintf(dev_name, "Game Controller @ Port %d", port);
-+			}
-+			if ((joyflag&JP_TYPE_MASK) == JP_TYPE_MOUSE) {
-+				dev_name = AllocVec(16, MEMF_ANY);
-+				sprintf(dev_name, "Mouse @ Port %d", port);
-+			}
-+			if ((joyflag&JP_TYPE_MASK) == JP_TYPE_JOYSTK) {
-+				dev_name = AllocVec(19, MEMF_ANY);
-+				sprintf(dev_name, "Joystick @ Port %d", port);
-+			}
-+			if ((joyflag&JP_TYPE_MASK) == JP_TYPE_UNKNOWN) {
-+				dev_name = AllocVec(25, MEMF_ANY);
-+				sprintf(dev_name, "unknown device @ Port %d", port);
-+			}
-+			joystick_names[LowLevel_PortFromIndex(joystick_count)] = dev_name;
-+			joystick_count++;
 +		}
 +	}
 +	else
@@ -2417,83 +2457,48 @@ diff -ruN SDL2-2.32.8/src/joystick/aros/SDL_sysjoystick.c SDL2-2.32.8.aros/src/j
 +
 +static const char *AROS_JoystickGetDeviceName(int device_index)
 +{
-+	D(bug("[SDL2:Joystick] %s()\n", __func__));
-+	return joystick_names[LowLevel_PortFromIndex(device_index)];
++	D(bug("[SDL2:Joystick] %s(%d)\n", __func__, device_index));
++	return aros_gameinput_devices[LowLevel_PortFromIndex(device_index)].gi_name;
 +}
 +
 +static const char *AROS_JoystickGetDevicePath(int device_index)
 +{
-+	D(bug("[SDL2:Joystick] %s()\n", __func__));
++	D(bug("[SDL2:Joystick] %s(%d)\n", __func__, device_index));
 +    return NULL;
 +}
 +
 +static int AROS_JoystickGetDeviceSteamVirtualGamepadSlot(int device_index)
 +{
-+	D(bug("[SDL2:Joystick] %s()\n", __func__));
++	D(bug("[SDL2:Joystick] %s(%d)\n", __func__, device_index));
 +    return -1;
 +}
 +
 +static int AROS_JoystickGetDevicePlayerIndex(int device_index)
 +{
-+	D(bug("[SDL2:Joystick] %s()\n", __func__));
++	D(bug("[SDL2:Joystick] %s(%d)\n", __func__, device_index));
 +    return device_index;
 +}
 +
 +static void AROS_JoystickSetDevicePlayerIndex(int device_index, int player_index)
 +{
-+	D(bug("[SDL2:Joystick] %s()\n", __func__));
++	D(bug("[SDL2:Joystick] %s(%d, %d)\n", __func__, device_index, player_index));
 +}
-+
 +
 +static SDL_JoystickGUID AROS_JoystickGetDeviceGUID(int device_index)
 +{
-+	SDL_JoystickGUID guid;
-+	D(bug("[SDL2:Joystick] %s()\n", __func__));
-+#if (0)
-+	APTR sensor = JoySensor[device_index];
-+	Uint16 *guid16 = (Uint16 *)guid.data;
-+	const char *name = NULL;
-+
-+	ULONG product, vendor;
-+	
-+	GetSensorAttrTags(sensor,
-+			SENSORS_HID_Name, (IPTR)&name,
-+			SENSORS_HID_Product, (IPTR)&product,
-+			SENSORS_HID_Vendor, (IPTR)&vendor,
-+			TAG_DONE);
-+
-+	SDL_zero(guid);
-+	SDL_memset(guid.data, 0, sizeof(guid.data));
-+
-+	*guid16++ = SDL_SwapLE16(SDL_HARDWARE_BUS_USB);
-+    *guid16++ = 0;
-+
-+    if (vendor && product)
-+	{
-+        *guid16++ = SDL_SwapLE16(vendor);
-+        *guid16++ = 0;
-+        *guid16++ = SDL_SwapLE16(product);
-+        *guid16++ = 0;
-+        *guid16++ = 0;
-+        *guid16++ = 0;
-+    } 
-+	else
-+	{
-+        SDL_strlcpy((char*)guid16, name, sizeof(guid.data) - 4);
-+    }
-+#endif
-+	return guid;
++	D(bug("[SDL2:Joystick] %s(%d)\n", __func__, device_index));
++	return aros_gameinput_devices[LowLevel_PortFromIndex(device_index)].gi_guid;
 +}
 +
 +static SDL_JoystickID AROS_JoystickGetDeviceInstanceID(int device_index)
 +{
-+	D(bug("[SDL2:Joystick] %s()\n", __func__));
++	D(bug("[SDL2:Joystick] %s(%d)\n", __func__, device_index));
 +	return device_index;
 +}
 +
 +static int AROS_JoystickOpen(SDL_Joystick *joystick, int device_index)
 +{
-+	D(bug("[SDL2:Joystick] %s()\n", __func__));
++	D(bug("[SDL2:Joystick] %s(0x%p, %d)\n", __func__, joystick, device_index));
 +	int rc = -1;
 +
 +	if (LowLevelBase) {
@@ -2531,7 +2536,7 @@ diff -ruN SDL2-2.32.8/src/joystick/aros/SDL_sysjoystick.c SDL2-2.32.8.aros/src/j
 +			joystick->nhats = 0;
 +		}
 +		joystick->hwdata = hwdata;
-+		joystick->name = joystick_names[hwdata->port];
++		joystick->name = aros_gameinput_devices[hwdata->port].gi_name;
 +		joystick->naxes = 2;
 +#ifndef NO_LOWLEVEL_EXT
 +		joystick->hwdata->joystate_ext = 0L;
@@ -2560,7 +2565,7 @@ diff -ruN SDL2-2.32.8/src/joystick/aros/SDL_sysjoystick.c SDL2-2.32.8.aros/src/j
 +static Uint32 AROS_JoystickGetCapabilities(SDL_Joystick *joystick)
 +{
 +    Uint32 result = 0;
-+	D(bug("[SDL2:Joystick] %s()\n", __func__));
++	D(bug("[SDL2:Joystick] %s(0x%p)\n", __func__, joystick));
 +    return result;
 +}
 +
@@ -2740,13 +2745,13 @@ diff -ruN SDL2-2.32.8/src/joystick/aros/SDL_sysjoystick.c SDL2-2.32.8.aros/src/j
 +void AROS_JoystickQuit(void)
 +{
 +	D(bug("[SDL2:Joystick] %s()\n", __func__));
-+	if (joystick_names) {
++	if (aros_gameinput_devices) {
 +		int i;
 +		for (i = 0; i < joystick_count; i++) {
-+			if (joystick_names[i])
-+				FreeVec(joystick_names[i]);
++			if (aros_gameinput_devices[i].gi_name)
++				FreeVec(aros_gameinput_devices[i].gi_name);
 +		}
-+		FreeVec(joystick_names);
++		FreeVec(aros_gameinput_devices);
 +	}
 +	if (LowLevelBase)
 +		CloseLibrary(LowLevelBase);
@@ -2832,8 +2837,20 @@ diff -ruN SDL2-2.32.8/src/joystick/aros/SDL_sysjoystick_c.h SDL2-2.32.8.aros/src
 \ No newline at end of file
 diff -ruN SDL2-2.32.8/src/joystick/SDL_gamecontrollerdb.h SDL2-2.32.8.aros/src/joystick/SDL_gamecontrollerdb.h
 --- SDL2-2.32.8/src/joystick/SDL_gamecontrollerdb.h	2025-01-18 15:07:12.000000000 +0000
-+++ SDL2-2.32.8.aros/src/joystick/SDL_gamecontrollerdb.h	2025-07-27 14:24:15.440841333 +0000
-@@ -997,6 +997,10 @@
++++ SDL2-2.32.8.aros/src/joystick/SDL_gamecontrollerdb.h	2025-10-26 17:37:56.168796967 +0000
+@@ -32,6 +32,11 @@
+ #ifdef SDL_JOYSTICK_XINPUT
+     "xinput,*,a:b0,b:b1,back:b6,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b10,leftshoulder:b4,leftstick:b8,lefttrigger:a2,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b9,righttrigger:a5,rightx:a3,righty:a4,start:b7,x:b2,y:b3,",
+ #endif
++#ifdef SDL_JOYSTICK_AROS
++	"ff00ba0bffff00000100000001000000,*,platform:AROS,a:b0,b:b1,x:b2,y:b3,back:b4,start:b5,guide:b6,leftshoulder:b7,rightshoulder:b8,leftx:a0,lefty:a1,rightx:a2,righty:a3,dpup:h0.1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,lefttrigger:a4,righttrigger:a5,",
++	"030000004c050000c405000000000000,PlayStation 4 Dualshock Controller,platform:AROS,a:b6,b:b7,x:b4,y:b5,back:b3,start:b2,leftstick:b8,rightstick:b9,leftshoulder:b0,rightshoulder:b1,dpup:h0.1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,leftx:a0,lefty:a1,rightx:a2,righty:a3,lefttrigger:+a4,righttrigger:+a5,",
++	"030000005e0400008e02000000000000,Xbox360 Controller,platform:AROS,a:b7,b:b8,x:b5,y:b6,back:b2,guide:b4,start:b3,leftstick:b9,rightstick:b10,leftshoulder:b0,rightshoulder:b1,dpup:h0.1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,leftx:a0,lefty:a1,rightx:a2,righty:a3,lefttrigger:+a4,righttrigger:+a5,",
++#endif
+ #ifdef SDL_JOYSTICK_WGI
+     "03000000491900001904000000007700,Amazon Luna Controller,a:b0,b:b1,back:b6,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b8,leftshoulder:b4,leftstick:b10,lefttrigger:a3,leftx:a0,lefty:a1,misc1:b9,rightshoulder:b5,rightstick:b11,righttrigger:a4,rightx:a2,righty:a5,start:b7,x:b2,y:b3,",
+     "03000000d11800000094000000007700,Google Stadia Controller,a:b0,b:b1,back:b6,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b8,leftshoulder:b4,leftstick:b9,lefttrigger:a5,leftx:a0,lefty:a1,misc1:b12,rightshoulder:b5,rightstick:b10,righttrigger:a4,rightx:a2,righty:a3,start:b7,x:b2,y:b3,",
+@@ -997,6 +1002,10 @@
  #ifdef SDL_JOYSTICK_VITA
      "0000000050535669746120436f6e7400,PSVita Controller,crc:d598,a:b2,b:b1,back:b10,dpdown:b6,dpleft:b7,dpright:b9,dpup:b8,leftshoulder:b4,leftstick:b14,lefttrigger:a4,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b15,righttrigger:a5,rightx:a2,righty:a3,start:b11,x:b3,y:b0,",
  #endif
