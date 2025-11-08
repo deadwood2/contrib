@@ -306,10 +306,23 @@ void AROSPDFApp::OpenFile(GString *fileNameA, GString *ownerPWA, GString *userPW
       dispH=BITMAPY;
     }
     doc = newdoc;
-    GString * title = new GString("AROSPDF - ");
-    title->append(fileNameA);
-    SetAttrs(wnd,MUIA_Window_Title,title->getCString() ,TAG_DONE);
-    delete title;
+
+    if (appTitle) {
+        delete appTitle;
+        appTitle = NULL; 
+    }
+    if (appFileName) {
+        delete appFileName;
+        appFileName = NULL; 
+    }
+
+    appFileName = new GString(fileNameA);
+
+    appTitle = new GString("AROSPDF - ");
+    appTitle->append(appFileName);
+
+    SetAttrs(wnd,MUIA_Window_Title,appTitle->getCString() ,TAG_DONE);
+
     resolution = 100;
     page = 1;
     posX = 0;
@@ -374,6 +387,8 @@ void AROSPDFApp::ToggleFullscreen() {
 AROSPDFApp::AROSPDFApp() {
   ready=FALSE;
   docLoaded=FALSE;
+  appTitle = NULL;
+  appFileName = NULL
   if (initAROS() != 0) {
     fprintf(stderr, "error initializing AROS\n");
     ok = gFalse;
@@ -451,6 +466,8 @@ void AROSPDFApp::ScrollUpDown(bool Down) {
 AROSPDFApp::AROSPDFApp(GString *fileNameA, GString *ownerPWA, GString *userPWA) {
   ready=FALSE;
   docLoaded=FALSE;
+  appTitle = NULL;
+  appFileName = NULL;
   if (initAROS() != 0) {
     fprintf(stderr, "error initializing AROS\n");
     ok = gFalse;
@@ -465,6 +482,8 @@ void AROSPDFApp::quit() {
   if (docLoaded==TRUE) {
     delete doc;
   }
+  if (appTitle) delete appTitle;
+  if (appFileName) delete appFileName;
 }
 
 int AROSPDFApp::run() {
