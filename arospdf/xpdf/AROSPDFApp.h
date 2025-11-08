@@ -67,6 +67,8 @@ private:
   int initAROS();
   void exitAROS();
 
+  GString *appTitle;
+  GString *appFileName;
   PDFDoc *doc;  
   AROSSplashOutputDev *splashOut;
   struct RastPort * rp;
