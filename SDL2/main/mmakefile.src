@@ -19,7 +19,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 #MM SDL2-aros-sharedlib : includes linklibs  contrib-sdl2-fetch SDL2-aros-copy-includes workbench-devs-AHI workbench-libs-mesa-linklib \
 #MM  development-libiconv
 
-#MM SDL2-aros-staticlib : includes linklibs  contrib-sdl2-fetch SDL2-aros-copy-includes workbench-devs-AHI
+#MM SDL2-aros-staticlib : includes linklibs  contrib-sdl2-fetch SDL2-aros-copy-includes workbench-devs-AHI development-libiconv
 
 REPOSITORIES := http://www.libsdl.org/release/
 ARCHVER      := 2.32.8
