@@ -120,7 +120,7 @@ AS_OpenAsyncFH( BPTR handle, OpenModes mode, LONG bufferSize, BOOL closeIt )
 			fh			= BADDR( file->af_File );
 			file->af_Handler	= fh->fh_Type;
 			file->af_BufferSize	= ( ULONG ) bufferSize / 2;
-			file->af_Buffers[ 0 ]	= ( APTR ) ( ( ( IPTR ) file + sizeof( AsyncFile ) + 15 ) & 0xfffffff0 );
+			file->af_Buffers[ 0 ]	= ( APTR ) ( ( ( IPTR ) file + sizeof( AsyncFile ) + 15 ) & ~0xfL );
 			file->af_Buffers[ 1 ]	= file->af_Buffers[ 0 ] + file->af_BufferSize;
 			file->af_CurrentBuf	= 0;
 			file->af_SeekOffset	= 0;
