@@ -23,7 +23,7 @@
 #define DEBUG 0
 #include <aros/debug.h>
 
-static LONG StartFile(struct RexxMsg *);
+static LONG StartFile(struct RexxMsg *, UBYTE *);
 static void StartFileSlave(struct RexxMsg *);
 static void AddLib(struct RexxMsg *);
 static void RemLib(struct RexxMsg *);
@@ -35,11 +35,50 @@ struct Library *ReginaBase = NULL;
 static void OpenLibs();
 static void CloseLibs();
 
-static UBYTE progdir[256];
+void server_process(void);
 
 int main(int argc, char **argv)
 {
-   struct MsgPort *port;
+   ULONG signals;
+   if (argc==3 && strcmp("SUBTASK", argv[1])==0)
+   {
+      struct RexxMsg *msg;
+
+      OpenLibs();
+      sscanf(argv[2], "%p", &msg);
+      StartFileSlave(msg);
+      ReplyMsg((struct Message *)msg);
+      CloseLibs();
+
+      return 0;
+   }
+
+   /* On AmigaOS, RexxMast starts a task called "RexxMaster". HippoPlayer 2.45
+      looks for it. */
+   struct Process *server = CreateNewProcTags(
+      NP_Entry, server_process,
+      NP_Name, "RexxMaster",
+      NP_StackSize, ((struct Process *)SysBase->ThisTask)->pr_StackSize);
+   if (!server) {
+      D(bug("[RexxMast] Failed to spawn RexxMaster server\n"));
+      return 20;
+   }
+
+   // Wait for user abort
+   signals = Wait(SIGBREAKF_CTRL_C);
+
+   // Not a perfect check, but better than blind signalling
+   if (FindTask("RexxMaster")) {
+      Signal((struct Task *)server, SIGBREAKF_CTRL_C);
+   }
+
+   return 0;
+}
+
+void server_process(void)
+{
+   UBYTE progdir[256];
+   struct MsgPort *port = NULL;
    struct RexxMsg *msg;
    BOOL done = FALSE;
    ULONG mask, signals;
@@ -55,16 +94,14 @@ int main(int argc, char **argv)
 
    OpenLibs();
 
-   if (argc==3 && strcmp("SUBTASK", argv[1])==0)
-   {
-      struct RexxMsg *msg;
-      
-      sscanf(argv[2], "%p", &msg);
-      StartFileSlave(msg);
-      ReplyMsg((struct Message *)msg);
-      CloseLibs();
-      return 0;
-   }
+   struct Library *DebugBase = NULL, *DOSBase = NULL, *IntuitionBase = NULL;
+   struct Library *SysBase = *(struct Library **)4;
+   DebugBase = OpenLibrary("debug.library", 0);
+   if (!DebugBase) goto cleanup;
+   DOSBase = OpenLibrary("dos.library", 0);
+   if (!DOSBase) goto cleanup;
+   IntuitionBase = OpenLibrary("intuition.library", 0);
+   if (!IntuitionBase) goto cleanup;
 
    lock = Lock("PROGDIR:", SHARED_LOCK);
    NameFromLock(lock, progdir, sizeof(progdir));
@@ -72,13 +109,16 @@ int main(int argc, char **argv)
    UnLock(lock);
 
    port = CreatePort("REXX", 0);
+
    es.es_Title = "RexxMast message";
    mask = SIGBREAKF_CTRL_C | (1<<port->mp_SigBit);
+   D(bug("[RexxMast] RexxMaster server started\n"));
    do
    {
       signals = Wait(mask);
-      if (signals & SIGBREAKF_CTRL_C)
+      if (signals & SIGBREAKF_CTRL_C) {
          done = TRUE;
+      }
       if (signals & (1<<port->mp_SigBit))
       {
          while ((msg = (struct RexxMsg *)GetMsg(port)) != NULL)
@@ -95,7 +135,7 @@ int main(int argc, char **argv)
             {
                static UBYTE *text[] =
                   { "RXCOMM", "RXFUNC", "RXCLOSE", "RXQUERY", "UNKNOWN1",
-                    "UNKNOWN2", "RXADDFH", "RXADDLIB", "RXREMLIB", 
+                    "UNKNOWN2", "RXADDFH", "RXADDLIB", "RXREMLIB",
                     "RXADDCON", "RXREMCON", "RXTCOPN", "RXTCCLS",
                     "TOO HIGH"
                   };
@@ -105,7 +145,7 @@ int main(int argc, char **argv)
                {
                case RXFUNC:
                case RXCOMM:
-                  if (StartFile(msg) < 0)
+                  if (StartFile(msg, progdir) < 0)
                   {
                      D(bug("Error executing command '%s'\n", (char *)msg->rm_Args[0]));
                      msg->rm_Result1 = RC_ERROR;
@@ -178,14 +218,20 @@ int main(int argc, char **argv)
          }
       }
    } while(!done);
-   
-   DeletePort(port);
+
+   cleanup:
+   if (port)
+      DeletePort(port);
+   if (DOSBase)
+      CloseLibrary(DOSBase);
+   if (IntuitionBase)
+      CloseLibrary(IntuitionBase);
+   if (DebugBase)
+      CloseLibrary(DebugBase);
    CloseLibs();
-   
-   return 0;
 }
 
-static LONG StartFile(struct RexxMsg *msg)
+static LONG StartFile(struct RexxMsg *msg, UBYTE *progdir)
 {
    char text[300];
 
