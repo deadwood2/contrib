@@ -388,7 +388,7 @@ AROSPDFApp::AROSPDFApp() {
   ready=FALSE;
   docLoaded=FALSE;
   appTitle = NULL;
-  appFileName = NULL
+  appFileName = NULL;
   if (initAROS() != 0) {
     fprintf(stderr, "error initializing AROS\n");
     ok = gFalse;
