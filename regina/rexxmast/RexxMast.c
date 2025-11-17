@@ -58,7 +58,7 @@ int main(int argc, char **argv)
    struct Process *server = CreateNewProcTags(
       NP_Entry, server_process,
       NP_Name, "RexxMaster",
-      NP_StackSize, ((struct Process *)SysBase->ThisTask)->pr_StackSize);
+      NP_StackSize, ((struct Process *)FindTask(NULL))->pr_StackSize);
    if (!server) {
       D(bug("[RexxMast] Failed to spawn RexxMaster server\n"));
       return 20;
