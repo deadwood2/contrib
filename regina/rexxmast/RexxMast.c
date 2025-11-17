@@ -94,15 +94,6 @@ void server_process(void)
 
    OpenLibs();
 
-   struct Library *DebugBase = NULL, *DOSBase = NULL, *IntuitionBase = NULL;
-   struct Library *SysBase = *(struct Library **)4;
-   DebugBase = OpenLibrary("debug.library", 0);
-   if (!DebugBase) goto cleanup;
-   DOSBase = OpenLibrary("dos.library", 0);
-   if (!DOSBase) goto cleanup;
-   IntuitionBase = OpenLibrary("intuition.library", 0);
-   if (!IntuitionBase) goto cleanup;
-
    lock = Lock("PROGDIR:", SHARED_LOCK);
    NameFromLock(lock, progdir, sizeof(progdir));
    D(bug("Got PROGDIR:='%s'\n", progdir));
@@ -222,12 +213,6 @@ void server_process(void)
    cleanup:
    if (port)
       DeletePort(port);
-   if (DOSBase)
-      CloseLibrary(DOSBase);
-   if (IntuitionBase)
-      CloseLibrary(IntuitionBase);
-   if (DebugBase)
-      CloseLibrary(DebugBase);
    CloseLibs();
 }
 
