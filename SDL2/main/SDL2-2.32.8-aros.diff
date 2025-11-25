@@ -2263,8 +2263,8 @@ diff -ruN SDL2-2.32.8/src/filesystem/aros/SDL_sysfilesystem.c SDL2-2.32.8.aros/s
 +/* vi: set ts=4 sw=4 expandtab: */
 diff -ruN SDL2-2.32.8/src/joystick/aros/SDL_sysjoystick.c SDL2-2.32.8.aros/src/joystick/aros/SDL_sysjoystick.c
 --- SDL2-2.32.8/src/joystick/aros/SDL_sysjoystick.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/joystick/aros/SDL_sysjoystick.c	2025-10-26 18:12:37.240795126 +0000
-@@ -0,0 +1,529 @@
++++ SDL2-2.32.8.aros/src/joystick/aros/SDL_sysjoystick.c	2025-11-25 17:29:32.754532822 +0000
+@@ -0,0 +1,527 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -2369,8 +2369,6 @@ diff -ruN SDL2-2.32.8/src/joystick/aros/SDL_sysjoystick.c SDL2-2.32.8.aros/src/j
 +
 +static int AROS_JoystickInit(void)
 +{
-+	int rc = 0;
-+
 +	D(bug("[SDL2:Joystick] %s()\n", __func__));
 +
 +	if((LowLevelBase = OpenLibrary("lowlevel.library", 37))) {
@@ -2432,16 +2430,16 @@ diff -ruN SDL2-2.32.8/src/joystick/aros/SDL_sysjoystick.c SDL2-2.32.8.aros/src/j
 +				aros_gameinput_devices[LowLevel_PortFromIndex(joystick_count)].gi_name = dev_name;
 +				aros_gameinput_devices[LowLevel_PortFromIndex(joystick_count)].gi_guid = guid;
 +				joystick_count++;
++				SDL_PrivateJoystickAdded(joystick_count - 1); // must be after correct count is set
 +			}
 +		}
-+	}
-+	else
-+	{
-+		/* failed to open lowlevel.library! */
-+		SDL_SetError("Unable to open lowlevel.library");
++		return joystick_count;
 +	}
 +
-+	return rc;
++	/* failed to open lowlevel.library! */
++	SDL_SetError("Unable to open lowlevel.library");
++
++	return 0;
 +}
 +
 +static int AROS_JoystickGetCount(void)
@@ -8933,8 +8931,8 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosvideo.h SDL2-2.32.8.aros/src/video/
 +#endif /* _SDL_arosvideo_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video/aros/SDL_aroswindow.c
 --- SDL2-2.32.8/src/video/aros/SDL_aroswindow.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_aroswindow.c	2025-08-11 16:17:46.169908885 +0000
-@@ -0,0 +1,1049 @@
++++ SDL2-2.32.8.aros/src/video/aros/SDL_aroswindow.c	2025-11-25 17:23:55.357560964 +0000
+@@ -0,0 +1,1056 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -9589,6 +9587,13 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +	} else if (data->win) {
 +		AROS_WindowToFront(data->win);
 +	}
++
++#if defined(__AROS__)
++	if (data->win->Flags & WFLG_WINDOWACTIVE) {
++		window->flags |= SDL_WINDOW_INPUT_FOCUS;
++		SDL_SetKeyboardFocus(window);
++	}
++#endif
 +}
 +
 +void
