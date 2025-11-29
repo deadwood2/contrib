@@ -7211,7 +7211,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmodes.c SDL2-2.32.8.aros/src/video/
 +				SA_Quiet, TRUE,
 +				SA_ShowTitle, FALSE,
 +				SA_Title, (IPTR)"SDL2",
++#if !defined(__AROS__)
 +				SA_AdaptSize, TRUE,
++#endif
 +				SA_ErrorCode, (IPTR)&openError,
 +				TAG_DONE);
 +
