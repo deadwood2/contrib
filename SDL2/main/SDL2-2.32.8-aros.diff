@@ -6801,8 +6801,8 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmessagebox.h SDL2-2.32.8.aros/src/v
 +#endif /* _SDL_arosmessagebox_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmodes.c SDL2-2.32.8.aros/src/video/aros/SDL_arosmodes.c
 --- SDL2-2.32.8/src/video/aros/SDL_arosmodes.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosmodes.c	2025-08-04 17:15:50.112794155 +0000
-@@ -0,0 +1,490 @@
++++ SDL2-2.32.8.aros/src/video/aros/SDL_arosmodes.c	2025-11-29 17:45:44.322581548 +0000
+@@ -0,0 +1,509 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -7111,59 +7111,76 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmodes.c SDL2-2.32.8.aros/src/video/
 +void
 +AROS_GetDisplayModes(_THIS, SDL_VideoDisplay * sdl_display)
 +{
-+	SDL_DisplayModeData *md = sdl_display->driverdata;
-+
 +	D(bug("[SDL2:arosmodes] %s()\n", __func__));
 +
-+	if (md) {
-+		Object **modes = NULL;
-+#if !defined(__AROS__)
-+		modes = GetMonitorModesList(md->monitor, NULL);
++#if defined(__AROS__)
++	ULONG id = INVALID_ID;
++	struct DimensionInfo dim;
++
++	while ((id = NextDisplayInfo(id)) != INVALID_ID) {
++
++		if ((id & MONITOR_ID_MASK) == DEFAULT_MONITOR_ID)
++			continue;
++
++		if (GetDisplayInfoData(NULL, (UBYTE *)&dim, sizeof(dim), DTAG_DIMS, id))
++		{
++			SDL_DisplayMode mode = sdl_display->desktop_mode;
++			ULONG pixelfmt = 0;
++			if (dim.MaxDepth == 24)
++				pixelfmt = PIXFMT_RGB24;
++			else if (dim.MaxDepth == 32)
++				pixelfmt = PIXFMT_ARGB32;
++			else continue;
++
++
++			mode.w = dim.Nominal.MaxX - dim.Nominal.MinX + 1;
++			mode.h = dim.Nominal.MaxY - dim.Nominal.MinY + 1;
++#if AROS_BIG_ENDIAN
++			mode.format = AROS_GetSDLPixelFormat(pixelfmt, SDL_PIXELFORMAT_BGRA8888);
++#else
++			mode.format = AROS_GetSDLPixelFormat(pixelfmt, SDL_PIXELFORMAT_RGBA8888);
 +#endif
++			mode.driverdata = sdl_display->desktop_mode.driverdata ? SDL_malloc(4) : NULL;
++			SDL_AddDisplayMode(sdl_display, &mode);
++		}
++	}
++
++#else
++	SDL_DisplayModeData *md = sdl_display->driverdata;
++
++	if (md) {
++		Object **modes = GetMonitorModesList(md->monitor, NULL);
 +		if (modes) {
 +			int modei = 0;
 +			while (modes[modei]) {
 +				SDL_DisplayMode mode = sdl_display->desktop_mode;
-+#if !defined(__AROS__)
 +				Boopsiobject *amode = modes[modei++];
-+#else
-+				APTR amode;
-+#endif
 +				ULONG modeid = INVALID_ID;
 +				STRPTR name = NULL;
 +				ULONG width = 0;
 +				ULONG height = 0;
 +				ULONG pixelfmt = PIXFMT_ARGB32;
-+#if !defined(__AROS__)
-+				GetAttr(MA_Mode_Name, amode, (IPTR *)&name);
-+				GetAttr(MA_Mode_ModeID, amode, (IPTR *)&modeid);
-+				GetAttr(MA_Mode_Width, amode, (IPTR *)&width);
-+				GetAttr(MA_Mode_Height, amode, (IPTR *)&height);
-+				GetAttr(MA_Mode_PixelFormat, amode, (IPTR *)&pixelfmt);
-+#endif
++				GetAttr(MA_Mode_Name, amode, (ULONG*)&name);
++				GetAttr(MA_Mode_ModeID, amode, (ULONG*)&modeid);
++				GetAttr(MA_Mode_Width, amode, (ULONG*)&width);
++				GetAttr(MA_Mode_Height, amode, (ULONG*)&height);
++				GetAttr(MA_Mode_PixelFormat, amode, (ULONG*)&pixelfmt);
++
 +				mode.w = width;
 +				mode.h = height;
 +				float vert = 0, hori = 0;
-+#if !defined(__AROS__)
 +				DoMethod(amode, MM_Mode_GetRefreshFrequencies, &hori, &vert);
-+#endif
 +				mode.refresh_rate = (int)hori;
-+#if AROS_BIG_ENDIAN
-+				mode.format = AROS_GetSDLPixelFormat(pixelfmt, SDL_PIXELFORMAT_BGRA8888);
-+#else
-+				mode.format = AROS_GetSDLPixelFormat(pixelfmt, SDL_PIXELFORMAT_RGBA8888);
-+#endif
++				mode.format = MOS_GetSDLPixelFormat(pixelfmt,SDL_PIXELFORMAT_BGRA8888);
 +
-+				//D("[%s] Mode %s - pixelfmt %ld\n", __func__, name, pixelfmt);
++				//D("[%s] Mode %s - pixelfmt %ld\n", __FUNCTION__, name, pixelfmt);
 +				mode.driverdata = sdl_display->desktop_mode.driverdata ? SDL_malloc(4) : NULL;
 +				SDL_AddDisplayMode(sdl_display, &mode);
 +			}
-+#if !defined(__AROS__)
-+			FreeMonitorModesList(modes);
-+#endif
++			FreeMonitorModesList(modes);					
 +		}
 +	}
-+				
++#endif
 +}
 +
 +int
