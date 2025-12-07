@@ -8950,8 +8950,8 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosvideo.h SDL2-2.32.8.aros/src/video/
 +#endif /* _SDL_arosvideo_h */
 diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video/aros/SDL_aroswindow.c
 --- SDL2-2.32.8/src/video/aros/SDL_aroswindow.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_aroswindow.c	2025-11-25 17:23:55.357560964 +0000
-@@ -0,0 +1,1056 @@
++++ SDL2-2.32.8.aros/src/video/aros/SDL_aroswindow.c	2025-11-27 14:09:42.802695756 +0000
+@@ -0,0 +1,1063 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
