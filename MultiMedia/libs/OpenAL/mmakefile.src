@@ -14,14 +14,14 @@ include $(SRCDIR)/config/aros-contrib.cfg
 #MM contrib-openal-library : contrib-openal-common
 
 OPENAL_VERSION := 1.19.1
-OPENALREPOSITORIES = https://github.com/kcat/openal-soft/archive/refs/tags
+OPENALREPOSITORIES = cache:// http://openal-soft.org/openal-releases
 OPENALARCHBASE     := openal-soft-$(OPENAL_VERSION)
 OPENALARCHSUFFIX := "tar.gz"
 OPENALPATCHSPEC := $(OPENALARCHBASE)-aros.diff:openal-soft-$(OPENALARCHBASE):-f,-p1
 OPENALARCHSRCDIR := $(PORTSDIR)/openal-soft/openal-soft-$(OPENALARCHBASE)
 
 %fetch mmake=contrib-openal-fetch archive=$(OPENALARCHBASE) destination=$(PORTSDIR)/openal-soft \
-    location=$(PORTSSOURCEDIR) archive_origins=$(OPENALREPOSITORIES) suffixes=$(OPENALARCHSUFFIX) \
+    location=$(PORTSSOURCEDIR) archive_origins="$(OPENALREPOSITORIES)" suffixes=$(OPENALARCHSUFFIX) \
     patches_specs=$(OPENALPATCHSPEC)
 
 %create_patch mmake=contrib-openal-create-patch \
