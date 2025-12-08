@@ -12,8 +12,8 @@ diff -ruN SDL2-2.32.8/include/begin_code.h SDL2-2.32.8.aros/include/begin_code.h
  #   define DECLSPEC
 diff -ruN SDL2-2.32.8/include/SDL_config_aros.h SDL2-2.32.8.aros/include/SDL_config_aros.h
 --- SDL2-2.32.8/include/SDL_config_aros.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/include/SDL_config_aros.h	2025-08-05 16:13:06.160628275 +0000
-@@ -0,0 +1,479 @@
++++ SDL2-2.32.8.aros/include/SDL_config_aros.h	2025-12-08 05:27:13.152122789 +0000
+@@ -0,0 +1,481 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
@@ -469,8 +469,10 @@ diff -ruN SDL2-2.32.8/include/SDL_config_aros.h SDL2-2.32.8.aros/include/SDL_con
 +/* Enable assembly routines */
 +
 +#if defined(__PPC__) || defined(__powerpc__)
++#if defined(HAVE_ALTIVEC_H)
 +#define SDL_ALTIVEC_BLITTERS  1
 +#define SDL_ENABLE_ALTIVEC_H 1
++#endif
 +#endif
 +#if defined(__arm__)
 +#define SDL_ARM_SIMD_BLITTERS 1
