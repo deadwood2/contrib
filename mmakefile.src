@@ -5,25 +5,26 @@ include $(SRCDIR)/config/aros-contrib.cfg
 # The apps target points back to config/$(ARCH)/mmakefile:
 #MM- contrib : \
 #MM     includes linklibs \
-#MM     contrib-setup-dirs \
-#MM     contrib-complete
+#MM     contrib-setup-dirs
 
-#MM- contrib-complete : contrib-aminet
-#MM- contrib-complete : contrib-fish
-#MM- contrib-complete : contrib-games
-#MM- contrib-complete : contrib-misc
-#MM- contrib-complete : contrib-demo
-#MM- contrib-complete : contrib-dopus
-#MM- contrib-complete : contrib-fryingpan-$(AROS_TARGET_CPU)
-#MM- contrib-complete : contrib-bgui
-#MM- contrib-complete : contrib-gfx
-#MM- contrib-complete : contrib-development
-#MM- contrib-complete : contrib-gnu
-#MM- contrib-complete : contrib-networking
-#MM- contrib-complete : contrib-pack
-#MM- contrib-complete : contrib-scout
-#MM- contrib-complete : contrib-multimedia
-#MM- contrib-complete : contrib-workbench
+#MM- contrib : contrib-aminet
+#MM- contrib : contrib-fish
+#MM- contrib : contrib-games
+#MM- contrib : contrib-misc
+#MM- contrib : contrib-demo
+#MM- contrib : contrib-dopus
+#MM- contrib : contrib-fryingpan-$(AROS_TARGET_CPU)
+#MM- contrib : contrib-bgui
+#MM- contrib : contrib-gfx
+#MM- contrib : contrib-development
+#MM- contrib : contrib-gnu
+#MM- contrib : contrib-networking
+#MM- contrib : contrib-pack
+#MM- contrib : contrib-scout
+#MM- contrib : contrib-multimedia
+#MM- contrib : contrib-workbench
+
+#MM- contrib-complete : contrib
 
 CONTRIB_SRC_DIR := $(AROSDIR)/contrib
 
