@@ -1,6 +1,6 @@
-diff -ruN SDL2-2.32.8/include/begin_code.h SDL2-2.32.8.aros/include/begin_code.h
---- SDL2-2.32.8/include/begin_code.h	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/include/begin_code.h	2025-07-28 13:13:58.433582407 +0000
+diff -ruN SDL2-2.32.10/include/begin_code.h SDL2-2.32.10.aros/include/begin_code.h
+--- SDL2-2.32.10/include/begin_code.h	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/include/begin_code.h	2025-07-28 13:13:58.433582407 +0000
 @@ -66,7 +66,7 @@
  #    define DECLSPEC
  #   endif
@@ -10,9 +10,9 @@ diff -ruN SDL2-2.32.8/include/begin_code.h SDL2-2.32.8.aros/include/begin_code.h
  #   define DECLSPEC __attribute__ ((visibility("default")))
  #  else
  #   define DECLSPEC
-diff -ruN SDL2-2.32.8/include/SDL_config_aros.h SDL2-2.32.8.aros/include/SDL_config_aros.h
---- SDL2-2.32.8/include/SDL_config_aros.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/include/SDL_config_aros.h	2025-12-08 05:27:13.152122789 +0000
+diff -ruN SDL2-2.32.10/include/SDL_config_aros.h SDL2-2.32.10.aros/include/SDL_config_aros.h
+--- SDL2-2.32.10/include/SDL_config_aros.h	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/include/SDL_config_aros.h	2025-12-08 05:27:13.152122789 +0000
 @@ -0,0 +1,481 @@
 +/*
 +  Simple DirectMedia Layer
@@ -495,9 +495,9 @@ diff -ruN SDL2-2.32.8/include/SDL_config_aros.h SDL2-2.32.8.aros/include/SDL_con
 +/* #undef SDL_LIBSAMPLERATE_DYNAMIC */
 +
 +#endif /* _SDL_config_aros_h */
-diff -ruN SDL2-2.32.8/include/SDL_config.h SDL2-2.32.8.aros/include/SDL_config.h
---- SDL2-2.32.8/include/SDL_config.h	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/include/SDL_config.h	2025-07-27 14:24:11.508841313 +0000
+diff -ruN SDL2-2.32.10/include/SDL_config.h SDL2-2.32.10.aros/include/SDL_config.h
+--- SDL2-2.32.10/include/SDL_config.h	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/include/SDL_config.h	2025-07-27 14:24:11.508841313 +0000
 @@ -43,10 +43,14 @@
  #include "SDL_config_android.h"
  #elif defined(__OS2__)
@@ -513,9 +513,9 @@ diff -ruN SDL2-2.32.8/include/SDL_config.h SDL2-2.32.8.aros/include/SDL_config.h
  #else
  /* This is a minimal configuration just to get SDL running on new platforms. */
  #include "SDL_config_minimal.h"
-diff -ruN SDL2-2.32.8/include/SDL_endian.h SDL2-2.32.8.aros/include/SDL_endian.h
---- SDL2-2.32.8/include/SDL_endian.h	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/include/SDL_endian.h	2025-07-27 14:24:11.608841313 +0000
+diff -ruN SDL2-2.32.10/include/SDL_endian.h SDL2-2.32.10.aros/include/SDL_endian.h
+--- SDL2-2.32.10/include/SDL_endian.h	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/include/SDL_endian.h	2025-07-27 14:24:11.608841313 +0000
 @@ -353,6 +353,12 @@
      return swapper.f;
  }
@@ -529,9 +529,9 @@ diff -ruN SDL2-2.32.8/include/SDL_endian.h SDL2-2.32.8.aros/include/SDL_endian.h
  /* remove extra macros */
  #undef HAS_BROKEN_BSWAP
  #undef HAS_BUILTIN_BSWAP16
-diff -ruN SDL2-2.32.8/include/SDL_opengl_glext.h SDL2-2.32.8.aros/include/SDL_opengl_glext.h
---- SDL2-2.32.8/include/SDL_opengl_glext.h	2023-02-04 07:02:10.000000000 +0000
-+++ SDL2-2.32.8.aros/include/SDL_opengl_glext.h	2025-08-02 12:12:54.456103703 +0000
+diff -ruN SDL2-2.32.10/include/SDL_opengl_glext.h SDL2-2.32.10.aros/include/SDL_opengl_glext.h
+--- SDL2-2.32.10/include/SDL_opengl_glext.h	2023-02-04 07:02:10.000000000 +0000
++++ SDL2-2.32.10.aros/include/SDL_opengl_glext.h	2025-08-02 12:12:54.456103703 +0000
 @@ -762,8 +762,10 @@
  
  #ifndef GL_VERSION_1_5
@@ -574,9 +574,9 @@ diff -ruN SDL2-2.32.8/include/SDL_opengl_glext.h SDL2-2.32.8.aros/include/SDL_op
  #define GL_BUFFER_SIZE_ARB                0x8764
  #define GL_BUFFER_USAGE_ARB               0x8765
  #define GL_ARRAY_BUFFER_ARB               0x8892
-diff -ruN SDL2-2.32.8/include/SDL_rwops.h SDL2-2.32.8.aros/include/SDL_rwops.h
---- SDL2-2.32.8/include/SDL_rwops.h	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/include/SDL_rwops.h	2025-07-28 14:22:41.854722088 +0000
+diff -ruN SDL2-2.32.10/include/SDL_rwops.h SDL2-2.32.10.aros/include/SDL_rwops.h
+--- SDL2-2.32.10/include/SDL_rwops.h	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/include/SDL_rwops.h	2025-07-28 14:22:41.854722088 +0000
 @@ -47,6 +47,7 @@
  #define SDL_RWOPS_JNIFILE   3U  /**< Android asset */
  #define SDL_RWOPS_MEMORY    4U  /**< Memory stream */
@@ -630,9 +630,9 @@ diff -ruN SDL2-2.32.8/include/SDL_rwops.h SDL2-2.32.8.aros/include/SDL_rwops.h
  
  extern DECLSPEC SDL_RWops *SDLCALL SDL_RWFromFP(FILE * fp, SDL_bool autoclose);
  
-diff -ruN SDL2-2.32.8/include/SDL_syswm.h SDL2-2.32.8.aros/include/SDL_syswm.h
---- SDL2-2.32.8/include/SDL_syswm.h	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/include/SDL_syswm.h	2025-07-28 13:26:12.821909338 +0000
+diff -ruN SDL2-2.32.10/include/SDL_syswm.h SDL2-2.32.10.aros/include/SDL_syswm.h
+--- SDL2-2.32.10/include/SDL_syswm.h	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/include/SDL_syswm.h	2025-07-28 13:26:12.821909338 +0000
 @@ -143,12 +143,14 @@
      SDL_SYSWM_WAYLAND,
      SDL_SYSWM_MIR,  /* no longer available, left for API/ABI compatibility. Remove in 2.1! */
@@ -662,9 +662,9 @@ diff -ruN SDL2-2.32.8/include/SDL_syswm.h SDL2-2.32.8.aros/include/SDL_syswm.h
  
  #if defined(SDL_VIDEO_DRIVER_OS2)
          struct
-diff -ruN SDL2-2.32.8/include/SDL_test.h SDL2-2.32.8.aros/include/SDL_test.h
---- SDL2-2.32.8/include/SDL_test.h	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/include/SDL_test.h	2025-07-27 14:24:11.872841315 +0000
+diff -ruN SDL2-2.32.10/include/SDL_test.h SDL2-2.32.10.aros/include/SDL_test.h
+--- SDL2-2.32.10/include/SDL_test.h	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/include/SDL_test.h	2025-07-27 14:24:11.872841315 +0000
 @@ -44,6 +44,14 @@
  #include "SDL_test_memory.h"
  #include "SDL_test_random.h"
@@ -680,9 +680,9 @@ diff -ruN SDL2-2.32.8/include/SDL_test.h SDL2-2.32.8.aros/include/SDL_test.h
  #include "begin_code.h"
  /* Set up for C function definitions, even when using C++ */
  #ifdef __cplusplus
-diff -ruN SDL2-2.32.8/include/SDL_thread.h SDL2-2.32.8.aros/include/SDL_thread.h
---- SDL2-2.32.8/include/SDL_thread.h	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/include/SDL_thread.h	2025-08-01 13:03:20.604152957 +0000
+diff -ruN SDL2-2.32.10/include/SDL_thread.h SDL2-2.32.10.aros/include/SDL_thread.h
+--- SDL2-2.32.10/include/SDL_thread.h	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/include/SDL_thread.h	2025-08-01 13:03:20.604152957 +0000
 @@ -57,7 +57,11 @@
  typedef struct SDL_Thread SDL_Thread;
  
@@ -695,9 +695,9 @@ diff -ruN SDL2-2.32.8/include/SDL_thread.h SDL2-2.32.8.aros/include/SDL_thread.h
  
  /* Thread local storage ID, 0 is the invalid ID */
  typedef unsigned int SDL_TLSID;
-diff -ruN SDL2-2.32.8/sdl2-config SDL2-2.32.8.aros/sdl2-config
---- SDL2-2.32.8/sdl2-config	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/sdl2-config	2025-07-27 14:24:12.084841316 +0000
+diff -ruN SDL2-2.32.10/sdl2-config SDL2-2.32.10.aros/sdl2-config
+--- SDL2-2.32.10/sdl2-config	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/sdl2-config	2025-07-27 14:24:12.084841316 +0000
 @@ -0,0 +1,56 @@
 +#!/bin/sh
 +
@@ -755,9 +755,9 @@ diff -ruN SDL2-2.32.8/sdl2-config SDL2-2.32.8.aros/sdl2-config
 +  esac
 +  shift
 +done
-diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/ahi/SDL_ahi_audio.c
---- SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/audio/ahi/SDL_ahi_audio.c	2025-08-13 04:18:25.693441335 +0000
+diff -ruN SDL2-2.32.10/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.10.aros/src/audio/ahi/SDL_ahi_audio.c
+--- SDL2-2.32.10/src/audio/ahi/SDL_ahi_audio.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/audio/ahi/SDL_ahi_audio.c	2025-08-13 04:18:25.693441335 +0000
 @@ -0,0 +1,591 @@
 +/*
 +  Simple DirectMedia Layer
@@ -1350,9 +1350,9 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.c SDL2-2.32.8.aros/src/audio/a
 +AudioBootStrap AHIAUD_bootstrap = {
 +	"AHI", "AHI audio driver", AHI_Init, SDL_FALSE 
 +};
-diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.h SDL2-2.32.8.aros/src/audio/ahi/SDL_ahi_audio.h
---- SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/audio/ahi/SDL_ahi_audio.h	2025-08-12 12:01:03.537549247 +0000
+diff -ruN SDL2-2.32.10/src/audio/ahi/SDL_ahi_audio.h SDL2-2.32.10.aros/src/audio/ahi/SDL_ahi_audio.h
+--- SDL2-2.32.10/src/audio/ahi/SDL_ahi_audio.h	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/audio/ahi/SDL_ahi_audio.h	2025-08-12 12:01:03.537549247 +0000
 @@ -0,0 +1,49 @@
 +/*
 +  Simple DirectMedia Layer
@@ -1403,9 +1403,9 @@ diff -ruN SDL2-2.32.8/src/audio/ahi/SDL_ahi_audio.h SDL2-2.32.8.aros/src/audio/a
 +typedef struct SDL_PrivateAudioData AHIAudioData;
 +
 +#endif /* _SDL_ahi_audio_h */
-diff -ruN SDL2-2.32.8/src/audio/SDL_audio.c SDL2-2.32.8.aros/src/audio/SDL_audio.c
---- SDL2-2.32.8/src/audio/SDL_audio.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/audio/SDL_audio.c	2025-07-27 14:24:12.824841320 +0000
+diff -ruN SDL2-2.32.10/src/audio/SDL_audio.c SDL2-2.32.10.aros/src/audio/SDL_audio.c
+--- SDL2-2.32.10/src/audio/SDL_audio.c	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/src/audio/SDL_audio.c	2025-07-27 14:24:12.824841320 +0000
 @@ -135,6 +135,9 @@
  #ifdef SDL_AUDIO_DRIVER_DUMMY
      &DUMMYAUDIO_bootstrap,
@@ -1416,9 +1416,9 @@ diff -ruN SDL2-2.32.8/src/audio/SDL_audio.c SDL2-2.32.8.aros/src/audio/SDL_audio
      NULL
  };
  
-diff -ruN SDL2-2.32.8/src/audio/SDL_sysaudio.h SDL2-2.32.8.aros/src/audio/SDL_sysaudio.h
---- SDL2-2.32.8/src/audio/SDL_sysaudio.h	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/audio/SDL_sysaudio.h	2025-07-27 14:24:12.880841320 +0000
+diff -ruN SDL2-2.32.10/src/audio/SDL_sysaudio.h SDL2-2.32.10.aros/src/audio/SDL_sysaudio.h
+--- SDL2-2.32.10/src/audio/SDL_sysaudio.h	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/src/audio/SDL_sysaudio.h	2025-07-27 14:24:12.880841320 +0000
 @@ -208,6 +208,7 @@
  extern AudioBootStrap VITAAUD_bootstrap;
  extern AudioBootStrap N3DSAUDIO_bootstrap;
@@ -1427,9 +1427,9 @@ diff -ruN SDL2-2.32.8/src/audio/SDL_sysaudio.h SDL2-2.32.8.aros/src/audio/SDL_sy
  extern AudioBootStrap OS2AUDIO_bootstrap;
  
  #endif /* SDL_sysaudio_h_ */
-diff -ruN SDL2-2.32.8/src/core/aros/SDL_cpu.c SDL2-2.32.8.aros/src/core/aros/SDL_cpu.c
---- SDL2-2.32.8/src/core/aros/SDL_cpu.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/core/aros/SDL_cpu.c	2025-07-27 14:24:13.576841324 +0000
+diff -ruN SDL2-2.32.10/src/core/aros/SDL_cpu.c SDL2-2.32.10.aros/src/core/aros/SDL_cpu.c
+--- SDL2-2.32.10/src/core/aros/SDL_cpu.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/core/aros/SDL_cpu.c	2025-07-27 14:24:13.576841324 +0000
 @@ -0,0 +1,43 @@
 +/*
 +  Simple DirectMedia Layer
@@ -1474,9 +1474,9 @@ diff -ruN SDL2-2.32.8/src/core/aros/SDL_cpu.c SDL2-2.32.8.aros/src/core/aros/SDL
 +//		copy_and_swap32_generic(srcx, destx, units);
 +	}
 +}
-diff -ruN SDL2-2.32.8/src/core/aros/SDL_cpu.h SDL2-2.32.8.aros/src/core/aros/SDL_cpu.h
---- SDL2-2.32.8/src/core/aros/SDL_cpu.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/core/aros/SDL_cpu.h	2025-07-27 14:24:13.584841324 +0000
+diff -ruN SDL2-2.32.10/src/core/aros/SDL_cpu.h SDL2-2.32.10.aros/src/core/aros/SDL_cpu.h
+--- SDL2-2.32.10/src/core/aros/SDL_cpu.h	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/core/aros/SDL_cpu.h	2025-07-27 14:24:13.584841324 +0000
 @@ -0,0 +1,34 @@
 +/*
 +  Simple DirectMedia Layer
@@ -1512,18 +1512,18 @@ diff -ruN SDL2-2.32.8/src/core/aros/SDL_cpu.h SDL2-2.32.8.aros/src/core/aros/SDL
 +extern void SDL_CopyAndSwap32(APTR srcx, APTR destx, LONG units);
 +
 +#endif /* SDL_CORE_AROS_CPU_H */
-diff -ruN SDL2-2.32.8/src/core/morphos/SDL_mosversion.h SDL2-2.32.8.aros/src/core/morphos/SDL_mosversion.h
---- SDL2-2.32.8/src/core/morphos/SDL_mosversion.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/core/morphos/SDL_mosversion.h	2025-07-27 14:24:13.256841322 +0000
+diff -ruN SDL2-2.32.10/src/core/morphos/SDL_mosversion.h SDL2-2.32.10.aros/src/core/morphos/SDL_mosversion.h
+--- SDL2-2.32.10/src/core/morphos/SDL_mosversion.h	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/core/morphos/SDL_mosversion.h	2025-07-27 14:24:13.256841322 +0000
 @@ -0,0 +1,5 @@
 +#define	str(s) #s
 +#define 	xstr(s) str(s)
 +#define	VERSION		53
 +#define	REVISION	21
 +#define	VERSTAG	"\0$VER: sdl2.library " xstr(VERSION) "." xstr(REVISION) " (" __AMIGADATE__ ") © Bruno Peloille, Szilard Biro, Ilkka Lehtoranta"
-diff -ruN SDL2-2.32.8/src/cpuinfo/SDL_cpuinfo.c SDL2-2.32.8.aros/src/cpuinfo/SDL_cpuinfo.c
---- SDL2-2.32.8/src/cpuinfo/SDL_cpuinfo.c	2025-05-08 20:10:28.000000000 +0000
-+++ SDL2-2.32.8.aros/src/cpuinfo/SDL_cpuinfo.c	2025-07-29 13:06:27.701401441 +0000
+diff -ruN SDL2-2.32.10/src/cpuinfo/SDL_cpuinfo.c SDL2-2.32.10.aros/src/cpuinfo/SDL_cpuinfo.c
+--- SDL2-2.32.10/src/cpuinfo/SDL_cpuinfo.c	2025-05-08 20:10:28.000000000 +0000
++++ SDL2-2.32.10.aros/src/cpuinfo/SDL_cpuinfo.c	2025-07-29 13:06:27.701401441 +0000
 @@ -62,6 +62,16 @@
  #include <setjmp.h>
  #endif
@@ -1599,9 +1599,9 @@ diff -ruN SDL2-2.32.8/src/cpuinfo/SDL_cpuinfo.c SDL2-2.32.8.aros/src/cpuinfo/SDL
  #ifdef __VITA__
          if (SDL_SystemRAM <= 0) {
              /* Vita has 512MiB on SoC, that's split into 256MiB(+109MiB in extended memory mode) for app
-diff -ruN SDL2-2.32.8/src/dynapi/SDL_dynapi.h SDL2-2.32.8.aros/src/dynapi/SDL_dynapi.h
---- SDL2-2.32.8/src/dynapi/SDL_dynapi.h	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/dynapi/SDL_dynapi.h	2025-07-28 12:54:16.736849927 +0000
+diff -ruN SDL2-2.32.10/src/dynapi/SDL_dynapi.h SDL2-2.32.10.aros/src/dynapi/SDL_dynapi.h
+--- SDL2-2.32.10/src/dynapi/SDL_dynapi.h	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/src/dynapi/SDL_dynapi.h	2025-07-28 12:54:16.736849927 +0000
 @@ -69,6 +69,8 @@
  #define SDL_DYNAMIC_API 0 /* devkitARM doesn't support dynamic linking */
  #elif defined(DYNAPI_NEEDS_DLOPEN) && !defined(HAVE_DLOPEN)
@@ -1611,9 +1611,9 @@ diff -ruN SDL2-2.32.8/src/dynapi/SDL_dynapi.h SDL2-2.32.8.aros/src/dynapi/SDL_dy
  #endif
  
  /* everyone else. This is where we turn on the API if nothing forced it off. */
-diff -ruN SDL2-2.32.8/src/events/scancodes_amigaos.h SDL2-2.32.8.aros/src/events/scancodes_amigaos.h
---- SDL2-2.32.8/src/events/scancodes_amigaos.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/events/scancodes_amigaos.h	2025-07-29 10:33:58.597401006 +0000
+diff -ruN SDL2-2.32.10/src/events/scancodes_amigaos.h SDL2-2.32.10.aros/src/events/scancodes_amigaos.h
+--- SDL2-2.32.10/src/events/scancodes_amigaos.h	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/events/scancodes_amigaos.h	2025-07-29 10:33:58.597401006 +0000
 @@ -0,0 +1,144 @@
 +/*
 +  Simple DirectMedia Layer
@@ -1759,9 +1759,9 @@ diff -ruN SDL2-2.32.8/src/events/scancodes_amigaos.h SDL2-2.32.8.aros/src/events
 +    /*  113 */    SDL_SCANCODE_END,
 +};
 +/* *INDENT-ON* */
-diff -ruN SDL2-2.32.8/src/events/SDL_events.c SDL2-2.32.8.aros/src/events/SDL_events.c
---- SDL2-2.32.8/src/events/SDL_events.c	2025-05-19 21:24:41.000000000 +0000
-+++ SDL2-2.32.8.aros/src/events/SDL_events.c	2025-08-12 16:47:42.873549765 +0000
+diff -ruN SDL2-2.32.10/src/events/SDL_events.c SDL2-2.32.10.aros/src/events/SDL_events.c
+--- SDL2-2.32.10/src/events/SDL_events.c	2025-05-19 21:24:41.000000000 +0000
++++ SDL2-2.32.10.aros/src/events/SDL_events.c	2025-08-12 16:47:42.873549765 +0000
 @@ -916,6 +916,12 @@
      if (_this) {
          _this->PumpEvents(_this);
@@ -1775,9 +1775,9 @@ diff -ruN SDL2-2.32.8/src/events/SDL_events.c SDL2-2.32.8.aros/src/events/SDL_ev
  
  #ifndef SDL_JOYSTICK_DISABLED
      /* Check for joystick state change */
-diff -ruN SDL2-2.32.8/src/file/SDL_rwops.c SDL2-2.32.8.aros/src/file/SDL_rwops.c
---- SDL2-2.32.8/src/file/SDL_rwops.c	2025-01-28 07:47:10.000000000 +0000
-+++ SDL2-2.32.8.aros/src/file/SDL_rwops.c	2025-08-05 16:37:40.256632360 +0000
+diff -ruN SDL2-2.32.10/src/file/SDL_rwops.c SDL2-2.32.10.aros/src/file/SDL_rwops.c
+--- SDL2-2.32.10/src/file/SDL_rwops.c	2025-01-28 07:47:10.000000000 +0000
++++ SDL2-2.32.10.aros/src/file/SDL_rwops.c	2025-08-05 16:37:40.256632360 +0000
 @@ -67,6 +67,35 @@
  #include "nacl_io/nacl_io.h"
  #endif
@@ -2111,9 +2111,9 @@ diff -ruN SDL2-2.32.8/src/file/SDL_rwops.c SDL2-2.32.8.aros/src/file/SDL_rwops.c
          area->type = SDL_RWOPS_UNKNOWN;
      }
      return area;
-diff -ruN SDL2-2.32.8/src/filesystem/aros/SDL_sysfilesystem.c SDL2-2.32.8.aros/src/filesystem/aros/SDL_sysfilesystem.c
---- SDL2-2.32.8/src/filesystem/aros/SDL_sysfilesystem.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/filesystem/aros/SDL_sysfilesystem.c	2025-08-05 16:29:56.128628931 +0000
+diff -ruN SDL2-2.32.10/src/filesystem/aros/SDL_sysfilesystem.c SDL2-2.32.10.aros/src/filesystem/aros/SDL_sysfilesystem.c
+--- SDL2-2.32.10/src/filesystem/aros/SDL_sysfilesystem.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/filesystem/aros/SDL_sysfilesystem.c	2025-08-05 16:29:56.128628931 +0000
 @@ -0,0 +1,148 @@
 +/*
 +  Simple DirectMedia Layer
@@ -2263,9 +2263,9 @@ diff -ruN SDL2-2.32.8/src/filesystem/aros/SDL_sysfilesystem.c SDL2-2.32.8.aros/s
 +#endif /* SDL_FILESYSTEM_AROS */
 +
 +/* vi: set ts=4 sw=4 expandtab: */
-diff -ruN SDL2-2.32.8/src/joystick/aros/SDL_sysjoystick.c SDL2-2.32.8.aros/src/joystick/aros/SDL_sysjoystick.c
---- SDL2-2.32.8/src/joystick/aros/SDL_sysjoystick.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/joystick/aros/SDL_sysjoystick.c	2025-11-25 17:29:32.754532822 +0000
+diff -ruN SDL2-2.32.10/src/joystick/aros/SDL_sysjoystick.c SDL2-2.32.10.aros/src/joystick/aros/SDL_sysjoystick.c
+--- SDL2-2.32.10/src/joystick/aros/SDL_sysjoystick.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/joystick/aros/SDL_sysjoystick.c	2025-11-25 17:29:32.754532822 +0000
 @@ -0,0 +1,527 @@
 +/*
 +  Simple DirectMedia Layer
@@ -2794,9 +2794,9 @@ diff -ruN SDL2-2.32.8/src/joystick/aros/SDL_sysjoystick.c SDL2-2.32.8.aros/src/j
 +};
 +
 +#endif
-diff -ruN SDL2-2.32.8/src/joystick/aros/SDL_sysjoystick_c.h SDL2-2.32.8.aros/src/joystick/aros/SDL_sysjoystick_c.h
---- SDL2-2.32.8/src/joystick/aros/SDL_sysjoystick_c.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/joystick/aros/SDL_sysjoystick_c.h	2025-09-30 02:28:46.896412440 +0000
+diff -ruN SDL2-2.32.10/src/joystick/aros/SDL_sysjoystick_c.h SDL2-2.32.10.aros/src/joystick/aros/SDL_sysjoystick_c.h
+--- SDL2-2.32.10/src/joystick/aros/SDL_sysjoystick_c.h	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/joystick/aros/SDL_sysjoystick_c.h	2025-09-30 02:28:46.896412440 +0000
 @@ -0,0 +1,41 @@
 +/*
 +  Simple DirectMedia Layer
@@ -2840,9 +2840,9 @@ diff -ruN SDL2-2.32.8/src/joystick/aros/SDL_sysjoystick_c.h SDL2-2.32.8.aros/src
 +
 +#endif
 \ No newline at end of file
-diff -ruN SDL2-2.32.8/src/joystick/SDL_gamecontrollerdb.h SDL2-2.32.8.aros/src/joystick/SDL_gamecontrollerdb.h
---- SDL2-2.32.8/src/joystick/SDL_gamecontrollerdb.h	2025-01-18 15:07:12.000000000 +0000
-+++ SDL2-2.32.8.aros/src/joystick/SDL_gamecontrollerdb.h	2025-10-26 17:37:56.168796967 +0000
+diff -ruN SDL2-2.32.10/src/joystick/SDL_gamecontrollerdb.h SDL2-2.32.10.aros/src/joystick/SDL_gamecontrollerdb.h
+--- SDL2-2.32.10/src/joystick/SDL_gamecontrollerdb.h	2025-01-18 15:07:12.000000000 +0000
++++ SDL2-2.32.10.aros/src/joystick/SDL_gamecontrollerdb.h	2025-10-26 17:37:56.168796967 +0000
 @@ -32,6 +32,11 @@
  #ifdef SDL_JOYSTICK_XINPUT
      "xinput,*,a:b0,b:b1,back:b6,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b10,leftshoulder:b4,leftstick:b8,lefttrigger:a2,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b9,righttrigger:a5,rightx:a3,righty:a4,start:b7,x:b2,y:b3,",
@@ -2866,9 +2866,9 @@ diff -ruN SDL2-2.32.8/src/joystick/SDL_gamecontrollerdb.h SDL2-2.32.8.aros/src/j
  #ifdef SDL_JOYSTICK_N3DS
      "000000004e696e74656e646f20334400,Nintendo 3DS,crc:3210,a:b0,b:b1,back:b2,dpdown:b7,dpleft:b5,dpright:b4,dpup:b6,leftshoulder:b9,lefttrigger:b14,leftx:a0,lefty:a1,rightshoulder:b8,righttrigger:b15,rightx:a2,righty:a3,start:b3,x:b10,y:b11,",
  #endif
-diff -ruN SDL2-2.32.8/src/joystick/SDL_joystick.c SDL2-2.32.8.aros/src/joystick/SDL_joystick.c
---- SDL2-2.32.8/src/joystick/SDL_joystick.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/joystick/SDL_joystick.c	2025-09-30 01:39:59.172551172 +0000
+diff -ruN SDL2-2.32.10/src/joystick/SDL_joystick.c SDL2-2.32.10.aros/src/joystick/SDL_joystick.c
+--- SDL2-2.32.10/src/joystick/SDL_joystick.c	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/src/joystick/SDL_joystick.c	2025-09-30 01:39:59.172551172 +0000
 @@ -100,6 +100,9 @@
  #ifdef SDL_JOYSTICK_VIRTUAL
      &SDL_VIRTUAL_JoystickDriver,
@@ -2912,9 +2912,9 @@ diff -ruN SDL2-2.32.8/src/joystick/SDL_joystick.c SDL2-2.32.8.aros/src/joystick/
              joystick->rumble_resend = now + SDL_RUMBLE_RESEND_MS;
              if (joystick->rumble_resend == 0) {
                  joystick->rumble_resend = 1;
-diff -ruN SDL2-2.32.8/src/joystick/SDL_sysjoystick.h SDL2-2.32.8.aros/src/joystick/SDL_sysjoystick.h
---- SDL2-2.32.8/src/joystick/SDL_sysjoystick.h	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/joystick/SDL_sysjoystick.h	2025-09-30 01:48:03.676503409 +0000
+diff -ruN SDL2-2.32.10/src/joystick/SDL_sysjoystick.h SDL2-2.32.10.aros/src/joystick/SDL_sysjoystick.h
+--- SDL2-2.32.10/src/joystick/SDL_sysjoystick.h	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/src/joystick/SDL_sysjoystick.h	2025-09-30 01:48:03.676503409 +0000
 @@ -191,7 +191,11 @@
      int (*Open)(SDL_Joystick *joystick, int device_index);
  
@@ -2938,9 +2938,9 @@ diff -ruN SDL2-2.32.8/src/joystick/SDL_sysjoystick.h SDL2-2.32.8.aros/src/joysti
  /* Ends C function definitions when using C++ */
  #ifdef __cplusplus
  }
-diff -ruN SDL2-2.32.8/src/locale/aros/SDL_syslocale.c SDL2-2.32.8.aros/src/locale/aros/SDL_syslocale.c
---- SDL2-2.32.8/src/locale/aros/SDL_syslocale.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/locale/aros/SDL_syslocale.c	2025-08-04 16:32:11.280791557 +0000
+diff -ruN SDL2-2.32.10/src/locale/aros/SDL_syslocale.c SDL2-2.32.10.aros/src/locale/aros/SDL_syslocale.c
+--- SDL2-2.32.10/src/locale/aros/SDL_syslocale.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/locale/aros/SDL_syslocale.c	2025-08-04 16:32:11.280791557 +0000
 @@ -0,0 +1,98 @@
 +/*
 +  Simple DirectMedia Layer
@@ -3040,9 +3040,9 @@ diff -ruN SDL2-2.32.8/src/locale/aros/SDL_syslocale.c SDL2-2.32.8.aros/src/local
 +		snprintf(buf, buflen, "en_GB");  
 +
 +}
-diff -ruN SDL2-2.32.8/src/misc/amigaos/SDL_sysurl.c SDL2-2.32.8.aros/src/misc/amigaos/SDL_sysurl.c
---- SDL2-2.32.8/src/misc/amigaos/SDL_sysurl.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/misc/amigaos/SDL_sysurl.c	2025-07-27 14:24:16.128841337 +0000
+diff -ruN SDL2-2.32.10/src/misc/amigaos/SDL_sysurl.c SDL2-2.32.10.aros/src/misc/amigaos/SDL_sysurl.c
+--- SDL2-2.32.10/src/misc/amigaos/SDL_sysurl.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/misc/amigaos/SDL_sysurl.c	2025-07-27 14:24:16.128841337 +0000
 @@ -0,0 +1,48 @@
 +/*
 +  Simple DirectMedia Layer
@@ -3092,9 +3092,9 @@ diff -ruN SDL2-2.32.8/src/misc/amigaos/SDL_sysurl.c SDL2-2.32.8.aros/src/misc/am
 +    return 0;
 +}
 +
-diff -ruN SDL2-2.32.8/src/misc/aros/SDL_getenv.c SDL2-2.32.8.aros/src/misc/aros/SDL_getenv.c
---- SDL2-2.32.8/src/misc/aros/SDL_getenv.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/misc/aros/SDL_getenv.c	2025-08-04 18:43:16.964792808 +0000
+diff -ruN SDL2-2.32.10/src/misc/aros/SDL_getenv.c SDL2-2.32.10.aros/src/misc/aros/SDL_getenv.c
+--- SDL2-2.32.10/src/misc/aros/SDL_getenv.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/misc/aros/SDL_getenv.c	2025-08-04 18:43:16.964792808 +0000
 @@ -0,0 +1,77 @@
 +/*
 +  Simple DirectMedia Layer
@@ -3173,9 +3173,9 @@ diff -ruN SDL2-2.32.8/src/misc/aros/SDL_getenv.c SDL2-2.32.8.aros/src/misc/aros/
 +			return 0;
 +	return -1;
 +}
-diff -ruN SDL2-2.32.8/src/misc/aros/SDL_misc.c SDL2-2.32.8.aros/src/misc/aros/SDL_misc.c
---- SDL2-2.32.8/src/misc/aros/SDL_misc.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/misc/aros/SDL_misc.c	2025-08-04 18:19:55.948791136 +0000
+diff -ruN SDL2-2.32.10/src/misc/aros/SDL_misc.c SDL2-2.32.10.aros/src/misc/aros/SDL_misc.c
+--- SDL2-2.32.10/src/misc/aros/SDL_misc.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/misc/aros/SDL_misc.c	2025-08-04 18:19:55.948791136 +0000
 @@ -0,0 +1,140 @@
 +/*
 +  Simple DirectMedia Layer
@@ -3317,9 +3317,9 @@ diff -ruN SDL2-2.32.8/src/misc/aros/SDL_misc.c SDL2-2.32.8.aros/src/misc/aros/SD
 +	*dst++ = '\0';
 +	return path;
 +}
-diff -ruN SDL2-2.32.8/src/misc/aros/SDL_misc.h SDL2-2.32.8.aros/src/misc/aros/SDL_misc.h
---- SDL2-2.32.8/src/misc/aros/SDL_misc.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/misc/aros/SDL_misc.h	2025-08-04 18:35:49.536792718 +0000
+diff -ruN SDL2-2.32.10/src/misc/aros/SDL_misc.h SDL2-2.32.10.aros/src/misc/aros/SDL_misc.h
+--- SDL2-2.32.10/src/misc/aros/SDL_misc.h	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/misc/aros/SDL_misc.h	2025-08-04 18:35:49.536792718 +0000
 @@ -0,0 +1,35 @@
 +/*
 +  Simple DirectMedia Layer
@@ -3356,9 +3356,9 @@ diff -ruN SDL2-2.32.8/src/misc/aros/SDL_misc.h SDL2-2.32.8.aros/src/misc/aros/SD
 +extern char *AROS_ConvertPath(const char *fn);
 +
 +#endif /* SDL_MISC_AROS_MISC_H */
-diff -ruN SDL2-2.32.8/src/power/aros/SDL_syspower.c SDL2-2.32.8.aros/src/power/aros/SDL_syspower.c
---- SDL2-2.32.8/src/power/aros/SDL_syspower.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/power/aros/SDL_syspower.c	2025-07-29 12:46:22.777400298 +0000
+diff -ruN SDL2-2.32.10/src/power/aros/SDL_syspower.c SDL2-2.32.10.aros/src/power/aros/SDL_syspower.c
+--- SDL2-2.32.10/src/power/aros/SDL_syspower.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/power/aros/SDL_syspower.c	2025-07-29 12:46:22.777400298 +0000
 @@ -0,0 +1,36 @@
 +/*
 +  Simple DirectMedia Layer
@@ -3396,9 +3396,9 @@ diff -ruN SDL2-2.32.8/src/power/aros/SDL_syspower.c SDL2-2.32.8.aros/src/power/a
 +#endif /* SDL_POWER_AROS */
 +#endif /* SDL_POWER_DISABLED */
 +
-diff -ruN SDL2-2.32.8/src/power/SDL_power.c SDL2-2.32.8.aros/src/power/SDL_power.c
---- SDL2-2.32.8/src/power/SDL_power.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/power/SDL_power.c	2025-07-29 12:44:23.481400442 +0000
+diff -ruN SDL2-2.32.10/src/power/SDL_power.c SDL2-2.32.10.aros/src/power/SDL_power.c
+--- SDL2-2.32.10/src/power/SDL_power.c	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/src/power/SDL_power.c	2025-07-29 12:44:23.481400442 +0000
 @@ -78,7 +78,12 @@
  #ifdef SDL_POWER_EMSCRIPTEN /* handles Emscripten */
      SDL_GetPowerInfo_Emscripten,
@@ -3413,9 +3413,9 @@ diff -ruN SDL2-2.32.8/src/power/SDL_power.c SDL2-2.32.8.aros/src/power/SDL_power
  #ifdef SDL_POWER_HARDWIRED
      SDL_GetPowerInfo_Hardwired,
  #endif
-diff -ruN SDL2-2.32.8/src/power/SDL_syspower.h SDL2-2.32.8.aros/src/power/SDL_syspower.h
---- SDL2-2.32.8/src/power/SDL_syspower.h	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/power/SDL_syspower.h	2025-07-29 12:43:55.325400476 +0000
+diff -ruN SDL2-2.32.10/src/power/SDL_syspower.h SDL2-2.32.10.aros/src/power/SDL_syspower.h
+--- SDL2-2.32.10/src/power/SDL_syspower.h	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/src/power/SDL_syspower.h	2025-07-29 12:43:55.325400476 +0000
 @@ -42,6 +42,12 @@
  SDL_bool SDL_GetPowerInfo_N3DS(SDL_PowerState *, int *, int *);
  SDL_bool SDL_GetPowerInfo_WinRT(SDL_PowerState *, int *, int *);
@@ -3429,9 +3429,9 @@ diff -ruN SDL2-2.32.8/src/power/SDL_syspower.h SDL2-2.32.8.aros/src/power/SDL_sy
  
  /* this one is static in SDL_power.c */
  /* SDL_bool SDL_GetPowerInfo_Hardwired(SDL_PowerState *, int *, int *);*/
-diff -ruN SDL2-2.32.8/src/render/opengl/SDL_render_gl.c SDL2-2.32.8.aros/src/render/opengl/SDL_render_gl.c
---- SDL2-2.32.8/src/render/opengl/SDL_render_gl.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/render/opengl/SDL_render_gl.c	2025-08-05 16:37:28.748631871 +0000
+diff -ruN SDL2-2.32.10/src/render/opengl/SDL_render_gl.c SDL2-2.32.10.aros/src/render/opengl/SDL_render_gl.c
+--- SDL2-2.32.10/src/render/opengl/SDL_render_gl.c	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/src/render/opengl/SDL_render_gl.c	2025-08-05 16:37:28.748631871 +0000
 @@ -21,7 +21,15 @@
  #include "../../SDL_internal.h"
  
@@ -3520,9 +3520,9 @@ diff -ruN SDL2-2.32.8/src/render/opengl/SDL_render_gl.c SDL2-2.32.8.aros/src/ren
      data->framebuffers = NULL;
  
      /* Set up parameters for rendering */
-diff -ruN SDL2-2.32.8/src/render/opengl/SDL_shaders_gl.c SDL2-2.32.8.aros/src/render/opengl/SDL_shaders_gl.c
---- SDL2-2.32.8/src/render/opengl/SDL_shaders_gl.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/render/opengl/SDL_shaders_gl.c	2025-07-27 14:24:16.620841339 +0000
+diff -ruN SDL2-2.32.10/src/render/opengl/SDL_shaders_gl.c SDL2-2.32.10.aros/src/render/opengl/SDL_shaders_gl.c
+--- SDL2-2.32.10/src/render/opengl/SDL_shaders_gl.c	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/src/render/opengl/SDL_shaders_gl.c	2025-07-27 14:24:16.620841339 +0000
 @@ -23,6 +23,11 @@
  #if SDL_VIDEO_RENDER_OGL
  
@@ -3535,9 +3535,9 @@ diff -ruN SDL2-2.32.8/src/render/opengl/SDL_shaders_gl.c SDL2-2.32.8.aros/src/re
  #include "SDL_opengl.h"
  #include "SDL_video.h"
  #include "SDL_shaders_gl.h"
-diff -ruN SDL2-2.32.8/src/SDL.c SDL2-2.32.8.aros/src/SDL.c
---- SDL2-2.32.8/src/SDL.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/SDL.c	2025-07-28 20:45:10.753574555 +0000
+diff -ruN SDL2-2.32.10/src/SDL.c SDL2-2.32.10.aros/src/SDL.c
+--- SDL2-2.32.10/src/SDL.c	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/src/SDL.c	2025-07-28 20:45:10.753574555 +0000
 @@ -49,7 +49,6 @@
  #include "haptic/SDL_haptic_c.h"
  #include "joystick/SDL_joystick_c.h"
@@ -3675,9 +3675,9 @@ diff -ruN SDL2-2.32.8/src/SDL.c SDL2-2.32.8.aros/src/SDL.c
  #elif defined(__VITA__)
      return "PlayStation Vita";
  #elif defined(__NGAGE__)
-diff -ruN SDL2-2.32.8/src/SDL_error.c SDL2-2.32.8.aros/src/SDL_error.c
---- SDL2-2.32.8/src/SDL_error.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/SDL_error.c	2025-07-30 18:46:14.000000000 +0000
+diff -ruN SDL2-2.32.10/src/SDL_error.c SDL2-2.32.10.aros/src/SDL_error.c
+--- SDL2-2.32.10/src/SDL_error.c	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/src/SDL_error.c	2025-07-30 18:46:14.000000000 +0000
 @@ -60,6 +60,43 @@
      return -1;
  }
@@ -3729,9 +3729,9 @@ diff -ruN SDL2-2.32.8/src/SDL_error.c SDL2-2.32.8.aros/src/SDL_error.c
 +#endif
 +
  /* vi: set ts=4 sw=4 expandtab: */
-diff -ruN SDL2-2.32.8/src/SDL_log.c SDL2-2.32.8.aros/src/SDL_log.c
---- SDL2-2.32.8/src/SDL_log.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/SDL_log.c	2025-07-30 18:47:19.000000000 +0000
+diff -ruN SDL2-2.32.10/src/SDL_log.c SDL2-2.32.10.aros/src/SDL_log.c
+--- SDL2-2.32.10/src/SDL_log.c	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/src/SDL_log.c	2025-07-30 18:47:19.000000000 +0000
 @@ -40,6 +40,10 @@
  #include <android/log.h>
  #endif
@@ -3785,9 +3785,9 @@ diff -ruN SDL2-2.32.8/src/SDL_log.c SDL2-2.32.8.aros/src/SDL_log.c
 +#endif
  
  /* vi: set ts=4 sw=4 expandtab: */
-diff -ruN SDL2-2.32.8/src/stdlib/SDL_stdlib.c SDL2-2.32.8.aros/src/stdlib/SDL_stdlib.c
---- SDL2-2.32.8/src/stdlib/SDL_stdlib.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/stdlib/SDL_stdlib.c	2025-07-27 14:24:17.192841344 +0000
+diff -ruN SDL2-2.32.10/src/stdlib/SDL_stdlib.c SDL2-2.32.10.aros/src/stdlib/SDL_stdlib.c
+--- SDL2-2.32.10/src/stdlib/SDL_stdlib.c	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/src/stdlib/SDL_stdlib.c	2025-07-27 14:24:17.192841344 +0000
 @@ -28,7 +28,9 @@
  /* This file contains portable stdlib functions for SDL */
  
@@ -3798,9 +3798,9 @@ diff -ruN SDL2-2.32.8/src/stdlib/SDL_stdlib.c SDL2-2.32.8.aros/src/stdlib/SDL_st
  
  double
  SDL_atan(double x)
-diff -ruN SDL2-2.32.8/src/stdlib/SDL_string.c SDL2-2.32.8.aros/src/stdlib/SDL_string.c
---- SDL2-2.32.8/src/stdlib/SDL_string.c	2025-03-10 22:45:43.000000000 +0000
-+++ SDL2-2.32.8.aros/src/stdlib/SDL_string.c	2025-07-30 18:43:56.000000000 +0000
+diff -ruN SDL2-2.32.10/src/stdlib/SDL_string.c SDL2-2.32.10.aros/src/stdlib/SDL_string.c
+--- SDL2-2.32.10/src/stdlib/SDL_string.c	2025-03-10 22:45:43.000000000 +0000
++++ SDL2-2.32.10.aros/src/stdlib/SDL_string.c	2025-07-30 18:43:56.000000000 +0000
 @@ -54,22 +54,23 @@
      return 0;
  }
@@ -3970,9 +3970,9 @@ diff -ruN SDL2-2.32.8/src/stdlib/SDL_string.c SDL2-2.32.8.aros/src/stdlib/SDL_st
      }
  }
 +#endif
-diff -ruN SDL2-2.32.8/src/thread/aros/SDL_sysmutex.c SDL2-2.32.8.aros/src/thread/aros/SDL_sysmutex.c
---- SDL2-2.32.8/src/thread/aros/SDL_sysmutex.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/thread/aros/SDL_sysmutex.c	2025-07-28 10:23:45.073287295 +0000
+diff -ruN SDL2-2.32.10/src/thread/aros/SDL_sysmutex.c SDL2-2.32.10.aros/src/thread/aros/SDL_sysmutex.c
+--- SDL2-2.32.10/src/thread/aros/SDL_sysmutex.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/thread/aros/SDL_sysmutex.c	2025-07-28 10:23:45.073287295 +0000
 @@ -0,0 +1,104 @@
 +/*
 +  Simple DirectMedia Layer
@@ -4078,9 +4078,9 @@ diff -ruN SDL2-2.32.8/src/thread/aros/SDL_sysmutex.c SDL2-2.32.8.aros/src/thread
 +    return 0;
 +#endif /* SDL_THREADS_DISABLED */
 +}
-diff -ruN SDL2-2.32.8/src/thread/aros/SDL_sysmutex_c.h SDL2-2.32.8.aros/src/thread/aros/SDL_sysmutex_c.h
---- SDL2-2.32.8/src/thread/aros/SDL_sysmutex_c.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/thread/aros/SDL_sysmutex_c.h	2025-07-27 14:24:17.416841400 +0000
+diff -ruN SDL2-2.32.10/src/thread/aros/SDL_sysmutex_c.h SDL2-2.32.10.aros/src/thread/aros/SDL_sysmutex_c.h
+--- SDL2-2.32.10/src/thread/aros/SDL_sysmutex_c.h	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/thread/aros/SDL_sysmutex_c.h	2025-07-27 14:24:17.416841400 +0000
 @@ -0,0 +1,22 @@
 +/*
 +  Simple DirectMedia Layer
@@ -4104,9 +4104,9 @@ diff -ruN SDL2-2.32.8/src/thread/aros/SDL_sysmutex_c.h SDL2-2.32.8.aros/src/thre
 +*/
 +#include "../../SDL_internal.h"
 +/* vi: set ts=4 sw=4 expandtab: */
-diff -ruN SDL2-2.32.8/src/thread/aros/SDL_syssem.c SDL2-2.32.8.aros/src/thread/aros/SDL_syssem.c
---- SDL2-2.32.8/src/thread/aros/SDL_syssem.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/thread/aros/SDL_syssem.c	2025-07-27 14:24:17.420841400 +0000
+diff -ruN SDL2-2.32.10/src/thread/aros/SDL_syssem.c SDL2-2.32.10.aros/src/thread/aros/SDL_syssem.c
+--- SDL2-2.32.10/src/thread/aros/SDL_syssem.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/thread/aros/SDL_syssem.c	2025-07-27 14:24:17.420841400 +0000
 @@ -0,0 +1,272 @@
 +/*
 +  Simple DirectMedia Layer
@@ -4380,9 +4380,9 @@ diff -ruN SDL2-2.32.8/src/thread/aros/SDL_syssem.c SDL2-2.32.8.aros/src/thread/a
 +
 +#endif /* SDL_THREADS_DISABLED */
 +/* vi: set ts=4 sw=4 expandtab: */
-diff -ruN SDL2-2.32.8/src/thread/aros/SDL_systhread.c SDL2-2.32.8.aros/src/thread/aros/SDL_systhread.c
---- SDL2-2.32.8/src/thread/aros/SDL_systhread.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/thread/aros/SDL_systhread.c	2025-08-12 14:18:26.729549553 +0000
+diff -ruN SDL2-2.32.10/src/thread/aros/SDL_systhread.c SDL2-2.32.10.aros/src/thread/aros/SDL_systhread.c
+--- SDL2-2.32.10/src/thread/aros/SDL_systhread.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/thread/aros/SDL_systhread.c	2025-08-12 14:18:26.729549553 +0000
 @@ -0,0 +1,180 @@
 +/*
 +  Simple DirectMedia Layer
@@ -4564,9 +4564,9 @@ diff -ruN SDL2-2.32.8/src/thread/aros/SDL_systhread.c SDL2-2.32.8.aros/src/threa
 +}
 +
 +/* vi: set ts=4 sw=4 expandtab: */
-diff -ruN SDL2-2.32.8/src/thread/aros/SDL_systhread_c.h SDL2-2.32.8.aros/src/thread/aros/SDL_systhread_c.h
---- SDL2-2.32.8/src/thread/aros/SDL_systhread_c.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/thread/aros/SDL_systhread_c.h	2025-08-01 14:11:38.399659885 +0000
+diff -ruN SDL2-2.32.10/src/thread/aros/SDL_systhread_c.h SDL2-2.32.10.aros/src/thread/aros/SDL_systhread_c.h
+--- SDL2-2.32.10/src/thread/aros/SDL_systhread_c.h	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/thread/aros/SDL_systhread_c.h	2025-08-01 14:11:38.399659885 +0000
 @@ -0,0 +1,32 @@
 +/*
 +  Simple DirectMedia Layer
@@ -4600,9 +4600,9 @@ diff -ruN SDL2-2.32.8/src/thread/aros/SDL_systhread_c.h SDL2-2.32.8.aros/src/thr
 +};
 +
 +typedef struct _AROS_ThreadPrivate SYS_ThreadHandle;
-diff -ruN SDL2-2.32.8/src/thread/generic/SDL_systls.c SDL2-2.32.8.aros/src/thread/generic/SDL_systls.c
---- SDL2-2.32.8/src/thread/generic/SDL_systls.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/thread/generic/SDL_systls.c	2025-07-27 14:24:17.384841346 +0000
+diff -ruN SDL2-2.32.10/src/thread/generic/SDL_systls.c SDL2-2.32.10.aros/src/thread/generic/SDL_systls.c
+--- SDL2-2.32.10/src/thread/generic/SDL_systls.c	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/src/thread/generic/SDL_systls.c	2025-07-27 14:24:17.384841346 +0000
 @@ -22,11 +22,6 @@
  #include "../../SDL_internal.h"
  #include "../SDL_thread_c.h"
@@ -4625,9 +4625,9 @@ diff -ruN SDL2-2.32.8/src/thread/generic/SDL_systls.c SDL2-2.32.8.aros/src/threa
 -}
 -
  /* vi: set ts=4 sw=4 expandtab: */
-diff -ruN SDL2-2.32.8/src/thread/n3ds/SDL_syscond.c SDL2-2.32.8.aros/src/thread/n3ds/SDL_syscond.c
---- SDL2-2.32.8/src/thread/n3ds/SDL_syscond.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/thread/n3ds/SDL_syscond.c	2025-07-27 14:24:17.452841347 +0000
+diff -ruN SDL2-2.32.10/src/thread/n3ds/SDL_syscond.c SDL2-2.32.10.aros/src/thread/n3ds/SDL_syscond.c
+--- SDL2-2.32.10/src/thread/n3ds/SDL_syscond.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/thread/n3ds/SDL_syscond.c	2025-07-27 14:24:17.452841347 +0000
 @@ -0,0 +1,127 @@
 +/*
 +  Simple DirectMedia Layer
@@ -4756,9 +4756,9 @@ diff -ruN SDL2-2.32.8/src/thread/n3ds/SDL_syscond.c SDL2-2.32.8.aros/src/thread/
 +#endif /* SDL_THREAD_N3DS */
 +
 +/* vi: set sts=4 ts=4 sw=4 expandtab: */
-diff -ruN SDL2-2.32.8/src/thread/SDL_systhread.h SDL2-2.32.8.aros/src/thread/SDL_systhread.h
---- SDL2-2.32.8/src/thread/SDL_systhread.h	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/thread/SDL_systhread.h	2025-07-27 14:24:17.824841353 +0000
+diff -ruN SDL2-2.32.10/src/thread/SDL_systhread.h SDL2-2.32.10.aros/src/thread/SDL_systhread.h
+--- SDL2-2.32.10/src/thread/SDL_systhread.h	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/src/thread/SDL_systhread.h	2025-07-27 14:24:17.824841353 +0000
 @@ -59,18 +59,12 @@
  /* Mark thread as cleaned up as soon as it exits, without joining. */
  extern void SDL_SYS_DetachThread(SDL_Thread *thread);
@@ -4778,9 +4778,9 @@ diff -ruN SDL2-2.32.8/src/thread/SDL_systhread.h SDL2-2.32.8.aros/src/thread/SDL
  /* This is for internal SDL use, so we don't need #ifdefs everywhere. */
  extern SDL_Thread *
  SDL_CreateThreadInternal(int(SDLCALL *fn)(void *), const char *name,
-diff -ruN SDL2-2.32.8/src/thread/SDL_thread.c SDL2-2.32.8.aros/src/thread/SDL_thread.c
---- SDL2-2.32.8/src/thread/SDL_thread.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/thread/SDL_thread.c	2025-07-31 14:39:34.385811973 +0000
+diff -ruN SDL2-2.32.10/src/thread/SDL_thread.c SDL2-2.32.10.aros/src/thread/SDL_thread.c
+--- SDL2-2.32.10/src/thread/SDL_thread.c	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/src/thread/SDL_thread.c	2025-07-31 14:39:34.385811973 +0000
 @@ -28,15 +28,7 @@
  #include "SDL_hints.h"
  #include "../SDL_error_c.h"
@@ -4991,9 +4991,9 @@ diff -ruN SDL2-2.32.8/src/thread/SDL_thread.c SDL2-2.32.8.aros/src/thread/SDL_th
 +#endif /* !__AROS__*/
 +
  /* vi: set ts=4 sw=4 expandtab: */
-diff -ruN SDL2-2.32.8/src/thread/SDL_thread_c.h SDL2-2.32.8.aros/src/thread/SDL_thread_c.h
---- SDL2-2.32.8/src/thread/SDL_thread_c.h	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/src/thread/SDL_thread_c.h	2025-08-01 13:05:57.897960957 +0000
+diff -ruN SDL2-2.32.10/src/thread/SDL_thread_c.h SDL2-2.32.10.aros/src/thread/SDL_thread_c.h
+--- SDL2-2.32.10/src/thread/SDL_thread_c.h	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/src/thread/SDL_thread_c.h	2025-08-01 13:05:57.897960957 +0000
 @@ -42,6 +42,10 @@
  #include "n3ds/SDL_systhread_c.h"
  #elif defined(SDL_THREAD_STDCPP)
@@ -5029,9 +5029,9 @@ diff -ruN SDL2-2.32.8/src/thread/SDL_thread_c.h SDL2-2.32.8.aros/src/thread/SDL_
  
  #endif /* SDL_thread_c_h_ */
  
-diff -ruN SDL2-2.32.8/src/timer/aros/SDL_systimer.c SDL2-2.32.8.aros/src/timer/aros/SDL_systimer.c
---- SDL2-2.32.8/src/timer/aros/SDL_systimer.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/timer/aros/SDL_systimer.c	2025-07-30 18:12:50.000000000 +0000
+diff -ruN SDL2-2.32.10/src/timer/aros/SDL_systimer.c SDL2-2.32.10.aros/src/timer/aros/SDL_systimer.c
+--- SDL2-2.32.10/src/timer/aros/SDL_systimer.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/timer/aros/SDL_systimer.c	2025-07-30 18:12:50.000000000 +0000
 @@ -0,0 +1,114 @@
 +/*
 +  Simple DirectMedia Layer
@@ -5147,9 +5147,9 @@ diff -ruN SDL2-2.32.8/src/timer/aros/SDL_systimer.c SDL2-2.32.8.aros/src/timer/a
 +}
 +
 +#endif /* SDL_TIMER_AROS || SDL_TIMERS_DISABLED */
-diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosclipboard.c SDL2-2.32.8.aros/src/video/aros/SDL_arosclipboard.c
---- SDL2-2.32.8/src/video/aros/SDL_arosclipboard.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosclipboard.c	2025-08-04 17:04:05.304791353 +0000
+diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosclipboard.c SDL2-2.32.10.aros/src/video/aros/SDL_arosclipboard.c
+--- SDL2-2.32.10/src/video/aros/SDL_arosclipboard.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/video/aros/SDL_arosclipboard.c	2025-08-04 17:04:05.304791353 +0000
 @@ -0,0 +1,277 @@
 +/*
 +  Simple DirectMedia Layer
@@ -5428,9 +5428,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosclipboard.c SDL2-2.32.8.aros/src/vi
 +
 +	return result;
 +}
-diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosclipboard.h SDL2-2.32.8.aros/src/video/aros/SDL_arosclipboard.h
---- SDL2-2.32.8/src/video/aros/SDL_arosclipboard.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosclipboard.h	2025-07-28 18:29:11.840824792 +0000
+diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosclipboard.h SDL2-2.32.10.aros/src/video/aros/SDL_arosclipboard.h
+--- SDL2-2.32.10/src/video/aros/SDL_arosclipboard.h	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/video/aros/SDL_arosclipboard.h	2025-07-28 18:29:11.840824792 +0000
 @@ -0,0 +1,30 @@
 +/*
 +  Simple DirectMedia Layer
@@ -5462,9 +5462,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosclipboard.h SDL2-2.32.8.aros/src/vi
 +extern SDL_bool AROS_HasClipboardText(_THIS);
 +
 +#endif /* _SDL_arosclipboard_h */
-diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.c
---- SDL2-2.32.8/src/video/aros/SDL_arosevents.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.c	2025-08-12 16:40:41.421551044 +0000
+diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosevents.c SDL2-2.32.10.aros/src/video/aros/SDL_arosevents.c
+--- SDL2-2.32.10/src/video/aros/SDL_arosevents.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/video/aros/SDL_arosevents.c	2025-08-12 16:40:41.421551044 +0000
 @@ -0,0 +1,846 @@
 +/*
 +  Simple DirectMedia Layer
@@ -5742,7 +5742,7 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video
 +}
 +
 +static const char porters[] = "Kalamatee (kalamatee@gmail.com), based on the morphos port\n";
-+static const char bases[] = "SDL 2.32.8 sources by Ilkka Lehtoranta";
++static const char bases[] = "SDL 2.32.10 sources by Ilkka Lehtoranta";
 +
 +static void
 +AROS_AboutSDL(struct Window *window)
@@ -6313,9 +6313,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.c SDL2-2.32.8.aros/src/video
 +    }
 +}
 \ No newline at end of file
-diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.h SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.h
---- SDL2-2.32.8/src/video/aros/SDL_arosevents.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosevents.h	2025-07-28 18:19:36.534462256 +0000
+diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosevents.h SDL2-2.32.10.aros/src/video/aros/SDL_arosevents.h
+--- SDL2-2.32.10/src/video/aros/SDL_arosevents.h	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/video/aros/SDL_arosevents.h	2025-07-28 18:19:36.534462256 +0000
 @@ -0,0 +1,29 @@
 +/*
 +  Simple DirectMedia Layer
@@ -6346,9 +6346,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosevents.h SDL2-2.32.8.aros/src/video
 +extern void AROS_GlobalMenu(struct Menu *mymenu, UWORD menu, UWORD item, UWORD sub, UWORD check);
 +
 +#endif /* _SDL_arosevents_h */
-diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosframebuffer.c SDL2-2.32.8.aros/src/video/aros/SDL_arosframebuffer.c
---- SDL2-2.32.8/src/video/aros/SDL_arosframebuffer.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosframebuffer.c	2025-08-04 17:26:42.572790303 +0000
+diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosframebuffer.c SDL2-2.32.10.aros/src/video/aros/SDL_arosframebuffer.c
+--- SDL2-2.32.10/src/video/aros/SDL_arosframebuffer.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/video/aros/SDL_arosframebuffer.c	2025-08-04 17:26:42.572790303 +0000
 @@ -0,0 +1,156 @@
 +/*
 +  Simple DirectMedia Layer
@@ -6506,9 +6506,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosframebuffer.c SDL2-2.32.8.aros/src/
 +		}
 +	return 0;
 +}
-diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosframebuffer.h SDL2-2.32.8.aros/src/video/aros/SDL_arosframebuffer.h
---- SDL2-2.32.8/src/video/aros/SDL_arosframebuffer.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosframebuffer.h	2025-07-28 18:12:17.694941784 +0000
+diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosframebuffer.h SDL2-2.32.10.aros/src/video/aros/SDL_arosframebuffer.h
+--- SDL2-2.32.10/src/video/aros/SDL_arosframebuffer.h	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/video/aros/SDL_arosframebuffer.h	2025-07-28 18:12:17.694941784 +0000
 @@ -0,0 +1,30 @@
 +/*
 +  Simple DirectMedia Layer
@@ -6540,9 +6540,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosframebuffer.h SDL2-2.32.8.aros/src/
 +extern void AROS_DestroyWindowFramebuffer(_THIS, SDL_Window * window);
 +
 +#endif /* _SDL_arosframebuffer_h */
-diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroskeyboard.c SDL2-2.32.8.aros/src/video/aros/SDL_aroskeyboard.c
---- SDL2-2.32.8/src/video/aros/SDL_aroskeyboard.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_aroskeyboard.c	2025-07-29 12:10:00.333399776 +0000
+diff -ruN SDL2-2.32.10/src/video/aros/SDL_aroskeyboard.c SDL2-2.32.10.aros/src/video/aros/SDL_aroskeyboard.c
+--- SDL2-2.32.10/src/video/aros/SDL_aroskeyboard.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/video/aros/SDL_aroskeyboard.c	2025-07-29 12:10:00.333399776 +0000
 @@ -0,0 +1,92 @@
 +/*
 +  Simple DirectMedia Layer
@@ -6636,9 +6636,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroskeyboard.c SDL2-2.32.8.aros/src/vid
 +	//SDL_SetScancodeName(SDL_SCANCODE_LCTRL, "Control");
 +
 +}
-diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroskeyboard.h SDL2-2.32.8.aros/src/video/aros/SDL_aroskeyboard.h
---- SDL2-2.32.8/src/video/aros/SDL_aroskeyboard.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_aroskeyboard.h	2025-07-28 18:28:38.729149009 +0000
+diff -ruN SDL2-2.32.10/src/video/aros/SDL_aroskeyboard.h SDL2-2.32.10.aros/src/video/aros/SDL_aroskeyboard.h
+--- SDL2-2.32.10/src/video/aros/SDL_aroskeyboard.h	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/video/aros/SDL_aroskeyboard.h	2025-07-28 18:28:38.729149009 +0000
 @@ -0,0 +1,28 @@
 +/*
 +  Simple DirectMedia Layer
@@ -6668,9 +6668,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroskeyboard.h SDL2-2.32.8.aros/src/vid
 +extern void AROS_InitKeyboard(_THIS);
 +
 +#endif /* _SDL_aroskeyboard_h */
-diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmessagebox.c SDL2-2.32.8.aros/src/video/aros/SDL_arosmessagebox.c
---- SDL2-2.32.8/src/video/aros/SDL_arosmessagebox.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosmessagebox.c	2025-08-04 17:11:26.948791539 +0000
+diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosmessagebox.c SDL2-2.32.10.aros/src/video/aros/SDL_arosmessagebox.c
+--- SDL2-2.32.10/src/video/aros/SDL_arosmessagebox.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/video/aros/SDL_arosmessagebox.c	2025-08-04 17:11:26.948791539 +0000
 @@ -0,0 +1,97 @@
 +/*
 +  Simple DirectMedia Layer
@@ -6769,9 +6769,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmessagebox.c SDL2-2.32.8.aros/src/v
 +
 +	return rc;
 +}
-diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmessagebox.h SDL2-2.32.8.aros/src/video/aros/SDL_arosmessagebox.h
---- SDL2-2.32.8/src/video/aros/SDL_arosmessagebox.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosmessagebox.h	2025-07-28 18:25:11.655177990 +0000
+diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosmessagebox.h SDL2-2.32.10.aros/src/video/aros/SDL_arosmessagebox.h
+--- SDL2-2.32.10/src/video/aros/SDL_arosmessagebox.h	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/video/aros/SDL_arosmessagebox.h	2025-07-28 18:25:11.655177990 +0000
 @@ -0,0 +1,28 @@
 +/*
 +  Simple DirectMedia Layer
@@ -6801,9 +6801,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmessagebox.h SDL2-2.32.8.aros/src/v
 +extern int AROS_ShowMessageBox(const SDL_MessageBoxData *mbd, int *buttonid);
 +
 +#endif /* _SDL_arosmessagebox_h */
-diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmodes.c SDL2-2.32.8.aros/src/video/aros/SDL_arosmodes.c
---- SDL2-2.32.8/src/video/aros/SDL_arosmodes.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosmodes.c	2025-11-29 17:45:44.322581548 +0000
+diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosmodes.c SDL2-2.32.10.aros/src/video/aros/SDL_arosmodes.c
+--- SDL2-2.32.10/src/video/aros/SDL_arosmodes.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/video/aros/SDL_arosmodes.c	2025-11-29 17:45:44.322581548 +0000
 @@ -0,0 +1,509 @@
 +/*
 +  Simple DirectMedia Layer
@@ -7314,9 +7314,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmodes.c SDL2-2.32.8.aros/src/video/
 +
 +    return 0;
 +}
-diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmodes.h SDL2-2.32.8.aros/src/video/aros/SDL_arosmodes.h
---- SDL2-2.32.8/src/video/aros/SDL_arosmodes.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosmodes.h	2025-07-28 17:58:38.549756245 +0000
+diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosmodes.h SDL2-2.32.10.aros/src/video/aros/SDL_arosmodes.h
+--- SDL2-2.32.10/src/video/aros/SDL_arosmodes.h	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/video/aros/SDL_arosmodes.h	2025-07-28 17:58:38.549756245 +0000
 @@ -0,0 +1,43 @@
 +/*
 +  Simple DirectMedia Layer
@@ -7361,9 +7361,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmodes.h SDL2-2.32.8.aros/src/video/
 +extern int AROS_GetDisplayBounds(_THIS, SDL_VideoDisplay * display, SDL_Rect * rect);
 +
 +#endif /* _SDL_arosmodes_h */
-diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmouse.c SDL2-2.32.8.aros/src/video/aros/SDL_arosmouse.c
---- SDL2-2.32.8/src/video/aros/SDL_arosmouse.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosmouse.c	2025-08-11 17:38:43.709907834 +0000
+diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosmouse.c SDL2-2.32.10.aros/src/video/aros/SDL_arosmouse.c
+--- SDL2-2.32.10/src/video/aros/SDL_arosmouse.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/video/aros/SDL_arosmouse.c	2025-08-11 17:38:43.709907834 +0000
 @@ -0,0 +1,375 @@
 +/*
 +  Simple DirectMedia Layer
@@ -7740,9 +7740,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmouse.c SDL2-2.32.8.aros/src/video/
 +		mouse->cur_cursor = NULL;
 +	}
 +}
-diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmouse.h SDL2-2.32.8.aros/src/video/aros/SDL_arosmouse.h
---- SDL2-2.32.8/src/video/aros/SDL_arosmouse.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosmouse.h	2025-08-11 16:08:35.165908881 +0000
+diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosmouse.h SDL2-2.32.10.aros/src/video/aros/SDL_arosmouse.h
+--- SDL2-2.32.10/src/video/aros/SDL_arosmouse.h	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/video/aros/SDL_arosmouse.h	2025-08-11 16:08:35.165908881 +0000
 @@ -0,0 +1,54 @@
 +/*
 +  Simple DirectMedia Layer
@@ -7798,9 +7798,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosmouse.h SDL2-2.32.8.aros/src/video/
 +extern void AROS_QuitMouse(_THIS);
 +
 +#endif /* _SDL_arosmouse_h */
-diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosopengl.c SDL2-2.32.8.aros/src/video/aros/SDL_arosopengl.c
---- SDL2-2.32.8/src/video/aros/SDL_arosopengl.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosopengl.c	2025-08-12 07:44:11.764791809 +0000
+diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosopengl.c SDL2-2.32.10.aros/src/video/aros/SDL_arosopengl.c
+--- SDL2-2.32.10/src/video/aros/SDL_arosopengl.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/video/aros/SDL_arosopengl.c	2025-08-12 07:44:11.764791809 +0000
 @@ -0,0 +1,267 @@
 +/*
 +  Simple DirectMedia Layer
@@ -8069,9 +8069,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosopengl.c SDL2-2.32.8.aros/src/video
 +}
 +
 +#endif /* SDL_VIDEO_OPENGL_AGL */
-diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosopengl.h SDL2-2.32.8.aros/src/video/aros/SDL_arosopengl.h
---- SDL2-2.32.8/src/video/aros/SDL_arosopengl.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosopengl.h	2025-08-03 20:44:17.961309549 +0000
+diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosopengl.h SDL2-2.32.10.aros/src/video/aros/SDL_arosopengl.h
+--- SDL2-2.32.10/src/video/aros/SDL_arosopengl.h	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/video/aros/SDL_arosopengl.h	2025-08-03 20:44:17.961309549 +0000
 @@ -0,0 +1,61 @@
 +/*
 +  Simple DirectMedia Layer
@@ -8134,9 +8134,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosopengl.h SDL2-2.32.8.aros/src/video
 +#endif /* !SDL_VIDEO_OPENGL_AGL_INTERN */
 +
 +#endif /* _SDL_arosopengl_h */
-diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosshape.c SDL2-2.32.8.aros/src/video/aros/SDL_arosshape.c
---- SDL2-2.32.8/src/video/aros/SDL_arosshape.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosshape.c	2025-07-29 12:13:48.561399854 +0000
+diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosshape.c SDL2-2.32.10.aros/src/video/aros/SDL_arosshape.c
+--- SDL2-2.32.10/src/video/aros/SDL_arosshape.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/video/aros/SDL_arosshape.c	2025-07-29 12:13:48.561399854 +0000
 @@ -0,0 +1,196 @@
 +/*
 +  Simple DirectMedia Layer
@@ -8334,9 +8334,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosshape.c SDL2-2.32.8.aros/src/video/
 +
 +	return 0;
 +}
-diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosshape.h SDL2-2.32.8.aros/src/video/aros/SDL_arosshape.h
---- SDL2-2.32.8/src/video/aros/SDL_arosshape.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosshape.h	2025-07-28 18:18:43.334984401 +0000
+diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosshape.h SDL2-2.32.10.aros/src/video/aros/SDL_arosshape.h
+--- SDL2-2.32.10/src/video/aros/SDL_arosshape.h	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/video/aros/SDL_arosshape.h	2025-07-28 18:18:43.334984401 +0000
 @@ -0,0 +1,34 @@
 +/*
 +  Simple DirectMedia Layer
@@ -8372,9 +8372,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosshape.h SDL2-2.32.8.aros/src/video/
 +extern int AROS_SetWindowShape(SDL_WindowShaper *shaper, SDL_Surface *shape, SDL_WindowShapeMode *shape_mode);
 +
 +#endif /* _SDL_arosshape_h */
-diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosvideo.c SDL2-2.32.8.aros/src/video/aros/SDL_arosvideo.c
---- SDL2-2.32.8/src/video/aros/SDL_arosvideo.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosvideo.c	2025-08-11 19:06:50.477908700 +0000
+diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosvideo.c SDL2-2.32.10.aros/src/video/aros/SDL_arosvideo.c
+--- SDL2-2.32.10/src/video/aros/SDL_arosvideo.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/video/aros/SDL_arosvideo.c	2025-08-11 19:06:50.477908700 +0000
 @@ -0,0 +1,472 @@
 +/*
 +  Simple DirectMedia Layer
@@ -8848,9 +8848,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosvideo.c SDL2-2.32.8.aros/src/video/
 +	AROS_CreateDevice,
 +    AROS_ShowMessageBox
 +};
-diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosvideo.h SDL2-2.32.8.aros/src/video/aros/SDL_arosvideo.h
---- SDL2-2.32.8/src/video/aros/SDL_arosvideo.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_arosvideo.h	2025-08-11 13:14:51.279276526 +0000
+diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosvideo.h SDL2-2.32.10.aros/src/video/aros/SDL_arosvideo.h
+--- SDL2-2.32.10/src/video/aros/SDL_arosvideo.h	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/video/aros/SDL_arosvideo.h	2025-08-11 13:14:51.279276526 +0000
 @@ -0,0 +1,98 @@
 +/*
 +  Simple DirectMedia Layer
@@ -8950,9 +8950,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_arosvideo.h SDL2-2.32.8.aros/src/video/
 +extern size_t getv(APTR obj, size_t attr);
 +
 +#endif /* _SDL_arosvideo_h */
-diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video/aros/SDL_aroswindow.c
---- SDL2-2.32.8/src/video/aros/SDL_aroswindow.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_aroswindow.c	2025-11-27 14:09:42.802695756 +0000
+diff -ruN SDL2-2.32.10/src/video/aros/SDL_aroswindow.c SDL2-2.32.10.aros/src/video/aros/SDL_aroswindow.c
+--- SDL2-2.32.10/src/video/aros/SDL_aroswindow.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/video/aros/SDL_aroswindow.c	2025-11-27 14:09:42.802695756 +0000
 @@ -0,0 +1,1063 @@
 +/*
 +  Simple DirectMedia Layer
@@ -10017,9 +10017,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.c SDL2-2.32.8.aros/src/video
 +	
 +	return 0;
 +}
-diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.h SDL2-2.32.8.aros/src/video/aros/SDL_aroswindow.h
---- SDL2-2.32.8/src/video/aros/SDL_aroswindow.h	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/aros/SDL_aroswindow.h	2025-08-11 00:37:06.556441007 +0000
+diff -ruN SDL2-2.32.10/src/video/aros/SDL_aroswindow.h SDL2-2.32.10.aros/src/video/aros/SDL_aroswindow.h
+--- SDL2-2.32.10/src/video/aros/SDL_aroswindow.h	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/src/video/aros/SDL_aroswindow.h	2025-08-11 00:37:06.556441007 +0000
 @@ -0,0 +1,136 @@
 +/*
 +  Simple DirectMedia Layer
@@ -10157,9 +10157,9 @@ diff -ruN SDL2-2.32.8/src/video/aros/SDL_aroswindow.h SDL2-2.32.8.aros/src/video
 +extern void AROS_WindowToFront(struct Window *win);
 +
 +#endif /* _SDL_aroswindow_h */
-diff -ruN SDL2-2.32.8/src/video/SDL_sysvideo.h SDL2-2.32.8.aros/src/video/SDL_sysvideo.h
---- SDL2-2.32.8/src/video/SDL_sysvideo.h	2025-05-19 21:24:41.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/SDL_sysvideo.h	2025-07-27 14:24:21.564841406 +0000
+diff -ruN SDL2-2.32.10/src/video/SDL_sysvideo.h SDL2-2.32.10.aros/src/video/SDL_sysvideo.h
+--- SDL2-2.32.10/src/video/SDL_sysvideo.h	2025-05-19 21:24:41.000000000 +0000
++++ SDL2-2.32.10.aros/src/video/SDL_sysvideo.h	2025-07-27 14:24:21.564841406 +0000
 @@ -484,6 +484,9 @@
  extern VideoBootStrap NGAGE_bootstrap;
  extern VideoBootStrap OS2DIVE_bootstrap;
@@ -10170,9 +10170,9 @@ diff -ruN SDL2-2.32.8/src/video/SDL_sysvideo.h SDL2-2.32.8.aros/src/video/SDL_sy
  
  /* Use SDL_OnVideoThread() sparingly, to avoid regressions in use cases that currently happen to work */
  extern SDL_bool SDL_OnVideoThread(void);
-diff -ruN SDL2-2.32.8/src/video/SDL_video.c SDL2-2.32.8.aros/src/video/SDL_video.c
---- SDL2-2.32.8/src/video/SDL_video.c	2025-05-19 21:24:41.000000000 +0000
-+++ SDL2-2.32.8.aros/src/video/SDL_video.c	2025-08-03 22:32:07.312795313 +0000
+diff -ruN SDL2-2.32.10/src/video/SDL_video.c SDL2-2.32.10.aros/src/video/SDL_video.c
+--- SDL2-2.32.10/src/video/SDL_video.c	2025-05-19 21:24:41.000000000 +0000
++++ SDL2-2.32.10.aros/src/video/SDL_video.c	2025-08-03 22:32:07.312795313 +0000
 @@ -132,6 +132,12 @@
  #ifdef SDL_VIDEO_DRIVER_EMSCRIPTEN
      &Emscripten_bootstrap,
@@ -10247,9 +10247,9 @@ diff -ruN SDL2-2.32.8/src/video/SDL_video.c SDL2-2.32.8.aros/src/video/SDL_video
          }
      }
  
-diff -ruN SDL2-2.32.8/test/checkkeys.c SDL2-2.32.8.aros/test/checkkeys.c
---- SDL2-2.32.8/test/checkkeys.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/test/checkkeys.c	2025-07-27 14:24:22.628841422 +0000
+diff -ruN SDL2-2.32.10/test/checkkeys.c SDL2-2.32.10.aros/test/checkkeys.c
+--- SDL2-2.32.10/test/checkkeys.c	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/test/checkkeys.c	2025-07-27 14:24:22.628841422 +0000
 @@ -305,7 +305,8 @@
          loop();
      }
@@ -10260,9 +10260,9 @@ diff -ruN SDL2-2.32.8/test/checkkeys.c SDL2-2.32.8.aros/test/checkkeys.c
      SDL_Quit();
      return 0;
  }
-diff -ruN SDL2-2.32.8/test/controllermap.c SDL2-2.32.8.aros/test/controllermap.c
---- SDL2-2.32.8/test/controllermap.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/test/controllermap.c	2025-07-27 14:24:22.668841422 +0000
+diff -ruN SDL2-2.32.10/test/controllermap.c SDL2-2.32.10.aros/test/controllermap.c
+--- SDL2-2.32.10/test/controllermap.c	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/test/controllermap.c	2025-07-27 14:24:22.668841422 +0000
 @@ -741,6 +741,10 @@
          return 2;
      }
@@ -10283,9 +10283,9 @@ diff -ruN SDL2-2.32.8/test/controllermap.c SDL2-2.32.8.aros/test/controllermap.c
  
      return 0;
  }
-diff -ruN SDL2-2.32.8/test/testfile.c SDL2-2.32.8.aros/test/testfile.c
---- SDL2-2.32.8/test/testfile.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/test/testfile.c	2025-07-27 14:24:22.984841427 +0000
+diff -ruN SDL2-2.32.10/test/testfile.c SDL2-2.32.10.aros/test/testfile.c
+--- SDL2-2.32.10/test/testfile.c	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/test/testfile.c	2025-07-27 14:24:22.984841427 +0000
 @@ -64,6 +64,11 @@
      SDL_RWops *rwops = NULL;
      char test_buf[30];
@@ -10307,9 +10307,9 @@ diff -ruN SDL2-2.32.8/test/testfile.c SDL2-2.32.8.aros/test/testfile.c
 +
      return 0; /* all ok */
  }
-diff -ruN SDL2-2.32.8/test/testgamecontroller.c SDL2-2.32.8.aros/test/testgamecontroller.c
---- SDL2-2.32.8/test/testgamecontroller.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/test/testgamecontroller.c	2025-07-27 14:24:23.000841427 +0000
+diff -ruN SDL2-2.32.10/test/testgamecontroller.c SDL2-2.32.10.aros/test/testgamecontroller.c
+--- SDL2-2.32.10/test/testgamecontroller.c	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/test/testgamecontroller.c	2025-07-27 14:24:23.000841427 +0000
 @@ -967,7 +967,7 @@
      CloseVirtualController();
      SDL_DestroyRenderer(screen);
@@ -10319,9 +10319,9 @@ diff -ruN SDL2-2.32.8/test/testgamecontroller.c SDL2-2.32.8.aros/test/testgameco
  
      return 0;
  }
-diff -ruN SDL2-2.32.8/test/testgl2.c SDL2-2.32.8.aros/test/testgl2.c
---- SDL2-2.32.8/test/testgl2.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/test/testgl2.c	2025-07-27 14:24:23.016841427 +0000
+diff -ruN SDL2-2.32.10/test/testgl2.c SDL2-2.32.10.aros/test/testgl2.c
+--- SDL2-2.32.10/test/testgl2.c	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/test/testgl2.c	2025-07-27 14:24:23.016841427 +0000
 @@ -22,6 +22,9 @@
  
  #ifdef HAVE_OPENGL
@@ -10332,9 +10332,9 @@ diff -ruN SDL2-2.32.8/test/testgl2.c SDL2-2.32.8.aros/test/testgl2.c
  #include "SDL_opengl.h"
  
  typedef struct GL_Context
-diff -ruN SDL2-2.32.8/test/testhaptic.c SDL2-2.32.8.aros/test/testhaptic.c
---- SDL2-2.32.8/test/testhaptic.c	2024-01-22 22:20:00.000000000 +0000
-+++ SDL2-2.32.8.aros/test/testhaptic.c	2025-07-27 14:24:23.052841428 +0000
+diff -ruN SDL2-2.32.10/test/testhaptic.c SDL2-2.32.10.aros/test/testhaptic.c
+--- SDL2-2.32.10/test/testhaptic.c	2024-01-22 22:20:00.000000000 +0000
++++ SDL2-2.32.10.aros/test/testhaptic.c	2025-07-27 14:24:23.052841428 +0000
 @@ -99,6 +99,7 @@
          HapticPrintSupported(haptic);
      } else {
@@ -10343,9 +10343,9 @@ diff -ruN SDL2-2.32.8/test/testhaptic.c SDL2-2.32.8.aros/test/testhaptic.c
          return 1;
      }
  
-diff -ruN SDL2-2.32.8/test/testnativeamigaos.c SDL2-2.32.8.aros/test/testnativeamigaos.c
---- SDL2-2.32.8/test/testnativeamigaos.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.8.aros/test/testnativeamigaos.c	2025-07-29 13:10:38.697400191 +0000
+diff -ruN SDL2-2.32.10/test/testnativeamigaos.c SDL2-2.32.10.aros/test/testnativeamigaos.c
+--- SDL2-2.32.10/test/testnativeamigaos.c	1970-01-01 00:00:00.000000000 +0000
++++ SDL2-2.32.10.aros/test/testnativeamigaos.c	2025-07-29 13:10:38.697400191 +0000
 @@ -0,0 +1,45 @@
 +/*
 +  Copyright (C) 1997-2017 Sam Lantinga <slouken@libsdl.org>
@@ -10392,9 +10392,9 @@ diff -ruN SDL2-2.32.8/test/testnativeamigaos.c SDL2-2.32.8.aros/test/testnativea
 +
 +#endif
 +
-diff -ruN SDL2-2.32.8/test/testnative.c SDL2-2.32.8.aros/test/testnative.c
---- SDL2-2.32.8/test/testnative.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/test/testnative.c	2025-07-29 13:13:12.805400295 +0000
+diff -ruN SDL2-2.32.10/test/testnative.c SDL2-2.32.10.aros/test/testnative.c
+--- SDL2-2.32.10/test/testnative.c	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/test/testnative.c	2025-07-29 13:13:12.805400295 +0000
 @@ -36,6 +36,9 @@
  #ifdef TEST_NATIVE_OS2
      &OS2WindowFactory,
@@ -10445,9 +10445,9 @@ diff -ruN SDL2-2.32.8/test/testnative.c SDL2-2.32.8.aros/test/testnative.c
      quit(0);
  
      return 0; /* to prevent compiler warning */
-diff -ruN SDL2-2.32.8/test/testnative.h SDL2-2.32.8.aros/test/testnative.h
---- SDL2-2.32.8/test/testnative.h	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/test/testnative.h	2025-07-29 13:11:40.633400415 +0000
+diff -ruN SDL2-2.32.10/test/testnative.h SDL2-2.32.10.aros/test/testnative.h
+--- SDL2-2.32.10/test/testnative.h	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/test/testnative.h	2025-07-29 13:11:40.633400415 +0000
 @@ -49,3 +49,13 @@
  #define TEST_NATIVE_OS2
  extern NativeWindowFactory OS2WindowFactory;
@@ -10462,9 +10462,9 @@ diff -ruN SDL2-2.32.8/test/testnative.h SDL2-2.32.8.aros/test/testnative.h
 +#define TEST_NATIVE_AMIGAOS
 +extern NativeWindowFactory AmigaOSWindowFactory;
 +#endif
-diff -ruN SDL2-2.32.8/test/testoffscreen.c SDL2-2.32.8.aros/test/testoffscreen.c
---- SDL2-2.32.8/test/testoffscreen.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/test/testoffscreen.c	2025-07-27 14:24:23.160841429 +0000
+diff -ruN SDL2-2.32.10/test/testoffscreen.c SDL2-2.32.10.aros/test/testoffscreen.c
+--- SDL2-2.32.10/test/testoffscreen.c	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/test/testoffscreen.c	2025-07-27 14:24:23.160841429 +0000
 @@ -107,6 +107,7 @@
      if (SDL_VideoInit("offscreen") < 0) {
          SDL_Log("Couldn't initialize the offscreen video driver: %s\n",
@@ -10473,9 +10473,9 @@ diff -ruN SDL2-2.32.8/test/testoffscreen.c SDL2-2.32.8.aros/test/testoffscreen.c
          return SDL_FALSE;
      }
  
-diff -ruN SDL2-2.32.8/test/testrumble.c SDL2-2.32.8.aros/test/testrumble.c
---- SDL2-2.32.8/test/testrumble.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/test/testrumble.c	2025-07-27 14:24:23.208841430 +0000
+diff -ruN SDL2-2.32.10/test/testrumble.c SDL2-2.32.10.aros/test/testrumble.c
+--- SDL2-2.32.10/test/testrumble.c	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/test/testrumble.c	2025-07-27 14:24:23.208841430 +0000
 @@ -98,6 +98,7 @@
          SDL_Log("Device: %s\n", SDL_HapticName(i));
      } else {
@@ -10484,9 +10484,9 @@ diff -ruN SDL2-2.32.8/test/testrumble.c SDL2-2.32.8.aros/test/testrumble.c
          return 1;
      }
  
-diff -ruN SDL2-2.32.8/test/testshape.c SDL2-2.32.8.aros/test/testshape.c
---- SDL2-2.32.8/test/testshape.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/test/testshape.c	2025-07-27 14:24:23.236841430 +0000
+diff -ruN SDL2-2.32.10/test/testshape.c SDL2-2.32.10.aros/test/testshape.c
+--- SDL2-2.32.10/test/testshape.c	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/test/testshape.c	2025-07-27 14:24:23.236841430 +0000
 @@ -112,7 +112,8 @@
          }
          SDL_free(pictures);
@@ -10505,9 +10505,9 @@ diff -ruN SDL2-2.32.8/test/testshape.c SDL2-2.32.8.aros/test/testshape.c
  
      return 0;
  }
-diff -ruN SDL2-2.32.8/test/torturethread.c SDL2-2.32.8.aros/test/torturethread.c
---- SDL2-2.32.8/test/torturethread.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.8.aros/test/torturethread.c	2025-07-27 14:24:23.348841432 +0000
+diff -ruN SDL2-2.32.10/test/torturethread.c SDL2-2.32.10.aros/test/torturethread.c
+--- SDL2-2.32.10/test/torturethread.c	2025-01-01 15:47:53.000000000 +0000
++++ SDL2-2.32.10.aros/test/torturethread.c	2025-07-27 14:24:23.348841432 +0000
 @@ -88,7 +88,9 @@
          return 1;
      }
