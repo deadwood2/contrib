@@ -474,7 +474,7 @@ diff -ruN SDL2-2.32.10/include/SDL_config_aros.h SDL2-2.32.10.aros/include/SDL_c
 +#define SDL_ENABLE_ALTIVEC_H 1
 +#endif
 +#endif
-+#if defined(__arm__)
++#if defined(__arm__) && 0
 +#define SDL_ARM_SIMD_BLITTERS 1
 +#define SDL_ARM_NEON_BLITTERS 1
 +#endif
