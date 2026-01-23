@@ -10508,7 +10508,16 @@ diff -ruN SDL2-2.32.10/test/testshape.c SDL2-2.32.10.aros/test/testshape.c
  }
 diff -ruN SDL2-2.32.10/test/torturethread.c SDL2-2.32.10.aros/test/torturethread.c
 --- SDL2-2.32.10/test/torturethread.c	2025-01-01 15:47:53.000000000 +0000
-+++ SDL2-2.32.10.aros/test/torturethread.c	2025-07-27 14:24:23.348841432 +0000
++++ SDL2-2.32.10.aros/test/torturethread.c	2026-01-23 14:10:10.973617131 +0000
+@@ -19,7 +19,7 @@
+ 
+ #include "SDL.h"
+ 
+-#define NUMTHREADS 10
++#define NUMTHREADS 20
+ 
+ static SDL_atomic_t time_for_threads_to_die[NUMTHREADS];
+ 
 @@ -88,7 +88,9 @@
          return 1;
      }
