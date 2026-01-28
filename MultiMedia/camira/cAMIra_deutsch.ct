@@ -1,0 +1,761 @@
+## version $VER: cAMIra.catalog 0.3 (05.04.2020)
+## language deutsch
+## codeset 0
+;
+;#language english
+;#version 0
+;#basename cAMIra
+;
+STR_CAMIRA_DESCRIPTION
+einfache Webcam Anwendung
+; simple webcam application
+;
+STR_CAMIRA_TRANSLATION_BY
+Deutsche Übersetzung von Programmautor
+; English localisation by program author.
+;
+STR_MAINWINDOW_TITLE
+cAMIra
+; cAMIra
+;
+STR_MAINWINDOW_RELEASE
+Auslöser
+; Release
+;
+STR_MAINWINDOW_RELEASE_KEY
+a
+; r
+;
+STR_MAINWINDOW_RELEASE_HELP
+Klicke hier um das angezeigte Bild zu speichern.
+; Click here to capture the image seen in the display.
+;
+STR_MAINMENU_PROJECT
+Projekt
+; Project
+;
+STR_MAINMENU_ABOUT
+Über ...
+; About ...
+;
+STR_MAINMENU_ABOUT_KEY
+?
+; ?
+;
+STR_MAINMENU_ABOUTMUI
+Über MUI ...
+; About MUI ...
+;
+STR_MAINMENU_QUIT
+Beenden
+; Quit
+;
+STR_MAINMENU_QUIT_KEY
+B
+; Q
+;
+STR_MAINMENU_VIEW
+Ansicht
+; View
+;
+STR_MAINMENU_LOGWINDOW
+Protokollfenster ...
+; Log Window ...
+;
+STR_MAINMENU_LOGWINDOW_KEY
+P
+; G
+;
+STR_MAINMENU_SETTINGS
+Einstellungen
+; Settings
+;
+STR_MAINMENU_SOURCE
+Quelle ...
+; Source ...
+;
+STR_MAINMENU_SOURCE_KEY
+Q
+; O
+;
+STR_MAINMENU_STAMP
+Stempel ...
+; Stamp ...
+;
+STR_MAINMENU_STAMP_KEY
+S
+; T
+;
+STR_MAINMENU_DISPLAY
+Anzeige ...
+; Display ...
+;
+STR_MAINMENU_DISPLAY_KEY
+A
+; D
+;
+STR_MAINMENU_SCHEDULER
+Planer ...
+; Scheduler ...
+;
+STR_MAINMENU_SCHEDULER_KEY
+P
+; S
+;
+STR_MAINMENU_CAPTURE
+Erfassung ...
+; Capture ...
+;
+STR_MAINMENU_CAPTURE_KEY
+E
+; C
+;
+STR_MAINMENU_UPLOAD
+Upload ...
+; Upload ...
+;
+STR_MAINMENU_UPLOAD_KEY
+U
+; U
+;
+STR_MAINMENU_LOG
+Protokoll ...
+; Log ...
+;
+STR_MAINMENU_LOG_KEY
+L
+; L
+;
+STR_MAINMENU_MUI
+MUI ...
+; MUI ...
+;
+STR_ABOUTWINDOW_TITLE
+cAMIra Informationen
+; cAMIra information
+;
+STR_ABOUTWINDOW_OK
+Ok
+; Ok
+;
+STR_ABOUTWINDOW_OK_KEY
+o
+; o
+;
+STR_ABOUTWINDOW_OK_HELP
+Nach dem Lesen der Informationen über cAMIra, hier klicken.
+; Click here after reading the informations about cAMIra.
+;
+STR_LOGWINDOW_TITLE
+cAMIra Protokoll
+; cAMIra log
+;
+STR_LOGWINDOW_CLOSE
+Schließen
+; Close
+;
+STR_LOGWINDOW_CLOSE_KEY
+s
+; c
+;
+STR_LOGWINDOW_CLOSE_HELP
+Zum schließen des Protokollfensters, hier klicken.
+; Click here to close the log window.
+;
+STR_LOGWINDOW_FLUSH
+Leeren
+; Flush
+;
+STR_LOGWINDOW_FLUSH_KEY
+l
+; f
+;
+STR_LOGWINDOW_FLUSH_HELP
+Um alle Meldugen unwiderruflich zu löschen, hier klicken.
+; Clicking here will remove all messages and there is no way to get them back.
+;
+STR_LOGWINDOW_SAVE
+Speichern
+; Save
+;
+STR_LOGWINDOW_SAVE_KEY
+s
+; s
+;
+STR_LOGWINDOW_SAVE_HELP
+Um alle aktuellen Meldungen zu speichern, klicke hier.
+; If the current messages shall be stored in a file, click here.
+;
+STR_SETTINGSWINDOW_TITLE
+cAMIra EInstellungen
+; cAMIra settings
+;
+STR_SETTINGSWINDOW_OK
+Ok
+; Ok
+;
+STR_SETTINGSWINDOW_OK_KEY
+o
+; o
+;
+STR_SETTINGSWINDOW_OK_HELP
+Nachdem hier geklickt wurde, werden die neuen Einstellungen übernommen.
+; After clicking here, the new setting values will be used.
+;
+STR_SETTINGSWINDOW_CANCEL
+Abbruch
+; Cancel
+;
+STR_SETTINGSWINDOW_CANCEL_KEY
+a
+; c
+;
+STR_SETTINGSWINDOW_CANCEL_HELP
+Nachdem hier geklickt wurde, werden die bisherigen Einstellungen beibehalten.
+; Use this button to discard changes and continue using the old setting values.
+;
+STR_SETTINGSWINDOW_CATEGORYLIST_HELP
+Wähle die zu bearbeitende Kategorie.
+; Choose the category to edit.
+;
+STR_SETTINGSWINDOW_SOURCE
+Quelle
+; Source
+;
+STR_SETTINGSWINDOW_VHIDRIVER
+Treiber
+; Driver
+;
+STR_SETTINGSWINDOW_VHIDRIVER_KEY
+t
+; d
+;
+STR_SETTINGSWINDOW_VHIDRIVER_HELP
+Gib hier den Namen des zu verwendeten VHI Treiber ein.
+; Enter here the name of the VHI driver that shall be used.
+;
+STR_SETTINGSWINDOW_VHIINFO
+Information
+; Info
+;
+STR_SETTINGSWINDOW_VHIINFO_TEMPLATE
+%s %d.%d von %s\n%s %d.%d von %s
+; %s %d.%d by %s\n%s %d.%d by %s
+;
+STR_SETTINGSWINDOW_VHIINFO_EMPTY
+\n
+; \n
+;
+STR_SETTINGSWINDOW_VHIINPUT
+Eingang
+; Input
+;
+STR_SETTINGSWINDOW_VHIINPUT_KEY
+e
+; i
+;
+STR_SETTINGSWINDOW_VHIINPUT_HELP
+Wähle den Videoeingang aus der Liste aus.
+; Choose the video input from this list.
+;
+;
+STR_SETTINGSWINDOW_VHIVIDEOFORMAT
+Format
+; Format
+;
+STR_SETTINGSWINDOW_VHIVIDEOFORMAT_KEY
+m
+; m
+;
+STR_SETTINGSWINDOW_VHIVIDEOFORMAT_HELP
+Wähle das Videoformat aus der Liste aus.
+; Choose the video format from this list.
+;
+STR_SETTINGSWINDOW_VHICOLOR
+Farbmodus
+; Color
+;
+STR_SETTINGSWINDOW_VHICOLOR_KEY
+f
+; c
+;
+STR_SETTINGSWINDOW_VHICOLOR_HELP
+Wähle zwischen Farb- oder Graustufenmodus.
+; Choose between color and grayscale mode.
+;
+STR_SETTINGSWINDOW_VHIX1
+X1
+; X1
+;
+STR_SETTINGSWINDOW_VHIX1_KEY
+x
+; x
+;
+STR_SETTINGSWINDOW_VHIX1_HELP
+Stelle die horizontale Position der oberen linken Ecke des Aufnahmebereichs ein.
+; Adjust horizontal position of upper left corner of the capture area.
+;
+STR_SETTINGSWINDOW_VHIY1
+Y1
+; Y1
+;
+STR_SETTINGSWINDOW_VHIY1_KEY
+1
+; 1
+;
+STR_SETTINGSWINDOW_VHIY1_HELP
+Stelle die vertikale Position der oberen linken Ecke des Aufnahmebereichs ein.
+; Adjust vertical position of upper left corner of the capture area.
+;
+STR_SETTINGSWINDOW_VHIX2
+X2
+; X2
+;
+STR_SETTINGSWINDOW_VHIX2_KEY
+2
+; 2
+;
+STR_SETTINGSWINDOW_VHIX2_HELP
+Stelle die horizontale Position der unteren rechten Ecke des Aufnahmebereichs ein.
+; Adjust horizontal position of lower right corner of the capture area.
+;
+STR_SETTINGSWINDOW_VHIY2
+Y2
+; Y2
+;
+STR_SETTINGSWINDOW_VHIY2_KEY
+y
+; y
+;
+STR_SETTINGSWINDOW_VHIY2_HELP
+Stelle die vertikale Position der unteren rechten Ecke des Aufnahmebereichs ein.
+; Adjust vertical position of lower right corner of the capture area.
+;
+STR_SETTINGSWINDOW_VHIWIDTH
+Breite
+; Width
+;
+STR_SETTINGSWINDOW_VHIWIDTH_KEY
+b
+; w
+;
+STR_SETTINGSWINDOW_VHIWIDTH_HELP
+Gib die Breite des Ausgabebildes ein.
+; Enter the width of the output image.
+;
+STR_SETTINGSWINDOW_VHIHEIGHT
+Höhe
+; Height
+;
+STR_SETTINGSWINDOW_VHIHEIGHT_KEY
+h
+; h
+;
+STR_SETTINGSWINDOW_VHIHEIGHT_HELP
+Gib die Höhe des Ausgabebildes ein.
+; Enter the height of the output image.
+;
+STR_SETTINGSWINDOW_STAMP
+Stempel
+; Stamp
+;
+STR_SETTINGSWINDOW_STAMPENABLE
+Aktivieren
+; Enable
+;
+STR_SETTINGSWINDOW_STAMPENABLE_KEY
+k
+; e
+;
+STR_SETTINGSWINDOW_STAMPENABLE_HELP
+Wenn dieser Schalter ein ist, wird ein benuzerspezifischer Text in das Bild gedruckt.
+; When this switch is enabled, a custom text is printed in the image.
+;
+STR_SETTINGSWINDOW_STAMPTEXT
+Text
+; Text
+;
+STR_SETTINGSWINDOW_STAMPTEXT_KEY
+t
+; t
+;
+STR_SETTINGSWINDOW_STAMPTEXT_HELP
+Das ist der Text, der in Bild gedruckt wird.\n Verschiedene Platzhalter sind über das Popup-Menü verfügbar, welche vor dem Drucken ensprechen ersetzt werden.
+; This is the text that will be printed in the image.\nSeveral specifier are available from the popup that will be expanded before printing.
+;
+STR_SETTINGSWINDOW_STAMPFONT
+Schriftart
+; Font
+;
+STR_SETTINGSWINDOW_STAMPFONT_KEY
+s
+; f
+;
+STR_SETTINGSWINDOW_STAMPFONT_HELP
+Wähle die Schriftart, mit welcher der Text ins Bild gedruckt werden soll, z. B. topaz/8.
+; Specify the font that will be used to draw the text in the image, e .g. topaz/8.
+;
+STR_SETTINGSWINDOW_STAMPX
+X
+; X
+;
+STR_SETTINGSWINDOW_STAMPX_KEY
+x
+; x
+;
+STR_SETTINGSWINDOW_STAMPX_HELP
+Stelle die horizontale Startposition des Textes ein.
+; This will be the horizontal start position of the text.
+;
+STR_SETTINGSWINDOW_STAMPY
+Y
+; Y
+;
+STR_SETTINGSWINDOW_STAMPY_KEY
+y
+; y
+;
+STR_SETTINGSWINDOW_STAMPY_HELP
+Stelle die vertikale Startposition des Textes ein.
+; This will be the vertical start position of the text.
+;
+STR_SETTINGSWINDOW_DISPLAY
+Anzeige
+; Display
+;
+STR_SETTINGSWINDOW_DISPLAYENABLE
+Aktivieren
+; Enable
+;
+STR_SETTINGSWINDOW_DISPLAYENABLE_KEY
+k
+; e
+;
+STR_SETTINGSWINDOW_DISPLAYENABLE_HELP
+Wenn dieser Schalter ein ist, wird periodisch die Anzeige erneuert.
+; When this switch is enabled, periodically display updates are triggered.
+;
+STR_SETTINGSWINDOW_DISPLAYINTERVAL
+Interval [ms]
+; Update [ms]
+;
+STR_SETTINGSWINDOW_DISPLAYINTERVAL_KEY
+i
+; u
+;
+STR_SETTINGSWINDOW_DISPLAYINTERVAL_HELP
+Nach dieser Zeit wird ein neues Bild von der Quelle angefordert. Der Digitalisierungsprozess kann länger als dieser Interval dauern. 0 hält diesen Vorgang an.
+; After this time in ms a new image for display is requested from the video hardware.\nNote, the digitize process may take longer than the time entered here. 0 disables the display.
+;
+STR_SETTINGSWINDOW_DISPLAYZOOM
+Zoom [%]
+; Zoom [%]
+;
+STR_SETTINGSWINDOW_DISPLAYZOOM_KEY
+z
+; z
+;
+STR_SETTINGSWINDOW_DISPLAYZOOM_HELP
+Gib den Vergößerungsfaktor in % für das angezeigte Bild an. Bei einem Wert von 0 wird das Bild an die Fenstergröße angepasst.
+; Spezify the zoom factor in % for displaying the digitized image. A value of 0 means that the image shall always fit in the window.
+;
+STR_SETTINGSWINDOW_DISPLAYRATIO
+Verhältnis
+; Ratio
+;
+STR_SETTINGSWINDOW_DISPLAYRATIO_KEY
+v
+; r
+;
+STR_SETTINGSWINDOW_DISPLAYRATIO_HELP
+Wenn Zoom 0 ist, gibt diese Auswahl das Seitenverhältnis beim darstellen des Bildes an.
+; If zoom is 0 this selection defines the aspect ratio while drawring the image.
+;
+STR_SETTINGSWINDOW_DISPLAYRATIOFREE
+frei
+; free
+;
+STR_SETTINGSWINDOW_DISPLAYRATIOKEEP
+beibehalten
+; keep
+;
+STR_SETTINGSWINDOW_SCHEDULER
+Planer
+; Scheduler
+;
+STR_SETTINGSWINDOW_SCHEDULERINTERVAL
+Interval [s]
+; Interval [s]
+;
+STR_SETTINGSWINDOW_SCHEDULERINTERVAL_KEY
+i
+; i
+;
+STR_SETTINGSWINDOW_SCHEDULERINTERVAL_HELP
+Der Planer löst das Speichern und Hochladen aus, falls diese Funktionen aktiviert sind. Gib den Interval in Sekunden an, in dem das passieren soll.
+; The scheduler triggers capture and upload when enabled. Specify here the interval in s for this to happen.
+;
+STR_SETTINGSWINDOW_CAPTURE
+Erfassung
+; Capture
+;
+STR_SETTINGSWINDOW_CAPTUREENABLE
+Aktivieren
+; Enable
+;
+STR_SETTINGSWINDOW_CAPTUREENABLE_KEY
+k
+; e
+;
+STR_SETTINGSWINDOW_CAPTUREENABLE_HELP
+Wenn dieser Schalter aktiviert ist, löst der Planer das Speichern der digitalisierten Bilder aus.
+; When this switch is enabled, the scheduler triggers storing of digitized images on disk.
+;
+STR_SETTINGSWINDOW_CAPTUREDRAWER
+Verzeichnis
+; Drawer
+;
+STR_SETTINGSWINDOW_CAPTUREDRAWER_KEY
+v
+; d
+;
+STR_SETTINGSWINDOW_CAPTUREDRAWER_HELP
+Das ist das lokale Basisverzeichnis für das Speichern von Bildern. Wenn es nicht existiert, funktioniert das nicht.
+; This is the local base drawer for storing images. If it does not exist, capture will fail.
+;
+STR_SETTINGSWINDOW_CAPTUREFILE
+Datei
+; File
+;
+STR_SETTINGSWINDOW_CAPTUREFILE_KEY
+d
+; f
+;
+STR_SETTINGSWINDOW_CAPTUREFILE_HELP
+Gib das Unterverzeichnis inklusive des Dateinamen ein. Einige Platzhalter könnten vom Popup aus eingefügt werden, die dann im finalen Pfad entsprechend ersetzt werden. Die Dateiendung wird abhängig vom Bildformat angehängt.
+; Enter here sub-path including the filename.\nSeveral specifiers can be used from the popup that get expanded to the final path.\nA filename extension based on the image format will be added automatically.
+;
+STR_SETTINGSWINDOW_CAPTUREFORMAT
+Format
+; Format
+;
+STR_SETTINGSWINDOW_CAPTUREFORMAT_KEY
+f
+; m
+;
+STR_SETTINGSWINDOW_CAPTUREFORMAT_HELP
+Wähle eines der unterstützten Bildformate.
+; Choose here one of the supported capture formats.
+;
+STR_SETTINGSWINDOW_FORMAT_JPG
+JPG
+; JPG
+;
+STR_SETTINGSWINDOW_FORMAT_PNG
+PNG
+; PNG
+;
+STR_SETTINGSWINDOW_UPLOAD
+Upload
+; Upload
+;
+STR_SETTINGSWINDOW_UPLOADENABLE
+Aktivieren
+; Enable
+;
+STR_SETTINGSWINDOW_UPLOADENABLE_KEY
+k
+; e
+;
+STR_SETTINGSWINDOW_UPLOADENABLE_HELP
+Wenn dieser Schalter aktiviert ist, löst der Planer das Hochladen der digitalisierten Bilder auf einen FTP Server aus.
+; When this switch is enabled, the scheduler triggers uploading of digitized images to a FTP server.
+;
+STR_SETTINGSWINDOW_UPLOADSERVER
+Server
+; Server
+;
+STR_SETTINGSWINDOW_UPLOADSERVER_KEY
+s
+; s
+;
+STR_SETTINGSWINDOW_UPLOADSERVER_HELP
+Gib hier den Servernamen an.
+; Enter here the server name.
+;
+STR_SETTINGSWINDOW_UPLOADPASSIVE
+Passiv
+; Passive
+;
+STR_SETTINGSWINDOW_UPLOADPASSIVE_KEY
+p
+; p
+;
+STR_SETTINGSWINDOW_UPLOADPASSIVE_HELP
+Wenn diese Schalter aktiviert ist, wird der passive, ansonsten der aktive Transfermodus verwendet.
+; When this switch is enabled, the passive transfer mode is used. When disabled, active mode is used.
+;
+STR_SETTINGSWINDOW_UPLOADTIMEOUT
+Timeout [s]
+; Timeout [s]
+;
+STR_SETTINGSWINDOW_UPLOADTIMEOUT_KEY
+t
+; t
+;
+STR_SETTINGSWINDOW_UPLOADTIMEOUT_HELP
+Nach dieser Zeit ohne Serveraktivität wird die Verbindung abgebrochen und der Upload schlägt fehl.
+; After that time in seconds of no server activity the connection will be canceled causing the upload to fail.
+;
+STR_SETTINGSWINDOW_UPLOADUSER
+User
+; User
+;
+STR_SETTINGSWINDOW_UPLOADUSER_KEY
+u
+; u
+;
+STR_SETTINGSWINDOW_UPLOADUSER_HELP
+Gib den Usernamen an, falls ein persönlicher Zugang zu dem FTP-Server verwendet wird.
+; Enter a user name, when using a personal account on the FTP server.
+;
+STR_SETTINGSWINDOW_UPLOADPASSWORD
+Passwort
+; Password
+;
+STR_SETTINGSWINDOW_UPLOADPASSWORD_KEY
+w
+; w
+;
+STR_SETTINGSWINDOW_UPLOADPASSWORD_HELP
+Wenn der persönliche Zugang ein Passwort benötigt, gib es hier ein. Beachte, das Passwort wird im Klartext gespeichert.
+; If your account requires a password, enter it here. Note, the password is stored in plain text so far.
+;
+STR_SETTINGSWINDOW_UPLOADDRAWER
+Verzeichnis
+; Drawer
+;
+STR_SETTINGSWINDOW_UPLOADDRAWER_KEY
+v
+; d
+;
+STR_SETTINGSWINDOW_UPLOADDRAWER_HELP
+Gib das entfernte Verzeichnis an, wohin das Bild hochgeladen werden soll. Die Dateiendung wird abhängig vom Bildformat angehängt.
+; Specify the remote drawer to that the image shall be upladed.\nA filename extension based on the image format will be added automatically.
+;
+STR_SETTINGSWINDOW_UPLOADFILE
+Datei
+; File
+;
+STR_SETTINGSWINDOW_UPLOADFILE_KEY
+d
+; f
+;
+STR_SETTINGSWINDOW_UPLOADFILE_HELP
+Gib den entfernten Dateinamen an.
+; Specify the remote filename to that the image shall be uploaded.
+;
+STR_SETTINGSWINDOW_UPLOADFORMAT
+Format
+; Format
+;
+STR_SETTINGSWINDOW_UPLOADFORMAT_KEY
+f
+; m
+;
+STR_SETTINGSWINDOW_UPLOADFORMAT_HELP
+Wähle hier eines der unterstützen Upload-Formate.
+; Choose here one of the supported upload formats.
+;
+STR_SETTINGSWINDOW_LOG
+Protokoll
+; Log
+;
+STR_SETTINGSWINDOW_LOGLEVEL
+Stufe
+; Level
+;
+STR_SETTINGSWINDOW_LOGLEVEL_KEY
+s
+; l
+;
+STR_SETTINGSWINDOW_LOGLEVEL_HELP
+Wähle hier bis zu welcher Stufe Meldungen zum Protokoll hinzugefügt werden sollen.
+; Choose here up to what level messages shall be added to the log.
+;
+STR_LOGLEVEL_OFF
+Aus
+; off
+;
+STR_LOGLEVEL_FAILURE
+Versagen
+; failure
+;
+STR_LOGLEVEL_ERROR
+Fehler
+; error
+;
+STR_LOGLEVEL_WARNING
+Warnung
+; warning
+;
+STR_LOGLEVEL_INFO
+Information
+; info
+;
+STR_LOGLEVEL_DEBUG
+Debug
+; debug
+;
+STR_SPECIFIER_YEAR_HELP
+Jahr
+; Year
+;
+STR_SPECIFIER_MONTH_HELP
+Monat als Dezimalzahl (01-12)
+; Month as a decimal number (01-12)
+;
+STR_SPECIFIER_DAY_HELP
+Tag des Monats (00-31)
+; Day of the month, zero-padded (01-31)
+;
+STR_SPECIFIER_HOUR_HELP
+Stunden im 24h-Format (00-23)
+; Hour in 24h format (00-23)
+;
+STR_SPECIFIER_MINUTE_HELP
+Minuten (00-59)
+; Minute (00-59)
+;
+STR_SPECIFIER_SECOND_HELP
+Sekunden (00-59)
+; Second (00-59)
+;
+STR_SPECIFIER_COUNTER_HELP
+cAMIra Zähler (0000-9999)
+; cAMIra counter (0000-9999)
+;
+STR_PROGRESS_TOGGLE
+T
+; T
+;
+STR_PROGRESS_TOGGLE_KEY
+t
+; t
+;
+STR_PROGRESS_TOGGLE_HELP
+Das Umschalten dieses Knopfes unterbricht den aktuellen Prozess bis der Knopf erneut umgeschaltet wird.
+; Toggling the button will suspend the current process until the button is toggled again.
+;
+STR_PROGRESS_CANCEL
+X
+; X
+;
+STR_PROGRESS_CANCEL_KEY
+x
+; x
+;
+STR_PROGRESS_CANCEL_HELP
+Das Drücken diese Knopfes bricht den aktuellen Prozess ab.
+; Pressing the button will cancel the current process.
+;

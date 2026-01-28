@@ -1,0 +1,569 @@
+#language english
+#version 0
+#basename cAMIra
+;
+STR_CAMIRA_DESCRIPTION (//)
+simple webcam application
+;
+STR_CAMIRA_TRANSLATION_BY (//)
+English localisation by program author.
+;
+STR_MAINWINDOW_TITLE (//)
+cAMIra
+;
+STR_MAINWINDOW_RELEASE (//)
+Release
+;
+STR_MAINWINDOW_RELEASE_KEY (//)
+r
+;
+STR_MAINWINDOW_RELEASE_HELP (//)
+Click here to capture the image seen in the display.
+;
+STR_MAINMENU_PROJECT (//)
+Project
+;
+STR_MAINMENU_ABOUT (//)
+About ...
+;
+STR_MAINMENU_ABOUT_KEY (//)
+?
+;
+STR_MAINMENU_ABOUTMUI (//)
+About MUI ...
+;
+STR_MAINMENU_QUIT (//)
+Quit
+;
+STR_MAINMENU_QUIT_KEY (//)
+Q
+;
+STR_MAINMENU_VIEW (//)
+View
+;
+STR_MAINMENU_LOGWINDOW (//)
+Log Window ...
+;
+STR_MAINMENU_LOGWINDOW_KEY (//)
+G
+;
+STR_MAINMENU_SETTINGS (//)
+Settings
+;
+STR_MAINMENU_SOURCE (//)
+Source ...
+;
+STR_MAINMENU_SOURCE_KEY (//)
+O
+;
+STR_MAINMENU_STAMP (//)
+Stamp ...
+;
+STR_MAINMENU_STAMP_KEY (//)
+T
+;
+STR_MAINMENU_DISPLAY (//)
+Display ...
+;
+STR_MAINMENU_DISPLAY_KEY (//)
+D
+;
+STR_MAINMENU_SCHEDULER (//)
+Scheduler ...
+;
+STR_MAINMENU_SCHEDULER_KEY (//)
+S
+;
+STR_MAINMENU_CAPTURE (//)
+Capture ...
+;
+STR_MAINMENU_CAPTURE_KEY (//)
+C
+;
+STR_MAINMENU_UPLOAD (//)
+Upload ...
+;
+STR_MAINMENU_UPLOAD_KEY (//)
+U
+;
+STR_MAINMENU_LOG (//)
+Log ...
+;
+STR_MAINMENU_LOG_KEY (//)
+L
+;
+STR_MAINMENU_MUI (//)
+MUI ...
+;
+STR_ABOUTWINDOW_TITLE (//)
+cAMIra information
+;
+STR_ABOUTWINDOW_OK (//)
+Ok
+;
+STR_ABOUTWINDOW_OK_KEY (//)
+o
+;
+STR_ABOUTWINDOW_OK_HELP (//)
+Click here after reading the informations about cAMIra.
+;
+STR_LOGWINDOW_TITLE (//)
+cAMIra log
+;
+STR_LOGWINDOW_CLOSE (//)
+Close
+;
+STR_LOGWINDOW_CLOSE_KEY (//)
+c
+;
+STR_LOGWINDOW_CLOSE_HELP (//)
+Click here to close the log window.
+;
+STR_LOGWINDOW_FLUSH (//)
+Flush
+;
+STR_LOGWINDOW_FLUSH_KEY (//)
+f
+;
+STR_LOGWINDOW_FLUSH_HELP (//)
+Clicking here will remove all messages and there is no way to get them back.
+;
+STR_LOGWINDOW_SAVE (//)
+Save
+;
+STR_LOGWINDOW_SAVE_KEY (//)
+s
+;
+STR_LOGWINDOW_SAVE_HELP (//)
+If the current messages shall be stored in a file, click here.
+;
+STR_SETTINGSWINDOW_TITLE (//)
+cAMIra settings
+;
+STR_SETTINGSWINDOW_OK (//)
+Ok
+;
+STR_SETTINGSWINDOW_OK_KEY (//)
+o
+;
+STR_SETTINGSWINDOW_OK_HELP (//)
+After clicking here, the new setting values will be used.
+;
+STR_SETTINGSWINDOW_CANCEL (//)
+Cancel
+;
+STR_SETTINGSWINDOW_CANCEL_KEY (//)
+c
+;
+STR_SETTINGSWINDOW_CANCEL_HELP (//)
+Use this button to discard changes and continue using the old setting values.
+;
+STR_SETTINGSWINDOW_CATEGORYLIST_HELP (//)
+Choose the category to edit.
+;
+STR_SETTINGSWINDOW_SOURCE (//)
+Source
+;
+STR_SETTINGSWINDOW_VHIDRIVER (//)
+Driver
+;
+STR_SETTINGSWINDOW_VHIDRIVER_KEY (//)
+d
+;
+STR_SETTINGSWINDOW_VHIDRIVER_HELP (//)
+Enter here the name of the VHI driver that shall be used.
+;
+STR_SETTINGSWINDOW_VHIINFO (//)
+Info
+;
+STR_SETTINGSWINDOW_VHIINFO_TEMPLATE (//)
+%s %d.%d by %s\n%s %d.%d by %s
+;
+STR_SETTINGSWINDOW_VHIINFO_EMPTY (//)
+\n
+;
+STR_SETTINGSWINDOW_VHIINPUT (//)
+Input
+;
+STR_SETTINGSWINDOW_VHIINPUT_KEY (//)
+i
+;
+STR_SETTINGSWINDOW_VHIINPUT_HELP (//)
+Choose the video input from this list.
+;
+;
+STR_SETTINGSWINDOW_VHIVIDEOFORMAT (//)
+Format
+;
+STR_SETTINGSWINDOW_VHIVIDEOFORMAT_KEY (//)
+m
+;
+STR_SETTINGSWINDOW_VHIVIDEOFORMAT_HELP (//)
+Choose the video format from this list.
+;
+STR_SETTINGSWINDOW_VHICOLOR (//)
+Color
+;
+STR_SETTINGSWINDOW_VHICOLOR_KEY (//)
+c
+;
+STR_SETTINGSWINDOW_VHICOLOR_HELP (//)
+Choose between color and grayscale mode.
+;
+STR_SETTINGSWINDOW_VHIX1 (//)
+X1
+;
+STR_SETTINGSWINDOW_VHIX1_KEY (//)
+x
+;
+STR_SETTINGSWINDOW_VHIX1_HELP (//)
+Adjust horizontal position of upper left corner of the capture area.
+;
+STR_SETTINGSWINDOW_VHIY1 (//)
+Y1
+;
+STR_SETTINGSWINDOW_VHIY1_KEY (//)
+1
+;
+STR_SETTINGSWINDOW_VHIY1_HELP (//)
+Adjust vertical position of upper left corner of the capture area.
+;
+STR_SETTINGSWINDOW_VHIX2 (//)
+X2
+;
+STR_SETTINGSWINDOW_VHIX2_KEY (//)
+2
+;
+STR_SETTINGSWINDOW_VHIX2_HELP (//)
+Adjust horizontal position of lower right corner of the capture area.
+;
+STR_SETTINGSWINDOW_VHIY2 (//)
+Y2
+;
+STR_SETTINGSWINDOW_VHIY2_KEY (//)
+y
+;
+STR_SETTINGSWINDOW_VHIY2_HELP (//)
+Adjust vertical position of lower right corner of the capture area.
+;
+STR_SETTINGSWINDOW_VHIWIDTH (//)
+Width
+;
+STR_SETTINGSWINDOW_VHIWIDTH_KEY (//)
+w
+;
+STR_SETTINGSWINDOW_VHIWIDTH_HELP (//)
+Enter the width of the output image.
+;
+STR_SETTINGSWINDOW_VHIHEIGHT (//)
+Height
+;
+STR_SETTINGSWINDOW_VHIHEIGHT_KEY (//)
+h
+;
+STR_SETTINGSWINDOW_VHIHEIGHT_HELP (//)
+Enter the height of the output image.
+;
+STR_SETTINGSWINDOW_STAMP (//)
+Stamp
+;
+STR_SETTINGSWINDOW_STAMPENABLE (//)
+Enable
+;
+STR_SETTINGSWINDOW_STAMPENABLE_KEY (//)
+e
+;
+STR_SETTINGSWINDOW_STAMPENABLE_HELP (//)
+When this switch is enabled, a custom text is printed in the image.
+;
+STR_SETTINGSWINDOW_STAMPTEXT (//)
+Text
+;
+STR_SETTINGSWINDOW_STAMPTEXT_KEY (//)
+t
+;
+STR_SETTINGSWINDOW_STAMPTEXT_HELP (//)
+This is the text that will be printed in the image.\nSeveral specifier are available from the popup that will be expanded before printing.
+;
+STR_SETTINGSWINDOW_STAMPFONT (//)
+Font
+;
+STR_SETTINGSWINDOW_STAMPFONT_KEY (//)
+f
+;
+STR_SETTINGSWINDOW_STAMPFONT_HELP (//)
+Specify the font that will be used to draw the text in the image, e .g. topaz/8.
+;
+STR_SETTINGSWINDOW_STAMPX (//)
+X
+;
+STR_SETTINGSWINDOW_STAMPX_KEY (//)
+x
+;
+STR_SETTINGSWINDOW_STAMPX_HELP (//)
+This will be the horizontal start position of the text.
+;
+STR_SETTINGSWINDOW_STAMPY (//)
+Y
+;
+STR_SETTINGSWINDOW_STAMPY_KEY (//)
+y
+;
+STR_SETTINGSWINDOW_STAMPY_HELP (//)
+This will be the vertical start position of the text.
+;
+STR_SETTINGSWINDOW_DISPLAY (//)
+Display
+;
+STR_SETTINGSWINDOW_DISPLAYENABLE (//)
+Enable
+;
+STR_SETTINGSWINDOW_DISPLAYENABLE_KEY (//)
+e
+;
+STR_SETTINGSWINDOW_DISPLAYENABLE_HELP (//)
+When this switch is enabled, periodically display updates are triggered.
+;
+STR_SETTINGSWINDOW_DISPLAYINTERVAL (//)
+Update [ms]
+;
+STR_SETTINGSWINDOW_DISPLAYINTERVAL_KEY (//)
+u
+;
+STR_SETTINGSWINDOW_DISPLAYINTERVAL_HELP (//)
+After this time in ms a new image for display is requested from the video hardware.\nNote, the digitize process may take longer than the time entered here. 0 disables the display.
+;
+STR_SETTINGSWINDOW_DISPLAYZOOM (//)
+Zoom [%]
+;
+STR_SETTINGSWINDOW_DISPLAYZOOM_KEY (//)
+z
+;
+STR_SETTINGSWINDOW_DISPLAYZOOM_HELP (//)
+Spezify the zoom factor in % for displaying the digitized image. A value of 0 means that the image shall always fit in the window.
+;
+STR_SETTINGSWINDOW_DISPLAYRATIO (//)
+Ratio
+;
+STR_SETTINGSWINDOW_DISPLAYRATIO_KEY (//)
+r
+;
+STR_SETTINGSWINDOW_DISPLAYRATIO_HELP (//)
+If zoom is 0 this selection defines the aspect ratio while drawring the image.
+;
+STR_SETTINGSWINDOW_DISPLAYRATIOFREE (//)
+free
+;
+STR_SETTINGSWINDOW_DISPLAYRATIOKEEP (//)
+keep
+;
+STR_SETTINGSWINDOW_SCHEDULER (//)
+Scheduler
+;
+STR_SETTINGSWINDOW_SCHEDULERINTERVAL (//)
+Interval [s]
+;
+STR_SETTINGSWINDOW_SCHEDULERINTERVAL_KEY (//)
+i
+;
+STR_SETTINGSWINDOW_SCHEDULERINTERVAL_HELP (//)
+The scheduler triggers capture and upload when enabled. Specify here the interval in s for this to happen.
+;
+STR_SETTINGSWINDOW_CAPTURE (//)
+Capture
+;
+STR_SETTINGSWINDOW_CAPTUREENABLE (//)
+Enable
+;
+STR_SETTINGSWINDOW_CAPTUREENABLE_KEY (//)
+e
+;
+STR_SETTINGSWINDOW_CAPTUREENABLE_HELP (//)
+When this switch is enabled, the scheduler triggers storing of digitized images on disk.
+;
+STR_SETTINGSWINDOW_CAPTUREDRAWER (//)
+Drawer
+;
+STR_SETTINGSWINDOW_CAPTUREDRAWER_KEY (//)
+d
+;
+STR_SETTINGSWINDOW_CAPTUREDRAWER_HELP (//)
+This is the local base drawer for storing images. If it does not exist, capture will fail.
+;
+STR_SETTINGSWINDOW_CAPTUREFILE (//)
+File
+;
+STR_SETTINGSWINDOW_CAPTUREFILE_KEY (//)
+f
+;
+STR_SETTINGSWINDOW_CAPTUREFILE_HELP (//)
+Enter here sub-path including the filename.\nSeveral specifiers can be used from the popup that get expanded to the final path.\nA filename extension based on the image format will be added automatically.
+;
+STR_SETTINGSWINDOW_CAPTUREFORMAT (//)
+Format
+;
+STR_SETTINGSWINDOW_CAPTUREFORMAT_KEY (//)
+m
+;
+STR_SETTINGSWINDOW_CAPTUREFORMAT_HELP (//)
+Choose here one of the supported capture formats.
+;
+STR_SETTINGSWINDOW_FORMAT_JPG (//)
+JPG
+;
+STR_SETTINGSWINDOW_FORMAT_PNG (//)
+PNG
+;
+STR_SETTINGSWINDOW_UPLOAD (//)
+Upload
+;
+STR_SETTINGSWINDOW_UPLOADENABLE (//)
+Enable
+;
+STR_SETTINGSWINDOW_UPLOADENABLE_KEY (//)
+e
+;
+STR_SETTINGSWINDOW_UPLOADENABLE_HELP (//)
+When this switch is enabled, the scheduler triggers uploading of digitized images to a FTP server.
+;
+STR_SETTINGSWINDOW_UPLOADSERVER (//)
+Server
+;
+STR_SETTINGSWINDOW_UPLOADSERVER_KEY (//)
+s
+;
+STR_SETTINGSWINDOW_UPLOADSERVER_HELP (//)
+Enter here the server name.
+;
+STR_SETTINGSWINDOW_UPLOADPASSIVE (//)
+Passive
+;
+STR_SETTINGSWINDOW_UPLOADPASSIVE_KEY (//)
+p
+;
+STR_SETTINGSWINDOW_UPLOADPASSIVE_HELP (//)
+When this switch is enabled, the passive transfer mode is used. When disabled, active mode is used.
+;
+STR_SETTINGSWINDOW_UPLOADTIMEOUT (//)
+Timeout [s]
+;
+STR_SETTINGSWINDOW_UPLOADTIMEOUT_KEY (//)
+t
+;
+STR_SETTINGSWINDOW_UPLOADTIMEOUT_HELP (//)
+After that time in seconds of no server activity the connection will be canceled causing the upload to fail.
+;
+STR_SETTINGSWINDOW_UPLOADUSER (//)
+User
+;
+STR_SETTINGSWINDOW_UPLOADUSER_KEY (//)
+u
+;
+STR_SETTINGSWINDOW_UPLOADUSER_HELP (//)
+Enter a user name, when using a personal account on the FTP server.
+;
+STR_SETTINGSWINDOW_UPLOADPASSWORD (//)
+Password
+;
+STR_SETTINGSWINDOW_UPLOADPASSWORD_KEY (//)
+w
+;
+STR_SETTINGSWINDOW_UPLOADPASSWORD_HELP (//)
+If your account requires a password, enter it here. Note, the password is stored in plain text so far.
+;
+STR_SETTINGSWINDOW_UPLOADDRAWER (//)
+Drawer
+;
+STR_SETTINGSWINDOW_UPLOADDRAWER_KEY (//)
+d
+;
+STR_SETTINGSWINDOW_UPLOADDRAWER_HELP (//)
+Specify the remote drawer to that the image shall be upladed.\nA filename extension based on the image format will be added automatically.
+;
+STR_SETTINGSWINDOW_UPLOADFILE (//)
+File
+;
+STR_SETTINGSWINDOW_UPLOADFILE_KEY (//)
+f
+;
+STR_SETTINGSWINDOW_UPLOADFILE_HELP (//)
+Specify the remote filename to that the image shall be uploaded.
+;
+STR_SETTINGSWINDOW_UPLOADFORMAT (//)
+Format
+;
+STR_SETTINGSWINDOW_UPLOADFORMAT_KEY (//)
+m
+;
+STR_SETTINGSWINDOW_UPLOADFORMAT_HELP (//)
+Choose here one of the supported upload formats.
+;
+STR_SETTINGSWINDOW_LOG (//)
+Log
+;
+STR_SETTINGSWINDOW_LOGLEVEL (//)
+Level
+;
+STR_SETTINGSWINDOW_LOGLEVEL_KEY (//)
+l
+;
+STR_SETTINGSWINDOW_LOGLEVEL_HELP (//)
+Choose here up to what level messages shall be added to the log.
+;
+STR_LOGLEVEL_OFF (//)
+off
+;
+STR_LOGLEVEL_FAILURE (//)
+failure
+;
+STR_LOGLEVEL_ERROR (//)
+error
+;
+STR_LOGLEVEL_WARNING (//)
+warning
+;
+STR_LOGLEVEL_INFO (//)
+info
+;
+STR_LOGLEVEL_DEBUG (//)
+debug
+;
+STR_SPECIFIER_YEAR_HELP (//)
+Year
+;
+STR_SPECIFIER_MONTH_HELP (//)
+Month as a decimal number (01-12)
+;
+STR_SPECIFIER_DAY_HELP (//)
+Day of the month, zero-padded (01-31)
+;
+STR_SPECIFIER_HOUR_HELP (//)
+Hour in 24h format (00-23)
+;
+STR_SPECIFIER_MINUTE_HELP (//)
+Minute (00-59)
+;
+STR_SPECIFIER_SECOND_HELP (//)
+Second (00-59)
+;
+STR_SPECIFIER_COUNTER_HELP (//)
+cAMIra counter (0000-9999)
+;
+STR_PROGRESS_TOGGLE (//)
+T
+;
+STR_PROGRESS_TOGGLE_KEY (//)
+t
+;
+STR_PROGRESS_TOGGLE_HELP (//)
+Toggling the button will suspend the current process until the button is toggled again.
+;
+STR_PROGRESS_CANCEL (//)
+X
+;
+STR_PROGRESS_CANCEL_KEY (//)
+x
+;
+STR_PROGRESS_CANCEL_HELP (//)
+Pressing the button will cancel the current process.
+;

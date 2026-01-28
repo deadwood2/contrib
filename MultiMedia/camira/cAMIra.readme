@@ -1,0 +1,124 @@
+Short:        simple webcam software using VHI drivers
+Uploader:     andreas_barth@gmx.net (Andreas Barth)
+Author:       Andreas Barth
+Type:         util/misc
+Version:      0.3.6
+Architecture: m68k-amigaos >= 2.0.4
+Distribution: Aminet
+
+
+Description
+-----------
+cAMIra is a small webcam software that uses VHI drivers.
+It can be used with a MUI interface or as a command line tool.
+Images can regularly be captured locally in dynamic folders and/or
+uploaded to a FTP server as JPEG or PNG file.
+A dynamic text can be printed in the images.
+
+
+Requirements
+------------
+- compiled for 68020 or better
+- AmigaOS 2.0.4 or newer
+- other components may have higher processor and/or OS requirements
+- a video hardware with VHI driver
+- a TCP/IP stack (optional, for upload to FTP servers)
+- MUI (optional, for the graphical user interface)
+- guigfx.library (optional, to display images, requires AmigaOS >= 3.0)
+- jpeg.library (optional, to generate JPEG images)
+- expat.library (optional, to load xml config files)
+
+The program was developed and tested on an Amiga 4000 with 68060
+processor, AmigaOS 3.9 and my Poseidon quickcamexpress.vhi driver.
+
+
+Installation
+------------
+Currently, just copy the program where you want.
+If you speak one of the supported languages, copy also your catalog file.
+
+
+Usage
+-----
+Sorry, documentation is still missing.
+But I hope, it is simple enough to give it a try.
+Use cAMIra ? to print the arguments template. All the options can 
+also be used as ToolType.
+
+
+History
+-------
+0.3.6: (2020-04-28)
+- new: video format can now be selected in the Source options page
+- changed: catalog files updated
+
+0.3.5: (2020-04-05)
+- fixed: problems in YUV to RGB24 conversion
+- fixed: some issues in the "Source" settings page
+- changed: now enabling VHI interlace mode, if supported
+
+0.3.4: (2017-11-25)
+- fixed: when changing window size, picture was drawn on window border
+- changed: renamed "Videohardware" to "Source" in the GUI
+- new: deutsches catalog file
+
+0.3.3: (2015-05-30)
+- fixed: FTP upload problem caused by only \n at end of FTP commands
+
+0.3.2: (2015-04-07)
+- fixed: AboutWindow and MUI Labels had hardcoded background
+- fixed: making the capture file name storter caused a faulty file name
+- changed: menu hotkeys now use capital letters
+- changed: "Ok" hotkey in settings window is now 'o'
+- changed: starting timer earlier to have timestamps in early log entries
+
+0.3.1: (2015-01-17)
+- fixed: problem with vhi process, when VHI_METHOD_OPEN failed
+
+0.3.0: (2015-01-17)
+- fixed: crash, when expat.library was missing
+- fixed: write over the end of allocated memory when query video hardware 
+- fixed: use of none existing return value of MUIM_List_InsertSingle
+- fixed: Grayscale8 to RGB24 not working
+- new: cropping, scaling, color mode can be configured, if supported
+- new: YUV_411/422/444 vhi input images are now supported
+- changed: image conversion/processing now in separate process
+
+0.2.0: (2013-07-21)
+- initial version
+
+
+Future
+------
+The program works so far ok for me.
+But I will be happy to receive comments, bug reports, wishes that
+I will try to answer, fix, implement when possible. Thank you!
+
+
+Author
+------
+cAMIra is Copyright 2012-2020 Andreas Barth
+You can contact the author by mail using the address from the
+Uploder field above or on Bitbucket, where the source is available.
+
+
+License
+-------
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+Source
+------
+Source can be found on Bitbucket:
+https://bitbucket.org/supernobby/camira

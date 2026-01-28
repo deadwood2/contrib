@@ -1,0 +1,70 @@
+# Copyright © 2026, The AROS Development Team. All rights reserved.
+# $Id$
+#
+# Makefile to make cAMIra.
+
+include $(SRCDIR)/config/aros-contrib.cfg
+
+#MM contrib-gfx-camira : \
+#MM includes \
+#MM linklibs \
+#MM workbench-libs-expat-lib-includes \
+#MM workbench-libs-vhi-includes \
+#MM contrib-gfx-libs-guigfx-includes \
+#MM workbench-libs-jpeg-linklib \
+#MM workbench-libs-png-linklib
+
+EXEDIR := $(AROS_CONTRIB)/MultiMedia/Gfx/cAMIra
+
+FILES := \
+    ab_stdio \
+    ab_stdlib \
+    AboutWindow \
+    Breaker \
+    cAMIra \
+    cAMIraLib \
+    Capture \
+    Context \
+    Dispatcher \
+    DisplayArea \
+    DisplayAreaClass \
+    DosManager \
+    IdleImage \
+    ImageProcessor \
+    Localization \
+    Log \
+    LogWindow \
+    LogWindowClass \
+    Magic \
+    MainWindow \
+    MainWindowClass \
+    MemoryManager \
+    ProgressBar \
+    Scheduler \
+    Settings \
+    SettingsWindow \
+    SettingsWindowClass \
+    Stamp \
+    Timer \
+    Upload \
+    Version \
+    VideoHardware
+
+FILES += \
+    Grayscale8Format \
+    JpegFormat \
+    PngFormat \
+    YuvFormat
+
+NOWARN_FLAGS := \
+    $(NOWARN_UNUSED_VARIABLE) \
+    $(NOWARN_IMPLICIT_FUNCTION_DECL) \
+    $(NOWARN_OLD_STYLE_DEFINITION)
+USER_CFLAGS := $(NOWARN_FLAGS)
+USER_CPPFLAGS := -DMUI_OBSOLETE
+
+%build_prog mmake=contrib-gfx-camira \
+    progname=cAMIra targetdir=$(EXEDIR) files=$(FILES) \
+    uselibs="jpeg png"
+
+%common
