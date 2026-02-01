@@ -21,8 +21,9 @@ int main( int argc, char *argv[] )
    printf("GL_EXTENSIONS: %s\n", (char *) glGetString(GL_EXTENSIONS));
    printf("GL_RENDERER: %s\n", (char *) glGetString(GL_RENDERER));
    printf("GL_VENDOR: %s\n", (char *) glGetString(GL_VENDOR));
+   printf("GL_SHADING_LANGUAGE_VERSION: %s\n\n", (char *) glGetString(GL_SHADING_LANGUAGE_VERSION));
    printf("GLU_VERSION: %s\n", (char *) gluGetString(GLU_VERSION));
-   printf("GLU_EXTENSIONS: %s\n", (char *) gluGetString(GLU_EXTENSIONS));
+   printf("GLU_EXTENSIONS: %s\n\n", (char *) gluGetString(GLU_EXTENSIONS));
    printf("GLUT_API_VERSION: %d\n", GLUT_API_VERSION);
 #ifdef GLUT_XLIB_IMPLEMENTATION
    printf("GLUT_XLIB_IMPLEMENTATION: %d\n", GLUT_XLIB_IMPLEMENTATION);
