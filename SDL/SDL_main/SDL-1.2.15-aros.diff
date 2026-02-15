@@ -1410,6 +1410,7 @@ diff -ruN SDL-1.2.15/SDL.conf SDL-1.2.15.aros/SDL.conf
 +SDL_bool SDL_HasSSE2() ()
 +char *SDL_iconv_string(const char *tocode, const char *fromcode, const char *inbuf, size_t inbytesleft) (A0, A1, A2, D0)
 +int SDL_GetWMInfo (SDL_SysWMinfo *info) (A0)
++SDL_RWops * SDL_RWFromConstMem(const void *mem, int size) (A0, D0)
 +##end functionlist
 diff -ruN SDL-1.2.15/SDL_intern.h SDL-1.2.15.aros/SDL_intern.h
 --- SDL-1.2.15/SDL_intern.h	1970-01-01 00:00:00.000000000 +0000
@@ -6495,7 +6496,7 @@ diff -ruN SDL-1.2.15/src/file/SDL_rwops.c SDL-1.2.15.aros/src/file/SDL_rwops.c
  	SDL_RWops *rwops;
  
  	rwops = SDL_AllocRW();
-@@ -561,9 +628,16 @@
+@@ -561,10 +628,23 @@
  		rwops->hidden.mem.stop = rwops->hidden.mem.base+size;
  	}
  	return(rwops);
@@ -6506,14 +6507,26 @@ diff -ruN SDL-1.2.15/src/file/SDL_rwops.c SDL-1.2.15.aros/src/file/SDL_rwops.c
  
 +#if !defined(PROTO_SDL_H)
  SDL_RWops *SDL_RWFromConstMem(const void *mem, int size)
-+#else
-+SDL_RWops *SDL_RWFromConstMem(const void *mem, int size, struct SDLBase *SDLBase)
-+#endif
  {
++#else
++AROS_LH2(SDL_RWops *, SDL_RWFromConstMem,
++	AROS_LHA(const void *, mem, A0),
++	AROS_LHA(int, size, D0),
++	struct SDLBase *, SDLBase, 197, SDL)
++{
++    AROS_LIBFUNC_INIT
++#endif
++
  	SDL_RWops *rwops;
  
-@@ -580,94 +654,256 @@
+ 	rwops = SDL_AllocRW();
+@@ -578,96 +658,261 @@
+ 		rwops->hidden.mem.stop = rwops->hidden.mem.base+size;
+ 	}
  	return(rwops);
++#if defined(PROTO_SDL_H)
++    AROS_LIBFUNC_EXIT 
++#endif
  }
  
 +#if !defined(PROTO_SDL_H)
