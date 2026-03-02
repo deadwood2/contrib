@@ -5,7 +5,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 
 #MM- contrib-sdl2-sdl-mixer : development-SDL2_mixer
 
-#MM- development-SDL2_mixer : SDL2-aros-lib development-libvorbis development-libmikmod
+#MM- development-SDL2_mixer : SDL2-aros-lib development-libvorbis development-libmikmod development-libxmp
 
 SDL_MIXER_EXTRA_OPTS := \
         LIBMIKMOD_CONFIG='$(AROS_DEVELOPER)/bin/libmikmod-config' \
