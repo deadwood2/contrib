@@ -1,0 +1,25 @@
+# Copyright 2026, The AROS Development Team. All rights reserved.
+
+include $(SRCDIR)/config/aros-contrib.cfg
+
+#MM- contrib-multimedia : development-libxmp-fetch
+
+
+XMP_VERSION := 4.6.3
+XMP_OPTS := -DBUILD_SHARED=OFF
+
+REPOSITORIES := https://sourceforge.net/projects/xmp/files/libxmp/4.6.3 \
+ https://github.com/libxmp/libxmp/releases/download/libxmp-4.6.3 \
+ https://fossies.org/linux/misc/legacy
+
+
+XMPARCHBASE     := libxmp-$(XMP_VERSION)
+XMPARCHSRCDIR := $(PORTSDIR)/libxmp/$(XMPARCHBASE)
+
+%fetch mmake=development-libxmp-fetch archive=$(XMPARCHBASE) destination=$(PORTSDIR)/libxmp \
+    location=$(PORTSSOURCEDIR) archive_origins=$(REPOSITORIES) suffixes="tar.gz"
+
+#MM- development-libxmp : development-libxmp-fetch
+
+%build_with_cmake mmake=development-libxmp package=libxmp srcdir=$(XMPARCHSRCDIR) \
+    prefix="$(AROS_DEVELOPER)" extraoptions="$(XMP_OPTS)"
