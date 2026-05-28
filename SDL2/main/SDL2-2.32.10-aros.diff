@@ -5465,8 +5465,8 @@ diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosclipboard.h SDL2-2.32.10.aros/src/
 +#endif /* _SDL_arosclipboard_h */
 diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosevents.c SDL2-2.32.10.aros/src/video/aros/SDL_arosevents.c
 --- SDL2-2.32.10/src/video/aros/SDL_arosevents.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.10.aros/src/video/aros/SDL_arosevents.c	2025-08-12 16:40:41.421551044 +0000
-@@ -0,0 +1,846 @@
++++ SDL2-2.32.10.aros/src/video/aros/SDL_arosevents.c	2026-05-26 12:07:01.494812819 +0000
+@@ -0,0 +1,847 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -6214,6 +6214,7 @@ diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosevents.c SDL2-2.32.10.aros/src/vid
 +				break;
 +		}
 +
++		ReplyMsg(&msg->am_Message);
 +	}
 +}
 +
