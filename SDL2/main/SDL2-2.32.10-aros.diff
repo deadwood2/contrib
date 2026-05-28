@@ -5032,8 +5032,8 @@ diff -ruN SDL2-2.32.10/src/thread/SDL_thread_c.h SDL2-2.32.10.aros/src/thread/SD
  
 diff -ruN SDL2-2.32.10/src/timer/aros/SDL_systimer.c SDL2-2.32.10.aros/src/timer/aros/SDL_systimer.c
 --- SDL2-2.32.10/src/timer/aros/SDL_systimer.c	1970-01-01 00:00:00.000000000 +0000
-+++ SDL2-2.32.10.aros/src/timer/aros/SDL_systimer.c	2025-07-30 18:12:50.000000000 +0000
-@@ -0,0 +1,114 @@
++++ SDL2-2.32.10.aros/src/timer/aros/SDL_systimer.c	2026-05-28 07:50:49.763378165 +0000
+@@ -0,0 +1,113 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -5107,9 +5107,8 @@ diff -ruN SDL2-2.32.10/src/timer/aros/SDL_systimer.c SDL2-2.32.10.aros/src/timer
 +SDL_GetPerformanceCounter(void)
 +{
 +	struct EClockVal val;
-+	ULONG ec;
-+	ec = ReadEClock(&val);
-+	return (Uint64)ec;
++	ReadEClock(&val);
++	return ((Uint64)val.ev_hi << 32) | (Uint64)val.ev_lo;
 +}
 +
 +Uint64
