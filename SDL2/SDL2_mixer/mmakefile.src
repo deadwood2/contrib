@@ -10,9 +10,9 @@ include $(SRCDIR)/config/aros-contrib.cfg
 SDL_MIXER_EXTRA_OPTS := \
         LIBMIKMOD_CONFIG='$(AROS_DEVELOPER)/bin/libmikmod-config' \
         --disable-music-ogg-stb \
-	--enable-music-ogg-vorbis \
-	--disable-music-ogg-vorbis-shared \
-	--disable-music-mod-xmp-shared \
+        --enable-music-ogg-vorbis \
+        --disable-music-ogg-vorbis-shared \
+        --disable-music-mod-xmp-shared \
         --disable-music-cmd \
         --disable-music-flac \
         libdir=$(AROS_LIB)
