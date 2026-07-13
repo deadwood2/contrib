@@ -9,9 +9,10 @@ include $(SRCDIR)/config/aros-contrib.cfg
 
 SDL_MIXER_EXTRA_OPTS := \
         LIBMIKMOD_CONFIG='$(AROS_DEVELOPER)/bin/libmikmod-config' \
-        --disable-music-mp3 \
-        --disable-music-mod-shared \
-        --disable-music-ogg-shared \
+        --disable-music-ogg-stb \
+	--enable-music-ogg-vorbis \
+	--disable-music-ogg-vorbis-shared \
+	--disable-music-mod-xmp-shared \
         --disable-music-cmd \
         --disable-music-flac \
         libdir=$(AROS_LIB)
@@ -23,7 +24,7 @@ SDL_MIXER_EXTRA_OPTS += \
 endif
 
 USER_INCLUDES := -I$(AROS_INCLUDES)/SDL2 -I$(AROS_CONTRIB_INCLUDES)
-USER_LDFLAGS := -L$(AROS_CONTRIB_LIB)
+USER_LDFLAGS := -L$(AROS_CONTRIB_LIB) -lvorbis -logg
 
 REPOSITORIES := https://www.libsdl.org/projects/SDL_mixer/release \
  https://gsdview.appspot.com/webports/mirror \
