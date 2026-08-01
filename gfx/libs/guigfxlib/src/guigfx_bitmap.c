@@ -121,10 +121,10 @@ BOOL ReadBitMapArrayA(struct BitMap *bm, PIC *pic, UWORD displayID, TAGLIST tags
 
 
 #ifdef __AROS__
-#define GetBitMapInfo(bm,displayid,args...) \
+#define GetBitMapInfo(bm,displayid,...) \
 ({ \
-     IPTR __args[] = { args }; \
-     GetBitMapInfoA((bm), (displayid), (TAGLIST)__args); \
+     const IPTR __args[] = { AROS_PP_VARIADIC_CAST2IPTR(__VA_ARGS__) };\
+     GetBitMapInfoA((bm), (displayid), (struct TagItem *)__args); \
 })
 #else
 int GetBitMapInfo(struct BitMap *bm, ULONG displayID, Tag tag1, ...)
