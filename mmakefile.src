@@ -20,6 +20,8 @@ include $(SRCDIR)/config/aros-contrib.cfg
 #MM- contrib : contrib-gnu
 #MM- contrib : contrib-networking
 #MM- contrib : contrib-pack
+#MM- contrib : contrib-regina
+#MM- contrib : contrib-rexx
 #MM- contrib : contrib-scout
 #MM- contrib : contrib-multimedia
 #MM- contrib : contrib-workbench
