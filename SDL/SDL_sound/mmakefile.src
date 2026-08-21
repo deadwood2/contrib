@@ -3,6 +3,8 @@
 
 include $(SRCDIR)/config/aros-contrib.cfg
 
+#MM- contrib-sdl : contrib-sdl-sdl-sound
+
 #MM- contrib-sdl-sdl-sound : development-SDL_sound
 
 #MM- development-SDL_sound : SDL-aros-lib

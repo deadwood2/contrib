@@ -3,6 +3,8 @@
 
 include $(SRCDIR)/config/aros-contrib.cfg
 
+#MM- contrib-sdl : contrib-sdl-sdl-net
+
 #MM- contrib-sdl-sdl-net : development-SDL_net
 
 #MM- development-SDL_net : SDL-aros-lib

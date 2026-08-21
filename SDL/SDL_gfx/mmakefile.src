@@ -3,6 +3,8 @@
 
 include $(SRCDIR)/config/aros-contrib.cfg
 
+#MM- contrib-sdl : contrib-sdl-sdl-gfx
+
 #MM- contrib-sdl-sdl-gfx : development-SDL_gfx
 
 #MM- development-SDL_gfx : \
