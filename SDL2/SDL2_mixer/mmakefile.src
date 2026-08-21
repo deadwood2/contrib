@@ -3,6 +3,8 @@
 
 include $(SRCDIR)/config/aros-contrib.cfg
 
+#MM- contrib-sdl2 : contrib-sdl2-sdl-mixer
+
 #MM- contrib-sdl2-sdl-mixer : development-SDL2_mixer
 
 #MM- development-SDL2_mixer : SDL2-aros-lib development-libvorbis development-libmikmod development-libxmp

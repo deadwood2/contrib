@@ -3,6 +3,8 @@
 
 include $(SRCDIR)/config/aros-contrib.cfg
 
+#MM- contrib-sdl2 : contrib-sdl2-sdl-ttf
+
 #MM- contrib-sdl2-sdl-ttf : development-SDL2_ttf
 
 #MM- development-SDL2_ttf : \
