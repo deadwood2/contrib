@@ -9,7 +9,7 @@ include $(SRCDIR)/config/aros-contrib.cfg
 
 #MM development-SDL_ttf-test : development-SDL_ttf
 
-#MM development-SDL_ttf : SDL-aros-lib workbench-libs-freetype-linklib
+#MM development-SDL_ttf : SDL-aros-lib workbench-libs-freetype-module-linklib
 
 FILES:=showfont
 
