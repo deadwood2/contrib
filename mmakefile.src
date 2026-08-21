@@ -23,6 +23,8 @@ include $(SRCDIR)/config/aros-contrib.cfg
 #MM- contrib : contrib-regina
 #MM- contrib : contrib-rexx
 #MM- contrib : contrib-scout
+#MM- contrib : contrib-sdl
+#MM- contrib : contrib-sdl2
 #MM- contrib : contrib-multimedia
 #MM- contrib : contrib-workbench
 
