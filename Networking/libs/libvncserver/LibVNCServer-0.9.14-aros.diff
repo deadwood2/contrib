@@ -442,7 +442,7 @@ diff -ruN libvncserver-LibVNCServer-0.9.14.orig/rfb/rfbconfig.h libvncserver-Lib
 + * provides as Roadshow extensions - hence the __CONFIG_ROADSHOW__ the
 + * mmakefile defines, which is what exposes them in <proto/bsdsocket.h>.
 + */
-+#define LIBVNCSERVER_IPv6 1
++/* #define LIBVNCSERVER_IPv6 1 */
 +
 +#define LIBVNCSERVER_PACKAGE_STRING "LibVNCServer 0.9.14"
 +#define LIBVNCSERVER_PACKAGE_VERSION "0.9.14"

@@ -25,7 +25,7 @@ NOWARN_FLAGS := $(NOWARN_UNINITIALIZED) $(NOWARN_PARENTHESES) \
 USER_CFLAGS := $(NOWARN_FLAGS)
 # __CONFIG_ROADSHOW__ exposes bsdsocket.library's getaddrinfo()/getnameinfo()
 # in <proto/bsdsocket.h>, which the IPv6 support needs
-USER_CPPFLAGS := -D_GNU_SOURCE=1 -D__CONFIG_ROADSHOW__
+USER_CPPFLAGS := -D_GNU_SOURCE=1
 USER_INCLUDES := \
     -I$(VNCSERVER_ARCHSRCDIR) \
     -I$(VNCSERVER_ARCHSRCDIR)/common \
