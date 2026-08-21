@@ -34,7 +34,7 @@ FILES := \
 %build_prog mmake=contrib-networking-utils-arosvncserver \
     progname=AROSVNCServer files="$(FILES)" \
     targetdir=$(TARGETDIR) \
-    uselibs="mui vncserver net pthread jpeg png z m"
+    uselibs="mui vncserver net pthread jpeg png z m gcc pthread"
 
 %copy_files_q mmake=contrib-networking-utils-arosvncserver-cpy \
     files="Read.Me license AROSVNCServer.info" dst=$(TARGETDIR)
