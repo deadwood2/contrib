@@ -3842,8 +3842,10 @@ static IPTR mNotify(struct IClass *cl, Object *obj, struct MUIP_TheBar_Notify *m
       notify->TrigVal       = msg->value;
       notify->DestObj       = msg->dest;
 
-      // fill the rest with memcpy
-      memcpy(&notify->FollowParams, &msg->followParams, sizeof(msg->followParams)+sizeof(IPTR)*msg->followParams);
+      // fill the rest with memcpy. On 64-bit systems every DoMethod argument
+      // occupies a full IPTR slot, so the gap between the followParams field
+      // and the first parameter is sizeof(IPTR) and not sizeof(ULONG).
+      memcpy(&notify->FollowParams, &msg->followParams, sizeof(IPTR)+sizeof(IPTR)*msg->followParams);
 
       // now we set the notify as we have identifed the button
       result = DoMethodA(button->obj, (Msg)notify);
@@ -4121,7 +4123,7 @@ static ULONG sleepButton(struct IClass *cl, Object *obj, struct InstData *data, 
           struct ButtonNotify *clone;
           ULONG size;
 
-          size = sizeof(struct ButtonNotify)+sizeof(ULONG)*notify->msg.FollowParams;
+          size = sizeof(struct ButtonNotify)+sizeof(IPTR)*notify->msg.FollowParams;
 
           // clone
           if((clone = SharedAlloc(size)))

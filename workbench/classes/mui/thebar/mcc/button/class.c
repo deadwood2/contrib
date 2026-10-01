@@ -2486,7 +2486,7 @@ mSendNotify(struct IClass *cl, Object *obj, struct MUIP_TheButton_SendNotify *ms
         // now we create a full temporary clone of the notify
         // message which we can modify before we send it to
         // the destination
-        if((destMessage = SharedAlloc(sizeof(ULONG)*(notify->msg.FollowParams))))
+        if((destMessage = SharedAlloc(sizeof(IPTR)*(notify->msg.FollowParams))))
         {
           IPTR i;
           Object *destObj = NULL;
