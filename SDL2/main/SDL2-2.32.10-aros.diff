@@ -1520,7 +1520,7 @@ diff -ruN SDL2-2.32.10/src/core/morphos/SDL_mosversion.h SDL2-2.32.10.aros/src/c
 +#define 	xstr(s) str(s)
 +#define	VERSION		53
 +#define	REVISION	21
-+#define	VERSTAG	"\0$VER: sdl2.library " xstr(VERSION) "." xstr(REVISION) " (" __AMIGADATE__ ") Â© Bruno Peloille, Szilard Biro, Ilkka Lehtoranta"
++#define	VERSTAG	"\0$VER: sdl2.library " xstr(VERSION) "." xstr(REVISION) " (" __AMIGADATE__ ") © Bruno Peloille, Szilard Biro, Ilkka Lehtoranta"
 diff -ruN SDL2-2.32.10/src/cpuinfo/SDL_cpuinfo.c SDL2-2.32.10.aros/src/cpuinfo/SDL_cpuinfo.c
 --- SDL2-2.32.10/src/cpuinfo/SDL_cpuinfo.c	2025-05-08 20:10:28.000000000 +0000
 +++ SDL2-2.32.10.aros/src/cpuinfo/SDL_cpuinfo.c	2025-07-29 13:06:27.701401441 +0000
@@ -5465,7 +5465,7 @@ diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosclipboard.h SDL2-2.32.10.aros/src/
 diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosevents.c SDL2-2.32.10.aros/src/video/aros/SDL_arosevents.c
 --- SDL2-2.32.10/src/video/aros/SDL_arosevents.c	1970-01-01 00:00:00.000000000 +0000
 +++ SDL2-2.32.10.aros/src/video/aros/SDL_arosevents.c	2026-07-24 19:13:50.365614837 +0000
-@@ -0,0 +1,850 @@
+@@ -0,0 +1,912 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -5529,6 +5529,9 @@ diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosevents.c SDL2-2.32.10.aros/src/vid
 +#include <proto/exec.h>
 +#include <proto/intuition.h>
 +#include <proto/keymap.h>
++#include <devices/inputevent.h>
++
++extern struct Library *KeymapBase;
 +#include <proto/locale.h>
 +
 +#include <stdio.h>
@@ -5592,6 +5595,33 @@ diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosevents.c SDL2-2.32.10.aros/src/vid
 +#if !defined(__AROS__)
 +    WCHAR keycode = getv(m, IMSGA_UCS4);
 +	length = UTF8_Encode(keycode, buffer);
++#else
++	/* Run the raw key through the active keymap (dead keys included) and
++	   hand SDL the printable result as UTF-8, so SDL_TEXTINPUT works.
++	   Keymaps produce ISO-8859-1; buffer holds at most 4 bytes + NUL. */
++	struct InputEvent ie;
++	UBYTE ansi[4];
++	WORD n, i;
++
++	ie.ie_NextEvent = NULL;
++	ie.ie_Class = IECLASS_RAWKEY;
++	ie.ie_SubClass = 0;
++	ie.ie_Code = m->Code;
++	ie.ie_Qualifier = m->Qualifier;
++	ie.ie_EventAddress = m->IAddress ? *((APTR *)m->IAddress) : NULL;
++
++	n = MapRawKey(&ie, (STRPTR)ansi, sizeof(ansi), NULL);
++	for (i = 0; i < n && length < 4; i++) {
++		UBYTE c = ansi[i];
++		if (c < 0x20 || c == 0x7f)
++			continue;
++		if (c < 0x80) {
++			buffer[length++] = c;
++		} else if (length < 3) {
++			buffer[length++] = 0xC0 | (c >> 6);
++			buffer[length++] = 0x80 | (c & 0x3F);
++		}
++	}
 +#endif
 +	return length;
 +}
@@ -5653,23 +5683,55 @@ diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosevents.c SDL2-2.32.10.aros/src/vid
 +AROS_MouseMove(_THIS, struct IntuiMessage *m, SDL_WindowData *data)
 +{
 +    struct Screen *s = data->win->WScreen;
++    int x = s->MouseX - data->win->LeftEdge - data->win->BorderLeft;
++    int y = s->MouseY - data->win->TopEdge - data->win->BorderTop;
++
++    (void)m;
 +
 +    //D(bug("[SDL2:arosevt] %s: X:%d Y:%d, ScreenX: %d ScreenY: %d\n", __func__, m->MouseX, m->MouseY, s->MouseX, s->MouseY);
 +    globalMouseState.x = s->MouseX;
 +    globalMouseState.y = s->MouseY;
 +
-+    if (SDL_GetRelativeMouseMode()) {
-+        if (data->first_deltamove) {
-+            data->first_deltamove = 0;
-+            return;
++    if (data->relative_mode) {
++        // Emulate relative mode like the SDL1 cgx port: AROS reports absolute
++        // positions and does not lock the pointer, so send the movement as
++        // deltas and warp the pointer back to the centre when it leaves the
++        // central half of the window. This keeps the (hidden) pointer, and any
++        // click, inside the window instead of losing the focus to whatever is
++        // underneath.
++        int cx = data->window->w / 2;
++        int cy = data->window->h / 2;
++        const SDL_bool inside = AROS_PointerInClientArea(data);
++
++        if (inside)
++            data->relative_inside = 1;
++
++        if (x != cx || y != cy) {
++            int rx = s->MouseX - data->last_mouse_x;
++            int ry = s->MouseY - data->last_mouse_y;
++            // Warp back whenever the pointer leaves the central half, like the
++            // SDL1 cgx port. Once the pointer has been inside the client area
++            // (i.e. not on the frame right after a recapture) do it even while
++            // a button is held, so dragging to the edge cannot let the pointer
++            // escape (and the following click land outside). Only right after
++            // capture, while the pointer may still be on the frame with a
++            // button held, skip the warp to avoid dragging the window.
++            const SDL_bool may_drag_window =
++                !data->relative_inside && !inside && SDL_GetMouseState(NULL, NULL) != 0;
++
++            if ((x < cx / 2 || x > cx * 3 / 2 || y < cy / 2 || y > cy * 3 / 2) &&
++                !may_drag_window)
++                AROS_WarpMouseInWindow(data->window, cx, cy);
++
++            if (rx || ry)
++                SDL_SendMouseMotion(data->window, 0, 1, rx, ry);
 +        }
-+        SDL_SendMouseMotion(data->window, 0, 1, m->MouseX, m->MouseY);
 +    } else {
-+    	//struct Screen *s = data->win->WScreen;
-+        int x = (s->MouseX - data->win->LeftEdge - data->win->BorderLeft);
-+        int y = (s->MouseY - data->win->TopEdge - data->win->BorderTop);
 +        SDL_SendMouseMotion(data->window, 0, 0, x, y);
 +    }
++
++    data->last_mouse_x = s->MouseX;
++    data->last_mouse_y = s->MouseY;
 +}
 +
 +static void
@@ -6316,7 +6378,6 @@ diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosevents.c SDL2-2.32.10.aros/src/vid
 +            AROS_CheckWBEvents(_this);
 +    }
 +}
-\ No newline at end of file
 diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosevents.h SDL2-2.32.10.aros/src/video/aros/SDL_arosevents.h
 --- SDL2-2.32.10/src/video/aros/SDL_arosevents.h	1970-01-01 00:00:00.000000000 +0000
 +++ SDL2-2.32.10.aros/src/video/aros/SDL_arosevents.h	2025-07-28 18:19:36.534462256 +0000
@@ -7368,7 +7429,7 @@ diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosmodes.h SDL2-2.32.10.aros/src/vide
 diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosmouse.c SDL2-2.32.10.aros/src/video/aros/SDL_arosmouse.c
 --- SDL2-2.32.10/src/video/aros/SDL_arosmouse.c	1970-01-01 00:00:00.000000000 +0000
 +++ SDL2-2.32.10.aros/src/video/aros/SDL_arosmouse.c	2025-08-11 17:38:43.709907834 +0000
-@@ -0,0 +1,375 @@
+@@ -0,0 +1,459 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -7396,12 +7457,14 @@ diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosmouse.c SDL2-2.32.10.aros/src/vide
 +#define __NOLIBBASE__
 +
 +#include "../../SDL_internal.h"
++#include "SDL_endian.h"
 +
 +#include "SDL_arosmouse.h"
 +#include "SDL_arosvideo.h"
 +
 +#include "../../events/SDL_mouse_c.h"
 +#include "SDL_hints.h"
++#include "SDL_events.h"
 +
 +#include <cybergraphx/cybergraphics.h>
 +#include <devices/input.h>
@@ -7444,7 +7507,16 @@ diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosmouse.c SDL2-2.32.10.aros/src/vide
 +			rp.BitMap = bmp;
 +
 +			if (SDL_LockSurface(surface) == 0) {
++				/* SDL converts colour cursors to SDL_PIXELFORMAT_ARGB8888, i.e. native
++				   32-bit 0xAARRGGBB words: on little-endian hosts that is B,G,R,A in
++				   memory (cgfx RECTFMT_BGRA32), not RECTFMT_ARGB (A,R,G,B). Using the
++				   wrong one scrambles the colours and takes the alpha from the blue
++				   channel, giving an opaque box around the pointer image. */
++#if SDL_BYTEORDER == SDL_LIL_ENDIAN
++				WritePixelArray(surface->pixels, 0, 0, surface->pitch, &rp, 0, 0, surface->w, surface->h, RECTFMT_BGRA32);
++#else
 +				WritePixelArray(surface->pixels, 0, 0, surface->pitch, &rp, 0, 0, surface->w, surface->h, RECTFMT_ARGB);
++#endif
 +				Object *ptrclassobj = NewObject(NULL, POINTERCLASS,
 +								POINTERA_BitMap, bmp,
 +								POINTERA_XOffset, -hot_x,
@@ -7583,52 +7655,104 @@ diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosmouse.c SDL2-2.32.10.aros/src/vide
 +	return 0;
 +}
 +
++int
++AROS_PointerInClientArea(SDL_WindowData *wd)
++{
++	struct Window *w;
++
++	if (!wd || !(w = wd->win))
++		return 0;
++
++	return w->WScreen->MouseX >= w->LeftEdge + w->BorderLeft &&
++	       w->WScreen->MouseX <  w->LeftEdge + w->Width  - w->BorderRight &&
++	       w->WScreen->MouseY >= w->TopEdge  + w->BorderTop &&
++	       w->WScreen->MouseY <  w->TopEdge  + w->Height - w->BorderBottom;
++}
++
++static struct MsgPort *warpPort;
++static struct IOStdReq *warpReq;
++
++static struct IOStdReq *
++AROS_GetWarpRequest(void)
++{
++	if (!warpReq) {
++		warpPort = CreateMsgPort();
++		if (warpPort) {
++			warpReq = (struct IOStdReq *)CreateIORequest(warpPort, sizeof(*warpReq));
++			if (warpReq) {
++				if (OpenDevice("input.device", 0, (struct IORequest *)warpReq, 0) != 0) {
++					DeleteIORequest((struct IORequest *)warpReq);
++					warpReq = NULL;
++				}
++			}
++			if (!warpReq) {
++				DeleteMsgPort(warpPort);
++				warpPort = NULL;
++			}
++		}
++	}
++	return warpReq;
++}
++
 +static void
-+AROS_WarpMouse(SDL_Window * window, int x, int y)
++AROS_FreeWarpRequest(void)
++{
++	if (warpReq) {
++		CloseDevice((struct IORequest *)warpReq);
++		DeleteIORequest((struct IORequest *)warpReq);
++		warpReq = NULL;
++	}
++	if (warpPort) {
++		DeleteMsgPort(warpPort);
++		warpPort = NULL;
++	}
++}
++
++void
++AROS_WarpMouseInWindow(SDL_Window *window, int x, int y)
 +{
 +	SDL_WindowData *data = (SDL_WindowData *)window->driverdata;
 +	struct Window *win;
++	struct IOStdReq *req;
 +
++	if (!data || !(win = data->win))
++		return;
++
++	// Reuse a single persistent input.device request. Creating and opening a
++	// message port on every warp was slow enough that fast movements could
++	// reach (and leave) the window edge before the pointer was pulled back.
++	req = AROS_GetWarpRequest();
++	if (req) {
++		struct InputEvent ie = { 0 };
++		struct IEPointerPixel newpos = { 0 };
++
++		newpos.iepp_Screen = win->WScreen;
++		newpos.iepp_Position.X = x + win->BorderLeft + win->LeftEdge;
++		newpos.iepp_Position.Y = y + win->BorderTop + win->TopEdge;
++
++		ie.ie_EventAddress = &newpos;
++		ie.ie_NextEvent = NULL;
++		ie.ie_Class = IECLASS_NEWPOINTERPOS;
++		ie.ie_SubClass = IESUBCLASS_PIXEL;
++		ie.ie_Code = IECODE_NOBUTTON;
++		ie.ie_Qualifier = 0;
++
++		req->io_Data = &ie;
++		req->io_Length = sizeof(ie);
++		req->io_Command = IND_WRITEEVENT;
++
++		DoIO((struct IORequest *)req);
++	}
++}
++
++static void
++AROS_WarpMouse(SDL_Window * window, int x, int y)
++{
 +	BOOL warpHostPointer;
 +	warpHostPointer = !SDL_GetRelativeMouseMode() && (window == SDL_GetMouseFocus());
 +
 +	if (warpHostPointer) {
-+
-+		if ((win = data->win)) {
-+			struct MsgPort *port;
-+			struct IOStdReq *req;
-+
-+			port = CreateMsgPort();
-+			if (port) {
-+				req = CreateIORequest(port, sizeof(*req));
-+				if (req) {
-+					if (OpenDevice("input.device", 0, (struct IORequest *)req, 0) == 0) {
-+						struct InputEvent ie = { 0 };
-+						struct IEPointerPixel newpos = { 0 };
-+
-+						newpos.iepp_Screen = win->WScreen;
-+						newpos.iepp_Position.X = x + win->BorderLeft + win->LeftEdge;
-+						newpos.iepp_Position.Y = y + win->BorderTop + win->TopEdge;
-+
-+						ie.ie_EventAddress = &newpos;
-+						ie.ie_NextEvent = NULL;
-+						ie.ie_Class = IECLASS_NEWPOINTERPOS;
-+						ie.ie_SubClass = IESUBCLASS_PIXEL;
-+						ie.ie_Code = IECODE_NOBUTTON;
-+						ie.ie_Qualifier = 0;
-+
-+						req->io_Data = &ie;
-+						req->io_Length = sizeof(ie);
-+						req->io_Command = IND_WRITEEVENT;
-+
-+						DoIO((struct IORequest *)req);
-+						CloseDevice((struct IORequest *)req);
-+					}
-+				}
-+
-+				DeleteMsgPort(port);
-+			}
-+		}
++		AROS_WarpMouseInWindow(window, x, y);
 +	} else {
 +		SDL_SendMouseMotion(window,0, SDL_GetRelativeMouseMode(), x, y);
 +	}
@@ -7642,19 +7766,38 @@ diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosmouse.c SDL2-2.32.10.aros/src/vide
 +	SDL_VideoDevice *video = SDL_GetVideoDevice();
 +	SDL_VideoData *data = (SDL_VideoData *)video->driverdata;
 +	SDL_WindowData *wd;
-+	size_t or_mask, and_mask;
 +
-+	if (enabled) {
-+		or_mask = IDCMP_DELTAMOVE;
-+		and_mask = ~0;
-+	} else {
-+		or_mask = 0;
-+		and_mask = ~IDCMP_DELTAMOVE;
++	// AROS has no pointer lock and no WM_ObtainEvents (unlike MorphOS), so
++	// relative mode is emulated in software: AROS_MouseMove() turns absolute
++	// positions into deltas and warps the pointer back, like the SDL1 cgx port.
++	ForeachNode(&data->windowlist, wd) {
++		if (wd->win) {
++			wd->relative_mode = enabled ? 1 : 0;
++			if (enabled) {
++				// Keep the right mouse button going to the window (and not to
++				// Intuition's menu handling) for the whole capture.
++				wd->win->Flags |= WFLG_RMBTRAP;
++				wd->relative_inside = 0;
++				wd->last_mouse_x = wd->win->WScreen->MouseX;
++				wd->last_mouse_y = wd->win->WScreen->MouseY;
++				// Do not warp while a button is held, or when the pointer is
++				// on the window frame/title bar: the capture may have been
++				// triggered by such a click and warping would drag the window.
++				if (SDL_GetMouseState(NULL, NULL) == 0 && AROS_PointerInClientArea(wd))
++					AROS_WarpMouseInWindow(wd->window, wd->window->w / 2, wd->window->h / 2);
++			} else {
++				// Leaving relative mode (e.g. untrap): a button released while
++				// the window did not have the pointer would otherwise stay
++				// "pressed" in SDL and swallow the next press. Release them.
++				Uint32 buttons = SDL_GetMouseState(NULL, NULL);
++				int b;
++				for (b = 1; b <= 5; b++) {
++					if (buttons & SDL_BUTTON(b))
++						SDL_SendMouseButton(wd->window, 0, SDL_RELEASED, b);
++				}
++			}
++		}
 +	}
-+
-+	ForeachNode(&data->windowlist, wd)
-+		if (wd->win)
-+			ModifyIDCMP(wd->win, (wd->win->IDCMPFlags | or_mask) & and_mask);
 +
 +	return 0;
 +}
@@ -7738,6 +7881,8 @@ diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosmouse.c SDL2-2.32.10.aros/src/vide
 +
 +	D(bug("[SDL2:arosmouse] %s()\n", __func__));
 +
++	AROS_FreeWarpRequest();
++
 +	if ( mouse->def_cursor ) {
 +		SDL_free(mouse->def_cursor);
 +		mouse->def_cursor = NULL;
@@ -7747,7 +7892,7 @@ diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosmouse.c SDL2-2.32.10.aros/src/vide
 diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosmouse.h SDL2-2.32.10.aros/src/video/aros/SDL_arosmouse.h
 --- SDL2-2.32.10/src/video/aros/SDL_arosmouse.h	1970-01-01 00:00:00.000000000 +0000
 +++ SDL2-2.32.10.aros/src/video/aros/SDL_arosmouse.h	2025-08-11 16:08:35.165908881 +0000
-@@ -0,0 +1,54 @@
+@@ -0,0 +1,56 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -7800,12 +7945,14 @@ diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosmouse.h SDL2-2.32.10.aros/src/vide
 +
 +extern void AROS_InitMouse(_THIS);
 +extern void AROS_QuitMouse(_THIS);
++extern void AROS_WarpMouseInWindow(SDL_Window *window, int x, int y);
++extern int AROS_PointerInClientArea(SDL_WindowData *wd);
 +
 +#endif /* _SDL_arosmouse_h */
 diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosopengl.c SDL2-2.32.10.aros/src/video/aros/SDL_arosopengl.c
 --- SDL2-2.32.10/src/video/aros/SDL_arosopengl.c	1970-01-01 00:00:00.000000000 +0000
 +++ SDL2-2.32.10.aros/src/video/aros/SDL_arosopengl.c	2026-07-24 19:13:50.366811634 +0000
-@@ -0,0 +1,274 @@
+@@ -0,0 +1,277 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
@@ -8009,9 +8156,12 @@ diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosopengl.c SDL2-2.32.10.aros/src/vid
 +AROS_GL_GetDrawableSize(_THIS, SDL_Window *window, int *width, int *height)
 +{
 +	SDL_WindowData *data = window->driverdata;
-+    int w = 0;
-+    int h = 0;
-+    if (data->win) {
++    /* The Intuition window only exists once the SDL window has been shown;
++       until then (and if it was closed) report the logical size, never 0x0,
++       as callers divide by the drawable size (e.g. OpenMW's HiDPI check). */
++    int w = window->w;
++    int h = window->h;
++    if (data && data->win) {
 +			w = data->win->Width - data->win->BorderLeft - data->win->BorderRight;
 +			h = data->win->Height - data->win->BorderTop - data->win->BorderBottom;
 +	}
@@ -8964,7 +9114,7 @@ diff -ruN SDL2-2.32.10/src/video/aros/SDL_arosvideo.h SDL2-2.32.10.aros/src/vide
 diff -ruN SDL2-2.32.10/src/video/aros/SDL_aroswindow.c SDL2-2.32.10.aros/src/video/aros/SDL_aroswindow.c
 --- SDL2-2.32.10/src/video/aros/SDL_aroswindow.c	1970-01-01 00:00:00.000000000 +0000
 +++ SDL2-2.32.10.aros/src/video/aros/SDL_aroswindow.c	2026-07-24 19:13:50.368998747 +0000
-@@ -0,0 +1,1073 @@
+@@ -0,0 +1,1108 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -9020,6 +9170,7 @@ diff -ruN SDL2-2.32.10/src/video/aros/SDL_aroswindow.c SDL2-2.32.10.aros/src/vid
 +#include <proto/intuition.h>
 +#include <proto/wb.h>
 +#include <proto/dos.h>
++#include "../../events/SDL_windowevents_c.h"
 +
 +extern struct Library *IntuitionBase;
 +extern struct Library *GadToolsBase;
@@ -9185,6 +9336,10 @@ diff -ruN SDL2-2.32.10/src/video/aros/SDL_aroswindow.c SDL2-2.32.10.aros/src/vid
 +		wd->window_title = NULL;
 +		wd->videodata = data;
 +		wd->first_deltamove = 0;
++		wd->relative_mode = 0;
++		wd->relative_inside = 0;
++		wd->last_mouse_x = 0;
++		wd->last_mouse_y = 0;
 +		wd->winflags = 0;
 +		wd->appmsg = NULL;
 +		wd->menu = NULL;     
@@ -9466,6 +9621,7 @@ diff -ruN SDL2-2.32.10/src/video/aros/SDL_aroswindow.c SDL2-2.32.10.aros/src/vid
 +			WA_MaxWidth, win_resizable ? -1 : max_w,
 +			WA_MaxHeight, win_resizable ? -1 : max_h,
 +			WA_Flags, flags,
++			WA_RMBTrap, TRUE,
 +			vd->CustomScreen ? WA_CustomScreen : TAG_IGNORE, vd->CustomScreen,
 +			vd->CustomScreen ? TAG_IGNORE : WA_PubScreen, vd->WScreen,
 +			(window->flags & SDL_WINDOW_BORDERLESS || fullscreen) ? TAG_IGNORE : WA_ScreenTitle, data->window_title,
@@ -9507,13 +9663,27 @@ diff -ruN SDL2-2.32.10/src/video/aros/SDL_aroswindow.c SDL2-2.32.10.aros/src/vid
 +			}
 +
 +			data->win->UserPort = &vd->WinPort;
-+			ModifyIDCMP(data->win, IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEMOVE | IDCMP_DELTAMOVE | IDCMP_MOUSEBUTTONS | IDCMP_REFRESHWINDOW | IDCMP_ACTIVEWINDOW | IDCMP_INACTIVEWINDOW | IDCMP_CHANGEWINDOW | IDCMP_GADGETUP | IDCMP_MENUPICK);
++			ModifyIDCMP(data->win, IDCMP_CLOSEWINDOW | IDCMP_RAWKEY | IDCMP_MOUSEMOVE | IDCMP_MOUSEBUTTONS | IDCMP_REFRESHWINDOW | IDCMP_ACTIVEWINDOW | IDCMP_INACTIVEWINDOW | IDCMP_CHANGEWINDOW | IDCMP_GADGETUP | IDCMP_MENUPICK);
 +
 +			data->curr_x = data->win->LeftEdge;
 +			data->curr_y = data->win->TopEdge;
 +			data->curr_w = data->win->Width;
 +			data->curr_h = data->win->Height;
 +			data->first_deltamove = TRUE;
++
++			/* WA_AutoAdjust may have clamped the window to the screen; tell
++			   SDL the real inner size now (updates window->w/h synchronously)
++			   rather than waiting for the IDCMP_CHANGEWINDOW that arrives on
++			   the next event pump, so SDL_GetWindowSize() and
++			   SDL_GL_GetDrawableSize() agree right after SDL_CreateWindow(). */
++			{
++				int inner_w = data->win->Width - data->win->BorderLeft - data->win->BorderRight;
++				int inner_h = data->win->Height - data->win->BorderTop - data->win->BorderBottom;
++				if (inner_w != window->w || inner_h != window->h) {
++					D(bug("[SDL2:aroswindow] %s: window clamped to %d x %d (wanted %d x %d)\n", __func__, inner_w, inner_h, window->w, window->h));
++					SDL_SendWindowEvent(window, SDL_WINDOWEVENT_RESIZED, inner_w, inner_h);
++				}
++			}
 +            data->menuactive = FALSE;
 +            data->win->UserData = (APTR)data;
 +
@@ -9614,6 +9784,21 @@ diff -ruN SDL2-2.32.10/src/video/aros/SDL_aroswindow.c SDL2-2.32.10.aros/src/vid
 +			if (data->grabbed > 0)
 +				DoMethod((Object *)data->win, WM_ObtainEvents);
 +#endif
++
++			// SDL keeps its global relative-mouse state across window
++			// re-creation (applications such as PrBoom-plus toggle fullscreen by
++			// destroying and re-creating the window). Our relative state lives
++			// in SDL_WindowData, which is a fresh, zeroed structure after such a
++			// re-creation, so re-sync it here, otherwise the new window stops
++			// sending relative motion until the app calls SetRelativeMouseMode
++			// again (which it usually does not).
++			if (SDL_GetRelativeMouseMode() && data->win) {
++				data->relative_mode = 1;
++				data->relative_inside = 0;
++				data->win->Flags |= WFLG_RMBTRAP;
++				data->last_mouse_x = data->win->WScreen->MouseX;
++				data->last_mouse_y = data->win->WScreen->MouseY;
++			}
 +		}
 +		
 +	} else if (data->win) {
@@ -10041,7 +10226,7 @@ diff -ruN SDL2-2.32.10/src/video/aros/SDL_aroswindow.c SDL2-2.32.10.aros/src/vid
 diff -ruN SDL2-2.32.10/src/video/aros/SDL_aroswindow.h SDL2-2.32.10.aros/src/video/aros/SDL_aroswindow.h
 --- SDL2-2.32.10/src/video/aros/SDL_aroswindow.h	1970-01-01 00:00:00.000000000 +0000
 +++ SDL2-2.32.10.aros/src/video/aros/SDL_aroswindow.h	2025-08-11 00:37:06.556441007 +0000
-@@ -0,0 +1,136 @@
+@@ -0,0 +1,143 @@
 +/*
 +  Simple DirectMedia Layer
 +  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
@@ -10128,6 +10313,13 @@ diff -ruN SDL2-2.32.10/src/video/aros/SDL_aroswindow.h SDL2-2.32.10.aros/src/vid
 +	BYTE grabbed;
 +	BYTE first_deltamove;
 +	BYTE winflags;
++
++	// Relative mouse mode emulation (AROS has neither a pointer lock nor
++	// WM_ObtainEvents): absolute positions are turned into deltas and the
++	// pointer is warped back to the window centre, like the SDL1 cgx port.
++	int relative_mode;
++	int relative_inside;
++	int last_mouse_x, last_mouse_y;
 +	
 +	APTR menuvisualinfo;
 +	struct Menu *menu;
